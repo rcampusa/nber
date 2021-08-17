@@ -1,0 +1,2286 @@
+                             NBER WORKING PAPER SERIES
+
+
+
+
+      MACHINE LEARNING AND PERCEIVED AGE STEREOTYPES IN JOB ADS:
+                    EVIDENCE FROM AN EXPERIMENT
+
+                                          Ian Burn
+                                       Daniel Firoozi
+                                        Daniel Ladd
+                                       David Neumark
+
+                                     Working Paper 28328
+                             http://www.nber.org/papers/w28328
+
+
+                    NATIONAL BUREAU OF ECONOMIC RESEARCH
+                             1050 Massachusetts Avenue
+                               Cambridge, MA 02138
+                                   January 2021
+
+
+
+
+This research was supported by the Sloan Foundation. Any views expressed are our own and not
+those of the Sloan Foundation. This experiment was approved by the UCI Institutional Review
+Board, HS# 2015-2107. The views expressed herein are those of the authors and do not
+necessarily reflect the views of the National Bureau of Economic Research.
+
+NBER working papers are circulated for discussion and comment purposes. They have not been
+peer-reviewed or been subject to the review by the NBER Board of Directors that accompanies
+official NBER publications.
+
+© 2021 by Ian Burn, Daniel Firoozi, Daniel Ladd, and David Neumark. All rights reserved. Short
+sections of text, not to exceed two paragraphs, may be quoted without explicit permission
+provided that full credit, including © notice, is given to the source.
+Machine Learning and Perceived Age Stereotypes in Job Ads: Evidence from an Experiment
+Ian Burn, Daniel Firoozi, Daniel Ladd, and David Neumark
+NBER Working Paper No. 28328
+January 2021
+JEL No. J14,J71,K31
+
+                                           ABSTRACT
+
+We explore whether ageist stereotypes in job ads are detectable using machine learning methods
+measuring the linguistic similarity of job-ad language to ageist stereotypes identified by industrial
+psychologists. We then conduct an experiment to evaluate whether this language is perceived as
+biased against older workers. We find that language classified by the machine learning algorithm
+as closely related to ageist stereotypes is perceived as ageist by experimental subjects. The scores
+assigned to the language related to ageist stereotypes are larger when responses are incentivized
+by rewarding participants for guessing how other respondents rated the language. These methods
+could potentially help enforce anti-discrimination laws by using job ads to predict or identify
+employers more likely to be engaging in age discrimination.
+
+Ian Burn                                          Daniel Ladd
+University of Liverpool                           3151 Social Sciences Plaza
+Department of Economics                           Irvine, Unit 92697
+Chatham St, Liverpool L69 7ZH                     US
+United Kingdom                                    dladd@uci.edu
+ian.burn@liverpool.ac.uk
+                                                  David Neumark
+Daniel Firoozi                                    Department of Economics
+Dept of Economics                                 University of California, Irvine
+3151 Social Sciences Plaza                        3151 Social Science Plaza
+Irvine, CA 92697                                  Irvine, CA 92697
+US                                                and NBER
+dfiroozi@uci.edu                                  dneumark@uci.edu
+Introduction
+
+         There is an extensive body of research testing for employer discrimination against older workers
+
+in labor markets, using correspondence studies to test for discrimination in hiring (e.g., Bendick et al.,
+
+1997, 1999; Lahey, 2008; Neumark et al., 2019a, 2019b). This research focuses on measuring employer
+
+behavior ­ specifically, whether there is less hiring of qualified older workers. There is little work that
+
+studies how workers respond to discrimination in the labor market. In this paper, we explore potential
+
+worker responses to one manifestation of discrimination in the labor market, in particular, whether
+
+workers perceive job requirements using language related to ageist stereotypes as biased against older
+
+workers. The use of ageist stereotypes in job ads, if it discourages older workers from applying for jobs,
+
+can have the same adverse outcome on the hiring of older workers.1
+
+         Utilizing ageist language in job ads may be rational for employers, despite it being illegal to
+
+discriminate against older workers. Employers who do not want to hire older workers might, in order to
+
+avoid unnecessary search costs, discourage older workers from applying by signaling their ageism.
+
+Shaping the applicant pool by discouraging older applicants has an additional benefit for discriminatory
+
+employers, because of the incentives created by age discrimination laws. A lower representation of older
+
+workers in their applicant pool can make it easier to justify a lower representation of older workers among
+
+employees, making it easier to rebut an allegation of age discrimination in hiring.
+
+         In this paper, we use evidence from a large sample of job ads to explore how job-ad language is
+
+interpreted by potential job applicants. First, we use machine learning methods, partly developed in Burn
+
+et al. (2020), to identify phrases in job ads that are linguistically related to ageist stereotypes drawn from
+
+the industrial psychology literature.2 We use these phrases to construct typical job-ad language (in the
+
+form of sentences) that reflects specific age stereotypes. We show that machine learning methods are
+
+
+1
+  Viewed in the context of labor market search, direct discrimination by employers reduces the likelihood that
+   employers make an offer to an older workers, whereas discouraging them from applying reduces the likelihood
+   that older workers find a match. Both thus reduce the arrival rate of job offers, lengthening unemployment
+   durations.
+2
+  The job ads were collected as part of a large-scale correspondence study of age discrimination (Neumark et al.,
+   2019). This research, in turn, is being used to develop a field experiment on how actual job applicants respond to
+   ageist language in job ads.
+
+
+
+
+                                                          1
+sensitive enough to detect the presence of stereotyped language, even when only one sentence in the job
+
+ad is highly related to the ageist stereotype. Second, we conduct an MTURK experiment that asks
+
+whether respondents perceive this job-ad language ­ which the machine learning algorithm classified as
+
+related to ageist stereotypes ­ as ageist. Our experimental evidence shows that sentences that are
+
+classified as closely related to ageist stereotypes by the machine learning algorithm are also rated as ageist
+
+by respondents in many cases.
+
+           Our paper makes two contributions to the literature. First, we contribute to the literature in
+
+industrial psychology on employer and worker beliefs about stereotypes. Much of the previous literature
+
+in industrial psychology utilizes surveys to understand how employers view older workers or how
+
+workers view job ads. To incentivize the elicitation of respondents' true beliefs, we asked respondents to
+
+guess how the average respondent to our survey rated each statement, and respondents were paid based on
+
+how close to the true value their answers were. When asked to state their own beliefs, respondents in our
+
+survey were less likely to rate a statement as ageist. But when asked how they thought the average
+
+respondent would view the same statement, they rated statements as more ageist on average. These
+
+findings suggest that standard surveying methods that do not incentivize responses may lead to an
+
+underreporting of perceptions of ageism; one potential explanation is that it is not socially desirable to
+
+perceive the language we use as ageist, since doing so indicates that one attributes the characteristics of
+
+people used in this language as applying more to older people.
+
+           Second, our results show the promise of machine learning methods to help reduce age
+
+discrimination in the labor market. The potential for age stereotypes or other language in job ads to deter
+
+applications from older job seekers is real. An extreme version of such language is stating maximum
+
+experience levels in job ads ­ as occurred recently in Kleber v. Carefusion Corp. ­ which will clearly act
+
+to exclude many older applicants.3 More generally, the U.S. Code of Federal Regulations covering the
+
+ADEA currently states, "Help wanted notices or advertisements may not contain terms and phrases that
+
+
+3
+    See Kleber v. Carefusion Corp. (http://www.aarp.org/content/dam/aarp/aarp_foundation/litigation/pdf-beg-02-01-
+     2016/kleber-amended-complaint.pdf, viewed November 8, 2017). Button (2019) discusses the ruling in this case.
+
+
+
+
+                                                          2
+limit or deter the employment of older individuals. Notices or advertisements that contain terms such as
+
+age 25 to 35, young, college student, recent college graduate, boy, girl, or others of a similar nature
+
+violate the Act unless one of the statutory exceptions applies" (§1625.4). Thus, our research asking
+
+whether we can reliably detect age stereotyping in job ads can provide information and tools to parties
+
+that enforce age discrimination laws on job-ad language that may predict employer discrimination in
+
+hiring.4
+
+Conceptual Framework and Implications of the Evidence
+
+           Why might employers use stereotyped language in job ads? One hypothesis is that employers
+
+who discriminate based on age use stereotyped language to try to shape the applicant pool, to reduce the
+
+likelihood that age discrimination is detected. Using language that conveys positive stereotypes related to
+
+young workers might discourage older workers from applying for the job (as might language conveying
+
+negative stereotypes related to older workers ­ although that seems less likely and is, in fact, less common
+
+in our data). This discouragement from applying would lead to the underrepresentation of older applicants
+
+in the applicant pool. This underrepresentation, in turn, is potentially valuable to a discriminating
+
+employer, because the probability of an age discrimination claim and of an adverse outcome for the
+
+employer is smaller the higher is the ratio of job offers to applicants for older applicants vs. younger
+
+applicants.5
+
+           A second hypothesis is more closely related to statistical discrimination. Different jobs may have
+
+different requirements, which could be stated in job ads. But employers may hold stereotypes about older
+
+job applicants' abilities to meet these job requirements ­ for example, assuming that older workers are
+
+less likely to be able to do the heavy lifting that a job requires. In this case, employers posting such ads
+
+
+
+4
+  In particular, this information can be useful for government enforcement agencies as well as attorneys representing
+   plaintiffs in age discrimination actions.
+5
+  In legal cases, the most compelling data on hiring discrimination comes from comparing hiring rates of the group
+   in question (older workers, in our case) relative to the applicant pool. In the absence of data on applicants, the
+   analysis of a firm's workforce relative to the age structure of the relevant workforce in the population is
+   sometimes used, but such analyses pose a greater challenge to establishing evidence consistent with age
+   discrimination.
+
+
+
+
+                                                          3
+and offering fewer callbacks to older workers would be engaging in pure statistical discrimination.
+
+           While social scientists are interested in the nature of discriminatory behavior, both statistical and
+
+taste discrimination are illegal under U.S. law. EEOC regulations state: "An employer may not base
+
+hiring decisions on stereotypes and assumptions about a person's race, color, religion, sex (including
+
+pregnancy), national origin, age (40 or older), disability or genetic information."6 A somewhat different
+
+and more complicated question is whether job requirements reflected in stereotyped language in job ads,
+
+to the extent they result in less hiring of older workers, are legal. The legality of these requirements
+
+generally requires an employer to show that the use of these requirements is based on a reasonable factor
+
+other than age (RFOA), even if that factor is correlated with age. An RFOA is defined as "a non-age
+
+factor that is objectively reasonable when viewed from the position of a prudent employer mindful of its
+
+responsibilities under the ADEA under like circumstances."7 In other words, a job requirement that is
+
+associated with less hiring of older workers is not necessarily illegal, but it may be.
+
+           Age discrimination is an important policy issue. Reducing age discrimination in hiring is an
+
+important component to lengthening work lives because many seniors transition to part-time or shorter-
+
+term "partial retirement" or "bridge jobs" at the end of their careers (Cahill et al., 2006; Johnson et al.,
+
+2009), or return to work after a period of retirement (Maestas, 2010). If ageist stereotypes in job ads
+
+discourage older applicants from applying for jobs, the EEOC could utilize our evidence in two ways to
+
+help reduce age discrimination in hiring. First, it could use the text of job ads to monitor for possible age
+
+discrimination in hiring (as could plaintiffs' attorneys who help enforce the law). Second, the EEOC
+
+could issue guidance to employers to avoid language that might discourage older workers from applying.
+
+Thus, rigorous evidence on the role of ageist language in job ads could potentially influence policy to
+
+reduce age discrimination in hiring and contribute to lengthening work lives.
+
+
+
+
+6
+    See http://www1.eeoc.gov//laws/practices/index.cfm?renderforprint=1 (viewed September 15, 2019).
+7
+    See https://www.federalregister.gov/documents/2012/03/30/2012-5896/disparate-impact-and-reasonable-factors-
+     other-than-age-under-the-age-discrimination-in-employment (viewed September 15, 2019).
+
+
+
+
+                                                         4
+Studying Job Ads
+
+           Very few studies explore job ads, and fewer still focus on discrimination. Among studies of
+
+issues other than discrimination, Modestino et al. (2016) use text data from job ads to document that
+
+"downskilling" occurred during the recovery from the Great Recession, with firms reducing skill
+
+requirements in their job ads. Deming and Kahn (2018) use text data in job ads to measure how ten
+
+different skills relate to wages. Marinescu and Wolthoff (2020) match text data from job ads to job
+
+application data to study the matching process between jobs and applicants. And He et al. (forthcoming)
+
+study how job flexibility conditions influence job application behavior. Kuhn and Shen (2013) and Kuhn
+
+et al. (2018) explore how gender preferences feature explicitly or implicitly in job ads in China, and
+
+Hellester et al. (2020) explore age and gender preferences in job ads in China and Mexico.
+
+           Two studies, to date, connect the text of job ads to measured discriminatory behavior of
+
+employers.8 Tilcsik (2011) identifies words in job ads related to masculine stereotypes (decisive,
+
+aggressive, assertive, and ambitious) and links those to hiring outcomes in a correspondence study of
+
+discrimination against gay men. And, in the most systematic study of how the text of job ads is associated
+
+with discrimination, Burn et al. (2020) identify common age stereotypes from the research literature in
+
+industrial psychology, use machine learning to calculate the relationship between the text of the job ads
+
+and specific age stereotypes, and then test whether job-ad language related to the stereotypes predicts
+
+hiring discrimination against older workers in a correspondence study. As already noted, the present paper
+
+builds on this prior work.
+
+           There has been no research on whether the ageist language in job ads is actually perceived as
+
+ageist by potential job applicants. Obviously, the use of this kind of language in job ads is much more
+
+troublesome if, in fact, it is perceived as ageist and thus discourages older workers from applying for jobs.
+
+
+8
+    Though they did not focus on job ads, Hanson et al. (2011) and Hanson et al. (2016) study language used by
+     mortgage originators and connect this language to their behavior. Hanson et al. (2011) study subtle discrimination
+     through "keywords" used by landlords responding to prospective tenants. Hanson et al. (2016) had research
+     assistants subjectively (and blindly) code the helpfulness and other characteristics of mortgage loan originator
+     responses to prospective borrowers.
+
+
+
+
+                                                            5
+If this happens, it would rightly be viewed as another dimension of age discrimination in hiring ­ one that
+
+has not been studied or detected in the research literature that studies hiring discrimination, mainly using
+
+correspondence studies.9
+
+           What is known about how job applicants read job ads focuses exclusively on gender bias in job
+
+ads. Gaucher et al. (2011) found that job ads for male-dominated occupations used masculine wording
+
+(i.e., words associated with male stereotypes, such as "leader," "competitive," or "dominant") more
+
+frequently than advertisements for female-dominated occupations, and women find job advertisements
+
+less appealing when they contained more masculine wording than feminine wording (Bem and Bem,
+
+1973; Gaucher et al., 2011).
+
+Methods
+
+Selecting the Stereotypes
+
+           To select the stereotypes we study, we start with a list of 17 ageist stereotypes from the industrial
+
+psychology literature. These are listed in Table 1. See Burn et al. (2020) for documentation of the sources
+
+used to identify these stereotypes and the larger set of phrases that correspond to them. Note that a few of
+
+these appear as both positive and negative stereotypes about older workers.
+
+           For our analysis, we selected a subset of these stereotypes that met the following criteria. First,
+
+the stereotype is commonly expressed in job-ad language about the ideal or preferred candidate skills or
+
+attributes; we did not want to focus on stereotypes that are not often included in job ads (e.g., hearing and
+
+memory), even if, according to the industrial psychology literature, employers hold these stereotypes.
+
+Second, we focus on stereotypes for which we had evidence of a correlation between discrimination and
+
+the stereotype (from Burn et al., 2020) and evidence that the stereotype captures a skill that employers
+
+view older workers as less likely to possess (from van Borm et al., 2019). Third, older workers should be
+
+aware that employers held the stereotype. As evidence, we drew on various reports put out by AARP; see
+
+
+
+9
+    These include Baert et al. (2016); Bendick et al. (1997, 1999); Carlsson and Eriksson (2019); Farber et al. (2017,
+     2019); Lahey (2008); Neumark et al. (2016, 2019a, 2019b); and Riach and Rich (2006, 2010).
+
+
+
+
+                                                            6
+Brenoff (2019) and Terrell (2019). Our final list of stereotypes is three skills or abilities for which older
+
+workers are stereotyped as deficient: communication skills, physical ability, and technological skills.10
+
+         Industrial psychology research focuses on the skills that employers desire in workers, but in
+
+which older workers are deficient. That is, the literature typically frames the phrasing of these skills or
+
+requirements in the negative. In contrast, job ads rarely seek candidates using negative formulations of a
+
+skill requirement, but instead turn the language to a positive formulation (e.g., ads will ask that a
+
+candidate be "adaptable," rather than that they are "not stubborn"). When describing skills and
+
+requirements related to our stereotypes, employers use words like "outgoing" (Stewart and Ryan, 1982),
+
+"sociable" (Kite et al., 1991), and "conversational skills" (Ryan et al., 1992; Schmidt and Boland, 1986)
+
+to describe communication skills. Physical ability is expressed using words like "energy," "speed," and
+
+"physical capability" (Levin, 1988; van Dalen et al., 2009). And technological skills focus on the ability
+
+to use "new technology," or on "technological competence" (AARP, 2000; McCann and Keaton, 2013;
+
+McGregor and Gray, 2002)
+
+Creating the Treatment (Stereotyped) and Control Job-Ad Language
+
+         To test whether stereotyped language is perceived as ageist by workers, we create two sets of
+
+phrases: treatment phrases and control phrases. The treatment and control job-ad sentences differ in the
+
+job requirements expressed and the type of language used in these phrases; we try as much as possible to
+
+have the treatment and control phrases describe similar skills while allowing for some differences to be
+
+appropriate to the occupation (see Table 2).11 As just noted, the requirements we manipulate have to do
+
+with a candidate's communication skills, physical ability, and technology skills. Our control sentences
+
+express job requirements that are also appropriate for the job but use age-neutral language not related to
+
+
+
+
+10
+   Communication skills are one of three stereotypes in Table 1 that appear both positively and negatively. Later, we
+   discuss the implications of this for our evidence.
+11
+   For example, for the machine learning treatment for communication skills, the phrase for administrative assistants
+   is "You must have good communication skills and teamwork on tasks," while for retail sales the phrase is "You
+   must have good communication skills with customers and staff." In contrast, the control phrase ­ "You must be
+   good at working without supervision" ­ is the same.
+
+
+
+
+                                                          7
+these age-stereotyped skills or abilities, while our treatment sentences use language highly related to these
+
+ageist stereotypes.
+
+           Our main method for generating phrases and sentences highly related to ageist stereotypes uses
+
+measures of semantic similarity generated by machine learning methods. Moreover, to isolate the effects
+
+of the different stereotypes, we used the results from these machine learning methods to construct
+
+sentences that were highly related to only one of the three stereotypes we use. We calculate the semantic
+
+similarity of nearly one million (997,562) phrases from the approximately 14,000 job ads collected in
+
+Burn et al. (2019) to the communication skills, physical ability, and technology skills stereotypes,
+
+measuring semantic similarity by the cosine similarity score.
+
+           The machine learning methods are explained fully in Burn et al. (2020). Briefly, though, this
+
+includes the following steps.
+
+                1. We scrape the text of the job ads, deleting so-called "stopping words" (like "of," "and,"
+
+                    "the"), which do not convey any real content.
+
+                2. We use as the "corpus" the entirety of English-language Wikipedia, which contains all
+
+                    words in the English language. With this corpus, we compute the semantic similarity
+
+                    between any two words, based on the frequency with which they appear together in either
+
+                    sentences or paragraphs of the Wikipedia corpus, a common procedure in computational
+
+                    linguistics. The resulting measure is the "cosine similarity score," which ranges from -1
+
+                    (the words never appear together) to 1 (they always appear together).
+
+                3. We use the resulting scores to compute the similarity between all three-word phrases in
+
+                    our ads and the stereotypes (from Table 1).12 Thus, we can calculate the cosine similarity
+
+                    score (or semantic similarity score) of any phrase constructed using words from our job
+
+                    ads to the stereotypes (see Burn et al., 2020).
+
+           As an example, Figure 1 shows the distribution of cosine similarity scores of all three-word
+
+
+12
+     Burn et al. (2020) discuss and document why three-word phrases are appropriate to capture the job requirement
+     content.
+
+
+
+
+                                                           8
+phrases (trigrams) with a particular stereotype (communication skills); the distribution is centered above
+
+zero, which makes sense since we are looking at the text from job ads. To provide some examples,
+
+trigrams at the lower end of the distribution are highly unrelated. These include, for example, "christmas
+
+season near" and "hotel near seattle" (both with scores of -0.3). Examples of trigrams with scores close to
+
+0.0 are "every Sunday pm" and "work year round." Trigrams at the top of the distribution with scores of
+
+1.0 include "excellent communication skills" and "prioritizing skills communication."
+
+        We use the list of words and phrases from our job ads to construct our treatment sentences. We
+
+iteratively edited the sentences to ensure that only the cosine similarity score of the manipulated
+
+stereotype substantively differed between the treatment and control sentences, whereas the cosine
+
+similarity scores for the other stereotypes listed in Table 1 (including the other two treatment stereotypes)
+
+were similar for the treatment and control sentences. For example, if the treatment language related to
+
+communication skills was also highly related to the stereotype about personality, we identified which
+
+words in the sentence were highly related to personality, and then we selected synonyms that were less
+
+related to personality. Our control sentences were created to express requirements for similar jobs without
+
+referring to ageist stereotypes about skills or abilities. We iteratively removed words and phrases that
+
+were highly related to our stereotypes to minimize the semantic similarity. The resulting sentences, for the
+
+treatment and control groups, are listed in columns (3) and (4) of Table 2, along with their cosine
+
+similarity scores with the stereotype.
+
+        We also use a second stereotype treatment that conveys bias by using ageist language identified
+
+by the AARP as related to communication skills, physical ability, and technology skills. We select three
+
+AARP examples that best correspond to our respective stereotypes: "cultural fit," "energetic person," and
+
+"digital native" (Brenoff, 2019; Terrell, 2019). We adapted the language to fit our job ads and created
+
+three sentences, one for each stereotype (Table 2, column (5)). Using the text about cultural fit, we
+
+created the sentence "You must be up-to-date with current industry jargon and communicate with a
+
+dynamic workforce" to reflect stereotypes about communication skills, emphasizing the communication
+
+aspect of fitting in. Using the text about energetic persons, we created the sentence "You must be a fit and
+
+
+
+                                                      9
+energetic person" to reflect stereotypes about physical ability. Using the text about digital natives, we
+
+created the sentence "You must be a digital native and have a background in social media" to reflect
+
+stereotypes about technology skills by emphasizing social media.
+
+        We thought it useful to use these rather blatant examples of stereotyped language suggested by
+
+AARP as a way of validating our methods. One might think that if these phrases are not identified as
+
+ageist, one might view it as less likely that our more subtle sentences would be. Conversely, at the other
+
+extreme, the experimental responses to the AARP phrases might give a sense of the upper bound of
+
+perceived stereotyping we could expect. On the other hand, note that ­ as shown in Table 2 ­ in every
+
+case, the cosine similarity score with the stereotype for the machine learning phrase is higher than for the
+
+AARP language. This does not necessarily mean that the AARP language is less ageist; rather, the AARP
+
+language may be perceived as more ageist, while the language is less directly aligned with a particular
+
+ageist stereotype. As an example, the AARP language we use for the communications stereotype includes
+
+"up-to-date," "jargon," and "dynamic," all of which may be reflect ageist stereotypes that are not strongly
+
+related to communications. This is not surprising since the AARP stereotypes were not chosen by
+
+machine learning with the goal of high semantic similarity with a specific stereotype and not with others.
+
+Indeed, as we noted earlier, the AARP language used for communications is in fact described as "cultural
+
+fit," which could be much broader.
+
+        It is also true that the treatment phrases for some stereotypes are stronger than for others. In
+
+particular, the cosine similarity score is always lowest for the phrase corresponding to technological skills
+
+than for the phrases corresponding to the other two stereotypes. As it turns out, the same is true for the
+
+control phrases. Thus, the impact of the difference between treatment and control phrases may not be
+
+expected to differ as much across stereotypes (if, in fact, they are perceived as ageist).
+
+Validating the Treatment vs. Control Differences
+
+        While the AARP language is quite blatant and should be perceived as ageist by workers, a first
+
+question is how well the stereotyped vs. neutral sentences generated from the machine learning results
+
+leads to ads that convey the intended stereotypes. In the language of epidemiology, we would like our
+
+
+
+                                                      10
+treatment sentences to have high "sensitivity" (conveying ageist stereotypes) and "specificity" (conveying
+
+information about the specific ageist stereotype intended).
+
+           To test whether our phrases are powerful enough to be detected in a job ad, we embedded the
+
+treatment and control sentences in job-ad templates we created to correspond to actual job ads. In
+
+particular, we created 12 templates per occupation using actual ads collected in Neumark et al. (2019) as a
+
+guide to creating our experimental job ads. We supplemented the sample of ads with recent real ads
+
+posted on the same job boards used in that study to capture contemporaneous patterns of behavior. Figure
+
+2 provides a few examples, and online Appendix A provides the full set of job-ad templates.
+
+           The treatment and control ads differ in the job requirements (denoted in bold with asterisks in
+
+each template), with three sentences assigned to be either a treatment phrase (stereotyped) or a control
+
+phrase (not stereotyped). As explained above, the requirements we manipulate have to do with a
+
+candidate's communication skills, physical ability, and technology skills. Our control phrases express job
+
+requirements that are also appropriate for the job but use age-neutral language not related to these age-
+
+stereotyped skills or abilities, while our treatment phrases use language highly related to these ageist
+
+stereotypes.
+
+           Figures 3-5 illustrate how the semantic similarity differs across the templates for the treatment
+
+and control job ads and show that our treatment job ads do activate the intended stereotypes.13
+
+Information on the distribution of all phrases found in the ads is shown in grey, information for the
+
+treatment job-ad language is shown with dashed black lines, and information for the control neutral job-ad
+
+language with solid black lines. The figures show the median to 99th percentile range and the average
+
+(with plotting symbols).
+
+           These figures display a few key results. First, the biased (treatment) job ads have considerably
+
+higher 99th percentiles than the control job ads, as well as higher means (and medians, although less so).
+
+For example, this is apparent in Figure 3, looking at the bars and symbols for the Physically Able
+
+
+13
+     As explained above, words have been aggregated up to three-word phrases to ensure that we measure semantic
+     meaning more accurately.
+
+
+
+
+                                                         11
+stereotype in the upper left-hand panel, the bars and symbols for the Technology stereotype in the upper
+
+right-hand panel, and the bars and symbols for the Communication stereotype in the lower left-hand
+
+panel. (In these three panels, we manipulate only the indicated stereotype, using the neutral language for
+
+the other two.) On the other hand, for the remaining stereotypes ­ the ones we do not manipulate ­ the
+
+control/neutral templates, treatment templates, and collected ads generally have similar medians, means,
+
+and 99th percentiles; see, for example, the bars for Dependable in the upper right-hand panel in Figure 3.14
+
+The implication of the differences in the means and especially the upper tails of the distributions is that
+
+the ads we write using the treatment sentences do, in fact, create ads with notably stronger age stereotypes
+
+for the "target" stereotype we are trying to convey. But our manipulated treatments do not create
+
+similarity with the other stereotypes (besides the three we are trying to study). That is, our treatment ads
+
+only generate a shift in similarity for the stereotypes we are seeking to activate, hence isolating those
+
+stereotypes in the job ads.
+
+           This key result is also apparent from the lower right-hand panel in each figure, where we use the
+
+treatment ads in which we manipulate all three stereotypes at once. If one compares the bars and symbols
+
+for any of the three manipulated stereotypes in this panel to the corresponding bars and symbols in the
+
+first three panels, the results look almost identical. Again, this reinforces the conclusion that machine
+
+learning generated semantic similarity scores are powerful enough to pick up the presence of stereotyped
+
+language, even when only one or a few sentences in the ad are actually related to the ageist stereotype.
+
+           In addition, the treatment effect is accentuated by using the control ads rather than simply using
+
+all the collected ads (as we would expect). The figures show that the control ads are more neutral than the
+
+full set of collected ads, as evidenced by the much lower values of the 99th percentiles for the control ads
+
+than for the collected ads, for each of the stereotypes we manipulate, but not for the other stereotypes; for
+
+example, compare the bars for Physically Able and for Hearing in the upper left-hand panel of Figure 3.
+
+Experimental Evidence
+
+
+
+14
+     There are infrequent exceptions ­ e.g., for Ability to Learn in the lower left-hand panel.
+
+
+
+
+                                                             12
+           Our final step ­ and the key new contribution of this paper ­ was to conduct an experiment using
+
+Amazon MTURK to measure whether and to what extent job-ad language using phrases with high cosine
+
+similarity scores with age-related stereotypes, as identified by machine learning methods, are perceived as
+
+ageist by potential job applicants, including older applicants.
+
+           We recruited participants through the Amazon MTURK online platform. We restricted the
+
+sample to U.S. residents. To guarantee that the median age of the sample was roughly 50, we used age-
+
+based quotas with a third of the sample in each of the following age bins: 25 to 35, 45 to 55, and 55+.
+
+Because the age bins are pre-set by Amazon MTURK, and MTURK's age data may not be up-to-date, we
+
+ask participants to self-report their age. The bins we use to collect self-reported age (25 to 35, 35 to 50,
+
+and 50+) broaden the MTURK bins to cover a gap in the age distribution and adjust the highest cutoff to
+
+50, in line with our benchmark age for older workers in the survey. We did not balance the recruitment
+
+sample on race or gender.15
+
+           Our experiment consisted of two parts, the baseline survey and the incentivized survey, which
+
+were conducted using Qualtrics. In the baseline survey, we recruited 50 respondents who met our criteria
+
+and passed the manipulation checks. The responses from the baseline survey were used solely to provide
+
+"correct" answers for the next step when we incentivize our second group of respondents to predict the
+
+responses of this first group. For the incentivized survey, we recruited 151 respondents who met our
+
+
+
+
+15
+     Respondents who met the sample restrictions were excluded if they failed a manipulation check as the first step of
+     the survey. This manipulation check acted as both a Turing test (ensuring our respondents were human) and a
+     check for American English language fluency (to reduce the chance someone has masked their location). All
+     questions were free response to prevent individuals or computer programs from clicking through and getting the
+     right answers by accident. The first three questions test for English understanding by asking respondents to
+     complete the analogy (e.g., Canine is to Dog as Feline is to ___, for which cat, kitten, Cat, or cats would all be
+     correct). One of these questions (Pen is to Whiteout as Pencil is to ___) was designed to elicit different responses
+     between American and U.K. English speakers. If participants listed "eraser," the correct answer in American
+     English, they were allowed to proceed, while participants who responded with "rubber," the answer in U.K.
+     English, were excluded. The last question was a free response that asked respondents to write two sentences of at
+     least 140 characters telling us who their favorite band or artist is and why. These were checked after the fact to
+     ensure the participant was paying attention and was capable of writing in coherent English sentences. The
+     manipulation checks overall screened out nine respondents.
+
+
+
+
+                                                            13
+criteria and passed the manipulation checks. For both surveys we used the manipulation check questions
+
+seen in online Appendix Figure B1.16
+
+           In Table 3, we report the self-reported demographic composition of our sampled MTURK
+
+respondents. The sample is relatively more-educated, white, and female than the U.S. population as a
+
+whole. Consistent with the age-based quotas we set for recruiting participants, the sample is also
+
+relatively older, which may explain some of the differences in the other demographic characteristics. In
+
+line with our target, we generated a sample with a median age near 50, finding roughly 55% of
+
+participants over that threshold and 45% below.
+
+Baseline Survey
+
+           The baseline survey had three separate blocks of questions. In the first block of questions,
+
+subjects were asked to give their informed consent to participate in the survey (Appendix Figure B2). In
+
+the second block, participants were shown a series of job requirements and told they were from job ads
+
+posted online. An example is shown in Figure 6. For each requirement, respondents were asked whether
+
+they personally agreed or disagreed with the statement that "[Treatment or control requirement] is biased
+
+against workers over 50."
+
+           Within each of the blocks that asked about whether or not phrases were perceived as biased, there
+
+were three pages for each respective stereotype: communication, physical, and technology. All the
+
+treatment and control phrases were tested on their respective pages, but the pages were not labeled by
+
+stereotypes that respondents viewed. Respondents had to proceed sequentially through the pages and
+
+could not go back or skip between them. The ordering of the questions was randomized within each page.
+
+We adopted this approach to force respondents to compare treatment and control phrases in a specific
+
+stereotype category without prompting them about the specific age-related stereotype in question. The
+
+order of questions on a page was randomized for each respondent. Responses to the questions were given
+
+
+
+16
+     We recruited 150 respondents initially ­ 50 in each age bin ­ but one person completed the survey and then
+     refused to accept payment. Thus, we ended up with 151 subjects because the quota filling on MTURK only counts
+     people who accepted payment.
+
+
+
+
+                                                         14
+on a Likert scale with the options: Strongly agree, Somewhat agree, Neither agree nor disagree,
+
+Somewhat disagree, Strongly disagree.
+
+           In the third block, we concluded by collecting the demographic characteristics of our sample
+
+(Appendix Figure B3). They were asked to report their age, gender, education, and race/ethnicity.
+
+Incentivized Survey
+
+           The second survey was split into five blocks of questions. The first asked the participants to give
+
+their informed consent. The second block of questions repeated questions from the baseline survey and
+
+asked respondents about their own opinions on job requirements.
+
+           The next two parts formed the crux of the incentivized survey. In each part, the respondents were
+
+asked to guess how the participants in the baseline survey rated the job requirements, and they were
+
+rewarded for how correctly they guessed. Before starting each of these blocks of questions, respondents
+
+were sent to a landing page that emphasized the new prompt and cash incentive.
+
+           The third set of questions asked respondents to predict what the previous survey respondents
+
+answered when they were shown job requirements from the job ads (Figure 7). For each requirement, they
+
+were asked whether they thought previous respondents agreed or disagreed with the statement that "This
+
+job requirement is biased against workers over 50." They were shown the same Likert scale shown to the
+
+baseline respondents. Respondents were informed that either the third set of questions in the survey or the
+
+fourth (described below) would be randomly selected for a cash incentive based on their answers to the
+
+questions in that part. They were told they would earn bonus pay, which was to be calculated based on
+
+how close they were to the correct answer. If they correctly predicted what the average participant said,
+
+they would earn $0.32 per question.17 Incorrect answers received less money, with the penalty increasing
+
+the further they were from the correct answer. Payouts were calculated using the quadratic scoring rule
+
+[1]         = 0.32 - 0.02 × (      2
+                               -  ) ,
+
+
+
+
+17
+     Average pay was $7.22.
+
+
+
+
+                                                       15
+where  was the payout to individual i for question q based on the average response to question q by
+
+previous respondents ( ) and their answer about how previous respondents answered question q ( ).18
+
+For example, they would earn $0.24 if the correct answer was "somewhat agree," and they guessed
+
+"somewhat disagree." All the treatment and control phrases were tested on their respective pages, but the
+
+pages were not labeled by stereotypes that respondents viewed. Respondents had to proceed sequentially
+
+through pages and could not go back or skip between them. The question order was randomized within
+
+each page.
+
+           The fourth block of questions differed from the third in that we asked respondents to guess how
+
+the older participants in the baseline survey (those over 50 years old) responded; see Figure 8. Before
+
+starting this block of questions, respondents were sent to a landing page that emphasized both the scoring
+
+rule and the age of respondents for whom they were guessing. The instructions read, "For each
+
+requirement, please state whether you think previous respondents over the age of 50 agree or disagree
+
+with the statement that "This job requirement is biased against workers over 50." The structure of this
+
+section was identical to the third block of questions.
+
+Analyses
+
+           To test for differences in how the treatment and control phrases were perceived, we employ a
+
+series of regression models. We begin with a simple regression testing for differences in respondent
+
+beliefs between treatment and control phrases conditional on observable characteristics:
+
+[2]         =  +  +   + 
+
+
+           The ranking that individual i gave to question q ( ) is the dependent variable. We include
+
+controls for gender, level of education, race, and age ( ). If respondents view the treatment phrases as
+
+more biased against older workers than the control phrases, we should find that  is less than zero,
+
+
+
+
+18
+     Respondents were told that their earnings, "would be calculated according to the formula: M=$0.32 - $0.02
+     *(Average Previous Answer - Your Prediction)^2." To illustrate their payoff, respondents were told they would
+     earn $0.24 if the correct answer was "somewhat agree," and they guessed "somewhat disagree."
+
+
+
+
+                                                          16
+because the responses ( ) range from 1 for strongly agree to 5 for strongly disagree. If we observe  is
+
+positive, then this is evidence that treatment phrases were rated as less biased by respondents. In Equation
+
+[2], and all subsequent regressions, the standard errors are clustered at the respondent level.
+
+           Our next step is to explore two forms of heterogeneity in our estimated treatment effects.19 The
+
+first examines whether respondents view treatment phrases differently depending on the stereotype to
+
+which the requirement is related. To test this, we define dummy variables for each of our three pairs of a
+
+stereotype treatment and the corresponding control (omitting one from the regression), and interactions
+
+between these dummy variables and the dummy variables for each stereotype treatment (communication
+
+skills, physical ability, or technology skills):
+
+[3]         =  + 1  ×   + 2  ×   + 3  ×  
+
+           + 1   + 2   + X i + 
+
+
+           Thus, the coefficients  , i = 1, 2, 3, capture how biased respondents view the treatment phrase
+
+for the stereotype relative to the control phrase.
+
+           The second form of heterogeneity we examine is the difference between the machine learning
+
+derived treatment phrases and the AARP treatment phrases. To do this, we add an additional interaction
+
+for when the treatment phrase is the AARP phrase:
+
+[4]         =  + 1  ×   + 2  ×   + 3  ×  
+
+           + 1  ×  ×   + 2  ×  ×   + 3  ×  ×  
+
+           + 1   + 2   + Xi + 
+
+
+           The coefficients  , i = 1, 2, 3, identify how much more biased respondents view the AARP
+
+treatment phrases relative to the machine learning derived treatment phrases for the same stereotype.
+
+Results
+
+
+
+19
+     We also examine heterogeneous differences in the treatment phrases across demographic groups. We find little
+     evidence to support the hypothesis that different groups view job requirements differently. The pattern of results
+     observed in Table 4 holds for by sex, age, education, or race. These results are available upon request.
+
+
+
+
+                                                            17
+        Figure 9 provides a graphical depiction of the answers from the MTURK survey participants.
+
+Across the three blocks of the survey that solicited respondents' self-assessments of age-bias, their
+
+predictions of previous' respondents' answers, and their predictions of the answers of respondents over
+
+the age of 50, our results were fairly consistent. The participants, on average, strongly disagreed with the
+
+notion that anyone would perceive the control phrases as biased against workers over the age of 50.
+
+Respondents rated the physical and technology-biased phrases derived from our cosine similarity score
+
+index as more biased than the control phrases, but viewed the communication skills stereotyped phrases
+
+as roughly identical to the controls. Opinions of the AARP-derived treatment phrases were starker, as all
+
+three were rated as far more age biased than their respective control counterparts.
+
+        The absence of evidence for bias for the language related to communication stills may reflect the
+
+fact that older workers are not always stereotyped as having worse communication skills, but are
+
+sometimes, as Table 1 showed, perceived as having better communication skills. In that sense, one might
+
+view the evidence of ageist ratings for the physical ability and technology-related stereotypes but not the
+
+communications stereotype as further confirmation that respondent perceptions accord with the industrial
+
+psychology literature. (Note that the cosine similarity scores from the machine learning do not detect
+
+positive vs. negative uses of the language.)
+
+        In Table 4, we estimate regression models for the survey responses that delve into more detail. In
+
+all cases, standard errors are clustered at the respondent level. In column (1), we report the estimated
+
+coefficient from a simple model of the responses for self-beliefs on a dummy variable for whether the
+
+response is to any treatment phrase. The estimated coefficient of -0.886 implies that responses are lower
+
+by almost one category of the Likert scale. Recall that the responses range from 1 for strongly agree to 5
+
+for strongly disagree, so a negative estimate implies the phrase was perceived as more ageist. The
+
+
+
+
+                                                     18
+estimate is strongly statistically significant. To help interpret the magnitude, the third number (in square
+
+brackets) reports the implied effect in terms of standard deviations of the responses.20
+
+           Column (2) expands the specification to differentiate the treatment by the type of stereotype ­
+
+communications, physical ability, or technology skills ­ without differentiating the machine learning
+
+phrases from the AARP phrases. We find significant negative effects (implying more ageist phrases) for
+
+all three, with the largest estimate (whether looking at the coefficient or the standard deviation effect) for
+
+physical ability, followed by technology skills, and the smallest estimate for communications. In this
+
+model, we also include controls for the different stereotype phrases (whether treatment or control) so that
+
+the Treatment × stereotype interactions measure the differences relative to the paired control phrase.
+
+           Column (3) expands the specification further to differentiate between machine learning and
+
+AARP treatment phrases. In this column, the estimated coefficients of the Treatment × stereotype
+
+coefficients measure the effects of the machine learning phrases, and the Treatment × stereotype × AARP
+
+estimates measure the differential effects of the AARP treatments relative to the machine learning
+
+treatments. We see that in every case the estimated effects of the AARP treatments are larger, in the
+
+direction of more perceived bias. All of the estimated differences for the AARP phrases are statistically
+
+significant, and the magnitudes are considerably larger for the communications and technology skills
+
+stereotypes. For the machine learning stereotypes, the estimated treatment effects for physical ability and
+
+technology skills are sizable, significant, and negative, while the effect for communications is near zero
+
+and insignificant (paralleling what we found in the raw data). On the one hand, this suggests that the
+
+phrases generated by machine learning for communications stereotypes do not evoke ageism, while the
+
+phrases in the AARP treatment do; on the other hand, recall the earlier caution that the stronger evidence
+
+for the AARP treatment for communications may not isolate the communications stereotype well.
+
+
+
+
+20
+     We estimated the specifications in Table 4 using an ordered probit model as well, to account for the fact that our
+     dependent variable is actually ordinal, rather than cardinal. This led to qualitatively very similar results, so we
+     report the OLS results for simplicity. Results available upon request.
+
+
+
+
+                                                             19
+           Columns (4)-(6) report estimates of the same specifications, but for the beliefs about other
+
+respondents ­ i.e., how respondents think others would perceive the language. The qualitative pattern of
+
+estimates is the same. However, one important difference is that the estimated impacts of the treatments
+
+are generally larger. This can be seen most simply by comparing the estimated treatment effects between
+
+columns (5) and (2). The estimated coefficients are substantially larger ­ especially for the physical
+
+ability and technology skills stereotypes ­ and in all three cases, the differences are strongly statistically
+
+significant (as indicated by the "daggers"). Comparing columns (6) and (3) indicates that the differences
+
+between self-beliefs and perceived beliefs of others for the physical ability and technology stereotypes are
+
+driven by the machine learning phrases, as their estimated coefficients are substantially larger in column
+
+(6) than in column (3), whereas the estimated interactions with the AARP phrases are not uniformly
+
+larger or smaller. As noted earlier, the differences in responses for perceived beliefs of others and self-
+
+beliefs may reflect the incentives we offered in eliciting the former, which could counter social
+
+desirability biases.
+
+           Finally, columns (7)-(9) focus on the perceived beliefs of those over age 50. These estimates are
+
+quite similar to those in columns (3)-(6), suggesting that respondents did not particularly believe that
+
+older individuals were more likely to perceive language as ageist.21 Of course, given that the stereotyped
+
+language was perceived as ageist, the impact on behavior would likely be stronger the older is the person
+
+reading job ads with these phrases.
+
+           Our last analysis compares the perceptions (self-beliefs, or of others) to the cosine similarity
+
+scores for the phrases we use (see Table 2), providing a useful graphical depiction of our survey results
+
+that captures many of our key points. Figure 10 does this for self-beliefs. Note the vertical axis is
+
+decreasing in the reported belief because a lower number implies stronger perceived ageism. Consider
+
+first the points plotted for control phrases. Referring back to Table 2, there are two control phrases for
+
+
+
+21
+     As further evidence that these perceptions that younger and older people to not perceive the ageist phrases
+     differently, the estimated effects of the treatments on self-beliefs of respondents aged 50 or under and over age 50
+     were very similar. Results available upon request.
+
+
+
+
+                                                            20
+physical ability and two for communications, so there are two circles for each of these. But there are three
+
+circles for technology skills, for which there are three control phrases. The horizontal axis measures the
+
+cosine similarity score for these, and they are clustered towards zero. The vertical height measures the
+
+perceived bias of these phrases, and ­ by design ­ they are low.22 The triangles are for the machine
+
+learning phrases. As Table 2 showed, these generally have the highest cosine similar scores with the
+
+corresponding stereotypes. The squares are for the AARP stereotypes, which generally have lower cosine
+
+similarity scores; there are only three of these plotted because there are only three phrases. Comparing the
+
+height of the triangles to the squares, we see that the AARP phrases are generally perceived as more
+
+biased, even though the cosine similarity scores with the stereotypes are lower.
+
+           Figures 11 and 12 show the same kind of evidence of beliefs about others' perceptions in general,
+
+and then for others over age 50. The qualitative patterns are the same, but Figures 11 and 12, in
+
+comparison to Figure 10, show the stronger perceived bias reported when asked about others' perceptions
+
+and how this shift is driven relatively more by the machine learning phrases.
+
+Conclusions and Discussion
+
+           In this paper, we explore whether the type of ageist stereotypes used in job ads is detectable in job
+
+ads using machine learning methods and whether this language is perceived as biased against older
+
+workers. This is important for three reasons. First, workers may respond to this language, with older
+
+workers applying to a narrower set of jobs or perhaps choosing not to apply at all, hence diminishing their
+
+job market opportunities. Second, the mechanism we study is plausible, as employers who want to
+
+discriminate against older workers but also want to avoid getting caught might manipulate job-ad
+
+language to discourage older workers from entering the applicant pool. And third, if ageist job-ad
+
+language can be detected by machine learning methods, then these methods could, in principle, be used to
+
+help enforce anti-discrimination laws by helping to predict or identify employers more likely to be
+
+engaging in age discrimination.
+
+
+22
+     We do this analysis for the mean survey responses, rather than the regression coefficients, because we want to
+     depict these for each occupation, and the regressions do not estimate separate effects by occupation.
+
+
+
+
+                                                           21
+        We use machine learning methods to identify phrases in job ads that are linguistically related to
+
+standard ageist stereotypes from the industrial psychology literature. We use these phrases to construct
+
+typical job-ad language that reflects specific age stereotypes. We show that machine learning methods are
+
+sensitive enough to detect the presence of stereotyped language, even when only one sentence in the job
+
+ad is highly related to the ageist stereotype. We then conduct an MTURK experiment that asks whether
+
+respondents perceive this job-ad language ­ which the machine learning algorithm classifies as related to
+
+ageist stereotypes ­ as ageist. We also used some "classic" ageist phrases identified by AARP.
+
+        Our experimental evidence shows that sentences that are classified as closely related to ageist
+
+stereotypes by the machine learning algorithm are generally perceived as ageist by respondents in our
+
+MTURK experiment (and more so when asked, with incentives, how they will be perceived by others).
+
+The AARP phrases were perceived as the most ageist. These results imply that the different age
+
+stereotypes we study capture real ageist sentiments and will be perceived as such by job applicants.
+
+        Although the AARP phrases were perceived as more ageist than those generated by our machine
+
+learning methods, the latter were more directly and more distinctly related to specific ageist stereotypes.
+
+This is potentially significant from a policy perspective, as it implies that machine learning can be used to
+
+identify ageist stereotypes in job ads the pertain to specific stereotypes. Because the legality of an age
+
+stereotype in a job ad might hinge on whether the language pertains to a job requirement based on a
+
+reasonable factor other than age (RFOA), it is important to be able to ascertain the type of job
+
+requirement to which the language might refer. In contrast, the AARP phrases we use, while perceived as
+
+more ageist, are harder to tie to specific stereotypes and hence, perhaps, to specific job requirements.
+
+
+
+
+                                                      22
+                                               References
+
+
+AARP. (2000). American business and older employees. AARP: Washington, DC.
+Baert, S., Norga, J., Thuy, Y., & Van Hecke, M. (2016). Getting grey hairs in the labour market. An
+        alternative experiment on age discrimination. Journal of Economic Psychology, 57, 86-101.
+Bem, S.L., & Bem, D.J. (1973). Does sexbiased job advertising "aid and abet" sex discrimination?
+       Journal of Applied Social Psychology, 3, 6-18.
+Bendick, M., Jr., Brown, L.E., & Wall, K. (1999). No foot in the door: An experimental study of
+       employment discrimination against older workers. Journal of Aging & Social Policy, 10, 5-23.
+Bendick, M., Jr., Jackson, C.W., & Romero, J.H. (1997). Employment discrimination against older
+       workers: An experimental study of hiring practices. Journal of Aging & Social Policy, 8, 25-46.
+Brenoff, A. (2019). 5 ageist phrases to be aware of. AARP: Washington, DC.
+Burn, I., Button, P., Munguia Corella, L.F., & Neumark, D. (2020). Older workers need not apply? Ageist
+         language in job ads and age discrimination in hiring. NBER Working Paper No. 26552.
+         Cambridge, MA.
+Button, P. (2019). Population aging, age discrimination, and age discrimination protections at the 50th
+        anniversary of the Age Discrimination in Employment Act. In Current and emerging trends in
+        aging and work, Czaja, S.J., Sharit, J., & James, J.B., eds., 163-88. New York, NY: Springer.
+Cahill, K.E., Giandrea, M.D., & Quinn, J.F. (2006). Retirement patterns from career employment. The
+        Gerontologist, 46, 514-23.
+Carlsson, M., & Eriksson, S. (2019). The effect of age and gender on labor demand ­ evidence from a
+        field experiment. Labour Economics, 59, 173-83.
+Deming, D., & Kahn, L.B. 2018). Skill requirements across firms and labor markets: Evidence from jJob
+      postings for professionals. Journal of Labor Economics, 36, S337-69.
+Farber, H.S., Silverman, D., & von Wachter, T.M. (2017). Factors determining callbacks to job
+        applications by the unemployed: An audit study. RSF: The Russell Sage Foundation Journal of
+        the Social Sciences, 3, 168-201.
+Farber, H.S., Herbst, C.M., Silverman, D., & von Wachter, T.M. (2019). Whom do employers want? The
+        role of recent employment and unemployment status and age. Journal of Labor Economics, 37,
+        323-49.
+Gaucher, D., Friesen, J., & Kay, A.C. (2011). Evidence that gendered wording in job advertisements
+       exists and sustains gender inequality. Journal of Personality and Social Psychology, 101, 109-28.
+Hanson, A., Hawley, Z., & Taylor, A. (2011). Subtle discrimination in the rental housing market:
+       Evidence from email correspondence with landlords. Journal of Housing Economics, 20, 276-84.
+Hanson, A., Hawley, Z., Martin, H., & Liu, B. (2016). Discrimination in mortgage lending: Evidence
+       from a correspondence experiment. Journal of Urban Economics, 92, 48-65.
+He, H., Neumark, D., & Weng, Q. Do workers value flexible jobs? A field experiment. Forthcoming in
+        Journal of Labor Economics.
+Hellester, M.D., Kuhn, P., & Shen, K. (2020). The age twist in employers' gender requests. Journal of
+        Human Resources, 55, 482-69.
+Johnson, R.W., Kawachi, J., & Lewis, E.K. (2009). Older workers on the move: Recareering in later life.
+       AARP Public Policy Institute. AARP: Washington, DC.
+Kite, M.E., Deaux, K., & Miele, M. (1991). Stereotypes of young and old: Does age outweigh gender?
+        Psychology and Aging, 6, 19-27.
+Kuhn, P., & Shen, K. (2013). Gender discrimination in job ads: Evidence from China. Quarterly Journal
+       of Economics, 128, 287-336.
+Kuhn, P., Shen, K., & Zhang, S. (2018). Gender-targeted job ads in the recruitment process: Evidence
+       from China. NBER Working Paper No. 25365. Cambridge, MA.
+Lahey, J. (2008). Age, women, and hiring: An experimental study. Journal of Human Resources, 43, 30-
+        56.
+Levin, W.C. (1988). Age stereotyping: College student evaluations. Research on Aging, 10, 134-48.
+Maestas, N. (2010). Back to work: Expectations and realizations of work after retirement. Journal of
+       Human Resources, 45, 718-48.
+Marinescu, I.E., & Wolthoff, R. (2020). Opening the black box of the matching function: The power of
+       words. Journal of Labor Economics, 38, 535-68.
+McCann, R.M., & Keaton, S.A. (2013). A cross cultural investigation of age stereotypes and
+      communication perceptions of older and younger workers in the USA and Thailand. Educational
+      Gerontology, 39, 326-41.
+McGregor, J., & Gray, L. (2002). Stereotypes and older workers: The New Zealand experience. Social
+      Policy Journal of New Zealand, 18, 163-77.
+Modestino, A.S., Shoag, D., & Balance, J. (2016). Downskilling: Changes in employer skill requirements
+       over the business cycle. Labour Economics, 41, 333-47.
+Neumark, D., Burn, I. & Button, P. (2016). Experimental age discrimination evidence and the Heckman
+      critique. American Economic Review Papers and Proceedings, 106, 303-8.
+Neumark, D., Burn, I. & Button, P. (2019a). Is it harder for older workers to find jobs? New and
+      improved evidence from a field experiment. Journal of Political Economy, 127, 922-70.
+Neumark, D., Burn, I. Button, P., & Chehras, N. (2019b). Do state laws protecting older workers from
+      discrimination reduce age discrimination in hiring? Evidence from a field experiment. Journal of
+      Law and Economics, 62, 373-402.
+Riach, P.A., & Rich, J. (2006). An experimental investigation of age discrimination in the French labour
+        market. IZA Discussion Paper No. 2522. Bonn, Germany.
+Riach, P.A., & Rich, J. (2010). An experimental investigation of age discrimination in the English labor
+        market. Annals of Economics and Statistics, 99/100, 169-85.
+Ryan, E.B., See, S.K., Meneer, W.B., & Trovato, D. (1992). Age-based perceptions of language
+       performance among younger and older adults. Communication Research, 19, 423-43.
+Schmidt, D.F., & Boland, S.M. (1986). Structure of perceptions of older adults: Evidence for multiple
+       stereotypes. Psychology and Aging, 1, 255-60.
+Stewart, M.A., & Ryan, E.B. (1982). Attitudes toward younger and older adult speakers: Effects of
+        varying speech rates. Journal of Language and Social Psychology, 1, 91-109.
+Terrell, K. (2019). Age bias that's barred by law appears in thousands of job listings. AARP:
+         Washington, DC.
+Tilcsik, A. (2011). Pride and prejudice: Employment discrimination against openly gay men in the United
+         States. American Journal of Sociology, 117, 586-626.
+van Borm, H., Burn, I., & Baert, S. (2019). What does a job candidate's age signal to employers? IZA
+       Discussion Paper No. 12849. Bonn: Germany.
+van Dalen, H., Henkens, K., & Schippers, J.J. (2009). Dealing with older workers in Europe: A
+       comparative survey of employers' attitudes and actions. Journal of European Social Policy, 19,
+       47-60.
+          Table 1: Age Stereotypes from Industrial Psychology Literature
+         Health                 Personality                   Skills
+ Less Attractive          Less Adaptable         Lower Ability to Learn
+ Hard of Hearing          Careful                Better Communication Skills
+ Worse Memory             Less Creative          Worse Communication Skills
+ Less Physically Able     Dependable             More Experienced
+                          Negative Personality   More Productive
+                          Warm Personality       Less Productive
+                                                 Worse with Technology
+Note: See Burn et al. (2020).
+                       Table 2: Control and Treatment Phrases by Occupation
+   Occupation           Stereotype            Control            Machine Learning        AARP Treatment
+                                                                    Treatment
+        (1)                (2)                   (3)                    (4)                       (5)
+Administrative      Communication       You must be good at    You must have good       You must be up-to-
+Assistants          skills              working without        communication and        date with current
+                                        supervision            teamwork on tasks        industry jargon and
+                                        (CSS = 0.20)           (CSS = 0.48)             communicate with a
+                                                                                        dynamic workforce
+                                                                                        (CSS = 0.23)
+Administrative      Physical ability    You must enter bills   You must be able to      You must be a fit and
+Assistants                              and keep track of      lift 40 pounds           energetic person (CSS
+                                        invoices               (CSS = 0.41)             = 0.30)
+                                        (CSS = 0.11)
+Administrative      Technological       You must produce       You must use             You must be a digital
+Assistants          skills              and distribute         accounting software      native and have a
+                                        documents such as      systems like Netsuite,   background in social
+                                        correspondence         Freshbook, and           media (CSS = 0.22)
+                                        memos, faxes           QuickBooks
+                                        and forms              (CSS = 0.29)
+                                        (CSS = 0.08)
+Retail sales        Communication       You must be good at    You must have good       You must be up-to-
+                    skills              working without        communication with       date with current
+                                        supervision            customers and staff      industry jargon and
+                                        (CSS = 0.20)           (CSS = 0.34)             communicate with a
+                                                                                        dynamic workforce
+                                                                                        (CSS = 0.23)
+Retail sales        Physical ability    You must enter bills   You must be able to      You must be a fit and
+                                        and keep track of      lift 40 pounds           energetic person (CSS
+                                        invoices               (CSS = 0.41)             = 0.30)
+                                        (CSS = 0.11)
+Retail sales        Technological       You must help to       You must use software    You must be a digital
+                    skills              clean and organize     such as Microsoft        native and have a
+                                        the store              Office/Excel or          background in social
+                                        (CSS = 0.09)           Google Sheets            media (CSS = 0.22)
+                                                               (CSS = 0.27)
+Security guard      Communication       You must follow        You must maintain        You must be up-to-
+                    skills              instruction from       communication about      date with current
+                                        supervisors            tasks with supervisors   industry jargon and
+                                        (CSS = 0.21)           (CSS = 0.38)             communicate with a
+                                                                                        dynamic workforce
+                                                                                        (CSS = 0.23)
+Security guard      Physical ability    You need to carry a    You must be able to      You must be a fit and
+                                        flashlight             lift 50 pounds           energetic person (CSS
+                                        (CSS = 0.20)           (CSS = 0.41)             = 0.30)
+Security guard      Technological       You must write         You must type patrol     You must be a digital
+                    skills              patrol records in      entries into a journal   native and have a
+                                        journal notebook       application on a         background in social
+                                        (CSS = 0.03)           computer system          media (CSS = 0.22)
+                                                               (CSS = 0.24)
+Note: See text for a description of how each sentence was created. The average cosine similarity score
+with the stereotype for each phrase (averaging over the cosine similarity score of each word contained in
+the phrase) is reported in parentheses. CSS = "cosine similarity score."
+                      Table 3: Demographics of MTURK Sample
+   Demographic Characteristic        Number of Respondents          Percent of Sample
+A. Level of Education
+Postgraduate Degree                              25                       16.6%
+Bachelor's Degree                                60                       39.7%
+Some College or 2 Year Degree                    49                       32.4%
+High School Graduate or Less                     17                       11.3%
+B. Age Group
+21 to 35 years old                               45                       29.8%
+35 to 50 years old                               23                       15.2%
+Over 50 years old                                83                       55.0%
+C. Sex
+Female                                           83                        55%
+Male                                             68                        45%
+D. Race and Ethnicity
+White                                           125                       82.8%
+Black or African American                         8                        5.3%
+Asian                                             6                        4.0%
+Hispanic or Latino                                4                        2.7%
+Other                                             3                        2.0%
+Two or More                                       5                        3.3%
+ Note: MTURK participants self-reported their demographic characteristics. Respondents
+ who selected two or more of the race and ethnicity categories were grouped into the
+ "Two or More" group.
+                           Table 4: Differences in Beliefs by Treatment (Negative Implies More Biased Against Older Workers)
+                                                     Self-beliefs                      Beliefs about all respondents         Beliefs about respondents over 50
+                                             (1)           (2)         (3)          (4)               (5)             (6)       (7)           (8)         (9)
+                                                 ***                                  ***                                           ***
+Treatment                                 -0.886                               -1.266                                        -1.248
+                                           (0.047)                               (0.050)                                      (0.053)
+                                          [-0.718]                               [-0.900]                                    [-0.873]
+Treatment × Communications                             -0.316***     0.015                      -0.465***            0.001               -0.450***       0.004
+                                                        (0.033)     (0.022)                        (0.050)         (0.046)                 (0.045)     (0.038)
+                                                       [-0.256]     [0.013]                       [-0.330]         [0.001]                [-0.315]     [0.003]
+                                                               ***         ***                           ***             ***                      ***
+Treatment × Physical ability                           -1.623      -1.526                       -2.153          -2.060                   -2.079       -2.066***
+                                                        (0.098)     (0.106)                        (0.091)         (0.099)                 (0.101)     (0.108)
+                                                       [-1.315]    [-1.237]                       [-1.531]        [-1.465]                [-1.454]    [-1.445]
+Treatment × Technology skills                          -0.895*** -0.488***                      -1.403***       -1.040***                -1.432*** -1.108***
+                                                        (0.064)     (0.063)                        (0.072)         (0.078)                 (0.078)     (0.083)
+                                                       [-0.725]    [-0.395]                       [-0.998]        [-0.739]                [-1.001]    [-0.775]
+Treatment × Communications × AARP                                  -1.327***                                    -1.865***                             -1.819***
+                                                                    (0.105)                                        (0.106)                             (0.114)
+                                                                   [-1.705]                                       [-1.326]                            [-1.272]
+Treatment × Physical ability × AARP                                -0.288***                                      -0.281***                             -0.040
+                                                                    (0.091)                                        (0.076)                             (0.076)
+                                                                   [-0.233]                                       [-0.200]                            [-0.028]
+Treatment × Technology skills × AARP                               -1.629***                                     -1.455***                            -1.296***
+                                                                    (0.099)                                        (0.090)                             (0.096)
+                                                                   [-1.320]                                       [-1.035]                            [-0.906]
+Physical ability                                        0.179***    0.179***                      0.172***         0.172***               0.152***     0.152***
+                                                        (0.046)     (0.046)                        (0.053)         (0.053)                 (0.056)     (0.056)
+                                                        [0.145]     [0.145]                        [0.122]         [0.122]                 [0.106]     [0.106]
+Technology skills                                        0.011       0.011                          -0.052          -0.052                  -0.079      -0.079
+                                                        (0.049)     (0.049)                        (0.060)         (0.060)                 (0.062)     (0.062)
+                                                        [0.009]     [0.009]                       [-0.037]        [-0.037]                [-0.056]    [-0.056]
+Adjusted R2                                 0.149        0.230       0.353         0.211             0.332           0.452     0.205         0.321       0.422
+Observations                                2,718        2,718       2,718         2,718             2,718           2,718     2,718         2,718       2,718
+Note: * indicates statistical significance of the coefficient. * p<0.1,** p<0.05,*** p<0.01.  indicates significant differences between the same coefficients in the Beliefs about all
+respondents and the Self-beliefs models.  p<0.1,  p<0.05,  p<0.01. In each regression, we include a constant and controls for gender, level of education, race, and age (not
+reported). Numbers in parentheses are robust standard errors clustered at the respondent level; numbers in brackets are coefficients normalized to standard deviations of the
+outcome variable. Negative numbers indicate higher levels of perceived bias against older workers, as the outcome ranges from 1 for "strongly agree" to 5 for "strongly
+disagree."
+                Figure 1: Example of the Distribution of Cosine Similarity (CS) Scores
+
+      3
+      2
+      1
+      0
+
+
+
+
+          -.5                          0                      .5                                       1
+                           Cosine similarity score with "communication skills"
+
+Note: Figure reports the distribution of cosine similarity scores for all trigrams from the job ads with the
+communication skills stereotype. The higher the cosine similarity score, the more related the trigram is
+to "communication skills."
+                                        Figure 2: Job Ad Examples
+
+
+Administrative Assistants Template 1 (Admin Assistant)
+Psychiatric office is in need of a full or part time Administrative Assistant to assist in front/back office
+general clerical duties. This individual will work on a several tasks and stay on course at all times. The
+Administrative Assistant we hire will be trained in various duties that cover the entire office.
+
+This individual MUST possess the following:
+
+-Exceptional customer service background to greet and register patients, answer phones, schedule
+appointments.
+-Can multitask.
+-High School diploma or GED.
+-Professional attitude.
+-*Communication Skill Requirement*.
+-*Technology Requirement*
+-*Physical Requirement*
+-Available for flexible hours.
+(Schedule hours and days will alternate every other week)
+
+Please email us a CV or resume and put "full-time" or "part-time" in the subject line.
+
+
+Retail Sales Associate Template 1 (Retail Sales Job)
+Our women's clothing store in *City* is looking for a sales associate to help us out weekday afternoons.
+We are pretty busy store and you must *Physical Requirement*. We are looking for someone with open
+to working in retail, who *Communication Skill Requirement*. We need you to *Technology
+Requirement*. So if this sounds like you, send us your resume and your earliest possible starting date
+and we will be in touch.
+
+
+Security Guard Template 1 (HIRING UNARMED SECURITY GUARDS)
+We currently have a position for a full-time or part-time security officer available. Training and uniforms
+will provided. We offer flexible working hours and have shifts any day of the week. Our pay scale is
+competitive. Email your resume and potential work hours to apply.
+
+Requirements
+-Professional appearance & attitude
+-Detail oriented
+-*Communication Skill Requirement*
+-*Physical Requirement*
+-*Technology Requirement*
+-At least 18 years of age
+-Access to transportation
+                                   Figure 3: Cosine Similarity Score of Administrative Assistant Templates
+
+
+
+
+Note: Graphs display median to 99th percentile range of trigram semantic similarity scores for each stereotype for Administrative Assistant ads.
+The average trigram semantic similarity score for each stereotype is represented by the respective shape for each template. Control ("neutral")
+templates contain trigrams from the created ad templates with only non-stereotyped phrases included. Collected ads comprise trigrams from all
+Administrative Assistant job ads. Treatment templates contain trigrams from the created ad templates with the respective stereotyped phrase or
+phrases included.
+                                          Figure 4: Cosine Similarity Score of Retail Sales Templates
+
+
+
+
+Note: Graphs display median to 99th percentile range of trigram semantic similarity scores for each stereotype for Retail Sales ads. The average
+trigram semantic similarity score for each stereotype is represented by the respective shape for each template. Control ("neutral") templates
+contain trigrams from the created ad templates with only non-stereotyped phrases included. Collected ads comprise trigrams from all Retail Sales
+job ads. Treatment templates contain trigrams from the created ad templates with the respective stereotyped phrase or phrases included.
+                                       Figure 5: Cosine Similarity Score of Security Guard Templates
+
+
+
+
+Note: Graphs display median to 99th percentile range of trigram semantic similarity scores for each stereotype for Security Guard ads. The average
+trigram semantic similarity score for each stereotype is represented by the respective shape for each template. Control ("neutral") templates
+contain trigrams from the created ad templates with only non-stereotyped phrases included. Collected ads comprise trigrams from all Security
+Guard job ads. Treatment templates contain trigrams from the created ad templates with the respective stereotyped phrase or phrases included.
+                    Figure 6: Block 1 Example (Exists in Survey 1 and Survey 2)
+
+
+
+
+Note: Respondents were asked about their opinions for all of the treatment and control phrases within a
+given age-related stereotype. The treatment and control phrases within the communication, physical, and
+technology categories were shown on three separate pages, and the Qualtrics software disallowed
+skipping or going back between sections. The order of phrases was randomized for each participant, and
+they were required to provide an answer in order to proceed to the next section of the survey. In this
+example, the first three phrases for the communication category are shown.
+                            Figure 7: Block 2 Landing Page and Example
+
+
+
+
+Note: After survey participants completed the block soliciting their personal opinions on whether certain
+phrases were age-biased, they were directed to the landing page pictured on the left-hand side of the
+figure. The landing page stressed the incentivized nature of the subsequent section and that bonus pay
+would be based on how accurately they could identify what the average respondent to the baseline survey
+said. The questions in the section reflected the new prompt and a highlighted portion at the top of each
+page reminded MTURK participants that their answers were incentivized based on accuracy.
+Figure 8: Block 3 Landing Page and Example (Exists only Survey 2)
+                                        Figure 9: Survey Results
+
+
+
+
+Note: These numerical ratings reflect the degree to which survey respondents rated phrases as age-biased
+or not age-biased, with lower numbers indicating a greater bias against older workers. Likert Scale ratings
+were translated to a numerical value such that "Strongly Agree" mapped to 1, "Somewhat Agree" mapped
+to 2, "Neither agree nor disagree" mapped to 3, "Somewhat Disagree" mapped to 4, and "Strongly
+Disagree" mapped to 5. The three categories: "Self," "Others," and "Over 50," refer to which group's
+opinions the MTURK respondents were asked to provide or predict in a given survey block. The average
+bias rating was collapsed on the treatment status of phrases (control, treatment, and AARP) as well as the
+category of the stereotype (communication, physical, or technology). Hence, each point in the figure
+above reflects the average bias rating MTURK respondents gave to a given treatment status for a specific
+stereotype from the perspective of a given group of people. For example, the triangle in the first row of
+the above figure indicates that when respondents were asked for their self-assessment of whether or not
+the physical stereotype control phrases were age-biased, they, on average, stated that they strongly
+disagreed.
+          Figure 10: Scatter of Self-Beliefs of Age Bias and Cosine Similarity (CS) Scores
+
+
+
+
+Note: CSS = "cosine similarity score." Figure plots MTURK respondents' average self-perception of age
+bias against CSS stereotype ratings from Table 2. Lower numbers on the y-axis indicate higher levels of
+perceived age bias. Higher CSS scores on the x-axis indicate higher average levels of semantic similarity
+of a phrase with its respective stereotype. Circular, triangular, and square markers represent control
+phrases, CSS treatment phrases, and AARP treatment phrases, respectively. Black (solid), blue (shaded),
+and red (unshaded) markers represent physical, technology, and communication phrases, respectively.
+ Figure 11: Scatter of Belief of Others' Perceptions of Age Bias and Cosine Similarity (CS) Scores
+
+
+
+
+Note: CSS = "cosine similarity score." Figure plots MTURK respondents' average belief about the
+perception of other's age bias against CSS stereotype ratings from Table 2. Lower numbers on the y-axis
+indicate higher levels of perceived age bias. Higher CSS scores on the x-axis indicate higher average
+levels of semantic similarity of a phrase with its respective stereotype. Circular, triangular, and square
+markers represent control phrases, CSS treatment phrases, and AARP treatment phrases, respectively.
+Black (solid), blue (shaded), and red (unshaded) markers represent physical, technology, and
+communication phrases, respectively.
+Figure 12: Scatter of Belief of Others over 50s' Perceptions of Age Bias and Cosine Similarity (CS)
+                                               Scores
+
+
+
+
+Note: CSS = "cosine similarity score." Figure plots MTURK respondents' average belief about
+respondents over 50s' perception of age bias against CSS stereotype ratings from Table 2. Lower
+numbers on the y-axis indicate higher levels of perceived age bias. Higher CSS scores on the x-axis
+indicate higher average levels of semantic similarity of a phrase with its respective stereotype. Circular,
+triangular, and square markers represent control phrases, CSS treatment phrases, and AARP treatment
+phrases, respectively. Black (solid), blue (shaded), and red (unshaded) markers represent physical,
+technology, and communication phrases, respectively.
+                                  Online Appendices
+
+Machine Learning and Perceived Age Stereotypes in Job Ads: Evidence from an Experiment
+                                 Appendix A (online): Job Ad Templates
+
+Administrative Assistants
+
+Administrative Assistants Template 1 (Admin Assistant)
+Psychiatric office is in need of a full or part time Administrative Assistant to assist in front/back office
+general clerical duties. This individual will work on a several tasks and stay on course at all times. The
+Administrative Assistant we hire will be trained in various duties that cover the entire office.
+
+This individual MUST possess the following:
+
+-Exceptional customer service background to greet and register patients, answer phones, schedule
+appointments.
+-Can multitask.
+-High School diploma or GED.
+-Professional attitude.
+-*Communication Skill Requirement*.
+-*Technology Requirement*
+-*Physical Requirement*
+-Available for flexible hours.
+(Schedule hours and days will alternate every other week)
+
+Please email us a CV or resume and put "full-time" or "part-time" in the subject line.
+
+
+Administrative Assistants Template 2 (Administrative Job)
+About the Employer: We are a well-established but growing law office looking for a Full-Time
+Receptionist/Administrative Assistant. We have a team of dedicated attorneys who work with a range of
+independent and corporate clients. Prior background is preferred, but not required.
+
+Responsibilities include:
+-Answering up to 6 phone lines
+-Coordinating mail in and out of the office
+-Filing and basic paperwork
+
+The ideal candidate will possess the following qualifications:
+-Can multitask
+-*Physical Requirement*
+-Organized and detail-oriented
+-*Communication Skill Requirement*
+-Maintain a professional attitude at all times
+-High School diploma or equivalent
+-Be a team player
+-*Technology Requirement*
+-Can work in a fast paced environment!
+
+If you meet these requirements, please send a resume and some interview hours to the provided email.
+Administrative Assistants Template 3 (Office Assistant)
+About: Growing company, over 30 years history, family owned and operated.
+
+About the position: Office Assistant
+* will train, prior background preferred;
+* fast paced environment;
+* answer 6 phone lines;
+* record daily records;
+
+Qualifications:
+* can multitask;
+**Physical Requirement*;
+**Technology Requirement*;
+* organized;
+* *Communication Skill Requirement*;
+* a team player, the company is run by the team.
+
+Please email your resume and availability for more information.
+
+
+Administrative Assistants Template 4 (HIRING ADMIN ASSISTANT)
+Job Description: Administrative Assistant position open now. Email resumes with a start date in the
+header!
+
+We are a Commercial Roofing company. All applicants need the judgement to make independent
+decisions when circumstances warrant. Excellent time management and strong organization are required.
+This position requires you to work under pressure, be self-directed with good business judgment and
+handle confidential information appropriately.
+
+In this position you will be responsible for:
+-Answering a multi-line phone system.
+-Greeting incoming guests.
+-Filing incoming faxes.
+-Light data entry.
+-Filing and other basic clerical duties.
+-Help co-workers as needed
+
+To qualify for this position, you must have:
+-*Communication Skill Requirement*.
+-*Physical Requirement*
+-*Technology Requirement*
+-Can multitask
+-Detail oriented
+Administrative Assistants Template 5 (Looking for Admin Assistant)
+A well-established service company is currently seeking an Administrative Assistant.
+
+Qualified candidates will possess the following:
+
+Proficiency in answering, screening, or forwarding calls, providing information, taking messages, or
+scheduling appointments.
+Maintain a professional presence at all times.
+*Communication Skill Requirement*.
+Be self-motivated.
+Pay attention to detail and multitask.
+*Physical Requirement*.
+Possess strong organizational and critical thinking
+*Technology Requirement*
+Please submit your resume via email. Put "Re: Administrative Assistant Position" in the subject line.
+
+
+Administrative Assistants Template 6 (ADMINISTRATIVE ASSISTANT)
+Our accounting firm is seeking an administrative assistant to work in account receivable.
+
+Minimum Qualifications:
+H.S. Graduate or GED (higher education is a plus)
+Administrative background useful
+*Technology Requirement*
+*Communication Skill Requirement*
+Other assorted office duties
+
+Responsibilities include, but are not limited to:
+Managing contracts, certificates, releases, etc.
+Handling invoices, collections, liens, etc.
+*Physical Requirement*
+
+Email resumes to us at: * email address*. Be sure to let us know when your earliest possible start date is!
+
+
+Administrative Assistants Template 7 (Administrative Assistant)
+Our family-run business is looking for an Administrative Assistant in *City*. We would like someone
+who is detail oriented, has a solid work ethic, and *Communication Skill Requirement*. If you fit this
+description, then please submit your resume by email and preferred work hours!
+
+Duties include client interaction, filing paperwork and testing, *Physical Requirement*, *Technology
+Requirement*, answering phone calls and emails, and scheduling.
+Administrative Assistants Template 8 (Office Admin Assistant)
+We are searching for an administrative assistant for our office manager. Our work hours are fast paced.
+Your main tasks would be to greet clients, answer the phone, schedule appointments also organize tax
+returns, filing, light cleaning and other office jobs as needed.
+
+The following are absolute must haves:
+*Communication Skill Requirement*
+*Technology Requirement*
+*Physical Requirement*
+High School Diploma (equivalents also acceptable)
+
+Please send resume via email with the heading "Administrative Opening".
+
+
+Administrative Assistants Template 9 (Office Assistant Wanted)
+We are a furniture store in need of a part or full time administrative assistant in downtown *City*.
+Candidate must be highly organized and reliable. Job duties include but are not limited to:
+
+- *Communication Skill Requirement*
+
+- Making appointments for project managers and clients
+
+- Making calls and greeting clients as the enter the store.
+
+- *Technology Requirement*
+
+- *Physical Requirement*
+
+Simply reply to this posting by email with "part time" or "full time" and attach your resume.
+Administrative Assistants Template 10 (Admin Position)
+We are looking for an administrative assistant that can operate in a team environment. Candidates will
+assist visitors to the company and handle office tasks. Ideal candidates can provide professional assistance
+via phone, mail, and email.
+
+Job Responsibilities:
+
+- *Physical Requirement*.
+- Greet and assist visitors.
+*Communication Skill Requirement*
+- Handle tasks, like filing paperwork, setting up for meetings, and reordering supplies.
+
+Requirements:
+
+- Good time management and organization.
+- *Technology Requirement*
+Attention to detail.
+
+If you're interested in this position, email us your resume and let us know the earliest you begin working.
+We can discuss details of the position in an interview.
+
+
+Administrative Assistants Template 11 (Admin Job)
+Are you interested in an administrative assistant position in a growing business? We are hiring qualified
+candidates in *City*! Apply with your resume and your preferred work hours. Submissions accepted via
+email.
+
+Duties include but are not limited to; greeting and checking-in guests, sending and receiving packages via
+Fedex/UPS/USPS, as well as admin support to management.
+
+Qualifications:
+· Relevant background or high school diploma (or equivalent) required
+· *Technology Requirement*
+· *Communication Skill Requirement*
+· Organized and great follow through on tasks
+
+Additional Responsibilities:
+· *Physical Requirement*
+· Assist in greeting and escorting high profile guests.
+· Assisting with various administrative duties as needed.
+· Provide executive assistance as required.
+Administrative Assistants Template 12 (Administrative Assistant Wanted)
+
+Our firm is seeking an Office Administrative Assistant committed to providing premier client service and
+working well in a team environment. The best candidate *Communication Skill Requirement*,
+*Physical Requirement*, and maintain and organized work environment. General duties include
+managing space reservations and serving as a contact for facilities related issues.
+
+Responsibilities and Qualifications:
+-*Technology Requirement*
+-Work with team with individuals at all levels
+-Follow-up and address issues in a timely and prompt manner.
+-Strong attention to detail, commitment to producing accurate work
+-Manage and maintain inventory of kitchen and office supplies, including printer paper and toner supplies
+-High School Diploma/GED required
+-Place catering orders, including set up for office meeting meals
+-Provide administrative support to the administrative team
+-Assist in other projects and responsibilities as assigned
+
+Please contact us if you are interested. We accept resumes or curricula vitae at * email address*. Put
+"Office Assistant Position" in the first line of your email. Thanks!
+Retail Sales Associate
+
+Retail Sales Associate Template 1 (Retail Sales Job)
+Our women's clothing store in *City* is looking for a sales associate to help us out weekday afternoons.
+We are pretty busy store and you must *Physical Requirement*. We are looking for someone with open
+to working in retail, who *Communication Skill Requirement*. We need you to *Technology
+Requirement*. So if this sounds like you, send us your resume and your earliest possible starting date
+and we will be in touch.
+
+
+Retail Sales Associate Template 2 (SALES ASSOCIATE WANTED)
+Seeking a sales associate for our hardware store in *City*. We have flexible hours available during the
+week. You *Physical Requirement*. Previous retail background is a plus, and our ideal candidate has a
+proven *Communication Skill Requirement*. *Technology Requirement*. Email a resume and
+specify your ideal work hours.
+
+
+Retail Sales Associate Template 3 (Sales Associate)
+Position: Retail Sales Associate (Retail Store)
+
+Requirements and duties:
+   Greet retail customers
+   Answering phones/email
+   Receive inventory
+   Stock merchandise
+   *Communication Skill Requirement*
+   *Technology Requirement*
+   *Physical Requirement*
+   High school diploma or college degree
+   Access to transportation
+
+Full Time and Part Time Available + Competitive Wages
+
+If you meet the above mentioned qualifications, please reply with resume (put full or part-time in the
+subject line). We look forward to your application!
+Retail Sales Associate Template 4 (Entry-Level Retail Sales Associate)
+Entry-level sales position. Please read all requirements and apply if you are looking for a long-term
+position. This can be either full-time or part-time position.
+
+Requirements:
+- *Communication Skill Requirement*
+- Work in sales preferred but not required
+-*Technology Requirement*
+- Can multitask and work as a team
+- GED or High School Diploma
+- *Physical Requirement*
+
+More information will be discussed during the interview. Please email resumes and list your schedule
+availability.
+
+
+Retail Sales Associate Template 5 (RETAIL SALES ASSOCIATE)
+Seeking enthusiastic, part time or full time Retail Associate for our store.
+
+Responsibilities Include
+- Customer Service: greeting customers, assisting them as they shop, answering their questions
+- Over The Counter Sales: manage the cash register, handle product returns
+- Packing & Shipping Online Orders
+
+Qualifications
+- Applicants must have good attendance and punctuality, access to transportation
+- Applicants must be 18 years old or older
+- Applicants must have at least a high school diploma
+- Applicants must *Communication Skill Requirement*
+- Applicants must *Physical Requirement*
+- Applicants must *Technology Requirement*
+
+Email us a resume and indicate part-time or full-time if you are interested.
+Retail Sales Associate Template 6 (Hiring Sales Associate)
+We are a shoe store hoping to hire a new sales associate in *City*!
+
+Our ideal candidate can:
+· *Physical Requirement*
+· *Technology Requirement*
+· Assist customers with in-store purchases.
+· Has a High School diploma or equivalent
+· Confirm labels match the correct products.
+· Inspect for damaged deliveries and merchandise.
+· Finalize work orders and *Communication Skill Requirement*
+
+If you're interested please reply to this ad with your résumé! (List your hours.)
+
+
+Retail Sales Associate Template 7 (Family Owned Store: Retail Sales Position)
+Be a part of our family owned, fabric wholesaler! We are searching for a part or full time sales assistant in
+our *City* location. Our business is committed to quality design and excellent service. As an employee
+you will work with staff, handle transactions, schedule deliveries, and *Technology Requirement*.
+
+Qualifications:
+
+-Qualified applicants will have a welcoming presentation.
+-We are looking for candidates with a High School diploma or equivalent GED, having a retail
+background is a plus.
+-Excellent customer service, *Communication Skill Requirement*.
+-*Physical Requirement*.
+-Complete our pre-employment background screening.
+
+Please send in your preferred schedule and resume to apply.
+
+
+
+Retail Sales Associate Template 8 (Furniture Showroom Sales Associate)
+Seeking a sales associate for a furniture showroom who has solid design training for a part time position
+(full time is available as well) in a fast-moving environment. Candidate must have the following
+qualifications:
+
+* Strong interest in retail.
+* High School Diploma/GED.
+* Interest or background in interior design.
+* *Physical Requirement*.
+* *Technology Requirement*.
+* Passion for interior design.
+* *Communication Skill Requirement*.
+
+Email us your resume/cv for consideration. Let us know if you are looking for part-time or full-time work
+in the header of email.
+Retail Sales Associate Template 9 (Pawnshop Job)
+We're running a small pawnshop in *City* and are looking for a new team member. Qualified applicants
+will:
+· Be a team player.
+· *Physical Requirement*
+· Have familiarity with retail environment
+· *Technology Requirement*
+
+Your duties will include but are not limited to organizing paperwork, selling watches and other items,
+evaluating new items, write loans, *Communication Skill Requirement* and all general store duties.
+Email us a resume and list of available work hours if interested.
+
+
+Retail Sales Associate Template 10 (Floral Design Sales Associate)
+We are searching for a full or part-time sales associate to join our small business in floral design. We
+offer flexible work hours with competitive pay. You will have to *Communication Skill Requirement*.
+You need to *Physical Requirement*, *Technology Requirement*, and be organized. Please send a
+resume and potential in-person interview hours. Thank you!
+
+
+Retail Sales Associate Template 11 (Novelty Products Shop Opening)
+We are a local retail shop in the novelty products business looking for sale associate. We are looking for
+someone with strong sales techniques and with good customer service.
+
+We require:
+*Communication Skill Requirement*
+*Technology Requirement*
+*Physical Requirement*
+flexible work hours
+
+To apply for a position:
+Please email your resume.
+Please indicate your M-F availability in the email.
+
+
+Retail Sales Associate Template 12 (Retail Job Opening)
+We are an upscale business working with select clients and are looking for a talented sales associate. This
+can be a part time or full time position and the number hours will vary, but the schedule will be posted far
+in advance. We prefer candidates with a track record in sales. Our business is growing and we are looking
+for someone to continue to grow with our team.
+
+Qualified candidate should:
+* *Technology Requirement*
+* Be available to work on weekends
+* *Communication Skill Requirement*
+* *Physical Requirement*
+* Work well in a team environment
+
+This position pays competitive wages. To apply, email your resume or curricula vitae and let us know
+many hours per week you prefer.
+Security Guard
+
+Security Guard Template 1 (HIRING UNARMED SECURITY GUARDS)
+We currently have a position for a full-time or part-time security officer available. Training and uniforms
+will provided. We offer flexible working hours and have shifts any day of the week. Our pay scale is
+competitive. Email your resume and potential work hours to apply.
+
+Requirements
+-Professional appearance & attitude
+-Detail oriented
+-*Communication Skill Requirement*
+-*Physical Requirement*
+-*Technology Requirement*
+-At least 18 years of age
+-Access to transportation
+
+
+Security Guard Template 2 (Security Guard)
+Responsibilities
+* Monitor and report flow of people on client property.
+* Monitor and inform any illegal or incorrect activity.
+* Give protection for individuals and property.
+* Take control of emergency conditions and inform to authorities as appropriate.
+
+Job requirements
+* Proficient in English.
+* Respond to emergency conditions fast and appropriately.
+*Technology Requirement*
+*Physical Requirement*
+* Can work flexibly and/or late night hours as needed.
+* Meet requirements for professional conduct and ethics.
+*Communication Skill Requirement*
+
+Send resumes and propose interview time/dates via email.
+Security Guard Template 3 (Security Officer)
+We're looking for security guards for a local office park.
+
+Duties:
+* Report suspicious things and look out for felony acts or law infractions at or near assigned post that may
+be a danger to the property, client or workers at the site
+* Report all incidents as required
+
+Requirements:
+*Communication Skill Requirement*.
+* Capability to perform important tasks of the position.
+**Technology Requirement*
+**Physical Requirement*.
+* Capacity to maintain satisfactory attendance standard
+
+If you're interested in this posting send us your resume and list a few hours for a sit-down interview. We
+will correspond by email.
+
+
+Security Guard Template 4 (HIRING UNARMED SECURITY GUARDS)
+Hiring UNARMED SECURITY GUARDS for a construction site!
+
+Overview:
+We are looking for guards to keep materials, tools, and trailers secured in *city*. You are expected to
+patrol the site and prevent vandalism and theft while on duty. Guards must *Technology Requirement*
+each day and report suspicious or criminal activity.
+
+Requirements:
+- High level of integrity
+- *Communication Skill Requirement*
+- *Physical Requirement*
+
+Reply to this ad with your resume plus your earliest start date and a member of our team will contact you.
+Security Guard Template 5 (Event Security)
+We are seeking qualified applicants for UNARMED security officers to staff local events.
+
+MEET THE FOLLOWING QUALIFICATIONS:
+-*Physical Requirement*
+-Bring and own a flashlight and a pair of boots
+-Carry and use a pair of handcuffs
+-High School Diploma are equivalent
+-*Communication Skill Requirement*
+-*Technology Requirement*
+
+Note: Veterans/reservist background is a plus
+
+EMAIL YOUR RESUME AND TYPICAL WEEKLY SCHEDULE FOR CONSIDERATION
+
+
+Security Guard Template 6 (Hiring Security Guards)
+HIRING *UNARMED* SECURITY GUARDS FOR A CLUB.
+PAID IN CASH WEEKLY.
+
+We are looking for security officers that can:
+- Check guest I.D.s upon entry
+- *Physical Requirement*
+- Frisk/pat down guests for weapons
+
+Job Description:
+- *Technology Requirement*
+- *Communication Skill Requirement*
+- Report unusual or suspicious activity to managers
+- Must be 18 years of age
+
+If you are qualified to this position contact us soon with your workday preferences.
+PLEASE EMAIL RESUMES FOR A RESPONSE
+Security Guard Template 7 (Unarmed Security)
+Our golf club is searching for security professionals in *City*
+
+JOB: Unarmed Security Guard
+
+QUALIFICATIONS:
+
+- *Technology Requirement*
+- Minimum age of 18 years old,
+- High School Diploma or Equivalent
+- *Communication Skill Requirement*
+- *Physical Requirement*
+
+-Duties include...
+Enforce parking rules and regulations
+Report incidents and suspicious activity
+Look and monitor doors and gates
+
+PLEASE EMAIL ALL RESUMES AND SPECIFY FULL OR PART-TIME
+
+
+Security Guard Template 8 (UNARMED GAURDS)
+Join our team if you're a security professional seeking a full-time or part-time position! We are a local
+warehouse and delivery company operating in *City*.
+
+REQUIREMENTS:
+· Must be at least 18 years of age.
+· *Physical Requirement*.
+· Must meet, follow, and maintain company policy at all times.
+· Must pass a background check.
+· *Communication Skill Requirement*.
+· Must have a High School Diploma or GED.
+· *Technology Requirement*.
+
+Join our team today! Tell us how many hours you'd like to sign up for! Submit resumes by email!
+Security Guard Template 9 (SECURITY GUARD JOBS)
+FULL OR PART TIME SECURITY GUARD OPENING
+Location: *City*
+
+We are hiring security guards for corporate offices in *city*. You are expected to patrol entry points and
+verify I.D.s upon entry. Work may involve contacting emergency services, responding to fire alarms, or
+interviewing suspicious people.
+
+DAILY FUNCTIONS:
+· Office patrols to deter criminal activity.
+· *Technology Requirement*.
+· Activity reporting to investigate and record suspicious persons.
+
+MINIMUM QUALIFICATIONS:
+· Must be at least 18 years of age.
+· *Physical Requirement*.
+· *Communication Skill Requirement*.
+· Must have a High School Diploma or GED.
+
+Interested in these positions? Send us an email with your resume and a few possible dates for an
+interview.
+
+
+Security Guard Template 10 (Retirement Community Residential Security)
+Security officers wanted for part-time and full-time work at a retirement community in *City*. Email
+resumes and say part-time/full-time to express interest.
+
+Position Summary: This role involves responding to emergencies, offering assistance, as well as
+monitoring the security to ensure resident safety.
+Qualifications:
+· *Physical Requirement*
+· *Technology Requirement*
+· Detail-oriented, and can multitask
+· *Communication Skill Requirement*
+
+Duties:
+· Record information on units, keys, and deliveries
+· Monitor security of the buildings
+· Maintain resident roster: Use and maintain current resident information
+· Enforce policies such as parking policies and amenity reservations
+Security Guard Template 11 (Security Officers Wanted)
+We are a security company looking for new guards that can join our ranks. Our business contracts locally
+in *City* and has several upcoming openings.
+
+We want our team members to have the following:
+
+*Knowledge of security service, defense, etc.
+*High school diploma or GED
+*Attention to detail
+* *Physical Requirement*
+* *Technology Requirement*
+* *Communication Skill Requirement*
+
+Please email your resume or summary of experience and suggested work hours for review.
+
+Security Guard Template 12 (Unarmed Security Officer)
+NEW OPENINGS for Security Guards in *City* *State*. Contact us by email with your resume and start
+date.
+
+Professional duties:
+
+*Conducting patrols and security checks.
+*Maintain consistent attendance.
+*Responding to alarms as needed.
+* *Technology Requirement*
+*Monitor, address, and report fire & safety hazards.
+*Maintain security of a complex, building and/or premises.
+
+
+Requirements:
+
+*Must be at least 18 years of age.
+*Must have High School diploma or GED equivalent.
+* *Communication skill Requirement*.
+* *Physical Requirement*.
+
+Veterans encouraged to apply but previous service is NOT required!
+          Appendix B (online)
+
+Appendix Figure B1: Manipulation Checks
+Appendix Figure B2: Informed Consent
+Appendix Figure B3: Demographic Questions
+

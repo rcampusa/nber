@@ -1,0 +1,2076 @@
+                              NBER WORKING PAPER SERIES
+
+    MEASURING COMMUTING AND ECONOMIC ACTIVITY INSIDE CITIES WITH
+                      CELL PHONE RECORDS
+
+                                     Gabriel E. Kreindler
+                                      Yuhei Miyauchi
+
+                                      Working Paper 28516
+                              http://www.nber.org/papers/w28516
+
+                    NATIONAL BUREAU OF ECONOMIC RESEARCH
+                             1050 Massachusetts Avenue
+                               Cambridge, MA 02138
+                                   February 2021
+
+The authors are grateful to the LIRNEasia organization for providing access to Sri Lanka cell
+phone data, and especially to Sriganesh Lokanathan, Senior Research Manager at LIRNEasia.
+The authors are also grateful to Ryosuke Shibasaki for navigating us through the cell phone data
+in Bangladesh, to Anisur Rahman and Takashi Hiramatsu for the access to the DHUTS survey
+data, and International Growth Center (IGC) Bangladesh for hartals data. The cell phone data for
+Bangladesh is prepared by the Asian Development Bank for the project (A-8074REG:
+"Applying Remote Sensing Technology in River Basin Management"), a joint initiative between
+ADB and the University of Tokyo. We are grateful to Lauren Li, Akira Matsushita and
+Zhongyi Tang, who provided excellent research assistance. We sincerely thank David
+Atkin, Alexander Bartik, Abhijit Banerjee, Sam Bazzi, Arnaud Costinot, Dave Donaldson,
+Esther Duflo, Gilles Duranton, Jean-Benoit Eymeoud, Ed Glaeser, Seema Jayachandran,
+Sriganesh Lokanathan, Danaja Maldeniya, Melanie Morten, Ben Olken, Steve Redding,
+members of the LIRNEasia BD4D team, and seminar participants at MIT, LIRNEasia,
+NEUDC 2016, the Harvard Urban Development Mini-Conference, ADB Urban Development,
+and Economics Conference, UEA 2019, NBER Cities and Global Economy Conference, for
+constructive comments and feedback. We thank Dedunu Dhananjaya, Danaja Maldeniya,
+Laleema Senanayake, Nisansa de Silva, and Thushan Dodanwala for help with Hadoop code and
+GIS data in Sri Lanka. We gratefully acknowledge funding from the International Development
+Research Centre (IDRC) and The Weiss Fund for the analysis of Sri Lanka data, and from the
+International Growth Center (IGC) for the analysis of Bangladesh data. We also acknowledge
+Darin Christensen and Thiemo Fetzer's R code to compute Conley standard errors (http://
+www.trfetzer.com/using-r-to-estimate-spatial-hac-errors-per-conley/), on which we built our
+code. The views expressed herein are those of the authors and do not
+necessarily reflect the views of the National Bureau of Economic Research.
+
+NBER working papers are circulated for discussion and comment purposes. They have not been
+peer-reviewed or been subject to the review by the NBER Board of Directors that accompanies
+official NBER publications.
+
+© 2021 by Gabriel E. Kreindler and Yuhei Miyauchi. All rights reserved. Short sections of text,
+not to exceed two paragraphs, may be quoted without explicit permission provided that full
+credit, including © notice, is given to the source.
+Measuring Commuting and Economic Activity inside Cities with Cell Phone Records
+Gabriel E. Kreindler and Yuhei Miyauchi
+NBER Working Paper No. 28516
+February 2021
+JEL No. C55,E24,R14
+
+                                         ABSTRACT
+
+We show how to use commuting flows to infer the spatial distribution of income within a city. A
+simple workplace choice model predicts a gravity equation for commuting flows whose
+destination fixed effects correspond to wages. We implement this method with cell phone
+transaction data from Dhaka and Colombo. Model-predicted income predicts separate income
+data, at the workplace and residential level, and by skill group. Unlike machine learning
+approaches, our method does not require training data, yet achieves comparable predictive power.
+We show that hartals (transportation strikes) in Dhaka reduce commuting more for high model-
+predicted wage and high-skill commuters.
+
+
+Gabriel E. Kreindler
+Department of Economics
+Harvard University
+1805 Cambridge Street
+Cambridge, MA 02138
+and NBER
+gkreindler@fas.harvard.edu
+
+Yuhei Miyauchi
+Department of Economics, Room 412A
+270 Bay State Road
+Boston University
+Boston, Mass 02215
+United States
+miyauchi@bu.edu
+Measures of urban economic activity at ne temporal and spatial scales are important yet rare.
+Such data is necessary to understand how cities respond to localized shocks such as changes
+in transportation infrastructure or oods, and to help governments target scarce public re-
+sources. These issues are especially salient in large cities in developing countries, which are
+growing fast yet are least covered by conventional data sources. At the same time, compre-
+hensive new data sources on urban behavior, especially individual mobility and commuting,
+are becoming available worldwide. Indeed, academic research publications using call detail
+records (CDR) or cell phone data covered at least      out of    countries in Africa and Asia as
+of      . Meanwhile, less than 10% of the urban population in sub-saharan African countries
+is covered by a census of rms with wage data.
+     In this paper, we provide a theory-based method to predict the spatial distribution of urban
+economic activity from commuting choices. The revealed-preference logic of our approach is
+simple. A core function of cities is to connect workers and jobs (Duranton and Puga            ).
+While many factors enter into workplace choice decisions, areas with high wages should
+disproportionately attract workers, keeping distance and home locations xed. We propose
+inverting this reasoning to infer the relative wage at a location based on its "attractiveness"
+as a commuting destination.
+     We formalize this intuition by building on recent urban economics models of commuting
+choices. In these models, work location decisions aggregate up to a gravity equation on com-
+muting ows, and destination xed e ects are proportional to log wages. This property holds
+for a general class of models developed to evaluate urban policies and transport infrastructure
+(Redding and Turner           , Redding and Rossi-Hansberg      ). We also show how to apply a
+similar method when wages and the commuting elasticity di er exibly by skill group.
+     We implement our approach using call detail record (CDR) data from two large metropolises:
+Colombo, Sri Lanka and Dhaka, Bangladesh. CDR data is a prototypical example of "big data"
+available in developing countries (Björkegren         ), and it contains phone user location for
+every transaction. We construct individual home and work locations by observing a user's
+     Authors' calculations (Appendix A).
+location at di erent times of the day over time. Commuting ows constructed this way have
+very ne geographic resolution and correlate strongly with commuting ows from a trans-
+portation survey from Dhaka. We use this data to estimate the model gravity equation.
+   Next, we assess how well this simple measure captures real di erences in income. First,
+we show that model workplace income is a robust predictor of workplace commuter income
+data from a large transportation survey in Dhaka. Second, in both cities, model-predicted
+residential income is a robust predictor of a census residential income proxy.
+   To set the right benchmark for the predictive performance, we also implement a supervised
+learning approach (elastic net regularization) using hundreds of features from cell-phone data
+and geographic measures (Zou and Hastie              , Blumenstock et al.       ). The model predic-
+tion, despite being computed without any training data, explains between 70% and 90% as
+much income variation compared to the supervised learning approach. Hence, the destination
+ xed e ects act as a "summary statistic" for most information in cell phone data.
+   We also estimate and validate the model extension with multiple worker skills.
+   The ideal application of our income-prediction method and of the high-frequency com-
+muting data is to trace out heterogeneous impacts of urban events and policies, such as trans-
+portation shocks, lockdowns or oods. We study hartals, a type of strike intended to disrupt
+transportation and economic activity in Bangladesh. We nd larger reductions in commut-
+ing on hartal days for commuters with higher model-predicted income, high skill, and long
+commute.
+   We build on a growing literature using quantitative urban models. While papers in this
+literature often use gravity equations to estimate structural parameters as part of a broader
+exercise (Ahlfeldt et al.        , Monte et al.      , Owens et al.       , Tsivanidis      , Severen
+    , Heblich et al.        , Dingel and Tintelnot         ), our focus is to use gravity equations to
+construct proxies of the spatial distribution of wages. Another related literature uses machine
+learning to empirically predict wealth and consumption at individual or regional level (Blu-
+menstock et al.        , Jean et al.    , Glaeser et al.      ). A key feature of our approach is that
+it does not require training data, relying instead on a simple and general theory of commuting
+behavior.
+    We believe that one promising path for "big data" in economics is using revealed prefer-
+ence techniques to infer attributes of choice options, such as workplace wages in our paper
+or spatial aspects of consumption behavior (Athey et al.              , Davis et al.      , Agarwal et al.
+     ).
+
+
+     Cell-Phone Data and Commuting Flows
+
+Cell phone transaction data. We use call detail record (CDR) data from large operators in
+Sri Lanka and Bangladesh to compute detailed commuting matrices. CDR data includes an
+observation for each transaction, such as outgoing or incoming voice call and text messages,
+or GPRS internet connections. Each observation has a timestamp, the anonymized participant
+user identi ers, and their cell tower locations. Towers are unevenly distributed in space; they
+are denser in urban and developed areas. We focus on the greater metropolitan areas around
+the capital cities of Colombo and Dhaka. The data covers a little over a year in Sri Lanka and
+four months in Bangladesh in the early             's.
+    We construct commuting trips by assigning "home" and "work" locations for each user.
+Home (work) locations are identi ed as the most frequent towers with a transaction between
+ pm to am of the next day ( am to pm) during weekdays excluding hartal days. For ro-
+bustness, we also construct daily commuting trips. We then aggregate over users to obtain
+an origin-destination (OD) matrix of commuting ows between every pair of cell towers.
+
+
+Google Maps travel time. As a proxy for travel costs, we obtain estimated typical driving
+travel times between pairs of cell towers using the Google Maps API. In each city we obtain
+Google data for      ,    randomly selected pairs of towers, and interpolate to pairs with nearby
+origin and nearby destination. We use predicted time without tra c congestion. Using pre-
+dicted time with tra c congestion in Colombo, where such data was available, yields virtually
+identical model-predicted wages (Table G. ).
+     In Bangladesh, the data only covers outgoing voice calls. Our sample covers the Western Province in Sri
+Lanka, and the Dhaka, Narayanganj, and Gazipur Districts in Bangladesh.
+     To construct daily commuting trips, on a given day, we de ne a user's origin as the location of the rst
+transaction between am to am, and the user's destination as the location of the last transaction between
+   am and pm. If transaction data is missing in either time interval, commuting behavior is not observed for
+that user-day (Table G. ).
+Household transportation survey. We use individual survey data from the                        Dhaka Ur-
+ban Transport Network Development Study or DHUTS (JICA                        ). The survey covers   ,
+randomly selected households in the Dhaka City Corporation (DCC), Dhaka's urban core.
+Home and work locations are at the level of            "survey areas." Our main analysis sample cov-
+ers     ,    commuters who live and work within the DCC, with positive income from work,
+excluding students, homemakers, and the unemployed.
+
+
+Population Censuses. We use census data from                         in Bangladesh and      in Sri Lanka,
+the closest years to our cell phone data. Since the census does not report income in either
+country, we obtain the rst principal component of houshold assets (house building materials,
+toilet facilities, water and electricity connection) at the nest geographic unit available. The
+residential income proxy at the cell tower level is the average across overlapping census units,
+weighted by overlap area with the tower.
+
+
+Representativeness of Commuters in Cell Phone Data. In Dhaka, commuting ows de-
+rived from cell phone data are strongly related to those from the DHUTS commuting survey,
+including when controlling for log travel time, origin and destination survey area xed e ects
+(Table G. ). This is consistent with previous research validating cell-phone-based commuting
+ ows (Calabrese et al.           , Wang et al.      , Iqbal et al.       ). The decay of commuting ows
+with travel time is virtually identical between the two data sources (Figure G. , Panel A).
+      Residential population density from cell phone data is correlated with census population
+density at the level of ,          and ,      cell phone towers in the two cities, with R2 = 0.61 in
+Dhaka and R2 = 0.49 in Colombo (Table G. ). The slope is .                     for both cities, hence cell
+phone data slightly over-represents population in denser areas. This type of bias does not
+automatically a ect our results as our approach uses workplace choice shares conditional on
+a residential location. In section . we further allow choices to di er by worker skill.
+      In the study areas, there are ,   Grama Niladhari (GN) in Sri Lanka, and ,   mauza in Dhaka.
+     Model: Commuting Flows, Gravity, and Wages
+
+Is it possible to infer the spatial distribution of wages from commuting ows? The interaction
+between wages and commuting costs to determine urban structure is fundamental in classical
+urban economics models (Alonso                , Mills       , Muth         ). Here, we explore this insight
+using a new generation of models inspired from the trade literature, designed to better match
+spatially disaggregated urban data (Ahlfeldt et al.               ).
+
+
+ .    Workplace Choice Model
+
+Space is partitioned into a nite set of locations, which may serve as both residential and work
+locations. We discuss how to map model locations to the data in section . .
+     There is a unit mass of workers, and each worker  sequentially decides her residential
+location (or origin) i, and then her work location (or destination) j. Conditional on residing
+in location i, the utility of worker  if she chooses destination j is:
+
+                                                        Wj Zij
+                                              Uij =                                                          ( )
+                                                         Dij
+
+
+
+Wj is the wage per e ective unit of labor supply at location j (all rms at location j o er the
+same wage), Dij is the travel time between i and j, and Zij is an idiosyncratic utility shock
+that is i.i.d. following the Fréchet distribution, with scale parameter normazlied to one and
+shape parameter . Each worker supplies one unit of labor and earns income Wj .
+     Each worker observes the shocks Zij and chooses the work location j where Uij is
+maximized. The probability that a worker commutes to j conditional on residing in i is given
+by
+                                                             )
+                                                      (Wj / Dij
+                                           ij|i =                                                            ( )
+                                                    s (Ws / Dis
+                                                             )
+
+
+       We follow Ahlfeldt et al. (   ) and assume that Zij are preference shocks. Tsivanidis (    ) alternatively
+assumes that Zij are productivity shocks and derives expected income as "commuter market access". Appendix
+C shows that our results are robust to alternate assumptions, and estimates a model where Zij and Dij partly
+a ect productivity and utility.
+       Assuming joint home and work location choice leads to the same conditional choice probabilities ij|i as
+residential terms (amenities, rent) cancel out (Ahlfeldt et al.   ). However, if workers choose their workplace
+  rst and then the home location (e.g. migrants), destination xed e ects would not exclusively capture destina-
+tion wages.
+Taking logs, and denoting log quantities by lowercase letters:
+
+
+                     log(ij|i ) = w j -  dij - log            exp (     ws -  dis )                        ( )
+                                                              s
+
+
+
+ .      Estimating the Gravity Equation
+
+We estimate equation ( ) using the empirical Poisson pseudo-maximum likelihood (PPML)
+method with two-way xed e ects:
+
+
+                                     log( E[ij|i ]) = j - dij + µi                                         ( )
+
+
+where µi and j are origin and destination xed e ects. We use PPML, rather than OLS, to
+deal with zero commuting ows (Silva and Tenreyro                     , Dingel and Tintelnot          ).
+      This equation allows us to measure the attractiveness of each destination j after accounting
+for the fact that conditional commuting probabilities also depend on log commute duration.
+Importantly, in our model, j is proportional to the (relative) log wage at j with a factor
+of , the Fréchet dispersion parameter. Our main goal is to recover the j 's from observed
+commuting choices. For this purpose, it is not necessary to model explicitly how wages are
+determined in equilibrium. The mapping between commuting choices and wages holds in any
+general equilibrium model that micro-founds the gravity equation for commuting ows with
+a discrete commuting choice model.
+      To obtain relative wage levels, we further need to know , the Fréchet parameter, which
+governs the variance of idiosyncratic preference shocks. In section , we will estimate                      in
+Dhaka using data on average wages by location in the city. When such data is not available,
+     may also be estimated from the overall variance of wages in the entire city, as in Ahlfeldt
+et al. (     ).
+     Log travel time as a measure of commuting costs o ers a good t (Figure G. ).
+     Our model does not include workplace amenities. If these di er considerably across space, the gravity
+destination xed e ects will capture the combined e ect of wages and amenities. Our empirical results in section
+ address empirically the extent to which our measure is correlated with wages.
+ .       Mapping Model Locations to Geographic Areas
+
+A key advantage of the model is that locations can be mapped directly to two-dimensional
+urban data. However, exactly how we map model locations to locations in the data may not
+be innocuous for inferring wages. The di culty of de ning appropriate geographic units is
+related to the "modi able areal unit problem" in geography (Fotheringham and Wong                         ),
+and to the problem of de ning urban areas in economics (Rozenfeld et al.                  , Baragwanath
+et al.      ).
+     We show how to solve this issue in a theory-consistent way. Assume that each Voronoi cell
+j consists of Nj sub-locations and workers draw independent Fréchet shocks at the levels of
+these sub-locations. Hence, the model implies a gravity equation at the level of sub-locations.
+However, a gravity equation continues to hold at the level of the larger Voronoi cells under
+two simplifying assumptions: that all sub-locations within j o er the same log wage w R
+                                                                                      j , and
+
+that all sub-location in j are located in the same place in space (and hence they are equally
+distant to any given origin i). Using standard Fréchet properties, the underlying log wage w R
+                                                                                             j
+
+is expressed as:
+                                    jR = w R
+                                           j =  j - log Nj ,                                             ( )
+
+where j is the destination xed e ect from the gravity equation between Voronoi cells. In
+other words, we need to adjust the destination xed e ects by subtracting a term (log( Nj ))
+that is increasing in the number of sub-locations in each cell.
+     Implementing this adjustment requires taking a stand on Nj , i.e. the number of indepen-
+dent Fréchet shocks drawn per Voronoi cell j. Theory does not o er strong guidance on how
+to select Nj . Here, we assume that Nj is proportional to the geographic area of Voronoi cell j,
+that is, Fréchet shocks are drawn for each vertex on a square lattice. We also show robustness
+to assuming Nj = 1 and to aggregating our raw data at the level of square grid cells (Tables
+G. , G. , and Figure G. ).
+     When wages di er across sub-locations within j, jR corresponds to a CES aggregate of these wages.
+ .    Estimating Wages Separately by Skill Group
+
+Skill inequality is salient in cities like Dhaka and Colombo, and our baseline model does not
+capture this. We now extend our method to estimate wages separately by skill group.
+     We consider two types of models. In our rst model, workers are either low-skill ( L) or
+                                                      L and w H and elasticities of commuting
+high-skill ( H ) and face separate log wage pro les w j       j
+
+cost with respect to travel time  L and  H . All agents have a common Fréchet shape pa-
+rameter . As before, our goal is to estimate composite wage terms s     s
+                                                                  j = w j for all j up
+
+to a constant and distance terms s =  s for each skill s  { L, H }. Equation ( ) expresses
+                      s separately by skill s. The average commuting probability (that we
+commute probabilities ij |i
+                                                   L +  H  H where  H is the share of
+observe in our cell phone data) is ij|i = (1 - iH )ij |i i ij|i    i
+
+high skill at residential location i (measured from census data). Because ij|i is not log-linear
+in the parameters of interest, we estimate the model using maximum likelihood (Appendix B).
+     In our second model, each residential location i has a "representative agent" with prefer-
+ences given by a weighted mean, with weights that depend on iH , the share of high skill at
+                                  H  H + w L (1 -  H ) at j and have commuting elasticity
+i. Agents from i earn log wages w j i      j      i
+
+ H iH +  L (1 - iH ). Plugging into equation ( ), our estimating equation becomes:
+
+
+           log(E[ij|i ]) = jL (1 - iH ) + jH iH -  L (1 - iH )dij -  H iH dij + µi           ( )
+
+
+This equation is intuitive: each destination has two levels of "attractiveness," jL = w j
+                                                                                        L and
+
+
+jH = w j
+       H . Loosely speaking,  H are identi ed from commuting probability patterns from
+                             j
+
+origins with large shares of high-skilled in the census. We estimate ( ) using PPML with origin
+and destination xed e ects, log duration interacted with skill shares, and destination-speci c
+linear slopes in iH .
+     The two models are identical when residences are completely segregated by skills (iH = 0
+or 1). In the intermediate case, we show by simulation that the two data generating process
+                                                     L and w H (Appendix B). Because of the
+are closely aligned when using the same pro les of w j       j
+
+simpler estimation procedure, we use the second model as our benchmark. Appendix B has
+results from the rst model.
+ .      Estimation Results: Gravity and Wages
+
+We estimate gravity equation ( ) using cell phone commuting ows and Google Maps travel
+times. Our goal is to recover the destination xed e ects, which in the model are proportional
+to workplace log wages. The estimation sample is non-holiday weekday commuting trips
+between pairs of towers excluding nearby and very distant towers.
+       Table    reports the results, based on commuting ows between ,                 locations in Dhaka
+(columns - ) and between ,            locations in Colombo (columns - ). The gravity equation is
+estimated with commuting ows constructed from assigned home and work locations for .
+and      million commuters in the two cities (columns , , , and ), and using the commuting
+ ows identi ed at the daily level (columns and ).
+       Commuting probability decreases strongly with travel time. Interestingly, although the
+average commuting trip is 25% longer on average in Sri Lanka, the coe cients are similar
+(- .     in Column     and - .     in Column ). This is a substantive nding, as the two cities
+di er in terms of economic development, population, and urban structure (mono- vs poly-
+centric). At the same time, these elasticities are substantially lower in magnitudes than in
+the United States (between         to , Monte et al. (         ) and Owens et al. (         )), potentially
+re ecting di erences in the disutility of commuting time.
+       Turning to our model with skill heterogeneity, we estimate equation ( ) using PPML, data
+on aggregate bilateral commuting ows, and residential-level skill shares from the popula-
+tion census. High-skilled is de ned as literate in Dhaka, and having secondary education in
+Colombo. The travel time elasticity is smaller in absolute value for the high skill group, im-
+plying that low skill workers commute closer to home. Tsivanidis (                 ) nds a similar result
+using commuting ows data by skill. Our method only requires aggregate commuting ows
+and the residential skill shares.
+       Figure    displays smoothed estimated wages in Dhaka and Colombo using choropleth
+maps. Our estimated, area adjusted measure jR is proportional to log wages, with factor
+
+     In Dhaka, we exclude days with transportation strikes (hartals). Tower pairs closer than minutes are
+excluded as they may capture calls randomly connecting to di erent towers ("tower-bouncing") rather than real
+commuting. Destination xed e ects estimated including nearby and same tower pairs are virtually identical
+(Table G. ).
+(the Fréchet shape parameter). Estimated wages are higher near city centers and alongside
+some (but not all) major road corridors. Moreover, secondary centers are visible, especially in
+Dhaka. The next sections will compare these results with independent income proxies.
+    Destination xed e ects using di erent estimation methods are highly correlated: estimat-
+ing on disjoint samples (Table D. ), using daily commuting ows instead of home and work
+assignment, when we use travel times with congestion in Colombo, and when we include
+neighboring and same tower pairs in the samples (Table G. ). Using OLS instead of PPML
+leads to a atter pro le of destination xed e ects due to many zero commuting ows ( %
+of all possible tower pairs in Bangladesh and           % in Sri Lanka). We obtain virtually identical
+results when allowing travel time to enter non-parametrically (as deciles of the travel time
+distribution).
+    Low- and high-skill destination xed e ects are positively correlated with the destination
+ xed e ects from the benchmark model, with respective correlation coe cients .                     and .
+in Dhaka and .         and .      in Colombo. However, the model also points to independent
+variation by skill: low- and high-skill destination xed e ects are weakly correlated in Dhaka
+and negatively correlated in Colombo, with correlation coe cients .               and - . , respectively.
+
+
+     Validation: Model-Predicted and Survey Workplace Income in Dhaka
+
+Our rst validation exercise compares income from the model and survey income from the
+DHUTS survey. We compute average income at the workplace level in each survey area in
+the DCC, the nest geographic location available in the DHUTS survey.
+    Our procedure predicts that the area adjusted destination xed e ects ^ R corresponds
+                                                                           j
+
+to the log labor income multiplied by , the Fréchet shape parameter of worker unobserved
+preferences. Panel (A) of Table        shows the scatter plot between ^ R against survey income,
+                                                                        j
+
+at the level of      survey areas. We expect a slope of           -1   and obtain a regression slope of
+0.12 (with standard deviation 0.03), implying ^ = 8.3. This estimate is slightly higher than
+previous estimates in Berlin ( . ; Ahlfeldt et al.            ) and London in the        th century ( . ;
+     Given that government jobs are typically paid less yet include large non-monetary bene ts (such as job
+tenure) and are centrally located, our baseline estimation sample excludes government workers. Including them
+does not substantially change our results (Table G. ).
+Heblich et al.        ), suggesting that idiosyncratic shocks are less important in our context.
+    Panel (A) shows that model-predicted wages are signi cantly correlated with survey wages.
+In Panel (B), we repeat this exercise separately by skill, using the extended model described
+in Section . . We nd that model income for one skill group predicts survey income for the
+same skill, with a much weaker relationship across skills.
+    Turning to predictive power, the bivariate relationship in Panel (A) has R2 = 0.25 and
+Root-Mean Squared Error (RMSE) = 0.22. A perfect t would imply R2 = 1 and RMSE= 0 if
+wages are measured without noise in the DHUTS data. Our results might indicate that our
+model has poor predictive power, or that wages are measured with noise. We believe the latter
+concern is warranted. For example,           % of survey areas have fewer than            observations, and
+the survey records total monthly income, which may include non-labor income.
+    To set the right benchmark given the potential for measurement error in this validation
+data, we compare the model prediction with a supervised-learning approach (elastic net regu-
+larization) using       features from cell-phone data and geographic data. We view this exercise
+as the state of the art method to do prediction when training data is available (Blumenstock
+et al.     ). To implement this, we randomly select half of all survey areas as "training data,"
+and predict survey income in the other half as "test data," using either OLS or elastic net
+regularization. See Appendix E for details.
+    Panel (C) of Table reports the average test and training R2 and RMSE statistics over
+random splits. Model-predicted income alone predicts 22% of the variation in the test data
+(column ). The area of the tower voronoi cell, an intuitive predictor of economic activity
+from cell phone data, has test R2 = 0.09 (column ).               Including all features from cell-phone
+data raises test R2 to . , a slight improvement over just using the model-predicted income
+(Column ). The same pattern holds for RMSE. This result indicates that the model-predicted
+income (one statistic computed from cell phone data) summarizes nearly all information about
+predicting workplace income in this context, despite the parsimonious model and functional
+form speci cation for travel cost.
+    Another important factor for R2 is geographic extent. In Section , we show that including
+     Cell phone operators tend to locate more towers in locations with high activity (Figure G. ).
+peri-urban areas drastically increases R2 .
+    Severen (       ) and Tsivanidis (        ) perform validation exercises for commuting-choice
+models similar to ours, estimated using commuting data from survey or administrative data.
+Using ne divisions (census tracts), Severen (              ) nds that model wages estimated using
+commuting ows barely predict tract-level wages in Los Angeles. Tsivanidis (                     ) nds that
+model-predicted wages across           urban areas in Bogotá predict survey wages, with an R2 =
+0.36. These results suggest that the geographic aggregation level may also matter. However,
+in our setting, aggregating up does not change predictive power signi cantly (Figure G. ).
+    Table G. shows that the model income is statistically signi cantly correlated with survey
+income after controlling for employment density, distance to the central business district, and
+log model residential income. Table G. shows that our results are robust to several alternate
+gravity equation speci cations. Table G. uses an individual-level speci cation and shows
+that our main result is robust to controlling for workplace sorting along observable worker
+characteristics and other controls.
+
+
+     Validation: Model-Predicted Income and Residential Income Proxies
+
+We next use a residential income proxy constructed from population census data to validate
+the model prediction at the residential location level. Model-predicted residential income at
+tower i is de ned as
+
+                                               ^ jR Vij /Vi                                              ( )
+                                                j
+
+where j indexes workplace towers, ^ R is the area adjusted destination xed e ect at j, Vi is
+                                    j
+
+total residential population at i, and Vij is the commuting volume from i to j. We focus on
+model t and not the magnitude of the slope in this exercise, because the income proxy is not
+measured in the same units as actual income.
+    Table    shows the results in Dhaka and Colombo. Model residential income is a strong
+predictor of the income proxy at the cell tower level (panel A). The R2 = 0.55 (Dhaka) and
+     In a machine learning application, Blumenstock et al. (    ) nds R2 = 0.41 when restricting to urban
+DHS clusters in Rwanda, compared to 0.62 when including both rural and urban clusters. Jean et al. (        )
+do not report results separately by urban areas. Within entire countries, R2 ranges between 0.37 and 0.55 for
+DHS-cluster level predicted consumption.
+0.77 (Colombo) is high, partly because of the coverage of suburban areas.
+    We next benchmark the predictive power to a supervised learning method (panel (B) Ta-
+ble ) in Dhaka.        The procedure is similar to Panel (B) in Table . Test R2 is .                   when
+using model-predicted income alone (column ). The test R2 when using the cell phone tower
+Voronoi cell area alone is .        (column ), and the supervised-learning method using all fea-
+tures increases it to . . Model-predicted residential income alone achieves about                   % of the
+predictive power of using all the cell-phone data metrics.
+
+
+     Practical Guidance: Spatial Coverage and Resolution
+
+What factors a ect the predictive performance of our method? We explore this issue using
+model-predicted residential income and census income proxy data to guide future applications
+of this method.
+    Our approach performs better when the analysis includes both urban core and peri-urban
+areas. In both cities, the explanatory power of model residential income increases as we in-
+clude areas further away from the city center. Adjusted R2 goes from 0.2 at the                   km cuto
+to . and . at         km cuto in Dhaka and Colombo, respectively (Figure G. ).
+    Model performance is not sensitive to the level of spatial aggregation. We combine cell
+phone towers into square grid cells, and estimate the gravity equation at this level. In both
+cities, regressing the census income proxy on model-predicted residential income yields sta-
+ble adjusted R2 between . and . for grid cells of between                   and     km wide (Figure G. ).
+(Gravity distance slopes are also stable.)
+    Overall, the method is best suited to applications that cover a large urban area, and is
+likely not sensitive to the spatial aggregation unit.
+      Unfortunately, we do not have access to features of cell phone data to implement the supervised learning
+approach in Colombo.
+      Related, average residential income from the (DHUTS) survey data ­ only available in Dhaka's urban core
+­ is di cult to predict, both using model residential income, and using other measures such as distance to CBD
+or residential density.
+    Application: The Heterogeneous Impacts of Hartal on Commuting
+
+Cities in developing countries experience frequent shocks that disrupt commuting, such as
+ oods, transportation strikes, protests or violence. Measuring how di erent types of com-
+muters are a ected by such shocks is a key step in understanding volatility in urban economic
+activity. We now show how to use high-frequency cell phone data combined with our method
+to study the heterogeneous impacts of urban shocks.
+    We study this question in the context of hartal, a form of political strike that involves a
+partial shutdown of urban transportation and businesses. They are common in South Asia,
+and especially in Bangladesh (UNDP            ). On hartal days, typically announced a few days in
+advance by unions or political groups, groups of people enforce the transportation shutdown,
+especially on major roads and in certain locations. There were                 hartal days over the
+months in our sample (Ahsan and Iqbal             ).
+    We estimate the impact of hartal on commuting to work and heterogeneity using the
+following speci cation:
+
+
+       Cijt =  · hartalt + W · hartalt ·  j +  D · hartalt · dij + µ + m(t) +  ijt                    ( )
+
+
+where Cijt is a dummy for whether commuter  with home location i and work location j
+travelled from home to work on day t, and hartalt is a dummy for hartal dates.
+    We rst focus on the interactions between hartal and  j , the standardized area adjusted
+wage at j, and dij , standardized log commute duration between i and j. We estimate  j using
+commuting data on non-hartal weekdays following the procedure in Section . We include
+month xed e ects m(t) and commuter xed e ects µ , to account for potential di erences
+in calling behavior on hartal days that may a ect the measure of commuting.
+    Table    shows the results. Commuting to work falls by . % on Hartal days (column ).
+The magnitude of the e ect is consistent with previous studies on hartals in more speci c
+settings (Ashraf et al.      , Ahsan and Iqbal         ). Appendix F reports robustness exercises.
+    The study period preceded parliamentary elections and was marked by general instability and more fre-
+quent hartals than in previous years.
+    Results are similar for a sample of frequent callers (Table F. ).
+    Commuters working in high-productivity areas (high  j ) are more sensitive to hartal dis-
+ruptions (column ).          Speci cally, commuters with model-predicted wage one standard de-
+viation above the mean reduce their commuting to work by                 . %, an e ect that is      % larger
+than the average e ect. This could be due to more disruption of production activity in more
+productive areas, or due to higher commuting cost (for example, due to the danger of physi-
+cal violence) for higher-income commuters. Distinguishing between these mechanisms is an
+interesting question beyond the scope of this paper.           Hartal a ects long-distance commuters
+more: a standard deviation longer commute is associated with a . pp more negative hartal
+e ect. However, the coe cient on the destination wage barely changes, showing that the
+productivity e ect is mostly independent of commute duration.
+    We now use our method to study how hartal a ects workers of di erent skills. We use
+                                                          L        H
+model-derived wages for low- and high-skilled ( j and  j ) estimated in section . and stan-
+dardized. Assume that the average hartal treatment e ect for commuter  of skill s  { L, H }
+                         s
+is s + s        s
+       D dij +  W  j . This yields the following speci cation
+
+
+
+                 Cijt =  L · hartalt · (1 - ij
+                                            H
+                                               ) +  H · hartalt · ij
+                                                                  H
+
+                             L                L      H      H                  H  H
+                             W · hartalt ·  j · (1 - ij ) + W · hartalt ·  j · ij +
+
+                             L                        H       H                   H
+                             D · hartalt · dij · (1 - ij ) +  D · hartalt · dij · ij +
+
+                             µ  + m ( t ) +    ijt
+
+
+
+where we interact the hartal terms in ( ) with the predicted share of high-skilled among com-
+                    H = V H / (V L + V H ), where V s = V s  s is the model-predicted com-
+muters from i to j, ij   ij     ij    ij           ij    i ij|i
+
+muting ow of skill s between i and j, and Vis is population of skill s from the census.
+    For both skills, commuting to work is negatively a ected by hartal, and the e ect is
+stronger for commuters with higher (skill-speci c) wages (column ). The high-skilled are
+more a ected on average, yet the low-skill hartal e ect is more sensitive to (low-skilled) des-
+      Mean-reversion is a potential concern because destination xed e ects are estimated on non-hartal days.
+To investigate this, we ran a placebo hartal exercise, estimating the gravity equation for a dummy switched on
+for a random set of weekdays. Coe cients in Table become an order of magnitude smaller.
+      Remote work is unlikely to explain this pattern. Dingel and Neiman (       ) estimate that in  , only %
+of jobs in Bangladesh can be done entirely at home.
+tination wage. Hence, the low-wage, low-skilled are least a ected.
+   The distance interactions are both negative and statistically indistinguishable. Skill dif-
+ferences documented above are likely not due to commuting technologies, such as access to
+private vehicles.
+   Overall, we nd consistent results of stronger hartal disruptions for high productivity and
+high-skill workers in Dhaka. These results illustrate how our methods to infer the spatial
+distribution of income can be used to measure heterogeneous e ects of high-frequency urban
+events.
+References
+
+A                  , S., F. M           ,       B. J                (               ): "The Geography of Consumption," NBER Work-
+    ing Paper No.                   .
+
+A                  , G. M., S. J. R                     , D. M. S                   ,        N. W         (   ): "The Economics of Density:
+    Evidence from the Berlin Wall," NBER Working Paper Series.
+
+------ (             ): "The Economics of Density: Evidence from the Berlin Wall," Econometrica,                                           ,
+           ­          .
+
+A          , R.             K. I            (            ): "Political Strikes and its Impact on Trade: Evidence from
+    Bangladeshi Transaction-level Export Data," IGC Working Paper.
+
+A           , W. (              ): "A Theory of the Urban Land Market," Papers and Proceedings Regional
+    Science Association, ,                      ­         .
+
+A           , A., R. M                                  , A. R                  ,            C. W             (   ): "The E ect of Political
+    and Labour Unrest on Productivity: Evidence from Bangladeshi Garments," IGC Working
+    Paper.
+
+A       , S., D. B              , R. D                    , F. R            ,           T. S              (   ): "Estimating Heterogeneous
+    Consumer Preferences for Restaurants and Travel Time Using Mobile Location Data," AEA
+    Papers and Proceedings,                         ,      ­ .
+
+B                          , K., R. G                          , G. H                    ,          A. K. K             (     ): "Detecting
+    urban markets with satellite imagery: An application to India," Journal of Urban Economics,
+               .
+
+B                     , D. (        ): "The Adoption of Network Goods: Evidence from the Spread of Mobile
+    Phones in Rwanda," The Review of Economic Studies,                                                ,       ­    .
+
+B                         , J., G. C                       ,            R. O (                 ): "Predicting Poverty and Wealth from
+    Mobile Phone Metadata," Science,                                    .
+C                  , F., G. D L                   , L. L ,                  C. R          (    ): "Estimating Origin-Destination
+    Flows Using Mobile Phone Location Data," IEEE Pervasive Computing,                                           ,   ­ .
+
+D      , D., J. D                , J. M               ,         E. M                  (       ): "How Segregated is Urban Con-
+    sumption?" Accepted, Journal of Political Economy.
+
+D           , J.          F. T                (           ): "Spatial Economics for Granular Settings," NBER working
+    Paper,            .
+
+D           , J. I.         B. N          (               ): "How Many Jobs Can be Done at Home?" Working Paper
+            , National Bureau of Economic Research.
+
+D            , C. (          ): Beyond Hartals: Towards Democratic Dialogue in Bangladesh, United Na-
+    tionas Development Programme.
+
+D                  , G.          D. P         (            ): "Chapter             - Urban Land Use," in Handbook of Regional
+    and Urban Economics, ed. by G. Duranton, J. V. Henderson, and W. C. Strange, Elsevier, vol.
+    of Handbook of Regional and Urban Economics,                                          ­    .
+
+F                         , A. S.         D. W. W                   (        ): "The modi able areal unit problem in multi-
+    variate statistical analysis," Environment and planning A,                                     ,   ­     .
+
+G             , E. L., H. K ,                 M. L              (           ): "Nowcasting the Local Economy: Using Yelp
+    Data to Measure Economic Activity," Harvard Business School Working Paper, No.                                         -   .
+
+H             , S., S. R            ,             D. S              (        ): "The Making of the Modern Metropolis: Evi-
+    dence from London," Working Paper.
+
+I      , M. S., C. F. C                               , P. W            ,          M. C. G             (    ): "Development of
+    Origin-destination Matrices Using Mobile Phone Call Data," Transportation Research Part
+    C: Emerging Technologies,                     ,       ­ .
+
+J       I                           C                         A               (       ): "Preparatory Survey Report on Dhaka
+    Urban Transport Network Development Study (DHUTS) in Bangladesh : Final Report."
+    Tech. rep., Japan International Cooperation Agency, http://open_jicareport.jica.go.jp/pdf/
+                   _ .pdf.
+J     , N., M. B                     , M. X , W. M. D                        , D. B. L                    ,           S. E                (   ): "Combining
+    satellite imagery and machine learning to predict poverty," Science,                                                                  ,   ­   .
+
+M         , E. S. (             ): "An Aggregative Model of Resource Allocation in a Metropolitan Area,"
+    The American economic review Papers and Proceedings of the Seventy -ninth Annual Meeting
+    of the American Economic Association,                                        ,           ­       .
+
+M             , F., S. R                  ,           E. R             H                         (       ): "Commuting, Migration and Local
+    Employment Elasticities," American Economic Review,                                                       ,         ­             .
+
+M          , R. (             ): Cities and Housing, Chicago: University of Chicago Press.
+
+O             , R., E. R              H                ,              P. D. S                    (       ): "Rethinking Detroit," American Eco-
+    nomic Journal: Economic Policy,                               ,          ­       .
+
+R               , S. J.              E. R          H                    (            ): "Quantitative Spatial Economics," Annual Re-
+    view of Economics, ,                      ­ .
+
+R               , S. J.              M. A. T                 (          ): "Transportation Costs and the Spatial Organization
+    of Economic Activity," in Handbook of Regional and Urban Economics, ,                                                                     ­        .
+
+R                   , H. D., D. R                  , X. G                ,           H. A. M                  (         ): "The Area and Population
+    of Cities: New Insights from a Di erent Perspective on Cities," American Economic Review,
+          ,         ­ .
+
+S               , C. (          ): "Commuting, Labor, and Housing Market E ects of Mass Transportation:
+    Welfare and Identi cation," Working Paper.
+
+S         , J. S.             S. T                (         ): "The log of gravity," The Review of Economics and statistics,
+      ,         ­         .
+
+S             , J. E., P. R. S                    , C. P                , V. A. A                         , T. J. B          , J. B                   , J. B
+              , K. E             M                , Y. A. D M                                , A. M. I                , K. N. H                       , X. L ,
+    E. W                 , A. J. T            ,            L. B                          (           ): "Mapping poverty using mobile phone
+    and satellite data," Journal of the Royal Society Interface,                                                  .
+T            , N. (     ): "Evaluating the Impact of Urban Transit Infrastructure: Evidence from
+    Bogota's TransMilenio," Working Paper.
+
+W       , P., T. H       , A. M. B       , K. S             ,      M. C. G                  (       ): "Under-
+    standing Road Usage Patterns in Urban Areas," Scienti c Reports, ,              .
+
+Z     , H.       T. H        (     ): "Regularization and variable selection via the elastic net,"
+    Journal of the royal statistical society: series B (statistical methodology),       ,       ­     .
+Figures and Tables
+
+                               Table : Gravity Equation Estimation Results
+
+                                                                Commuting Probability
+
+                                     ( )          ( )             ( )             ( )          ( )          ( )
+
+log Travel Time                     - .          - .                             - .          - .
+                                  ( .      )   ( .      )                      ( .      )   ( .      )
+log Travel Time × Low Skill                                      - .                                       - .
+                                                                 ( . )                                     ( . )
+log Travel Time × High Skill                                     - .                                       - .
+                                                                 ( . )                                     ( . )
+
+
+
+City                               Dhaka       Dhaka           Dhaka         Colombo        Colombo       Colombo
+Commuting Measure                Home-Work     Daily         Home-Work      Home-Work        Daily       Home-Work
+Number of Destination FE             ,           ,               ,              ,              ,             ,
+Number of Trips                     . e+        . e+            . e+           . e+           . e+          . e+
+Observations                        . e+        . e+            . e+           . e+           . e+          . e+
+Pseudo R2                              .           .                              .              .
+
+Notes. This table reports estimates of the gravity equations ( ) and ( ) by Poisson pseudo-maximum likelihood
+(PPML) method with two-way xed e ects. The outcome variable is commuting probability ij|i from cell phone
+tower i to j conditional on residing in i, computed from cell phone data and aggregated over weekdays. In
+Bangladesh, we exclude hartal days. Commuting ows are constructed from assigned home and work locations
+(columns , , , ) and using the commuting ows identi ed at the daily level (columns and ) using cell phone
+data as described in Section . Travel time between towers from the Google Maps API. The sample is all tower
+pairs with travel time between       seconds and the        th percentile. High-skilled is de ned as literate in Dhaka
+(67% of the population), and having secondary education or more in Colombo (80% of the population). Two-way
+clustered standard errors at the origin and destination level are reported in parentheses.  p  0.10,  p  0.05,
+ p    0.01.
+                                                       Figure : Estimated log Wages in Dhaka and Colombo
+
+
+
+
+                                               (A) Dhaka                                                         (B) Colombo
+Notes. These gures plot our model measure of log wages, the area-adjusted destination xed e ects      ^R
+                                                                                                       j   divided by the Fréchet shape parameter , at the level of cell phone
+tower Voronoi cells in Dhaka and Colombo. We use         = 8.3, as estimated in section . Log wages are kernel smoothed with an adaptive kernel bandwidth (proportional to
+the radius of the equivalent-area circle of the Voronoi cell.
+      Table : Average Workplace Income: Model Prediction and Survey Data in Dhaka
+
+
+    (A) Raw Correlation
+                                                                                  (B) Raw Correlation By Skill
+
+                                                                                    log Survey Income (workplace)
+                                                                                  Low Skill               High Skill
+                                                                       ( )           ( )        ( )    ( )         ( )    ( )
+
+                                                          × log Model Income (workplace)
+                                                        Low-Skilled     . ***           . ***  .                         - .
+                                                                       ( . )           ( . ) ( . )                       ( . )
+                                                        High-Skilled                 .         - .              . ***     . ***
+                                                                                   ( . )       ( . )           ( . )     ( . )
+
+                                                        Observations
+                                                        Adjusted R      .            .          .      .           .      .
+                                                        RMSE            .            .          .      .           .      .
+
+
+
+    (C) Comparison with supervised learning using features derived from cell-phone data
+
+                                ( )             ( )                         ( )               ( )
+                         log Model Income                                          ( ) + log Model Income
+       Features                           log Tower Area          All CDR Features
+                            (workplace)                                                   (workplace)
+
+       Training R2                   .              .                       .                              .
+       Training RMSE                 .              .                       .                              .
+       Test R2                       .              .                       .                              .
+       Test RMSE                     .              .                       .                              .
+       Observations
+
+
+Notes. This table compares survey and model predictions of average workplace income. The slopes in panels (A)
+and (B) identify -1 , the inverse Fréchet shape parameter. The unit of analysis is a survey area from the DHUTS
+survey. The survey sample is ,          commuters who live and work inside the Dhaka City Corporation, who re-
+port positive income, excluding students, homemakers, the unemployed, and government workers. The outcome
+variable is the average income of survey respondents who work in a survey area, using log income truncated at
+the th percentile. In panel (B) we compute average survey income separately by skill; high skill is de ned as
+literate ( % of the population). Model-predicted workplace income in survey area b is  jb y j VjW /Vb   W where j
+
+is a cell phone tower, y j = ^ R is the area adjusted destination xed e ect at j, V W = i Vij and V W =  jb V W
+                            j                                                              j                   b                j
+denote workplace population in tower j and survey area b, respectively (Vij is the commuting volume from i to
+j). In panel (B) we use skill-speci c destination xed e ects estimated using equation ( ) and skill-speci c pre-
+                                     ^L
+                                     V
+dicted volume, de ned as Vij V    ij           ^s
+                             ^ L +V  ^ H where Vij is predicted commuting volume of skill s. Regressions in panels
+                                ij        ij
+(A) and (B) are weighted by survey area employment population from the DHUTS survey (skill-speci c in panel
+B).
+In Panel (C), Test (Training) R2 and RMSE indicate the average R2 in the test (training) data over        random
+splits. See Appendix E for the description of the supervised learning method (elastic-net regularization) and cell
+phone data feature construction.
+                                    Table : Average Residential Income: Model Prediction and Residential Income Proxy
+
+                                                                                         (A) Raw Correlation
+                                                           (i) Dhaka                                                                                         (ii) Columbo
+
+
+                                     4                                                                                                      7.5
+  Census Residential Income Proxy
+
+
+
+
+                                                                                                         Census Residential Income Proxy
+                                     2                                                                                                      5.0
+
+
+
+
+                                     0                                                                                                      2.5
+
+
+                                                                                                                                                                                      y = 1.29x + 3.04
+                                                                                                                                                                                          (0.06) (0.12)
+                                    -2                                              y = 0.89x + 1.79                                        0.0
+                                                                                                                                                                                         R2 = 0.77
+                                                                                        (0.06) (0.08)
+                                                                                                                                                                                       RMSE = 1.05
+                                                                                       R2 = 0.55
+                                                                                     RMSE = 0.97
+                                    -4                                                                                                     -2.5
+
+                                              -5.0          -2.5           0.0             2.5                                                          -2.5            0.0               2.5             5.0
+                                                  Log Model Income (residential, demeaned)                                                              Log Model Income (residential, demeaned)
+
+
+                                    (B) Comparison with supervised learning using features derived from cell-phone data
+                                                                         (Dhaka)
+
+                                                                        ( )                        ( )                                            ( )                          ( )
+                                                              log Model Income                                                                                     ( ) + log Model Income
+                                         Features                                         log Tower Area                                    All CDR Features
+                                                                 (residential)                                                                                            (residential)
+
+                                         Training R2                     .                         .                                               .                              .
+                                         Training RMSE                   .                         .                                               .                              .
+                                         Test R2                         .                         .                                               .                              .
+                                         Test RMSE                       .                         .                                               .                              .
+                                         Observations
+
+Notes. This table compares a census proxy and model predictions of average residential income. The unit
+of analysis is a cell phone tower. Income proxy is the rst principal component of census residential assets
+(weighting each census block by its area overlap with the Voronoi cell). Average model residential (take-home)
+income at tower i is  j y j Vij /Vi where j indexes workplace towers, y j =   ^ R is the area adjusted destination xed
+                                                                                j
+e ect at j, Vi is total residential population at i, and Vij is the commuting volume from i to j. Regressions in both
+panels are weighted by tower residential population (from cell phone data). Panel (B) repeats the analysis in Table
+  panel (B). See Appendix E for details. Table G. shows that model residential income is statistically signi cantly
+correlated with survey income after controlling for residential density, distance to the central business district,
+and model workplace income.
+                  Table : The Heterogeneous Impacts of Hartal on Commuting
+
+                                                              Work Commute (% change vs weekday)
+                                                               ( )            ( )            ( )            ( )
+             Hartal                                         - .            - .            - .        
+
+                                                             ( .       )    ( .       )    ( .       )
+             Interactions: Hartal ×
+             (  L ) % Low Skill                                                                          - .      
+
+                                                                                                          ( .     )
+             ( H )   % High Skill                                                                        - .      
+
+                                                                                                          ( .     )
+             Dest. FE (z)                                                  - .            - .        
+
+                                                                            ( .       )    ( .       )
+               L )
+             ( W     % Low Skill × Dest. FE Low Skill (z)                                                - .      
+
+                                                                                                          ( .     )
+               H ) % High Skill × Dest. FE High Skill (z)
+             ( W                                                                                         - .      
+
+                                                                                                          ( .     )
+             Log Duration (z)                                                             - .        
+
+                                                                                           ( .       )
+             (L      % Low Skill × Log Duration (z)                                                               
+              D)                                                                                         - .
+                                                                                                          ( .     )
+             ( H     % High Skill × Log Duration (z)                                                              
+               D)                                                                                        - .
+                                                                                                          ( .     )
+
+             Commuter FE                                           X              X              X           X
+             P-value  L =  H                                                                                 .
+             P-value WL = H                                                                                  .
+                           W
+             P-value  L
+                      D = D
+                           H                                                                                 .
+             Observations                                     . e+           . e+           . e+           . e+
+
+
+
+Notes. This table reports the impact of hartal days on the probability to commute to work. The sample includes
+all commuters with distinct home- and work- locations ( % of all users), who travel at least once during hartal
+and non-hartal days. The sample is all days with data on commuting (including days when the user is observed to
+not travel), excluding holidays and weekends. All speci cations include commuter and month xed e ects. The
+outcome is normalized to on weekdays, so coe cients represent percentage changes on hartal days relative to
+weekdays. All variables interacted with hartal are standardized. The destination xed e ects, as well as skill-
+speci c destination xed e ects are estimated in Table . The share of high skilled among i to j commuters is
+ijH = V H / (V L + V H ) where V H = V H  H , and V H is the high-skilled residential population at i (measured
+        ij     ij    ij           ij    i   ij|i      i
+from census data), and ij  H is the model-predicted commuting probability for high-skilled. Table F. shows
+                            |i
+similar results when restricting to a sample of frequent callers.
+Online Appendix for "Measuring Commuting and Economic Activity
+inside Cities with Cell Phone Records" (Gabriel Kreindler and Yuhei
+Miyauchi)
+
+Table of Contents
+   A. Conventional and Modern Data Availability in Developing Countries
+   B. Model Extension and Estimation: Worker Skill Heterogeneity
+   C. Model Extension and Estimation: Preference or Productivity Shocks
+   D. Robustness: Gravity Equation Over-identi cation
+   E. Supervised-Learning Method Details
+   F. Additional Results: the Impact of Hartal
+   G. Additional Figures and Tables
+
+A     Conventional and Modern Data Availability in Developing Countries
+Fine-grained spatially disaggregated data on wages at the rm location is rare and di cult
+to access in developing countries. For example, the Bangladesh economic census does not
+include labor costs data, and we were not able to acces Sri Lanka economic census microdata.
+    To illustrate, we document data availability for the     largest countries in Sub-Saharan
+Africa (accounting for > 95% of the population in the region). We chose this region as it is
+undergoing rapid urban growth and urban transformation.
+    Of these, ever had an economic census, covered informal rms. However, at most
+included wage data, which accounts for between . and . % of the urban population of all
+countries in the sample. (The      Ghana and         Zimbabwe censuses included wage data,
+while for the ongoing censuses in Mali and Togo we do not know if wage data was collected.)
+
+
+    By contrast, big data that can be used to construct urban commuting ows is increasingly
+available in developing countries.
+    To illustrate, we identi ed countries out of countries in South Asia and Africa, where
+call detail record (CDR) data have been used in academic papers. In other contexts, public
+transport transactions, geolocated tweets or other smartphone app location data, may be used
+to construct urban commuting ows. Smartphone location data is becoming increasingly pop-
+ular and available to researchers, and even more so since the onset of the Covid- pandemic.
+
+B    Model Extension and Estimation: Worker Skill Heterogeneity
+In section . we introduced two model extensions with skill heterogeneity. In this section
+we provide additional detail on model derivation, estimation, and simulation results. We also
+       For each country, we checked the national statistics agency website as well as the Google Search results
+for the terms "economic census," " rm census," "establishment census," "enterprise census," and "business reg-
+istry," in English, French or Portuguese. We could not nd o cial census reports for Ethiopia and Zambia, while
+the Mali and Togo censuses are still ongoing. Detailed results available upon request. Data on urban popu-
+lation from https://en.wikipedia.org/wiki/Urbanization_by_country and https://en.wikipedia.org/wiki/List_of_
+sovereign_states_and_dependent_territories_in_Africa.
+       In August       , we searched on Google Scholar using the following keywords "call detail records" and the
+country name.
+present results from the rst model.
+   First, we derive the expression for aggregate commuting ows in the rst model. Assume
+that workers are either low-skill L or high-skill H . The two skills face di erent log wage
+           L ) and ( w H ) and di erent commuting elasticities  L and  H , and have the same
+pro les (w j  j        j j
+Fréchet shape parameter . Equation ( ) now holds separately by skill, and the aggregate
+commuting ow is Poisson distributed with mean given by:
+                                      L - Ld )
+                               exp( w j                            H - Hd )
+                                                            exp( w j
+                                            ij                           ij
+              E Vij =   ViL                        + ViH                                      (B. )
+                              s exp( ws
+                                      L - Ld )
+                                            is             s exp( ws
+                                                                   H - Hd )
+                                                                         is
+
+    In our data we observe aggregate commuting ows Vij , not separately by skill. However,
+equipped with census data on ViL and ViH , the low- and high-skill residential populations at
+i, we can estimate s        s       s     s
+                     j = w j and  =  for all j and s  { L, H } in (B. ). We use maximum
+likelihood and implement a standard gradient ascent algorithm that has good convergence
+properties, yet is not guaranteed to nd the global maximum.
+    In the second model, we assume that a representative commuter has preferences given by a
+weighted mean with weights given by the skill shares at their residential location. Agents from
+i earn log wages w jH  H + w L (1 -  H ) and have commuting elasticity  H  H +  L (1 -  H ).
+                       i      j       i                                       i              i
+Plugging into equation ( ), the estimating equation becomes:
+
+          log(E[ij|i ]) = jL (1 - iH ) + jH iH -  L (1 - iH )dij -  H iH dij + µi             (B. )
+
+    Before applying these methods on real data, we explore their performance on data that is
+simulated based on (B. ), and using the geographic structure in Dhaka. Both methods perform
+well to recover underlying parameters. Table B. shows that the distance slopes are broadly
+accurate, and that the log-linear speci cation (B. ) disentangles the two vectors of destina-
+tion xed e ects to a great extent (although not perfectly). Indeed, the o -diagonal terms in
+columns and are smaller than the diagonal terms. However, the log-linear speci cation
+performs worse for low-skilled workers.
+    We next estimate the gravity equation with two skills. In Dhaka, we de ne high-skill as
+literate, and use the fraction of population that is literate from the population census. (Overall,
+67% of the population is literate. Interpolated at the tower level, this fraction ranges from 31%
+to 100% with a mean of 76% and standard deviation 11%.) In Colombo, we de ne high-skill
+as having secondary education or more. (Overall, 80% of the population has a secondary
+education. At the tower level, this fraction ranges from 57% to 95% with a mean of 82% and
+standard deviation 6%.)
+    Table B. reports results from the gravity equation with two skills. Columns and repli-
+cate columns and in Table . In both countries, the high skilled have a shallower slope on
+travel time. This could be due to a lower disutility of distance (e.g. if high-skilled can a ord
+faster or more convenient travel modes).
+    Table B. replicates the validation exercise from Table by skill, at the level of survey
+area in the DCC that appear in the DHUTS survey. The one-skill model income predicts both
+low-skilled and high-skilled survey income, with higher R2 for the latter. Using the log-linear
+gravity equation, low-skilled model income predicts low-income survey income. Importantly,
+columns and show that the "o -diagonal" terms are zero, meaning that this method is
+successful in discriminating between low- and high-skill wage patterns. Using the maximum
+likelihood estimate of the gravity equation, only the high-skilled model income is positively
+predictive of survey income (columns - ).
+     Table B. : Numerical Simulation Check: Estimating Gravity with Two Skill Groups
+
+                                                          ( )            ( )       ( )                   ( )        ( )            ( )
+                        Estimation Method:              Pooled              Log-linear                            MLE
+                        Outcome                              ^j
+                                                                         ^L
+                                                                                         ^H
+                                                                                                         ^L
+                                                                                                                        ^H
+                                                                          j               j               j              j
+
+                        Panel A. Destination Fixed E ects
+
+                        True Low Skill FE jL             . ***           . ***          . *              . ***        .
+                                                        ( . )           ( . )         ( . )             ( . )       ( . )
+                        True High Skill FE jH            . ***           . ***         . ***              .          . ***
+                                                        ( . )           ( . )         ( . )             ( . )       ( . )
+
+                        Observations                         ,           ,               ,               ,              ,
+                        Adjusted R                               .           .               .               .              .
+
+                        Panel B. Distance Slopes
+                                                                                                                                  True
+                        Estimation Method:              Pooled                   Log-linear                       MLE           parameter
+                        log Travel Time                     - .
+                        log Travel Time × Low Skill                                - .                            - .            - .
+                        log Travel Time × High Skill                               - .                            - .            - .
+
+
+
+Notes. This table uses simulated data to compare estimated parameter values with true values. Data is simulated
+for the ,    towers in Dhaka and the actual skill-speci c population. Destination xed e ects for the two skills
+are the sum of a common normal component (sd= . ) and a skill-speci c component (sd= . ). Commuting ows
+are drawn from a Poisson distribution with mean given by (B. ). The distance slopes for low- and high-skilled are
+ L =  L = -4 and  H =  H = -2. The rst column shows results from the pooled regression ( ) estimated
+with PPML. The next two columns use the log-linear speci cation (B. ) estimated with PPML. The last two
+columns use maximum likelihood estimates of (B. ), using zero as initial values for both sets of destination xed
+e ects. Panel A regresses estimated low- and high- skill destination xed e ects on the true values. Panel B
+reports the estimate (and true) distance coe cients.
+
+
+
+
+                    Table B. : Gravity Equation with Skills: Estimation Results
+                                                                        ( )                       ( )                   ( )               ( )
+
+                  Low Skill × log Travel Time                         - . ***                    - .              - . ***                - .
+                                                                       ( . )                                       ( . )
+                  High Skill × log Travel Time                        - . ***                    - .              - . ***                - .
+                                                                       ( . )                                       ( . )
+
+                  City                                                 Dhaka    Dhaka                             Colombo Colombo
+                  Estimation Method                                  Log-Linear MLE                              Log-Linear MLE
+                  Corr( ^ L, MLE , ^ L, LL )                                      .                                          .
+                          j          j
+                        ^ H , MLE   ^ H, LL )
+                  Corr(    j      ,    j                                                          .                                         .
+                  Number of Destination FE                              ,                         ,                  ,                    ,
+                  Number of Trips                                      . e+                      . e+               . e+                 . e+
+                  Observations                                         . e+                      . e+               . e+                 . e+
+
+
+Notes. This table estimates the gravity equation for models with two skill groups. Columns and estimate
+the log-linear equation (B. ) using PPML, while columns and estimate equation (B. ) using a custom gradi-
+ent ascent algorithm and maximum likelihood, where destination xed e ect are initialized at the values from
+columns and , respectively. Columns and report in each country the correlation between the destination
+ xed e ects obtained from the two methods, for each skill group.
+Table B. : Average Workplace Income by Skill: Model Prediction and Survey Data in Dhaka
+
+                                                  Outcome: log Survey Income (workplace)
+                           ( )     ( )        ( )      ( )      ( )      ( )      ( )     ( )      ( )    ( )
+                          Low     High       Low      High     Low      High     Low     High     Low     High
+
+        Explanatory variables: × log Model Income (workplace)
+        Pooled             . ** . ***
+                          ( . ) ( . )
+        Log-linear Low                        . ***             . ***   - .
+                                             ( . )             ( . )    ( . )
+        Log-linear High                                . ***   - .       . ***
+                                                      ( . )    ( . )    ( . )
+        MLE Low                                                                    .              - .     - . **
+                                                                                 ( . )            ( . )    ( . )
+        MLE High                                                                          . ***    . **    . ***
+                                                                                         ( . )    ( . )   ( . )
+
+        Observations
+        Adjusted R         .       .          .           .     .        .       - .        .      .        .
+
+
+Notes. This table compares survey and model predictions of average workplace income, by skill. See notes for
+Table . In the DHUTS survey, low-skilled is de ned as at most primary school ( % of all commuters).
+
+
+C    Model Extension and Estimation: Preference or Productivity Shocks
+In the main analysis, we assume that an agent earns income directly proportional to her wage.
+Formally, the Fréchet shocks Zij and travel time Dij a ect utility but not income. Here, we
+relax this assumption and allow Zij and Dij to a ect income instead. We show that the model
+income continues to be correlated with survey income. Furthermore, we develop a method to
+estimate the degree to which Zij and Dij a ect income instead of preferences.
+                                                   z , d       z    -d
+    Model. Assume that income is given by Yij            = Wj Zij  Dij  , where z , d  [0, 1]
+respectively control the extent to which the shocks Zij and travel time Dij a ect income.
+For example, when z = 1 and d = 0, shocks a ect utility and income equally, while travel
+time only a ects utility. We derive formulas for expected income in the following four extreme
+extreme cases:
+
+                               Ey0,0
+                                 ij = w j
+
+                                         1
+                               Ey1,1
+                                 ij =        log       exp (     ws -  dis )           -K
+                                                      s                                                            (C. )
+                               Ey0,1
+                                 ij = w j -  dij
+
+                               Ey1,0    1,1
+                                 ij = Eyij +  dij
+
+where K is a constant term that does not depend on locations.
+    When neither shocks nor travel time a ect income (as assumed in our main speci cation
+and in Ahlfeldt et al.     ), income is simply the destination wage. In the second case, travel
+time and income a ect income but not preference directly (as assumed in Tsivanidis           ).
+In this case, the expression for expected income has the form of "commuting market access"
+(Tsivanidis       ).
+   In the general case, log income is a convex combination of the four extreme cases described
+above:
+    ,
+  yijz d = z d · y1,1                  1,0                0,1                       0,0
+                   ij + z (1 - d ) yij + (1 - z ) d · yij + (1 - z ) (1 - d ) yij . (C. )
+
+Using (C. ) and dropping the constant K, this simpli es to
+
+             z                                                        1 - z             d
+                         exp (
+     ,
+ Eyijz d =        log               ws -  dis )       +  dij +                   wj +         -  dij (C. )
+                         s
+
+
+Validation for the four extreme cases. Table C. shows the results of the OLS regression of
+average workplace survey income on model workplace income under the four extreme cases
+in equation (C. ). In all of these regressions, we expect the slope of -1 .
+    In all cases, we nd that model income is signi cantly correlated with survey income. In
+terms of the model t (R2 and RMSE), we nd the best t when Zij is on income and Dij
+is on preference (Column ). Our baseline assumption (both Zij and Dij are on preference;
+Column ) performs the second, followed by the case with both Zij and Dij are on income;
+Column ). We also nd a larger regression slope in Column ( ). This indicates that the
+estimates of may di er depending on the model assumptions.
+
+Table C. : Robustness of Workplace Income Validation with Di erent Assumptions on Id-
+iosyncratic Shocks and Travel Cost
+
+
+                                                       log Survey Income (workplace)
+                                                ( )          ( )          ( )           ( )
+
+            × log Model Income (workplace)     .            .            .             . 
+                                               ( . )        ( . )        ( . )         ( . )
+
+
+           Zij                               Preference    Income       Income      Preference
+           Dij                               Preference    Income      Preference    Income
+
+          Adjusted R                              .               .        .            .
+          Root Mean Squared Error                 .           .            .            .
+          Observations
+
+Notes. The results of OLS regressions between survey income and model income under four di erent assump-
+tions on idiosyncratic shocks and travel cost expressed in equation (C. ).
+
+
+Estimating Parameters z , d , in a general case. The above framework also allows us to
+estimate z , d , using survey income data. These structural parameters illustrate the sources
+of spatial frictions in intra-city labor market, hence they are of independent interest aside from
+the prediction of income.
+    We estimate the parameters z , d and by OLS the equation:
+                                 S        ^1       ^2      ^3      S
+                                yij  = 1 Xij + 2 X j + 3 Xij +  ij ,                          (C. )
+
+where yijS is survey-based income of commuter  who lives at i and works at j. Asymptoti-
+          
+cally, we have
+                               ^1
+                                              ^3
+                                                                 1
+                      ^z =
+                                     ,^d =          , and ^ =         .            (C. )
+                            ^1 +  ^2       ^1 +  ^2           ^1 + ^2
+    Table C. reports the estimates of z , d , and based on estimating equation (C. ) with
+OLS, and using transformation (C. ). We report two types of standard errors: based on the
+Delta method (in round parentheses) and based on bootstrapping at the origin survey area
+level (in square parentheses). In columns - , we estimate the full equation (C. ), and we nd
+that ^ d is close to zero with a small and insigni cant negative value, and the other parameters
+are imprecisely estimated when using bootstrapped standard errors. Given that the model
+restricts 3  0 (from d  [0, 1]), in columns - we restrict the coe cient on travel time
+to be equal to zero (3 = 0) and estimate the other two parameters. This increases the point
+estimate for   ^ z and slightly lowers that for ^ while improving precision.
+    These results show that idiosyncratic shocks partly a ect income, while travel time is most
+consistent with a pure utility cost.
+
+Table C. : How Pref. Shocks and Travel Time A ect Income: Estimated Structural Parameters
+
+                                             ( )        ( )        ( )       ( )        ( )
+                                                                           Constrained model
+                                                    Full model                 (d = 0)
+
+                Shock productive z            .        - .         .          .         .
+                                            ( . )     [ . ]      [ . ]      ( . )     [ . ]
+                Shock distance d            - .        - .         .
+                                            ( . )     [ . ]      [ . ]
+                Shape parameter                 .         .          .        .         .
+                                            ( . )     [ . ]      [ . ]      ( . )     [ . ]
+                Observations                  ,         ,          ,          ,         ,
+                Bootstrap clusters
+Notes. This table reports estimates of the structural parameters that control the degree to which idiosyncratic
+shocks a ect income (z ), travel time a ects income (d ), and the Fréchet shape parameter , using the procedure
+described in Appendix C. We estimated equation (C. ) by regressing individual log survey income from the
+DHUTS survey on the three model-predicted terms. In columns and , we restrict the third coe cient that
+corresponds to travel time to be zero (3 = 0). The estimates for z , d and in this table are transformations of
+the estimated OLS coe cients as detailed in equation (C. ). Columns and report standard errors computed
+using the Delta method. Columns , , and report results from             bootstrap runs where we cluster at the
+origin survey area level ( survey areas with at least one out-commuter in DHUTS survey). The coe cient is
+the median estimate and standard errors in square parentheses. Column censors       ^ 1  0 and ^ 2  0.
+
+
+D     Robustness: Gravity Equation Over-identi cation
+In this section, we estimate the gravity equation on two disjoint samples to understand the
+stability of the estimated parameters. In each city, we estimate the gravity equation on the
+sample of nearby towers, and on the sample of distant towers. We use as cuto the travel
+time such that aggregate commuting ows are roughly equal below and above the cuto (
+minutes in Dhaka and minutes in Colombo).
+    Table D. shows the results. Panel A shows that the distance coe cient is stable when es-
+timating on these disjoint samples. (In Colombo, it is slightly steeper when estimated for long
+commutes.) Moreover, the resulting destination xed e ects estimated on the two disjoint
+samples are highly correlated ( . and . in the two cities).
+    Panel B repeats the validation exercise in Bangladesh. Column repeats the analysis Panel
+A in Table , while the next two columns use model income computed using destination
+ xed e ects from the gravity equation estimated on the "close" and on the "far" samples,
+respectively. In both cases, the model income measure is predictive of log survey income,
+with a similar slope. The explanatory power is higher when using the "far" sample.
+
+        Table D. : Overidenti cation: Estimating on "Close" and "Far" Tower Samples
+
+                                                           ( )       ( )       ( )         ( )    ( )          ( )
+                                                                    Dhaka                       Colombo
+                     Sample:                             Pooled     Close          Far   Pooled Close         Far
+
+                     Panel A. Gravity Equation
+                     log Travel Time                     - . ***   - . *** - . ***       - . ***   - . ***   - . ***
+                                                          ( . )     ( . )   ( . )         ( . )     ( . )     ( . )
+                     Corr (^ Close , ^ Far )                                       .                           .
+                             j         j
+                     Number of Destination FE
+                     Number of Trips                       . e+      . e+     . e+        . e+      . e+      . e+
+                     Observations                          . e+      . e+     . e+        . e+      . e+      . e+
+                     Pseudo R                                .         .        .           .         .         .
+
+                     Panel B. Validation (Outcome: log Survey Income, Workplace)
+                      × log Model Income (workplace)       . ***     . ***     . ***
+                                                          ( . )     ( . )     ( . )
+                     Observations
+                     Adjusted R                             .         .            .
+
+
+
+Notes. This table reports results when estimating the gravity equation using only nearby (or only distant) tower
+pairs. Panel A estimates gravity equation using home-work commuting ows (columns and reproduce results
+from Table ). The sample is all tower pairs at least    seconds away. In columns and , we restrict to towers
+below and above minutes, respectively. In columns and , we restrict to towers below and above minutes,
+respectively. In columns and we report the correlation between the two vectors of destination xed e ects
+using the two disjoing samples. Panel B regresses log survey income at the workplace level on the log of our
+model income measure (at the workplace level). Column reproduces Table , while the next two columns use
+destination xed e ects estimated using the two disjoint samples. Robust standard errors in parentheses.
+
+
+
+E    Supervised-Learning Method Details
+In Sections and , we compare the predictive power of a single model-predicted income
+measure, and of a supervised learning approach that uses multiple features derived from cell
+phone data. This appendix describes the details of the supervised-learning approach.
+    The main steps of our procedure as as follows. We begin by computing a large set of
+cell phone tower-level metrics from cell phone data. Following Blumenstock et al. (       ), we
+then use elastic net regularization (Zou and Hastie         ) to t a linear model without over-
+ tting the data. We then assess the predictive power on a hold-out testing sample. The rest
+of this section explains the details of feature construction, model tting and hyper-parameter
+calibration, and of the comparison with the model-predicted income measure.
+
+Extracting a Large Set of Quantitative Metrics from Cell-Phone Data
+To construct our set of features from cell phone data, whenever the data allows we closely
+follow Steele et al. (  ), who use cell phone data to map poverty in Bangladesh. We then add
+additional hour-and-location level metrics. To capture nonlinear patterns, for each variable
+described below, we include both the variable and its logarithm. Altogether, we have
+tower-level features from this procedure.
+     "Transactions" refers to outgoing call in Bangladesh, as only this type of call is recorded in the data.
+   User-level characteristics averaged at home and work locations. The rst set of features
+measures averages at users' home and work towers. We construct the following statistics for
+each user for the entire sample period.
+    . Number of transactions
+    . Number of places: unique number of towers that the user ever visits
+    . Radius of Gyration: the sum of squared distances from each visited tower (each trans-
+      action) to the centroid of all visited towers
+    . Entropy of places: - i Ni Pi log Pi , where Pi is the fraction of transactions at tower i,
+      and Ni is the set of all towers visited by i
+   For each tower, we then take the average of these metrics, once for all users for whom this
+tower is their home location, and once for all users for whom this tower is their work location.
+Altogether, we obtain metrics ( metrics × (home and work)).
+   Hourly statistics at the tower level. The second set of features is constructed for each
+hour of the day and each tower. We rst compute the following statistics for each tower, date
+and hour:
+    . Number of transactions
+    . Number of unique users who made transactions
+    . Average travel time distance to home locations of users who made at least one transac-
+      tion at the tower on the speci ed date and hour
+    . Average travel time distance to work locations of users who made at least one transac-
+      tion at the tower on the speci ed date and hour
+    . Average duration of calls
+   We then aggregate these statistics at the tower level, separately for weekends and week-
+days (excluding Hartal days). Together, we have           ( metrics ×       hours × (week-
+days/weekends)) features.
+   Tower areas. The last statistic is the geographic area of the voronoi cell that contains the
+tower. We choose this statistic as a particularly compelling predictor of economic activity
+because cell phone operators tend to strategically locate towers at a high spatial frequency in
+areas where they expect high (cell phone) activity.
+   Our nal set of cell phone features includes all the variables above, and for each one, its
+logarithm. In total, we have    features ( × ( + + )).
+
+Elastic Net Regularization for Relevant Feature Selection
+Given the large number of features (or variables) relative to the number of observations, our
+next step is to use a supervised learning model that has good out-of-sample predictive power
+and does not over t the training data set. Following Blumenstock et al. (     ), we use elastic
+net regularization, which is a regularized linear regression method that minimizes the sum of
+squared deviations from a linear model, minus a penalty term. The penalty term is the sum
+of an absolute value or L1 penalty (as in LASSO regression) and a quadratic or L2 penalty (as
+in ridge regression):
+                                     p
+                                    (2
+                                     j + (1 -  ) |  j | )                                  (E. )
+                                    j =1
+
+where  j is the coe cient on feature j, and  and  are hyperparameters.
+  We implement the elastic net regularization in the following steps. First, we randomly
+select 50% of our survey areas as our "training data," and predict the survey income of the
+remaining survey areas as "test data." Second, we implement the elastic net regularization
+to select relevant features and t the model. Third, we assess the predictive performance of
+the model in the test data. Our primary measure is test R2 , de ned by the sum of squared
+prediction error divided by the total sum of squares. Lastly, we repeat this exercise     times,
+and report the average test R2 (as well as the training R2 ).
+    Our baseline results use  = 0.5. We show in robustness exercises below that this pa-
+rameter choice does not signi cantly a ect our results. For , a typical strategy used in the
+literature is cross-validation. Due to the very small sample ( observations), this does not
+perform well in our case. Instead, we select  to maximize the R-squared in the test data over
+     random splits of the data into training and test. Given that we are using the test data for
+choosing , the predictive power we obtain is likely an upper bound of the true predictive
+power. Below, we show that choosing  based on cross-validation within the training data
+set performs worse (for survey workplace income prediction).
+
+Additional Robustness Results with DHUTS Survey Workplace Income
+Hyperparameter  using cross-validation. Here we replicate Table panel (B) where the
+elastic net hyperparameter  is computed via cross-validation. For each iteration of splitting
+the training and test data set, we further split the training data set into N folds. Within these
+N set of samples, we repeat training the data with N - 1 subsets and predict the in remaining
+subset. We repeat this procedure N times, and compute the sum of squared prediction resid-
+uals. We choose  that minimizes the prediction error, and we use the chosen  to once again
+train the model with the entire training data set, and evaluate the predictive performance
+using the test data set.
+    Table E. reports the results. Column ( ) is the OLS prediction with the model-predicted
+income, and Columns ( )-( ) are the results of the elastic net using all cell phone data features.
+Column ( ) simply reproduces Panel (B) of Table where  is chosen to maximize the test R2 .
+Columns ( )-( ) show the results when we choose  based on di erent number of folds for
+cross-validation.
+
+ Table E. : Predicting Workplace Income: Choosing Hyperparameter with Cross-Validation
+
+                                   ( )                 ( )          ( )    ( ) ( )    ( )    ( )
+                                  OLS                              Elastic Net
+                           (log Model Income)                 (All CDR Features)
+                                                Maximize Test R2 CV CV CV             CV    CV
+
+ Training R2                       .                    .           .     .      .     .     .
+ Test R2                           .                    .           .     .      .     .     .
+
+ Number of Folds for CV
+ Observations
+
+
+   Columns ( )-( ) show that the test R2 falls when we use the cross-validation procedure for
+choosing . In fact, test R2 is lower than the OLS with model-predicted income. At the same
+time, training R2 is higher than in columns ( ) and ( ), suggesting that poorer predictive
+performance is likely due to over tting. Over tting is unavoidable given the small sample
+size.
+    Hyperparameter  robustness.  = 1 assigns all weight to the L2 norm, which is equiv-
+alent to the ridge regression.  = 0 assigns all weight to the L1 norm, which is equivalent to
+LASSO. Test R2 for  = 0, 0.25, 0.5, 0.75 and 1 is 0.17, 0.24, 0.24, 0.24 and 0.23, respectively.
+
+F    Additional Results: the Impact of Hartal
+
+                        Figure F. : Impact of Hartal on Commuting to Work
+
+
+
+                                               20
+                                               10
+
+
+
+
+                                % Change
+                                               0
+
+
+
+
+                              Travel to Work
+                                               -10
+                                               -20
+
+
+
+
+                                                     -5 -4 -3 -2 -1 start +1 +2 +3 +4
+
+                                                       Days relative to hartal start date
+
+
+
+Notes. This gure shows the event study impact of the onset of a hartal event on the probability to commute to
+work. The sample is based on all commuters whose long-term home and workplace towers are di erent (35%
+of all users), who travel at least once on hartal days, and once on non-hartal days. The sample is all days with
+commuting data (including stationary trips). "Trip to Work" is a dummy for making a proper trip (origin distinct
+from destination) to the long-term workplace location (de ned based on non-Hartal days).
+
+
+The event study in Figure F. shows that there is a fall in commuting to work at the onset of
+hartal strikes. The point estimates are consistent with anticipation and a partial reduction in
+commuting to work on the day before the onset of hartal.
+    To construct this gure, we proceed as follows. First, we compute calendar date xed
+e ects using the regression C t = t + µ +  t where  denotes a commuter, t denotes a
+calendar date, and C t is a dummy for commuting to work. (Figure F. plots these xed e ects,
+normalized as percentage changes relative to the mean of the outcome variable on non-hartal,
+non-holiday workdays.) Next, we adjust the date xed e ects by the average di erences on
+Friday (the main free day in Bangladesh) and Saturday (the other weekend day). We exclude
+holidays from the sample, as well as the days in the sample that are both hartal and weekend.
+Lastly, we construct hartal "onset" events. We require at least two days between hartal events,
+which leads to a sample of six hartal onset events (see the thin vertical red lines in Figure F. ).
+We use an unbalanced panel pooling the six hartal events. For each event, we include up to
+  days prior to the rst hartal day, excluding holidays. If another hartal takes place in this
+    Indeed, for the residential asset prediction (where the sample size is over ,           ) the cross-validation and
+choosing  to maximize the test R2 perform similarly (not reported).
+preceding period, we exclude it and all previous days. We include all consecutive hartal days
+after it starts.
+    Table F. replicates Table using a sample of frequent callers. The patterns of results is
+very similar, thus alleviating the concern that commuting reductions during hartal may be
+driven by commuters making fewer calls rather than commuting to work less.
+
+          Figure F. : Commuting by Calendar Date (Hartals, Holidays and Weekends)
+
+                                             10
+                            Percent change relative to work days
+                              -30       -20  -40  -10         0
+
+
+
+
+                                                                      2Aug   9Aug   16Aug      23Aug   30Aug   6Sep    13Sep   20Sep     27Sep
+                                                    10
+                               Percent change relative to work days
+                                   -30     -20       -10
+                                                    -40       0
+
+
+
+
+                                                                      1Nov   8Nov   15Nov 22Nov 29Nov          6Dec   13Dec 20Dec 27Dec
+
+                                                                                            Weekdays                  Hartal
+                                                                                            Public Holiday            Friday, Saturday
+
+
+
+Notes. This gure shows average commuting probability by calendar date. The Y axis plots the percentage
+change relative to the mean on non-hartal, non-holiday workdays. The sample and outcome are as in Figure
+F. . The gure plots calendar date xed e ects from a regression of any trip commuting dummy on commuter
+and calendar date xed e ects. Hartal dates are from Ahsan and Iqbal (        ) and public holidays from https:
+//www.timeanddate.com/holidays/bangladesh/. The red vertical lines indicate hartal event onset date for the six
+hartal events. Friday is the main free day in Bangladesh, and Saturday is the other weekend day. Five days in
+the sample are both hartal and weekend: August , September , November , , and , and December .
+We drop these throughout the analysis.
+Table F. : The Heterogeneous Impacts of Hartal on Commuting: Frequent Commuter Sample
+
+                                                                     Work Commute (% change vs weekday)
+                                                                      ( )            ( )            ( )            ( )
+                  Hartal                                           - .            - .            - .        
+
+                                                                    ( .       )    ( .       )    ( .       )
+                  Interactions: Hartal ×
+                  (  L ) % Low Skill                                                                            - .      
+
+                                                                                                                 ( .     )
+                  ( H )   % High Skill                                                                          - .      
+
+                                                                                                                 ( .     )
+                  Dest. FE (z)                                                    - .            - .        
+
+                                                                                   ( .       )    ( .       )
+                    L )
+                  ( W     % Low Skill × Dest. FE Low Skill (z)                                                  - .      
+
+                                                                                                                 ( .     )
+                    H)
+                  ( W     % High Skill × Dest. FE High Skill (z)                                                 - .
+                                                                                                                 ( .     )
+                  Log Duration (z)                                                               - .        
+
+                                                                                                  ( .       )
+                  (L      % Low Skill × Log Duration (z)                                                                 
+                   D)                                                                                           - .
+                                                                                                                 ( .     )
+                  ( H     % High Skill × Log Duration (z)                                                                
+                    D)                                                                                          - .
+                                                                                                                 ( .     )
+
+                  Commuter FE                                             X              X              X           X
+                  P-value  L =  H                                                                                   .
+                  P-value WL = H                                                                                    .
+                                W
+                  P-value  L
+                           D = D
+                                H                                                                                   .
+                  Observations                                       . e+           . e+           . e+           . e+
+
+
+Notes. This table replicates Table on the sample of frequent callers, de ned as those who have commuting data
+on at least half of all days ( out of   days), who account 8.3% of all commuters.
+G      Additional Figures and Tables
+
+                Figure G. : Administrative Units and Cell Phone Voroni Cells in Dhaka
+                       (A) Dhaka                                   (B) Colombo
+                                                                                     Study Area      Subdistricts
+                                          Study Area      Central Dhaka
+                                                                                     Voronoi Cells   CBD
+                                          Voronoi cells   CBD
+
+
+
+
+Notes. This gure shows the map of cell phone tower Voronoi cells in Dhaka, Bangladesh (Panel A), and in Colombo, Sri Lanka (Panel
+B). The yellow shaded area is the Dhaka City Corporation (DCC), the urban core of Dhaka, the main sample in the DHUTS transportation
+survey. The overall study area covers for Dhaka are three districts in Bangladesh: Dhaka, Gazipur, and Narayanganj, and the entire Western
+Province in Sri Lanka. The Voronoi cell of a tower is the locus of all points closer to that tower than to any other tower.
+
+
+
+
+                           Table G. : Cell Phone Data Coverage at User-Day Level
+
+                                                                                         Dhaka,   Colombo,
+                                                                                       Bangladesh Sri Lanka
+                             Panel A. Home-Work Commuting Flows
+                             ( ) Unique users                                               .   e+           .   e+
+                             ( ) Users with home and work towers                            .   e+           .   e+
+                             ( ) Users (distinct home and work towers)                      .   e+           .   e+
+                             ( ) Users (gravity equation sample)                            .   e+           .   e+
+                             Panel B. Daily Commuting Flows
+                             ( ) Unique users                                               . e+             . e+
+                             ( ) Weekdays in sample
+                             ( ) All user-days possible (= (5) × (6))                       . e+             . e+
+                             ( ) User-days with data (daily trips)                          . e+             . e+
+                             ( ) Coverage rate (= (8)/(7))                                    . %              . %
+                             ( )    Trips (distinct origin and destination towers)          . e+             . e+
+                             ( )    Trips (gravity equation sample)                         . e+             . e+
+
+Notes: This table describes data coverage in the two countries. Panel A reports the number of commuters based on our home-work classi -
+cation. Row indicates the number of commuters with at least one home tower (based on calls between pm and am) or at least one work
+tower (based on calls between am and pm). Row indicates the number of commuters with both home and work towers. Row restricts
+to distinct towers, and row to our baseline gravity equation estimation sample, towers more than        seconds away and closer than the
+  th percentile of the duration distribution. Panel B reports information about daily commuting trips. A daily trip is a pair of origin and
+destination towers visited by the same user during a single day, in the intervals am- am and am- pm, respectively. Row indicates
+the number of unique users who have at least one trip on a weekday. (We do not have this number for Sri Lanka so we use the number of
+users from row .) Row is the number of calendar weekdays in the data. Row is the product of the previous two, which is the theoretical
+upper bound of user-day combinations that could appear in the data. (Note that in practice some users only start using a cell phone partway
+through the period, so this is an overestimate.) Row describes the actual number of daily trips. Row reports coverage for daily trips.
+Rows and replicate rows and for daily trips.
+                          Figure G. : Commuting Flows from Survey Data and Cell Phone Data
+
+ Panel (A) Survey vs Cell Phone Data                                                          Panel (B) Commuting Flows vs Home-Work Flows
+                                      Dhaka
+                                 90 survey wards
+             10
+
+
+
+
+                                                                                                                      Dhaka                                           Colombo
+                                                                                                          1,868 cell phone towers                              1,201 cell phone towers
+
+
+
+
+                                                                                8
+
+
+
+
+                                                                                                                                                        8
+     log Commuting Flow
+                    5
+
+
+
+
+                                                                                          6
+
+
+
+
+                                                                                                                                                        6
+                                                                       Log commuting flow
+                                                                                   4
+
+
+
+
+                                                                                                                                                        4
+       0
+
+
+
+
+                                                                             2
+
+
+
+
+                                                                                                                                                        2
+                                                                       0
+
+
+
+
+                                                                                                                                                        0
+             -5
+
+
+
+
+                            5         10                30    60
+
+
+                                                                                -2
+
+
+
+
+                                                                                                                                                        -2
+                           Travel Time (Minutes, log scale)
+
+                                  Cell data, log(mean())                                                 5      10         30      60 90                      5      10         30      60 90
+                                                                                                        Travel Time (Minutes, log scale)                     Travel Time (Minutes, log scale)
+                                  Survey data, log(mean())
+                                  Bootstrapped CI                                                                Daily Commuting, log(mean())                Home Work, log(mean())
+
+
+Notes. This gure compares the decay of commuting ows with travel time in survey and cell phone data.
+The unit of analysis is ,      survey area pairs in Panel A, and 1.6 · 106 and 1.4 · 106 tower pairs in Dhaka and
+Colombo in Panel B, respectively. Panel A compares commuting ows from the DHUTS survey (red, dash) and
+from cell phone data (blue, solid) in Dhaka. Panel B compares daily commuting trips (blue, solid) and home-
+work commuting trips (black, dash). See Section for the de nition of home-work and daily commuting trips.
+In each graph, commuting ows are rst averaged within each of               equal bins of log travel time below the
+   th percentile, and the plot shows the local linear regression of log mean commuting ow on log travel time.
+This procedure avoids the bias due to zero commuting ows, which is important for survey and home-work
+commuting data. The DHUTS sample (described in Table G. ) has ,                 commuters. The cell phone data
+sample has 18 · 106 trips in Panel A, and 38 · 106 daily trip and 5.2 · 106 for home-work trips in Dhaka, and
+237 · 106 daily trips and 2.6 · 106 home-work trips in Colombo, in Panel B. In Panel A, pointwise bootstrapped
+   % con dence intervals clustered at the origin survey area shown in gray.
+
+
+
+     Table G. : Comparison of Commuting Flows from Survey Data and Cell Phone Data
+                                                                                                    Flow survey data (DHUTS)
+                                                                                              ( )               ( )            ( )            ( )
+                                              Log ow cell phone data                      .                 .              .              .     
+
+                                                                                     ( .            )      ( .        )   ( .        )   ( .        )
+                                              Log duration                                                                - .            - . 
+                                                                                                                           ( . )          ( . )
+                                              Origin and destination
+                                                    xed e ects                                                  Yes                           Yes
+                                              Observations
+
+Notes: This table shows the relationship between commuting ows from two di erent data sets in Dhaka: the
+DHUTS transportation survey (outcome) and home-work comuting ows from cell phone data (explanatory
+variable). The survey sample consists of the ,      commuters who live and work within the      survey areas
+inside the DCC and who report positive income from work, excluding students, homemakers, and the unem-
+ployed. (The sample includes government workers.) An observation is a pair of survey areas from the DHUTS
+survey. The coe cients show the estimates from the Poisson pseudo-maximum-likelihood (PPML) estimation
+of DHUTS commuting ow on log ows from cell phone. We use PPML to deal with the presence of zeros in
+DHUTS commuting ows (Silva and Tenreyro           ). If cell phone commuting ow data is a perfect measure of
+commuting ows, one would expect coe cients equal to one. Standard errors are clustered at the origin survey
+area level.  p  0.10,  p  0.05,  p  0.01.
+            50k                                                                .8                        .8
+                                                               2
+                                                         SLK R
+
+            10k
+                                                                               .6                        .6
+                                                                 2
+                                                        BGD R
+    Pop
+  density                                                                           Adj          Adj
+  (/km2)     1k                                        BGD pop density         .4                        .4
+                                                                                        2            2
+    (log                                                                            R            R
+  scale)
+
+
+            100                                                                .2                        .2
+
+
+
+            20                               SLK pop density                                                       Colombo (SLK)         Dhaka (BGD)
+                                                                               0                         0
+                  0        20             40           60                 80                                      20       100         1000         10000 50000
+                           Cutoff: distance from CBD (km)                                                              Population density (/km2) (log scale)
+
+                  Figure G. : Distance to CBD and R2                                            Figure G. : Population Density and
+                                                                                                R2
+
+Notes. This gure shows how the R2 of census residential income proxy depends on the sample of locations
+included in the analysis. In Figure G. , we restrict the sample to cell phone towers within a certain distance to the
+CBD. The graph plots the adjusted R2 when regressing census income proxy on model residential income. The
+  gure also plots the local linear regression of population density (per square km) for towers at a given distance
+to the CBD. Figure G. shows the relation between population density at the distance cuto and the achieved
+adjusted R2 . Interestingly, the relationship between the population density at the distance cuto and adjusted
+R2 is similar in the two cities, suggesting a more general relationship.
+
+
+
+
+                       Figure G. : Prediction R2 and Geographic Aggregation Level
+
+                                    1                                                                         400
+
+
+                                    .8
+                                                                                                              300
+
+                           Adj .6
+                                                                                                                  Number of
+                                2
+                                                                                                              200 locations
+                            R
+                                    .4
+
+                                                                                                              100
+                                    .2
+
+
+                                    0                                                                         0
+                                         2         4               6              8                      10
+                                             Aggregation level: grid cell size (km, approx)
+                                                                                            2
+                                                   N location BGD                   Adj R BGD
+                                                                                         2
+                                                   N location SLK                   Adj R SLK
+
+
+
+
+Notes. This graph shows the R2 of the regression of census income proxy on model residential income, at
+di erent levels of aggregation. For k = 2, . . . , 10 we aggregate cell phone towers into grid cells of size k · 0.01
+in decimal coordinates (equal to approximately k · 1.11 kilometers). We aggregate commuting ows and run
+the gravity equation at this level, and recover average residential income. (Note, we do not area adjust the
+destination xed e ects as grid cells have approximately equal area.) The gray lines (right Y axis) indicate the
+number of grid cells in the aggregated data.
+Table G. : Comparison of Residential Population from Cell Phone Data and Population Census
+                                                           log Residential Density log Residential Population
+                                                                 (cell phone)             (cell phone)
+                                                                 ( )              ( )                ( )               ( )
+                            log Residential Density         .                   .     
+                            (census)                        ( . )               ( . )
+
+                            log Residential Population                                              .                 . 
+                            (census)                                                                ( . )             ( . )
+
+
+                            City                            Dhaka              Colombo              Dhaka            Colombo
+                            Observations                     ,                    ,                  ,                  ,
+                            Adjusted R2                        .                    .                  .                  .
+Notes: This table shows the representativeness of the cell phone data at the residential level. The unit of analysis
+is a Voronoi cell around each cell phone tower in the greater metropolitan area of each city (Dhaka, Gazipur,
+and Narayanganj districts in Bangladesh, and Western Province in Sri Lanka). In cell phone data, residential
+population is de ned as out-commuting ow. Census residential population in a Voronoi cell is computed as the
+average census population in the nest available census geographic units , weighted by their area overlap with
+the Voronoi cell. The high adjusted R-squared in columns ( ) and ( ) indicates a strong association between the
+geographic density from the two data sources. The comparatively lower adjusted R-squared in columns ( ) and
+( ) may be due to the fact that cell phone operators tend to assign cell phone towers to equalize the subscriber
+coverage per tower. Conley standard errors with km distance cuto shown in parentheses.  p  0.10,  p 
+0.05,  p  0.01.
+
+
+
+                        Table G. : Gravity Equation Robustness: Destination Fixed E ects
+                                                            Destination Fixed E ects (Benchmark)
+                                           ( )     ( )     ( )          ( )       ( )         ( )            ( )       ( )       ( )       ( )         ( )
+
+Dest FE (Daily Flows)                     .                                                  . 
+                                          ( . )                                              ( . )
+
+Dest FE (Full Sample)                             .                                                         . 
+                                                  ( . )                                                     ( . )
+
+Dest FE (OLS with log(volume))                            .                                                           . 
+                                                          ( . )                                                       ( . )
+
+Dest FE (OLS with log(volume + ))                                      .                                                        . 
+                                                                       ( . )                                                    ( . )
+
+Dest FE (Nonparameric Gravity Equation)                                          .                                                        .    
+
+                                                                                ( .     )                                                ( .     )
+
+Dest FE (Travel Time with Congestion)                                                                                                                 .    
+
+                                                                                                                                                     ( .     )
+
+
+Estimation Method                         PPML    PPML     OLS          OLS     PPML         PPML           PPML       OLS       OLS      PPML        PPML
+City                                      Dhaka   Dhaka   Dhaka        Dhaka    Dhaka       Colombo        Colombo   Colombo   Colombo   Colombo     Colombo
+Observations                               ,       ,       ,            ,        ,            ,               ,        ,         ,          ,          ,
+Adjusted R2                                  .       .       .            .        .            .               .        .         .          .          .
+
+Notes. This table compares destination xed e ects computed under di erent assumptions. The outcome in the rst four (last ve) columns
+is the destination xed e ects from the rst (third) column in Table . Each row uses destination xed e ects (FE) from the gravity equation
+estimated di erently. The (destination FE estimated in the) rst row uses daily commuting ows (columns and in Table ). The second
+row uses all tower pairs below the th percentile of the travel time including same-tower pairs (which account for over half of all commuting
+  ows), with travel time censored from below at      seconds. The third row estimates the gravity equation by OLS dropping all tower pairs
+with zero commuting ows (to allow for logarithms). The fourth row estimates the gravity equation by OLS using log commuting ow
+plus one as outcome. The fth row estimates the gravity equation with log travel time entering non-parametrically instead of linearly, as
+dummies for the deciles of log travel time. The last row uses the travel time from Google Maps query with tra c congestion taken into
+account. (The query for Sri Lanka was sent for am on Friday, August ,           , one month prior to this date.) Most coe cients are close to
+  and the R2 is above . , except for the third and fourth rows. High regression coe cients of the third and fourth rows indicate that the
+destination e ects are atter if we estimate the gravity equation by OLS ignoring zero ows, due to sample selection. Standard errors in
+parentheses.  p  0.10,  p  0.05,  p  0.01.
+     Table G. : Average Workplace Income: Model Prediction and Survey Data in Dhaka
+
+                                                                      log Survey Income (workplace)
+                                                         ( )              ( )            ( )             ( )               ( )
+
+          × log Model Income (workplace)                .                                               .                  .       
+
+                                                        ( . )                                           ( . )      ( . )
+
+         log Employment Density                                       .                                 - .        - .
+                                                                  ( . )                                 ( . )      ( . )
+
+         log Dist. to CBD                                                            - .             - .          - . 
+                                                                                      ( . )           ( . )        ( . )
+
+          ×log Model Income (residential)                                                                          - .
+                                                                                                                   ( . )
+
+
+         Adjusted R                                      .                .                 .            .                     .
+         Root Mean Squared Error                         .                .                 .            .                     .
+         Observations
+
+Notes. Robustness of Table     controlling for employment density, distance to CBD, and the model residential
+income.
+
+
+     Table G. : Robustness: Average Workplace Income and Survey Income Comparison
+                                                                  log Survey Income (workplace)
+                                            ( ) Daily              ( ) Excluding                  ( ) Without          ( ) Include
+                                              Flows             Neighboring Towers              Area Adjustment        All Origins
+
+       Panel A. Log Survey Income
+      log Model Income (workplace)    .            .            .                 .             .           .     .                    . 
+                                      ( . )        ( . )        ( . )            ( . )          ( . )     ( . )   ( . )               ( . )
+
+
+      Geographic Controls                               X                            X                       X                         X
+      Adjusted R                        .               .             .              .           .           .     .                   .
+      Observations
+
+       Panel B. Log Survey Income Residual on Demographics
+      log Model Income (workplace)      .         .        .                     .              .           .     .                     .
+                                        ( . )    ( . )     ( . )                 ( . )          ( . )     ( . )   ( . )               ( . )
+
+
+      Geographic Controls                               X                            X                       X                         X
+      Adjusted R                        .               .         .                  .           .           .         .               .
+      Observations
+
+Notes. Robustness for Table and Table G. . Odd and even columns correspond to the speci cations in columns
+  and of Table G. . The rst two columns use commuting ows de ned at the daily level instead of com-
+muting ows from home and work assignment (see Section for the de nition). The next two columns de ne
+workplace income at the survey-area level excluding commuters whose origin towers are within       seconds of
+the destination cell tower, when we aggregate up from cell tower level. The next two columns use destination
+ xed e ects not adjusted for Voronoi cell tower. The last two columns include commuters from DHUTS survey
+whose origin locations are outside the DCC area. (In the main analysis, we exclude households outside of DCC,
+because the corresponding survey areas are signi cantly coarser and detailed information on sampling is not
+available.)
+                Table G. : Individual Income: Model Predictions and Survey Data
+
+                                                          log Survey Income
+                                                    ( )         ( )           ( )         ( )
+
+                 Model log Income (workplace)      .           .          .           .     
+
+                                                   ( . )       ( . )      ( . )      ( . )
+
+                 log Travel Time                               .          .          . 
+                                                               ( . )      ( . )      ( . )
+
+                 log Dest. Dist. to CBD                      - .        - .            .
+                                                              ( . )      ( . )       ( . )
+
+                 log Dest. Commuting Zone Area               - .        - .         - . 
+                                                              ( . )      ( . )       ( . )
+
+                 Male                                                                . 
+                                                                                     ( . )
+
+                 Age                                                                 .      
+
+                                                                                    ( .         )
+
+                 Level of education                                                  . 
+                                                                                     ( . )
+
+
+                 Origin FE                                      X             X           X
+                 Occupation and Sector FE                                                 X
+                 Government Worker                  No          No            Yes        Yes
+                 Observations                       ,           ,              ,          ,
+                 Adjusted R2                        .           .              .          .
+
+Notes: This table regresses log income from the DHUTS survey on model-predicted income and controls. The
+unit of observation is a survey respondent in the sample described in Table . Model-predicted income for a
+pair of origin and destination survey areas is the weighted average of tower-pair model income, with weights
+given by tower-to-tower commuting ows. Formally, for survey areas a and b, y ab  ia, jb Vij /Vab · y j , where
+i  a and j  b index towers, y j =   ^ R is the area-adjusted destination xed e ect at j, and Vab  ia, jb Vij is
+                                      j
+the total ow between a and b. We assign to each survey respondent the predicted income between his or her
+home and work survey areas. Columns , and include origin survey area xed e ects, and column includes
+occupation and job sector xed e ects. Conley standard errors with km distance cuto in parentheses. (For
+computational purposes, when including xed e ects, the standard errors are computed after residualizing the
+  xed e ects.)  p  0.10,  p  0.05,  p  0.01
+   Table G. : Average Residential Income: Model Prediction and Residential Income Proxy
+
+                                                                                       Census Residential Income Proxy
+                                                                               ( )                ( )                 ( )                     ( )
+
+                                 Panel A. Dhaka
+                                log Model Income (residential)            .                                                                 . 
+                                                                          ( . )                                                             ( . )
+
+                                log Residential Density                                      .                                              . 
+                                                                                             ( . )                                          ( . )
+
+                                log Dist. to CBD                                                               - .                          - .
+                                                                                                                ( . )                       ( . )
+
+                                log Model Income (workplace)                                                                            - . 
+                                                                                                                                         ( . )
+                                Sub-district FE (count)                                                                                     X( )
+                                Adjusted R                                         .                  .                   .                      .
+                                Observations                                   ,              ,                       ,                      ,
+
+                                 Panel B. Colombo
+                                log Model Income (residential)            .                                                                 . 
+                                                                          ( . )                                                             ( . )
+
+                                log Residential Density                                      .                                              . 
+                                                                                             ( . )                                          ( . )
+
+                                log Dist. to CBD                                                               - .                          - . 
+                                                                                                                ( . )                        ( . )
+
+                                log Model Income (workplace)                                                                            - . 
+                                                                                                                                         ( . )
+                                Sub-district FE (count)                                                                                     X( )
+                                Adjusted R                                         .                  .                       .                  .
+                                Observations                                   ,              ,                       ,                      ,
+
+
+Notes. Robustness of Table controlling for residential density, distance to CBD, and the model workplace income.
+
+
+
+           Table G. : Robustness: Average Residential Income and Census Income Proxy
+
+                                                                                       Census Residential Income Proxy
+                                                                                                      ( ) Excluding
+                                                                   ( ) Daily                                                                ( ) No Area
+                                                                                                      Neighboring
+                                                                     Flows                                                                  Adjustment
+                                                                                                          Towers
+
+                         Panel A. Dhaka
+                        log Model Income (residential)    .               .                  .                 .                  - .                - . 
+                                                          ( . )           ( . )              ( . )             ( . )               ( . )              ( . )
+                        Geographic Controls                                  X                                    X                                      X
+                        Sub-district FE (count)                           X( )                                 X( )                                   X( )
+                        Adjusted R                             .             .                    .               .                     .                .
+                        Observations                       ,               ,                  ,                 ,                   ,                  ,
+
+                         Panel B. Colombo
+                        log Model Income (residential)    .               .                  .                 .                  - .                - . 
+                                                          ( . )           ( . )              ( . )             ( . )               ( . )              ( . )
+                        Geographic Controls                                  X                                    X                                      X
+                        Sub-district FE (count)                           X( )                                 X( )                                   X( )
+                        Adjusted R                             .             .                    .               .                     .                .
+                        Observations                       ,               ,                  ,                 ,                   ,                  ,
+
+
+Notes. Robustness for panel (A) in Tables G. . Odd and even columns correspond to the speci cations in columns and in Tables G. . The
+ rst two columns use daily commuting ows instead of home-work commuting ows (see Section for de nitions). The next two columns
+de ne workplace income at the survey-area level excluding commuters whose origin towers are within         seconds of the destination cell
+tower, when we aggregate up from cell tower level. The last two columns use destination xed e ects not adjusted for Voronoi cell tower
+area.
+

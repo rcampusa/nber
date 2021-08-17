@@ -1,0 +1,2215 @@
+                              NBER WORKING PAPER SERIES
+
+
+
+
+    OPTIMAL HARVEST WITH MULTIPLE FISHING ZONES, ENDOGENOUS PRICE
+                      AND GLOBAL UNCERTAINTY
+
+                                         Jose Pizarro
+                                      Eduardo S. Schwartz
+
+                                       Working Paper 28732
+                               http://www.nber.org/papers/w28732
+
+
+                     NATIONAL BUREAU OF ECONOMIC RESEARCH
+                              1050 Massachusetts Avenue
+                                Cambridge, MA 02138
+                                     April 2021
+
+
+
+
+The views expressed herein are those of the authors and do not necessarily reflect the views of the
+National Bureau of Economic Research.
+
+NBER working papers are circulated for discussion and comment purposes. They have not been
+peer-reviewed or been subject to the review by the NBER Board of Directors that accompanies
+official NBER publications.
+
+© 2021 by Jose Pizarro and Eduardo S. Schwartz. All rights reserved. Short sections of text, not
+to exceed two paragraphs, may be quoted without explicit permission provided that full credit,
+including © notice, is given to the source.
+Optimal Harvest with Multiple Fishing Zones, Endogenous Price and Global Uncertainty
+Jose Pizarro and Eduardo S. Schwartz
+NBER Working Paper No. 28732
+April 2021
+JEL No. G10,G13,G31,Q20,Q22
+
+                                          ABSTRACT
+
+The literature on the optimal harvest of fisheries has concentrated on a single fishing area with
+biomass uncertainty and to a lesser degree also with price uncertainty. We develop and
+implement a stochastic optimal control approach to determine the harvest that maximizes the
+value of a fishery participating in a global market, where all the considered harvesting zones sell
+their production. This market is characterized by an inverse demand function, which combines an
+exogenous demand shock and the aggregate harvesting of all zones. Accordingly, a fishery's
+harvest will be affected by the global demand shocks and the harvesting in all the competing
+zones through the global selling price. In addition, we decompose the biomass uncertainty into
+local and global biomass shocks. Through global biomass shocks, the model provides enough
+flexibility to acknowledge for correlation in the biomass shocks faced by the multiple perhaps
+adjacent areas. When we compare our global framework with an alternative where the individual
+zones are aggregated into a single optimizing fishery we find that competition will increase the
+global harvest and consequently reduced the resource price.
+
+
+Jose Pizarro
+University of British Colombia
+2053 Main Mall
+Vancouver, BC V6T 1Z2
+Canada
+jose.pizarro@sauder.ubc.ca
+
+Eduardo S. Schwartz
+Anderson School of Management
+University of California, Los Angeles
+110 Westwood Plaza
+Los Angeles, CA 90095
+and Simon Fraser University, Vancouver, Canada
+and also NBER
+eduardo.schwartz@anderson.ucla.edu
+1 Introduction
+The rapid integration of natural resource markets that has occurred in the last few decades has
+
+changed the landscape for sheries. International trade has continuously expanded fueled by
+
+trade liberalization and technological changes. Fisheries have also experienced these changes.
+
+   We can now consider the sh market as a global market. Products harvested in South
+
+America, Africa or Europe are widely available across the world for consumption. This supply
+
+expansion, driven by globalization, has intensied the competition faced by local sheries.
+
+Consequently, it is reasonable to think that a value-maximizing shery will be concerned
+
+about global conditions when deciding its optimal harvest.
+
+   In this paper, we propose a novel framework to nd the optimal harvest of a shery oper-
+
+ating in a global market. We develop and implement a stochastic optimal control framework
+
+to determine the optimal harvest that maximizes the value of a shery participating in a
+
+global market, where all the considered harvesting zones sell their production. This market
+
+is characterized by an inverse demand function, which combines a stochastic exogenous de-
+
+mand factor and the aggregate harvesting of all zones. Accordingly, a shery's harvest will be
+
+aected by the global demand shocks and the harvesting in all the competing zones through
+
+the global selling price. In essence, each shery optimizes its harvest taking into account the
+
+optimal harvest of all the other zones. When no shery has an incentive to deviate from its
+
+optimal strategy a Nash equilibrium is obtained.
+
+   A shery operating in a particular zone will also face uncertainty on the dynamics of its
+
+biomass. In particular, we decompose the biomass uncertainty into local and global biomass
+
+shocks. Through global biomass shocks, the model provides enough exibility to acknowledge
+
+for correlation in the biomass shocks faced by the multiple perhaps adjacent areas.
+
+   In summary, our model includes global and local uncertainty.         That is, market-wide
+
+shocks that will aect all the considered sheries and local shocks that will only aect a
+
+single shery. This consideration will allow us to understand how each uncertainty source
+
+aects the shery's optimal policy.
+
+   Since the model considers multiple zones competing on the amount of harvest they will
+
+extract, and the price is determined by the aggregate harvest, the global price and its dy-
+
+namics are an endogenous result of the model, intertwined with the harvesting policies of the
+
+modeled zones and the multiple sources of uncertainty.
+
+   To the best of our knowledge, our paper is the rst to propose a global market setting
+
+with various zones and multiple sources of uncertainty. Several papers, including Nøstbakken
+
+(2006), Poudel et al. (2013), Kvamsdal et al. (2016) and Pizarro and Schwartz (2021) consider
+
+a single shery facing multiple sources of uncertainty, including price uncertainty, but do
+
+
+
+
+                                              2
+not expand to a setting that allows understanding the eects of competition and global
+
+uncertainty. Pindyck (1984) presented a model with a similar inverse demand function, but
+
+without global demand uncertainty or multiple zones competing.
+
+   A key contribution of the paper is that we apply the framework to a real group of sheries
+
+in dened geographical zones. We obtain data for the Alaska and British Columbia halibut
+
+shery. The data includes time series for the halibut biomass, total harvest (landings) and
+
+price. We use this data to estimate all the required parameters of the model. We select these
+
+areas because of data availability.   We collected data from several sources, including the
+
+International Pacic Halibut Commission (IPHC), the National Oceanic and Atmospheric
+
+Administration (NOAA) and Fisheries and Oceans Canada (DFO).
+
+   The model and the solution algorithm are developed with an arbitrary number of zones.
+
+But to illustrate its implementation we consider a setting with only two zones. Many of the
+
+interesting features of the model can be observed in this setting. We focus on two particular
+
+cases, the rst is denoted Symmetric Case and the second is denoted Asymmetric Case. In
+
+the Symmetric Case, we consider two zones with comparable biomass, South Alaska (2C) and
+
+British Columbia (2B). In the Asymmetric Case, we consider two zones with very dierent
+
+biomass, Alaska (2C, 3 and 4) and British Columbia (2B). We believe that these two cases
+
+will allow us to illustrate the key economic and nancial trade-os of the model.
+
+   Another contribution of our paper is to show that global competition is indeed a funda-
+
+mental force driving a shery's optimal harvest choices. To reach this conclusion we compare
+
+our global framework with an alternative where the individual zones are aggregated into a
+
+single optimizing shery, thus abstracting from all competition eects.      We obtain signif-
+
+icantly dierent results.   In particular, we show that competition will increase the global
+
+harvest and consequently reduced the resource price, overall beneting consumers.
+
+   The model is solved using a value-function iteration algorithm. The solution approach
+
+solves for the optimal dynamic harvesting policy of the representative shery in each zone
+
+separately.   This shery will take the optimal harvesting policy of the competing zones as
+
+given and decide its optimal policy as the best response to this set of functions.     Once
+
+the problem is solved for all zones, the optimal policies are updated, and the problem is
+
+solved again for each shery with the updated set of policies. The algorithm stops when no
+
+signicant changes are made to the policy of any of the studied zones.
+
+   The model allows us to study how the optimal harvest relates to the multiple state
+
+variables in our model, which are, the biomass in each zone and the exogenous demand
+
+factor. The model also shows how the harvest will optimally evolve with stochastic changes
+
+in the state variables. Based on the optimal policy, it is possible to simulate the dynamics
+
+of the biomass, subject to global and local stochastic shocks and optimal harvesting. This
+
+
+
+
+                                              3
+analysis illustrates how the biomass in each zone will evolve over a specic time horizon.
+
+     The paper proceeds as follows.                 The general valuation model is presented in Section
+
+2.    Section 3 provides a detailed estimation of the model parameters for the Alaska and
+
+the British Columbia halibut shery.                     Section 4 presents the model results for both the
+
+symmetric and asymmetric cases. Section 5 shows the impact of global competition on the
+
+optimal harvesting policy.            Finally, Section 6 provides our concluding remarks.                       Details on
+
+the solution algorithm are provided in the Appendix.
+
+
+
+
+2 A Valuation Model of Marine Fisheries Rights with
+  Global Uncertainty
+In this section, we present an economic model to study sheries valuation in a global frame-
+
+work. We consider multiple geographical zones on which the sh specie of interest is available.
+
+In each zone, a representative shery maximizes the value of the resource by choosing the
+
+optimal annual harvest, taking into account that in the other zones representative sheries
+
+will also be doing the same.
+
+     We consider      N      dierent zones where the resource is harvested independently by the local
+
+representative shery. The dynamic of the biomass for the zone                             i  {1, 2, ..., N }   is:
+
+
+
+                                 Ii,t+1 = Gi (Ii,t ) - qi,t + Ii,t (i         i,t+1   + i t+1 )                        (1)
+
+
+where     Ii,t   is the biomass at year      t    in zone   i, Gi (Ii,t )    is the annual expected rate of growth
+
+of the biomass,       qi,t   is the annual harvesting rate,             i,t is the local biomass shocks, which are
+
+assumed to be i.i.d. standard normal,               i   is the volatility of the unanticipated local shocks to
+
+the resource stock.
+
+     We also introduce global shocks to the biomass                     t+1 ,   which are common to all the zones
+
+and assumed to be i.i.d. standard normal.                   i   is the sensitivity of zone        i to the unanticipated
+global shocks to the resource stock. The local and global shocks are assumed to be mutually
+
+orthogonal, although the existence of the global shocks will induce correlation in the unex-
+
+pected changes in the biomass across zones. The covariance between the shocks in zone                                    i
+and   j   is:
+
+
+
+                                 Cov [i   i,t+1   + i t+1 , j       j,t+1   + j t+1 ] = i j                            (2)
+
+
+as a result, the correlation coecient between the shocks in zone                           i   and   j   is:
+
+
+
+
+                                                                4
+                                                                       i j
+                                           i,j =                                                                                    (3)
+                                                            2        2             2            2
+                                                        i + i ×                 j + j
+
+      Note that when the      {1 , 2 , ..., N }         are equal to 0, the correlation is equal to 1 and when
+
+the   {1 , 2 , ..., N }   are equal to zero the correlation is 0. As in Kvamsdal et al. (2016), Sims
+
+et al. (2018) and Pizarro and Schwartz (2021), the growth rate of the biomass is assumed to
+
+follow a logistic function:
+
+
+                                                                                  Ii,t
+                                               Gi (Ii,t ) = i Ii,t 1 -                                                              (4)
+                                                                                 Iimax
+      Combining the dynamics of the biomass and harvest of each zone, the dynamics of global
+                    N
+biomass      It =   i=1 Ii,t is:
+
+
+                                           N
+                          It+1 =                 Gi (Ii,t ) - qi,t + Ii,t (i            i,t+1   + i t+1 )                           (5)
+                                          i=1
+
+re-writing Equation (5) as:
+
+
+                                   N                    N                N                          N
+                    It+1 =               Gi (Ii,t ) -           qi,t +         Ii,t i   i,t+1 +           Ii,t i t+1
+                                   i=1                  i=1              i=1                        i=1
+
+
+                                                                                                I
+      We denote    qt = N   i=1 qi,t , G (It ) =
+                                                 N                     i,t
+                                                 i=1 Gi (Ii,t ), i,t = It , t^
+                                                                             +1 =
+                                                                                                                 N
+                                                                                                                 i=1   i,t i   i,t+1 and
+             N
+t^
+ +1 =        i=1 i,t i t+1 , thus the global biomass dynamics can be written                                    as:
+
+
+
+                                         It+1 = G (It ) - qt + It (^t+1 + ^t+1 )                                                    (6)
+
+
+where    ^t+1   is an i.i.d. normal with mean zero and volatility:
+
+
+
+                                                                    N
+                                                     ^                   2
+                                                     t =                 i,t i 2                                                    (7)
+                                                                   i=1
+
+and   ^t+1   is an i.i.d. normal with mean zero and volatility:
+
+
+
+                                                                    N
+                                                    ^
+                                                    t    =               2
+                                                                         i,t i 2                                                    (8)
+                                                                   i=1
+
+      The annual harvest of each zone is sold in a global market at the global market price.
+
+This price is determined by the aggregate harvest from the                                N     zones,    qt , and the global inverse
+demand curve:
+
+
+
+                                                                   5
+                                                                N             -
+                                                                                         -
+                                                  Pt = X t           qi,t          = Xt qt                                (9)
+                                                               i=1
+
+wherePt is the unit sh price at year t, Xt is                               an exogenous stochastic demand factor and
+
+  (0, 1) is the demand slope. The exogenous                                 stochastic component of the demand follows
+
+the process:
+
+
+
+                                                        ln Xt = µX + X t                                                 (10)
+
+
+where     µX   is the annual expected in the logarithm of                        Xt . t is assumed to be an i.i.d.   standard
+
+normal and       X   is the demand shocks volatility. Demand and biomass shocks are assumed to
+
+be orthogonal.
+
+   Note that the global price at which each representative shery can sell its harvest depends
+
+on the harvest of all sheries. Hence, when each shery optimizes its harvest, it has to take
+
+into account the optimal harvest of all the other sheries and its eect on the global price.
+
+Figure 1 illustrates the market organization.
+
+
+
+                          Zone 1:       I1,t
+                                                                 q1,t
+                          Zone 2:       I2,t
+                                                                 q2,t                  Global Fish Market
+                                 ...                                                                 -
+                                                                                          Pt = X t q t
+                                                                qN,t
+                      Zone N:           IN,t
+
+                                       N                                    N
+                          It =         i=1 Ii,t              qt =           i=1 qi,t
+
+                   Global Biomass                         Aggregate Harvest
+                                                  Figure 1: Market Organization.
+
+
+   We now focus on the problem solved by an innitely-lived value-maximizing shery, with
+
+enough installed capacity for the range of harvests considered, and the right to harvest in a
+                                                                                                1
+particular zone      i.   The shery's annual cash ow from harvesting                                is equal to:
+
+
+
+                                               i (Ii,t , Pt , qi,t ) = Pt × qi,t - ci (qi,t )                            (11)
+
+
+   Using the price denition presented in Equation (9), we can re-write the representative
+
+shery's prot as:
+
+  1 For   simplicity we abstract from taxes and depreciation in this presentation of the model.
+
+                                                                        6
+                                                                           N            -
+
+                           i (Ii,t , Xt , q1,t , ..., qN,t ) = Xt                qi,t           × qi,t - ci (qi,t )                    (12)
+                                                                           i=1
+
+      The operating cost function of harvesting                        qi,t , c (qi,t ),   is:
+
+
+
+                                                          ci (qi,t ) = ci    i
+                                                                        0 + c1 × qi,t                                                  (13)
+
+
+where     ci
+           0    is the xed cost and            ci
+                                                1   is the variable cost. All these parameters correspond to the
+
+shery operating in area              i.   The cost function parameter                      ci
+                                                                                            0    captures also the xed cost paid
+
+by the shery to remain open in years without harvest.
+
+      Equation (12) shows a key economic mechanism of our model, the interdependence of the
+
+dierent zones, specically, how the choices made in other zones impact the prots of the
+
+shery operating in zone               i   through their eect on the global price. Hence, when the shery
+
+in area     i   decides its optimal harvest, it will take into account the harvest from other areas
+
+being sold in the global market.
+
+      This interconnection between the dierent harvesting zones will require the shery in zone
+
+i   to consider the harvesting policies in all the alternative areas when deciding its optimal
+
+policy, and consequently, the state variables of each zone will need to be considered in the
+
+shery's problem besides the aggregate exogenous demand shock.
+
+      For the innitely lived representative shery in area i, the present value of future expected
+
+cash ows, for the space state                   {I1,t , ..., IN,t , Xt }   and a given set of harvesting policies                     qi,t =
+qi (I1,t , ..., IN,t , Xt ), i  1, .., N ,      is:
+
+
+
+    Hi (I1,t , ..., IN,t , Xt , qi (I1,t , ..., IN,t , Xt )) =
+                                                    
+                                                              1
+                                          Et                         i (I1, , ..., IN, , X , qi (I1, , ..., IN, , X ))                 (14)
+                                                     =t
+                                                          (1 + r) -t
+
+where      r    is the shery's risk-adjusted cost of capital.                           As all considered sheries harvest a
+
+common specie and compete in the same market we assume that their cost of capital is the
+
+same.
+
+                                                                                                                   
+      A value-maximizing shery will choose the optimal harvesting policy                                          qi (I1,t , ..., IN,t , Xt ),
+that is, the harvesting policy that maximizes the value of the shery for the current state
+
+space.
+
+      As mentioned, the revenues of a shery operating in zone                                    i directly depend on the harvest-
+ing policies of the sheries operating in the rest of the zones. Hence, each shery anticipates
+
+the optimal harvests for all the other sheries and chooses its optimal harvest to maximize
+
+its value. This is, when maximizing the rm's value, the shery in zone                                                 i   takes the set of
+
+
+                                                                      7
+functions   q  /qi
+                 
+                   = qj
+                         (I1,t , ..., IN,t , Xt ) j  {1, 2, ..., N } - i         as known and optimally selects
+                         
+its   harvesting policy qi (I1,t , ..., IN,t , Xt ).
+
+      The shery in area i, taking the set of optimal policies             q  /qi
+                                                                               
+                                                                                 as known, solves the following
+
+Bellman equation:
+
+
+
+  Vi (I1,t , ..., IN,t , Xt ) =
+                                                                   1
+                           max i (I1,t , ..., IN,t , Xt , qi )+       Et Vi (I1,t+1 , ..., IN,t+1 , Xt+1 )    (15)
+                            
+                           qi 0                                   1+r
+                                                                                                              
+where   Vi (I1,t , ..., IN,t , Xt ) is the value of the   shery in area     i,   under the optimal policy    qi   for
+
+the   current state space {I1,t , ..., IN,t , Xt }.
+
+      As   q  /qi
+                
+                    is the set of optimal policies, the optimal policy for the shery in zone            i becomes
+the best response to the optimal strategy of the sheries in the other zones, therefore, the set
+
+of harvesting policies represents a Nash Equilibrium, as any unilateral deviation from this
+
+harvesting policy will be sub-optimal.
+
+      Second, the model will allow us to incorporate competition in global markets, thus we
+
+can understand how a shery operating in dierent levels of competition will change its
+
+behavior when facing demand, local biomass or global biomass shocks. This model allow us
+
+to understand how a shery with a positive inuence in the price will dier from a small zone
+
+that operates as a pure price taker as its inuence in the price is overall marginal.
+
+      The proposed model has positive policy potential as it will help regulators understand
+
+how to tackle global shocks and local shocks, and if it is optimal to regulate zone by zone or
+
+to have a global approach. All these potential contributions are discussed in the remainder
+
+of this paper. In Section 3 we estimate all the parameters of the model using real data of the
+
+Pacic halibut shery. Section 4 shows the results for the harvesting policy and the shery's
+
+value for a global market.           Section 5 present several applications of our model in dierent
+
+settings to address the previously presented contributions. Finally, Section 6 concludes. A
+
+description of the approach taken to solve the model is included in the Appendix.
+
+
+
+
+3 Parameter Estimation for the Pacic Halibut Fishery
+To illustrate the implementation of the methodology presented in the previous section, we
+
+calibrate and solve the model for the Pacic halibut. This area is ideal to test our model as its
+
+setting is consistent with our assumptions, multiple geographical zones that harvest a unique
+
+specie and the proximity of the multiple selling points allow us to consider the existence of
+
+a unique global market for the resource on this geographical area.
+
+
+
+
+                                                           8
+    We consider the regulatory areas determined by the International Pacic Halibut Com-
+
+mission (IPHC). The IPHC was established in 1923 by a convention between Canada and
+
+the U.S. for the preservation of the Pacic halibut shery, and monitors the resource over the
+
+regulatory areas presented in Figure 2. The IPHC is our rst source of data, as we obtain
+
+the biomass assessments from its annual reports.
+
+
+
+
+         Figure 2: International Pacic Halibut Commission (IPHC) Regulatory Areas. Source: IPHC.
+
+    Our second source of data is the Department of Fisheries and Oceans of Canada (DFO),
+
+specically, we use the British Columbia halibut landings, price data and nancial reports
+                         2
+published on its site .      Our third source of data is the National Oceanic and Atmospheric
+
+Administration (NOAA), we use the Alaska halibut landings and price data published on its
+    3
+site .
+
+    Although our model is designed to deal with any number of zones, for illustrative purposes
+
+we will focus on     N = 2.    In particular, we consider two cases. First, when two zones have
+
+similar levels of their biomass, which we call Symmetric Case. Second, when the two zones
+
+have very dierent levels of their biomass, which we call Asymmetric Case. These cases en-
+
+compass most of the potential applications of the model and will facilitate the understanding
+
+of the key economic and nancial mechanisms.
+
+    In the following subsections, we present the estimations for the parameters for the specied
+
+   2 https://www.dfo-mpo.gc.ca/index-eng.htm
+   3 https://www.noaa.gov/
+
+
+
+                                                   9
+cases of the halibut biomass dynamics for each considered zone, the price dynamics and the
+
+cost function.
+
+
+
+
+3.1     Symmetric Case: South Alaska and British Columbia
+
+For the symmetric case, we consider two zones of similar size: the South Alaska zone (2C)
+
+and the British Columbia zone (2B).
+
+
+
+3.1.1 South Alaska (2C) and British Columbia (2B) Halibut Biomass Dynamics
+      Parameters
+To estimate the biomass dynamics we use the stock assessments provided by Stewart and
+
+Hicks (2017) and Stewart and Webster (2017), which although approximate, is the closest
+
+proxy to its true magnitude. The symmetric case biomass assessment of each zone is presented
+
+in Panel A of Figure 3. Panel B shows the share of the total biomass of each zone.
+
+
+
+
+Figure 3: Biomass of the South Alaska zone (2C) and the British Columbia zone (2B). Source: International
+Pacic Halibut Commission (IPHC).
+
+   Harvesting data was obtained from the Department of Fisheries and Oceans of Canada
+       4
+(DFO)      website and the National Oceanic and Atmospheric Administration (NOAA) web-
+   5
+site . The annual harvesting for the South Alaska zone (2C) and the British Columbia zone
+
+(2B) are presented in Figure 4.
+
+   4 http://www.dfo-mpo.gc.ca
+   5 foss.nmfs.noaa.gov
+
+
+
+
+                                                   10
+Figure 4: Harvesting of the South Alaska zone (2C) and the British Columbia zone (2B). Source: De-
+partment of Fisheries and Oceans of Canada (DFO) and National Oceanic and Atmospheric Administration
+(NOAA).
+
+   For each zone   i  {1, 2}   the biomass dynamic follows the process presented in Equation
+
+(1) and Equation(4):
+
+
+                                          Ii,t
+                   Ii,t+1 = i Ii,t 1 -           - qi,t + Ii,t i   i,t+1   + Ii,t i t+1
+                                         Iimax
+
+   Therefore, for each zone we estimate:
+
+
+                         Ii,t+1 + qi,t         Ii,t
+                                       = i - i max + i          i,t+1   + i t+1                   (16)
+                             Ii,t             Ii
+where i,t+1 is an idiosyncratic biomass shock aecting area i, while           t+1 is an aggregate shock
+that aects all zones simultaneously. Both shocks are assumed to be independent standard
+
+normal.
+
+   To estimate, we dene the full shock for zone       i   as   i,t+1    a normally distributed random
+
+shock, so Equation (16) can be re-written as:
+
+
+                             Ii,t+1 + qi,t         Ii,t
+                                           = i - i max + i i,t+1                                  (17)
+                                 Ii,t             Ii
+
+   Since in the regression presented in Equation (17) the shocks to the biomass in each
+
+zone may be correlated, we estimate both areas simultaneously using seemingly unrelated
+
+regressions (SUR).
+
+
+
+
+                                                 11
+       Table 1: Estimated Parameters for the Symmetric Case Halibut Biomass Dynamics
+In this table, we estimate the biomass dynamics parameters for the Alaska zone (2C) and the British Columbia
+zone (2B). The parameters are estimated using seemingly unrelated regressions (SUR). Data covers from
+1996 to 2018. It is obtained from Stewart and Hicks (2017), Stewart and Webster (2017), the Department
+of Fisheries and Oceans of Canada (DFO) website: http://www.dfo-mpo.gc.ca and the National Oceanic
+and Atmospheric Administration (NOAA) website : foss.nmfs.noaa.gov. All coecients are estimated
+simultaneously.
+                               Panel A: Parameters for Alaska (2C) Biomass
+                                  i                     0.45
+                               (z-stat)                 5.43
+                                Iimax
+                                                       97.03
+                               (z-stat)                 4.18
+                                  R2                    0.41
+                         Panel B: Parameters for British Columbia (2B) Biomass
+                            i                           0.79
+                         (z-stat)                       6.28
+                          Iimax
+                                                       83.78
+                         (z-stat)                       4.96
+                            R2                          0.48
+                                  Panel C: Random Shocks Parameters
+                                  BC               0.11
+                                  AK               0.10
+                                                   0.55
+
+
+    Table 1 shows that although the zones are similar, their biomass dynamics are dierent.
+
+In particular, the intrinsic growth rate     i   is statistically signicant for both zones but larger
+
+for British Columbia. This parameter reects specic characteristics of the zone's biomass
+
+that aect the expected biomass growth rate, as biological or economic factors.                   Figure 5
+
+shows the logistic growth rate of the biomass for the two considered zones, South Alaska and
+
+British Columbia. For the estimated parameters, British Columbia has a greater expected
+
+biomass growth rate for most biomass levels, which will have implications for the optimal
+
+harvest in each one of the zones.
+
+
+
+
+                                                    12
+Figure 5: Logistic biomass growth rate for the South Alaska zone (2C) and the British Columbia zone (2B).
+Source: Based on Estimated Parameters.
+
+   To test the signicance of the correlation between the shocks to the biomass of each zone,
+
+we perform a Breusch-Pagan test of independence. For the Symmetric Case, the                2   statistic
+
+is 6.32, with a p-value of 0.01, consequently, for this case, the correlation is positive and
+
+statistically signicant.
+
+   Figure 6 shows the estimated left-hand-side of the regression specied in Equation (17)
+
+versus the data:
+
+
+
+
+Figure 6: Estimated Biomass Dynamics for the South Alaska zone (2C) and the British Columbia zone
+(2B). Source: Own Elaboration Based on the Estimated Parameters.
+
+   From the estimated parameters, we can disentangle the volatility of the unexpected shocks
+
+to each zone into the volatility of the idiosyncratic shocks and the aggregate shocks. Since
+
+we have estimated three shock parameters and we have four biomass shock parameters to
+
+compute, we need to make an additional assumption. In particular, we assume that                   i =
+  i  {1, 2}.
+
+                                                   13
+   First, the variance of the estimated shocks is:
+
+
+
+                               Var (i i,t+1 ) = Var (i     i,t+1   + t+1 )
+
+therefore:
+                                             2   2
+                                             i = i + 2                                                    (18)
+
+
+   Second, the covariance of the estimated shocks in dierent zones                   i  {1, 2}   is:
+
+
+
+                Cov (1 1,t+1 , 2 2,t+1 ) = Cov (1       1,t+1   + t+1 , 2    2,t+1   + t+1 )
+
+then:
+
+                                              1 2  = 2                                                    (19)
+
+
+   Combining Equations (18) and Equations (19) we can solve for                 {1 , 2 , }:
+
+                                                   2
+                                          1 =      1 - 1 2 
+
+                                          2 =      2
+                                                   2 - 1 2                                                (20)
+
+                                                
+                                           =       1 2 
+
+   Using Equation (20) and the results presented in Tables 1, we can calculate the biomass
+
+shocks parameters. These parameters are presented in Table 2.
+
+               Table 2: Estimated Parameters for Biomass Shocks, Symmetric Case
+Parameters calculated from the results of the seemingly unrelated regression presented in Table 1 and the
+results shown in Equation (20). AK is the idiosyncratic volatility estimated for the Alaska zone (2C) and
+BC is the idiosyncratic volatility estimated for the British Columbia zone (2B).  is the volatility of the
+aggregate biomass shock.
+
+                                     Random Shocks Parameters
+                                     AK          0.06
+                                     BC          0.08
+                                                 0.08
+
+
+3.1.2 South Alaska (2C) and British Columbia (2B) Halibut Price Dynamics
+      Parameters
+As shown in Equation (9), the price is modeled as a function of the aggregate harvest sold in
+
+the global market, which is represented by an inverse demand function. We use halibut prices
+
+of Alaska and British Columbia, and their aggregate harvest to identify the price parameters.
+
+   To make both prices comparable we express all of them in 2018 U.S. dollars.                         For the
+
+Halibut prices in British Columbia, we use the price in Canadian dollars, then we convert
+
+
+                                                   14
+them into U.S. dollars using the corresponding year's exchange rate, and the Alaska price
+
+and the British Columbia converted prices are inated using the U.S. CPI.
+
+    Using the size of the harvest in each zone as the weight, we calculate the weighted average
+
+price. We use it for the estimation of the price dynamics. This price and the aggregate harvest
+                                             6
+of the two zones are shown in Figure 7 .
+
+
+
+
+Figure 7: South Alaska (2C) and British Columbia (2B) Aggregate Ex-Vessel Real Price (2018 U.S. Dollars)
+and Harvest, 1996 to 2018. Source: Department of Fisheries and Oceans of Canada (DFO) and National
+Oceanic and Atmospheric Administration (NOAA).
+
+    Combining Equation (9) and Equation (10), we can re-write the the price dynamics as:
+
+
+
+                     ln Pt = - ln Qt +  ln Xt = - ln Qt + µX + X t                                     (21)
+
+
+    For the time-series presented in Figure 7 we estimate the regression presented in Equation
+
+(21) to obtain the parameters of the price dynamics.
+
+
+          Table 3: Estimated Parameters for the Halibut Price Dynamics, Symmetric Case
+The parameters are estimated using maximum likelihood. We estimated the mean and volatility obtained for
+the estimation of an ARIMA(0,1,0) model for the Logarithm of the Halibut Ex-Vessel Price of South Alaska
+(2C) and British Columbia (2B). Data covers from 1996 to 2018 and is obtained from the Department of
+Fisheries and Oceans of Canada (DFO) website and the National Oceanic and Atmospheric Administration
+(NOAA) website.
+
+                                      Price Dynamics Parameters
+                                                     0.38
+                                      (z-stat)       0.77
+                                        µX           0.02
+                                      (z-stat)       0.40
+                                        X            0.17
+                                      (z-stat)       6.80
+   6 Itshould be noted that the prices for halibut in both zones were very similar, consistent with the idea
+that there is one aggregate market for the product.
+
+                                                    15
+   Figure 8 compares the estimated price with the data:
+
+
+
+
+Figure 8: South Alaska (2C) and British Columbia (2B) Aggregate Ex-Vessel Real Price and Model Fore-
+casted Price, 1996 to 2018. Source: Own Elaboration Based on the Estimated Parameters.
+
+3.1.3 South Alaska (2C) and British Columbia (2B) Halibut Fishery Costs Pa-
+      rameters
+The estimation of the model's cost function, as presented in Equation (13), is one of the main
+
+challenges of the parameter estimation, as time series of harvesting costs are not available
+
+for the studied zones.
+
+   To our knowledge, few sources of real cost data are available for the studied sheries. We
+
+focus on two surveys performed by Nelson Bros Fisheries Ltd. for the Department of Fisheries
+
+and Oceans of Canada (DFO) (Nelson (2009) and Nelson (2011)). These surveys include an
+
+estimation of the operating income for vessels harvesting halibut in British Columbia.
+
+   From these surveys, we notice that in the two years available the xed costs constitute
+
+approximately 10% of the annual revenue, while the annual prot is approximately 20% of
+
+the annual revenue. We use these ratios to extrapolate the xed and variables cost for each
+
+one of the studied zones.    Using the available price and harvesting data, we calculate the
+
+annual revenue for each zone and construct a time series of xed costs as:
+
+
+
+                                       Fti = 10% × Pti × qt
+                                                          i
+                                                                                                   (22)
+
+
+   Then, we estimate the xed cost parameter for zone             i   as the average for the time series,
+
+rounded down to the nearest dollar:
+
+
+                                                      T
+                                                 1
+                                        ci
+                                         0   =             Fti                                     (23)
+                                                 T   t=1
+
+
+
+                                                 16
+    After the xed cost is estimated, we estimate the variable cost as:
+
+
+
+                                        Cti = 80% × Pti × qt
+                                                           i
+                                                             - ci
+                                                                0                                       (24)
+
+
+    The variable cost parameter for zone       i is calculated as the average of the estimated variable
+cost divided by the annual harvest:
+
+
+                                                          T
+                                                     1         Cti
+                                              ci
+                                               1   =                                                    (25)
+                                                     T   t=1
+                                                               qt
+
+    The estimated cost parameters are presented in Table 4.
+
+
+              Table 4: Estimated Parameters for the Cost Function, Symmetric Case
+The parameters are estimated using the assumption that the xed costs constitute approximately 10% of the
+annual revenue, while the annual prot is approximately 20% of the annual revenue. The xed cost parameter
+for zone i is the average for the time series rounded down to the nearest dollar. The variable cost parameter
+for zone i is calculated as the average of the estimated variable cost divided by the annual harvest.
+
+                      Parameter South Alaska (2C) British Columbia (2B)
+                          c0          1.50                 4.00
+                          c1          2.52                 2.76
+
+
+3.2     Asymmetric Case: Alaska and British Columbia
+
+For the asymmetric case, we consider two zones of very dierent sizes: the whole of Alaska
+
+(zone 2C, 3 and 4) and the much smaller British Columbia zone (2B).
+
+
+
+3.2.1 Alaska (2C, 3 and 4) and British Columbia (2B) Halibut Biomass Dynam-
+      ics Parameters
+As in the symmetric case, we use the biomass assessments provided by Stewart and Hicks
+
+(2017) and Stewart and Webster (2017). As mentioned, we consider the Alaska zone (zone 2C,
+
+3A, 3B, and 4) and the British Columbia zone (2B), the biomass of each zone are presented
+
+in Panel A Figure 9. Panel B shows the share of each zone in the total biomass.
+
+
+
+
+                                                     17
+Figure 9: Biomass of the Alaska zone (2C, 3A, 3B and 4) and the British Columbia zone (2B). Source:
+International Pacic Halibut Commission (IPHC).
+
+   The annual harvesting for the Alaska zone (2C, 3 and 4) and the British Columbia zone
+
+(2B) are presented in Figure 10:
+
+
+
+
+Figure 10: Harvesting of the Alaska zone (2C, 3 and 4) and the British Columbia zone (2B). Source:
+Department of Fisheries and Oceans of Canada (DFO) and National Oceanic and Atmospheric Administration
+(NOAA).
+
+   As in the symmetric case, we estimate Equation (17) for both areas simultaneously using
+
+seemingly unrelated regressions (SUR). The estimated parameters are presented in Table 5:
+
+
+
+
+                                                 18
+      Table 5: Estimated Parameters for the Asymmetric Case Halibut Biomass Dynamics
+In this table, we estimate the biomass dynamics parameters for the Alaska zone (2C, 3 and 4) and the
+British Columbia zone (2B). The parameters are estimated using seemingly unrelated regressions (SUR).
+Data covers from 1996 to 2018. It is obtained from Stewart and Hicks (2017), Stewart and Webster (2017),
+the Department of Fisheries and Oceans of Canada (DFO) website: http://www.dfo-mpo.gc.ca and the
+National Oceanic and Atmospheric Administration (NOAA) website : foss.nmfs.noaa.gov. All coecients
+are estimated simultaneously.
+                                Panel A: Parameters for Alaska Biomass
+                                   i                  0.08
+                                (z-stat)              3.80
+                                 Iimax
+                                                    1103.26
+                                (z-stat)              2.94
+                                   R2                 0.22
+                           Panel B: Parameters for British Columbia Biomass
+                              i                        0.77
+                           (z-stat)                    5.87
+                            Iimax
+                                                      84.22
+                           (z-stat)                    4.61
+                              R2                       0.48
+                                 Panel C: Random Shocks Parameters
+                                 BC               0.11
+                                 AK               0.03
+                                                  0.25
+
+
+   To test the signicance of the correlation between the shocks to the biomass of each zone,
+
+we perform a Breusch-Pagan test of independence. For the Asymmetric Case, the              2   statistic
+
+is 1.30, with a p-value of 0.25, consequently for this case although the correlation is positive,
+
+it is not statistically signicant.
+
+   Figure 11 shows the estimated left-hand-side of the regression specied in Equation (17)
+
+versus the data:
+
+
+
+
+Figure 11: Estimated Biomass Dynamics for the Alaska zone (2C, 3 and 4) and the British Columbia zone
+(2B). Source: Own Elaboration Based on the Estimated Parameters.
+
+
+                                                  19
+    Using Equation (20) and the results presented in Table 5, we can calculate the biomass
+
+shocks parameters. These parameters are presented in Table 6.
+
+
+               Table 6: Estimated Parameters for Biomass Shocks, Asymmetric Case
+Parameters calculated from the results of seemingly unrelated regressions presented in Table 5 and the results
+shown in Equation (20). AK is the idiosyncratic volatility estimated for the Alaska zone (2C, 3 and 4) and
+BC is the idiosyncratic volatility estimated for the British Columbia zone (2B).  is the volatility of the
+aggregate biomass shock.
+
+                                       Random Shocks Parameters
+                                       AK          0.02
+                                       BC          0.10
+                                                   0.03
+
+
+3.2.2 Pacic Halibut Price Dynamics Parameters
+As in the symmetric case, we use the annual harvest of each zone as the weight to calculate
+
+a unique aggregate price for this case. Figure 12 presents the aggregate price and harvest we
+
+will use to estimate the price dynamics:
+
+
+
+
+Figure 12: Alaska (2C, 3 and 4) and British Columbia (2B) Aggregate Ex-Vessel Real Price (2018 U.S.
+Dollars) and Harvest, 1996 to 2018. Source: Department of Fisheries and Oceans of Canada (DFO) and
+National Oceanic and Atmospheric Administration (NOAA).
+
+    For the time-series presented in Figure 12 we estimate the regression presented in Equation
+
+(21) to obtain the parameters of the price dynamics (Table 7). The goodness-of-t of the
+
+estimated parameters are shown in Figure 13.
+
+
+
+
+                                                     20
+        Table 7: Estimated Parameters for the Halibut Price Dynamics, Asymmetric Case
+The parameters are estimated using maximum likelihood. We estimated the mean and volatility obtained for
+the estimation of an ARIMA(0,1,0) model for the Logarithm of the Halibut Ex-Vessel Price of Alaska (2C, 3
+and 4) and British Columbia (2B). Data covers from 1996 to 2018 and is obtained from the Department of
+Fisheries and Oceans of Canada (DFO) website and the National Oceanic and Atmospheric Administration
+(NOAA) website.
+
+                                      Price Dynamics Parameters
+                                                     0.23
+                                      (z-stat)       0.47
+                                        µX           0.01
+                                      (z-stat)       0.29
+                                        X            0.21
+                                      (z-stat)       6.89
+
+
+
+
+Figure 13: Alaska (2C, 3 and 4) and British Columbia (2B) Aggregate Ex-Vessel Real Price and Model
+Forecasted Price, 1996 to 2018. Source: Own Elaboration Based on the Estimated Parameters.
+
+3.2.3 Alaska (2C, 3 and 4) and British Columbia (2B) Halibut Fishery Costs
+      Parameters
+The cost parameters for the Asymmetric Case are obtained using the same procedure dis-
+
+cussed for the Symmetric Case. The estimated parameters are presented in Table 8.
+
+
+             Table 8: Estimated Parameters for the Cost Function, Asymmetric Case
+The parameters are estimated using the assumption that the xed costs constitute approximately 10% of the
+annual revenue, while the annual prot is approximately 20% of the annual revenue. The xed cost parameter
+for zone i is the average for the time series rounded down to the nearest dollar. The variable cost parameter
+for zone i is calculated as the average of the estimated variable cost divided by the annual harvest.
+
+                     Parameter Alaska (2C, 3 and 4) British Columbia (2B)
+                         c0           17.00                  4.00
+                         c1            2.46                  2.76
+
+
+
+                                                     21
+4 Model Results for the Pacic Halibut Fishery
+4.1    Symmetric Case: South Alaska and British Columbia
+
+To illustrate the implication of the model we rst consider two zones of similar size and we
+
+now solve the model for the parameters estimated in the previous section.               We solve the
+
+model with the estimated parameters. We denote South Alaska (2C) Zone 1 and British
+
+Columbia (2B) Zone 2. The only parameter that has not been estimated is the real risk-
+
+adjusted discount rate. For this parameter, we follow Pizarro and Schwartz (2021) and use
+
+a value of 2.9% for both zones.
+
+   Table 9 summarizes the parameters used for solving the model. Since the data used to
+
+estimate the required parameters is annual, we solve the model using a one-year time step.
+
+We construct the biomass, policies, and random shocks grids dividing the sets into equally-
+
+spaced discrete points. For the exogenous demand factor, we use a log-linear grid to better
+
+capture its distribution.
+
+   The biomass grid boundaries are 0.1 and carrying capacity             I max .   For the exogenous
+
+demand factor, the boundaries are the       90%   condence interval, for a 10-year time horizon,
+                                                                                                     7
+constructed using its estimated distribution.       For the policy grid, the boundaries are 0.1
+
+to 45 million pounds per year. This upper boundary ensures that the optimal harvesting is
+
+always an interior value on the constructed grid.
+
+  7 Given
+        that the inverse demand function is undened if the harvest is zero, we choose this small as the
+minimum harvest.
+
+
+
+
+                                                  22
+                          Table 9: Model Parameters for the Symmetric Case
+This table summarizes the parameters estimated in Section 3. Stochastic shocks are dened to cover a 90%
+condence interval.
+                                              Panel A: Grid Density
+              Parameter       Zone 1     Zone 2                   Description
+                 nI             35         35                 Biomass grid density
+                 nX             21         21        Exogenous demand factor grid density
+                 nZ             5          5     Biomass and demand factor shocks grid density
+                 nQ            150        150                Harvesting grid density
+
+                                            Panel B: Biomass Dynamics
+                   Parameter       Zone 1    Zone 2                Description
+                        min
+                       Ii            0.1       0.1              Minimum biomass
+                        max
+                       Ii           97.03     83.78             Maximum biomass
+                         i          0.44      0.78        Biomass intrinsic growth rate
+                         i          0.07      0.08     Biomass idiosyncratic shock volatility
+                                    0.08      0.08        Biomass global shock volatility
+
+                                           Panel C: Demand Dynamics
+             Parameter     Value                               Description
+                 X0        11.45             Current level of the exogenous demand factor
+                 µX        0.02        Expected growth of the log of the exogenous demand factor
+                 X         0.17          Log of the exogenous demand factor shocks volatility
+                           0.38                          Inverse demand slope
+
+                                            Panel D: Other Parameters
+            Parameter     Value                                Description
+               Z min      -1.65                   Min. value of the stochastic shocks
+               Z max      1.65                    Max. value of the stochastic shocks
+               Qmin       0.10                      Min. value of the annual harvest
+               Qmax
+                 1        45.00         Max. value of the annual harvest for South Alaska (2C)
+               Qmax
+                 2        45.00        Max. value of the annual harvest for British Columbia (2B)
+                 r        0.03                         Risk-adjusted discount rate
+                 c10      1.50                Fixed harvesting cost for South Alaska (2C)
+                 c11      2.52                Variable harvesting cost South Alaska (2C)
+                 c20      4.00              Fixed harvesting cost for British Columbia (2B)
+                 c21      2.76              Variable harvesting cost British Columbia (2B)
+
+
+4.1.1 Value Functions and Harvesting Policies. Symmetric Case
+Figure 14 shows the value of the Zone 1: South Alaska (2C) and Zone 2: British Columbia
+
+halibut shery, for dierent values of the biomass in each zone, under the optimal harvesting
+                                                                         8
+policy, for a xed exogenous demand factor               Xt = 11.45   .
+
+   8 The solution algorithm takes approximately 10 global iterations across both zones, while it takes approx-
+imately 300 iterations to fulll the stopping criteria in each zone (absolute change of 1.0 × 10e-3 in the value
+function). The iteration errors and changes in the optimal policy converge smoothly in all global iterations.
+
+
+
+
+                                                        23
+Figure 14: Zone 1: South Alaska (2C) and Zone 2: British Columbia (2B) Value Function for the Exogenous
+Demand Xt = 11.45. Source: Own Elaboration Based on Model Results.
+
+   Figure 14 shows how the resource value is aected by the interaction between the zones.
+
+The value of the biomass in a specic zone is more valuable when the biomass is lower in the
+
+other zone, that is, the resource is more valuable when the competing zone has less biomass
+
+and consequently produces less. This can also be seen more clearly in Table 10 which shows
+
+the value in both zones for three dierent biomass levels in each one of the zones.
+
+
+              Table 10: Value of the Fishery in Zone 1 and 2 for the Symmetric Case
+This table shows the value function obtained from solving the symmetric model. Zone 1: South Alaska (2C),
+Zone 2: British Columbia (2B). All results are computed for an exogenous demand factor of Xt = 11.45.
+        Fishery's Value in Zone 1 V1,t [Mill. USD]        Fishery's Value in Zone 2 V2,t [Mill. USD]
+         1
+        It   2
+           /It [Mill. lb.]   10    30      50              1
+                                                          It   2
+                                                             /It [Mill. lb.]   10    30      50
+               10            587   577    576                    10            911   940    945
+               30            647   626    621                    30            876   904    909
+               50            667   644    638                    50            864   889    893
+
+
+   Figure 15 shows the optimal harvesting for dierent values of the biomass in each zone.
+
+
+
+
+                                                     24
+Figure 15: Zone 1: South Alaska (2C) and Zone 2: British Columbia (2B) Harvesting Policy for the
+Exogenous Demand Xt = 11.45. Source: Own Elaboration Based on Model Results.
+
+   Figure 15 shows that the optimal annual harvest in each zone goes from values close to zero
+                                                                                         9
+in states of low biomass to 13 million pounds per year in both zones . The lowest levels are
+
+observed only in states where the zone's biomass is almost depleted. The highest harvestings
+
+are observed in states where the biomass is high in both zones. Table 11 illustrates this eect
+
+for three dierent levels of biomass in each zone.
+
+
+                     Table 11: Harvesting in Zone 1 and 2 for the Symmetric Case
+This table shows the optimal harvesting policy obtained from solving the symmetric model. Zone 1: South
+Alaska (2C), Zone 2: British Columbia (2B). All results are computed using an exogenous demand factor of
+Xt = 11.45.
+
+                 Harvesting in Zone 1 q1,t [Mill. lb.]        Harvesting in Zone 2 q2,t [Mill. lb.]
+                  1
+                 It   2
+                    /It [Mill. lb.]   10    30    50           1
+                                                              It   2
+                                                                 /It [Mill. lb.]   10    30    50
+                        10            0.8   0.5   0.5                10            2.5   8.6   10.6
+                        30            5.1   4.7   3.9                30            2.0   8.6   11.4
+                        50            8.6   8.4   7.9                50            1.4   8.4   11.0
+
+
+   Figure 16 shows the aggregate harvesting for both zones.
+
+   9 The   harvesting policy upper-bound was set at 45 million pounds per year in each zone. This limit is not
+binding.
+
+
+
+
+                                                         25
+Figure 16: Aggregate Harvesting Policy for the Exogenous Demand Xt = 11.45. Symmetric Case. Source:
+Own Elaboration Based on Model Results.
+
+   Figure 16 shows that the aggregate annual optimal harvesting goes from values close to
+
+zero to 24 million pounds per year in states of high biomass in both zones.            This gure
+
+helps us illustrate part of the interactions between both zones, in particular, that if a zone
+
+has available biomass, while the second is depleted, the total production increases, but it is
+
+still lower than in the case that both zones have high biomass. This occurs because when a
+
+zone produces without competing with the second zone, it will select a level of harvest that
+
+balances selling a higher harvest with selling at a lower price.
+
+   Recall that the global price is determined by an exogenous demand factor           Xt   and the
+
+aggregate harvest of the two zones. Figure 17 shows the global market price for the aggregate
+
+harvest presented in Figure 16 for dierent levels of the biomass for both zones.           Here we
+
+notice that the price is highest when the resource is not available in both zones, and as the
+
+biomass increases the price decreases.     This is explained by the increase in the harvest in
+
+those states. Table 12 shows this for three dierent levels of the biomass in both zones.
+
+
+
+
+Figure 17: Global Market Price for the Exogenous Demand Xt = 11.45. Symmetric Case. Source: Own
+Elaboration Based on Model Results.
+
+                                                26
+                          Table 12: Global Price for the Symmetric Case
+This table shows the global price obtained from the optimal harvesting policy in each zone and the global
+exogenous demand factor. All results are computed for an exogenous demand factor of Xt = 11.45.
+                                          Global Price: Pt [USD/lb.]
+                                        1
+                                       It   2
+                                          /It [Mill. lb.]        10     30    50
+                                               10                7.3    4.9   4.6
+                                               30                5.4    4.3   4.1
+                                               50                4.8    3.9   3.7
+
+
+4.1.2 Harvesting, Biomass and Price Simulations. Symmetric Case
+To study the halibut biomass and global price dynamics if the optimal harvesting policy is
+
+implemented in both zones, we generate multiple shocks for the biomass and the exogenous
+
+demand factor. With these shocks, the current state of global demand factor and the biomass,
+
+the estimated dynamics and the optimal policy, we simulate                            10, 000   dierent paths over a
+
+horizon of   10 years for the biomass,       the harvest and the halibut global price. All simulations
+
+start from the current state of the exogenous demand factor                           X0 = 11.45 and the biomass:
+I1,0 = 81.18   million pounds in Zone 1 (South Alaska (2C))                         and I2,0 = 55.04 million pounds
+
+in Zone 2 (British Columbia (2B)).
+
+   Figure 18 presents the median,            10th   and     90th       percentiles of the 10,000 simulated paths
+
+over a 10-year horizon for the biomass in each zone.
+
+
+
+
+Figure 18: Zone 1: South Alaska (2C) and Zone 2: British Columbia (2B) Simulated Biomass. Source:
+Own Elaboration Based on Model Simulations.
+
+   Panel A of Figure 18 shows that the biomass is expected to decrease in Zone 1: South
+
+Alaska (2C), while Panel B shows that the biomass is expected to slightly decrease in Zone
+
+2: British Columbia (2B). This gure also shows the biomass remains away from depletion
+
+with   90% probability.   The   90th   percent percentile shows that in paths of biomass growth will
+                                         max
+approach its carrying capacity (I              ).
+
+
+                                                            27
+   Figure 19 presents the median,     10th   and   90th   percentiles of the simulated harvesting in
+
+each zone.
+
+
+
+
+Figure 19: Zone 1: South Alaska (2C) and Zone 2: British Columbia (2B) Simulated Harvesting. Source:
+Own Elaboration Based on Model Simulations.
+
+   Panel A of Figure 19 shows the simulated harvesting in Zone 1: South Alaska (2C), Panel
+
+B shows the simulated harvest in Zone 2: British Columbia (2B). The gures show the median
+
+harvest in British Columbia (2B) increases over the simulated period, whereas the median
+
+harvest decreases in South Alaska (2C). As both zones face similar global uncertainty, this
+
+is, global biomass and exogenous demand factor shocks, these dierences are mostly driven
+
+by the dierences in the biomass dynamics.           As shown in Figure 5, the expected biomass
+
+growth is greater, for most biomass levels, in British Columbia, this faster growth increases
+
+the incentives to harvest today, as the resource will recover faster in the following periods,
+
+in comparison to South Alaska.
+
+   Figure 20 presents the median,     10th   and   90th   percentiles of the simulated aggregate har-
+
+vesting and global price.
+
+
+
+
+Figure 20: Zone 1: South Alaska (2C) and Zone 2: British Columbia (2B) Simulated Aggregate Harvest
+and Global Market Price. Source: Own Elaboration Based on Model Simulations.
+
+                                                   28
+   Panel A of Figure 20 shows that the global harvesting is expected to decrease over time,
+
+it will not be less than 5 million pounds with    90% probability, while it may be slightly higher
+than 30 million pounds per year.        Panel B shows the global price.        Overall, the price is
+
+expected to increase, while presenting an asymmetric distribution. The increase in the price
+
+is related to the expected growth in the demand factor and the decrease in the harvesting.
+
+This occurs because there is a limit to the benets of harvesting due to the negative slope of
+
+the demand function, therefore, the sheries will not harvest excessively high quantities, as
+
+this policy will push the price down, reducing their revenues. On the other hand, simulated
+
+high prices are related to low biomass states in both zones.
+
+
+
+
+4.2     Asymmetric Case: Alaska and British Columbia
+
+We now consider two zones of signicantly dierent sizes and solve the model with the
+
+parameters estimated in Section 3 for the Asymmetric Case. We denote Alaska (2C, 3 and
+
+4) Zone 1 and British Columbia (2B) Zone 2. As in the Symmetric Case, we use a real
+
+risk-adjusted discount rate of 2.9% for both zones.
+
+   Table 13 summarizes the parameters used for solving the model.                We follow the grid
+
+construction procedure for most of the required grids, except for the policy grid in Alaska.
+                                                    10
+For this zone, the policy grid boundaries are 0.1        to 250 million pounds per year. This upper
+
+boundary ensures that the optimal harvesting is always an interior value on the constructed
+
+grid for this larger zone.
+
+  10 Given
+        that the inverse demand function is undened if the harvest is zero, we choose this small as the
+minimum harvest.
+
+
+
+
+                                                  29
+                        Table 13: Model Parameters for the Asymmetric Case
+This table summarizes the parameters estimated in Section 3. Stochastic shocks are dened to cover a 90%
+condence interval.
+                                            Panel A: Grid Density
+             Parameter      Zone 1     Zone 2                   Description
+                nI            35         35                 Biomass grid density
+                nX            21         21        Exogenous demand factor grid density
+                nZ            5          5     Biomass and demand factor shocks grid density
+                nQ           150        150                Harvesting grid density
+
+                                           Panel B: Biomass Dynamics
+                 Parameter       Zone 1      Zone 2               Description
+                      min
+                     Ii            0.1         0.1             Minimum biomass
+                      max
+                     Ii         1,146.37      84.22            Maximum biomass
+                       i          0.08        0.77       Biomass intrinsic growth rate
+                       i          0.02        0.08    Biomass idiosyncratic shock volatility
+                                  0.03        0.03       Biomass global shock volatility
+
+                                         Panel C: Demand Dynamics
+            Parameter       Value                            Description
+                X0          9.41           Current level of the exogenous demand factor
+                µX          0.01     Expected growth of the log of the exogenous demand factor
+                X           0.21       Log of the exogenous demand factor shocks volatility
+                            0.24                       Inverse demand slope
+
+                                          Panel D: Other Parameters
+           Parameter     Value                               Description
+             Z min        -1.65                 Min. value of the stochastic shocks
+             Z max        1.65                  Max. value of the stochastic shocks
+             Qmin         0.10                    Min. value of the annual harvest
+             Qmax
+               1         100.00      Max. value of the annual harvest for Alaska (2C, 3 and 4)
+             Qmax
+               2         45.00       Max. value of the annual harvest for British Columbia (2B)
+               r          0.03                       Risk-adjusted discount rate
+               c10       17.00             Fixed harvesting cost for Alaska (2C, 3 and 4)
+               c11        2.46             Variable harvesting cost Alaska (2C, 3 and 4)
+               c20        4.00            Fixed harvesting cost for British Columbia (2B)
+               c21        2.76            Variable harvesting cost British Columbia (2B)
+
+
+4.2.1 Value Functions and Harvesting Policies. Asymmetric Case.
+Figure 21 shows the value of the Zone 1: Alaska (2C, 3 and 4) and Zone 2: British Columbia
+
+(2B) halibut shery, for dierent values of the biomass in each zone, under the optimal
+
+harvesting policy, for a xed exogenous demand factor               Xt = 9.41.
+
+
+
+
+                                                       30
+Figure 21: Zone 1: Alaska (2C, 3 and 4) and Zone 2: British Columbia (2B) Value Function for the
+Exogenous Demand Xt = 9.41. Source: Own Elaboration Based on Model Results.
+
+   Figure 21 shows how dierent the interaction between the zones is in this case. The value
+
+of the larger biomass zone (Alaska) is almost not aected by the other zone, that is, the
+
+value of the resource is not aected by a signicantly smaller competing zone.                       Therefore,
+
+this indicates that Zone 1 (Alaska) will maximize its value almost as if it was the only shery
+
+in the market. On the other hand, the smaller zone (British Columbia) value will be aected
+
+by the biomass level of the larger zone, thus its value will uctuate according to the biomass
+
+of the larger zone. This can also be seen in Table 14.
+
+
+              Table 14: Value of the Fishery in Zone 1 and 2 for the Asymmetric Case
+This table shows the value function obtained from solving the asymmetric model. Zone 1: Alaska (2C, 3 and
+4), Zone 2: British Columbia (2B). All results are computed for an exogenous demand factor of Xt = 9.41.
+        Fishery's Value in Zone 1 V1,t [Mill. USD]        Fishery's Value in Zone 2 V2,t [Mill. USD]
+         1
+        It   2
+           /It [Mill. lb.]   10     30      50             1
+                                                          It   2
+                                                             /It [Mill. lb.]   10      30     50
+              100            1169   1162   1161                 100            1736   1809   1834
+              300            2076   2060   2058                 300            1548   1621   1647
+              500            2534   2511   2503                 500            1461   1524   1550
+
+
+   Figure 22 shows the optimal harvesting for the asymmetric model, as a function of the
+
+biomass in each zone.
+
+
+
+
+                                                     31
+Figure 22: Zone 1: Alaska (2C, 3 and 4) and Zone 2: British Columbia (2B) Harvesting Policy for the
+Exogenous Demand Xt = 9.41. Source: Own Elaboration Based on Model Results.
+
+    Figure 22 shows that the optimal harvesting goes from values close to zero in states of
+
+low biomass to over 40 million pounds per year in states of high biomass in Zone 1. In Zone 2
+
+harvest also starts at values close to zero in states of low biomass but increases to 25 million
+
+pounds per year in states of high biomass in Zone 2 and Zone 1. Table 15 complements these
+
+results for multiple levels of the biomass in each zone.
+
+
+                      Table 15: Harvesting in Zone 1 and 2 for the Asymmetric Case
+This table shows the optimal harvesting policy obtained from solving the symmetric model. Zone 1: Alaska
+(2C, 3 and 4), Zone 2: British Columbia (2B). All results are computed for an exogenous demand factor of
+Xt = 9.41.
+
+                  Harvesting in Zone 1: q1,t [Mill. lb.]        Harvesting in Zone 2: q2,t [Mill. lb.]
+                   1
+                  It   2
+                     /It [Mill. lb.]   10    30    50            1
+                                                                It   2
+                                                                   /It [Mill. lb.]   10    30    50
+                           100         1.0   1.0   1.0                100            1.0   8.7   16.7
+                           300         3.7   1.8   1.0                300            1.0   8.3   16.2
+                           500         9.3   8.5   5.9                500            1.0   8.3   16.2
+
+
+    Table 15 shows that although the value of the shery in Zone 1 is not signicantly aected
+                                                                                                         11
+by the biomass in Zone 2, the harvest is, especially if the biomass in Zone 1 is small                        . In
+
+scenarios of small biomass in Zone 1, an additional unit of the resource becomes extremely
+
+valuable for the shery, as its biomass annual growth is considerably low, particularly in
+
+comparison to Zone 2, thus enhancing the incentives to preserve the biomass and consequently
+
+increase the continuation value of the shery.
+
+    Table 15 shows that, for Zone 2, the harvest is almost unaected by the biomass in Zone 1.
+
+That is an interesting feature of the model, as it points that when facing a large competitor, a
+
+shery will act like a price-taker, focusing on the exogenous demand factor and local biomass
+
+to determine the annual harvest.
+  11 I max   = 1, 146.37
+
+
+                                                           32
+   Figure 23 shows that the aggregate annual optimal harvesting goes from values close to
+
+zero to 60 million pounds per year in states of high biomass in both zones.            From both
+
+policies and their combination, is possible to notice that most of the interaction is driven
+
+by the optimal harvesting policy in Zone 2. This is consistent with the notion that Zone 1
+
+maximizes its value almost independently from Zone 2, while Zone 2 does take into account
+
+the optimal policy in Zone 1.
+
+
+
+
+Figure 23: Aggregate Harvesting Policy for the Exogenous Demand Xt = 9.41. Asymmetric Case. Source:
+Own Elaboration Based on Model Results.
+
+   Figure 24 shows the global market price, in the asymmetric case, for the aggregate harvest
+
+presented in Figure 23 for dierent levels of the biomass for both zones.          Here, as in the
+
+symmetric case, we notice that the price is highest when the resource is not available in both
+
+zones and as the biomass increases the price decreases. Table 16 shows this for three dierent
+
+levels of the biomass in both zones.
+
+
+
+
+Figure 24: Global Market Price for the Exogenous Demand Xt = 9.41. Asymmetric Case. Source: Own
+Elaboration Based on Model Results.
+
+
+
+                                                33
+                          Table 16: Global Price for the Asymmetric Case
+This table shows the global price obtained from the optimal harvesting policy in each zone and the global
+exogenous demand factor, for the Asymmetric Case. All results are computed for an exogenous demand
+factor of Xt = 9.41.
+                                      Global Price: Pt [USD/lb.]
+                                    1
+                                   It   2
+                                      /It [Mill. lb.]        10      30    50
+                                          100                8.0     5.5   4.7
+                                          300                6.5     5.4   4.8
+                                          500                5.4     4.8   4.5
+
+
+4.2.2 Harvesting, Biomass and Price Simulations. Asymmetric Case
+As in the Symmetric Case, we simulate          10, 000       dierent paths over a horizon of       10   years for
+
+the biomass, the harvest and the global price. All simulations start from the current state of
+
+the exogenous demand factor       X0 = 9.41 and biomass: I1,0 = 493.73 million pounds in Zone
+1 (Alaska (2C, 3 and 4)) and     I2,0 = 55.04 million pounds in Zone 2 (British Columbia (2B)).
+   Figure 25 presents the median,      10th   and   90th     percentile of the 10,000 simulated paths over
+
+the 10-year horizon for the biomass in each zone.
+
+
+
+
+Figure 25: Zone 1: Alaska (2C, 3 and 4) and Zone 2: British Columbia (2B) Simulated Biomass. Source:
+Own Elaboration Based on Model Simulations.
+
+   Panel A of Figure 25 shows that the biomass is expected to increase in Zone 1: Alaska
+
+(2C, 3 and 4), while Panel B shows that the biomass is expected to decrease in Zone 2:
+
+British Columbia (2B). As in the Symmetric Case, the biomass will not approach depletion
+
+with 90% probability, but in contrast to the Symmetric Case, the                     90th   percentile will not
+
+reach the carrying capacity (Imax ) for neither zone.
+
+   Figure 26 presents the median,       10th   and      90th       percentile of the simulated paths over the
+
+10-year horizon for the harvesting policy in each zone.
+
+
+
+
+                                                        34
+Figure 26: Zone 1: Alaska (2C, 3 and 4) and Zone 2: British Columbia (2B) Simulated Harvesting. Source:
+Own Elaboration Based on Model Simulations.
+
+   Panel A of Figure 26 shows that the simulated harvest in Zone 1: Alaska (2C, 3 and
+
+4) is expected to increase signicantly over the 10-year horizon. This increase is interesting
+
+considering that the biomass is expected to grow over the same period. In particular, this
+
+shows that the shery will optimally allow the biomass to increase over the rst years, to be
+
+able to optimally increase harvest in the future. Panel B of Figure 26 shows the simulated
+
+harvest in Zone 2: British Columbia (2B). In this zone, the harvest will start at a higher
+
+level and is expected to decrease over time. This high level of harvesting in Zone 2 explains
+
+the observed reduction in biomass.
+
+   We notice that the initial simulated harvest in Zone 1: Alaska (2C, 3 and 4) is lower than
+
+in Zone 2: British Columbia (2B), although its biomass level is signicantly higher. Several
+
+characteristics of Zone 1 may help us explain this result.            First, the biomass in that zone
+
+although greater than the biomass in British Columbia, is relatively small in comparison to
+                               max
+the zone's carrying capacity (I1      = 1, 146), therefore, it will be optimal to allow the biomass
+to grow given the zone's available capacity. Second, the intrinsic growth rate in this zone is
+
+small (1   = 0.08) in comparison to the growth rate in British Columbia ((2 = 0.77).         Thus, to
+
+induce biomass growth, the harvesting in Zone 1 must be drastically reduced. Finally, we can
+
+also point that the harvesting is only smaller in Alaska at the start of the simulation. As the
+
+biomass starts to grow in future simulated periods, the harvesting in the zone also increases,
+
+surpassing the harvest in British Columbia. This increment in the harvest is limited though,
+
+due to the negative slope of the global demand, as more harvest negatively aects the global
+
+prices.
+
+   Figure 27 presents the median,      10th   and   90th   percentile of the simulated aggregated har-
+
+vesting and global price over the 10-year horizon simulated.
+
+
+
+
+                                                    35
+Figure 27: Zone 1: Alaska (2C, 3 and 4) and Zone 2: British Columbia (2B) Simulated Aggregate Harvest
+and Global Market Price. Source: Own Elaboration Based on Model Simulations.
+
+   Panel A of Figure 27 shows that the simulated aggregate harvesting is expected to increase,
+
+due specically to the increment in the harvesting of Zone 1. Beyond the increment in the
+
+harvest, prices are also expected to increase over time. This is due to the expected growth
+
+in the exogenous demand factor      Xt .   An interesting feature of the simulated price dynamics
+
+of the Asymmetric case is that prices appear to be more volatile in this case than in the
+
+Symmetric Case. This feature may be explained by the asymmetry in the biomass, as Zone 1
+
+will change its production reecting shocks to its biomass, while not giving signicant weight
+
+to the harvesting in Zone 2, therefore transferring part of its biomass uncertainty to the
+
+global price.
+
+
+
+
+5 The Impact of a Global Competition
+Our model provides an ideal setting to compare a global framework with an alternative where
+
+the individual zones are aggregated into a single optimizing shery, thus abstracting from all
+
+competition eects.
+
+   To formulate this comparison, we start by adding the biomass and harvest of South Alaska
+
+(2C) and British Columbia (2B). With these time series, we estimate the aggregate biomass
+
+dynamics parameters. As we consider both zones simultaneously, the price dynamics will be
+
+the same as in the symmetric case. We also update the cost function parameters to reect
+
+the new representative shery, for this, we consider the total revenue and harvest of South
+
+Alaska (2C) and British Columbia (2B) and followed the approach described in Section 3.
+
+We denote the aggregate model as the Single Fishery Case. This model is solved following
+
+Pizarro and Schwartz (2021) while incorporating the presented global market. We use the
+
+obtained optimal policies to simulate the dynamics of the aggregate harvesting and biomass
+
+
+
+                                                  36
+for this case.
+
+   All simulations start from the current state of the exogenous demand factor     X0 = 11.45
+and the biomass:   I1,0   = 81.18 million pounds in Zone 1 (South Alaska (2C)) and I2,0 = 55.04
+million pounds in Zone 2 (British Columbia (2B)).
+
+   Figure 28 shows the median,        10th   and    90th   percentile of 10,000 simulated paths, over a
+
+10-year horizon, for the aggregate biomass in the Symmetric Case and the Single Fishery
+
+Case.
+
+
+
+
+Figure 28: Simulated Aggregate Biomass for the Single Fishery Case and the Symmetric Case. Source:
+Own Elaboration Based on Model Results.
+
+   Figure 28 shows that the biomass is expected to decrease in both cases, but it will be
+
+higher in the Single Fishery Case. This gure also shows the biomass in the Single Fishery
+
+Case will have a higher      10th   and   90th   percentiles.   The   90th   percent percentile shows that
+
+in paths of biomass growth will approach its carrying capacity (for the Single Fishery Case
+
+I max = 185   million pounds).
+
+   Figure 29 shows the median,       10th and 90th percentile of the simulated aggregate harvesting
+for the Symmetric Case and the Single Fishery Case.
+
+
+
+
+                                                      37
+Figure 29: Simulated Aggregate Harvesting for the Single Fishery Case and the Symmetric Case. Source:
+Own Elaboration Based on Model Results.
+
+   Figure 29 shows that the harvest is expected to increase in the Single Fishery Case and
+
+decrease in the Symmetric Case, but the harvest in the Single Fishery Case is always lower
+
+than in the Symmetric Case.       Thus, if each shery solves the problem individually, it will
+
+harvest less over the simulated horizon. This policy is consistent with the higher biomass
+
+observed in Figure 29 and will induce also higher global prices, as presented in Figure 30.
+
+
+
+
+Figure 30: Simulated Global Price for the Single Fishery Case and the Symmetric Case. Source: Own
+Elaboration Based on Model Results.
+
+   Figure 30 shows that the global price is expected to increase in both cases, but it will be
+
+higher in the Single Fishery Case for the whole simulated period. This result is consistent
+
+with the observed harvesting policy, as the Single Fishery Case harvests less, causing the
+
+price to increase.
+
+
+
+
+                                                 38
+   Overall, the simulated dynamics are signicantly dierent for the considered cases.      In
+
+particular, we can conclude that competition will increase the global harvest, and conse-
+
+quently reduced the resource price, overall beneting consumers. We also notice that this
+
+benet to the consumer will not take a signicant toll on the biomass of the aggregate area.
+
+
+
+
+6 Conclusions
+This article develops and implements a stochastic optimal control approach to a real group
+
+of sheries in dened geographical zones, facing local and global sources of uncertainty. The
+
+solution of the model is obtained by solving for the optimal value of the sheries using
+
+a value-function iteration approach.   Overall, the results highlight the strong interaction
+
+between zones when considering competition in a global market.
+
+   The solution is implemented using estimated parameters for the Alaska and British
+
+Columbia halibut shery. We illustrate the model considering a setting with only two zones.
+
+In particular, we focus on a Symmetric Case and an Asymmetric Case.
+
+   In the Symmetric Case, we consider two zones with comparable biomass, South Alaska
+
+(2C) and British Columbia (2B). We nd that the optimal harvesting policy, the biomass
+
+dynamics and the global prices are signicantly inuenced by the interaction between the
+
+two zones. We also show that specic characteristics of the biomass dynamics in each zone
+
+will have an impact on the results.
+
+   In the Asymmetric Case, we consider two zones with very dierent biomass, Alaska (2C,
+
+3 and 4) and British Columbia (2B). We nd that the harvesting policy in the larger zone
+
+will not be greatly aected by the harvesting policy of the smaller zone. In this setting, the
+
+interaction between zones is mostly driven by the policy in the smaller zone.
+
+   We use our model to show that global competition is a fundamental force driving a
+
+shery's optimal harvest choices. To reach this conclusion, we compare our Symmetric Case
+
+with an alternative where the individual zones are aggregated into a single optimizing shery
+
+(Single Fishery Case), thus abstracting from all competition eects. We show that results
+
+are signicantly dierent in each case. We conclude that competition will increase the global
+
+harvest and consequently reduced the resource price, overall beneting consumers.
+
+   This paper contributes to the literature by proposing a novel framework to study the
+
+interactions of multiple sheries in a global setting. The model allows us to answer funda-
+
+mental economic questions, such as how signicant is the interaction between sheries and
+
+what is the impact of global competition in the optimal policy. These results have relevant
+
+policy implications, as regulators could use the model to determine the total annual catch
+
+(TAC) in a multiple zones setting, properly accounting for the interactions shown in our
+
+
+                                             39
+results.
+
+   In this paper we have concentrated on a single sh specie, abstracting from the interaction
+
+in the demand and the supply of dierent species. These interactions considerably increase
+
+the complexity of the problem but look promising topics for future research.
+
+
+
+
+                                             40
+References
+S. F. Kvamsdal, D. Poudel, and L. K. Sandal. Harvesting in a shery with stochastic growth
+
+  and a mean-reverting price.   Environmental and resource economics, 63(3):643663, 2016.
+
+S. Nelson.   Pacic Commercial Fishing Fleet: Financial Proles for 2007.        Fisheries and
+
+  Oceans Canada (DFO), 2009.
+
+
+S. Nelson.   Pacic Commercial Fishing Fleet: Financial Proles for 2009.        Fisheries and
+
+  Oceans Canada (DFO), 2011.
+
+
+L. Nøstbakken. Regime switching in a shery with stochastic stock and price.       Journal of
+  Environmental Economics and Management, 51(2):231241, 2006.
+
+R. S. Pindyck.   Uncertainty in the theory of renewable resource markets.     The Review of
+  Economic Studies, 51(2):289303, 1984.
+
+J. Pizarro and E. Schwartz. Fisheries optimal harvest under price and biomass uncertainty.
+
+  Environmental and Resource Economics, 78(1), 2021.
+
+D. Poudel, L. K. Sandal, S. F. Kvamsdal, and S. I. Steinshamn. Fisheries management under
+
+  irreversible investment: does stochasticity matter?    Marine Resource Economics,    28(1):
+
+  83103, 2013.
+
+
+C. Sims, R. D. Horan, and B. Meadows. Come on feel the noise: Ecological foundations in
+
+  stochastic bioeconomic models.    Natural Resource Modeling, 31(4), 2018.
+
+I. Stewart and A. Hicks.   Assessment of the Pacic halibut (Hippoglossus stenolepis) stock at
+  the end of 2017.   International Pacic Halibut Commission, 2017.
+
+
+I. Stewart and R. Webster.  Overview of data sources for the Pacic halibut stock assessment,
+  harvest strategy policy, and related analyses. International Pacic Halibut Commission,
+  2017.
+
+
+
+
+                                              41
+Appendix A: Implementation of the Model and Value-
+Function Algorithm Scheme
+Value-Function Iteration Approach
+
+To solve the Bellman equation for the shery's value                          Vi (I1,t , ..., IN,t , Xt ),   we follow a modi-
+
+ed version of the Value-Function Iteration Approach as presented in Pizarro and Schwartz
+
+(2021).
+
+     We start from Equation (15) for zone               i:
+
+
+
+                                                               
+  Vi (I1,t , ..., IN,t , Xt ) = max
+                                 
+                                     (I1,t , ..., IN,t , Xt , qi (I1,t , ..., IN,t , Xt )) +
+                               qi 0
+                                                1
+                                                   Et [Vi (I1,t+1 , ..., IN,t+1 , Xt+1 ) |I1,t , ..., IN,t , Xt ]         (26)
+                                               1+r
+          
+where    qi (I1,t , ..., IN,t , Xt ) is the harvesting policy and {I1,t+1 , ..., IN,t+1 , Xt+1 } is the state at
+year   t + 1 of the stochastic variables in our model, the resource biomass for each zones and
+the exogenous demand factor.
+
+     We solve Equation (26) assuming that the shery in zone                              i   maximizes taking the set of
+                                                                               
+optimal policies for the rest of the considered zones,                q      /qi , as known. This set of functions is
+
+fundamental to solve the Bellman equation as it allows the calculation of the period's prots
+
+and the expected state of all the zones' biomass in the following period, and consequently,
+
+the continuation value.
+
+     The model implementation starts by dening a discrete state space for the biomass of
+
+each zone in the set         i  {1, 2, .., N } and the exogenous demand factor, {I1,m1 , ..., IN,mN , Xj },
+where     Ii,mi    {Ii,1 , Ii,2 , ..., Ii,M = Iimax } and Xj  {X1 , X2 , ..., XJ }.
+                                                                                      min
+     The optimal control for each zone is also discretized to the set qi,ki  {qi,1 = qi   , ..., qi,K =
+ max                                        i      i                   M
+qi }. Over the state space the function V = Vm1 ,...,mN ,j is a N × J matrix representing
+the value of the shery in zone i for the state {I1,m1 , ..., IN,mN , Xj }.
+
+     The shocks to the biomass of each zone and the exogenous demand factor are denoted
+
+by   Z i i  {1, ..., N }     and   ZX    respectively. The global biomass shock is denoted                        Z G.   These
+
+shocks are assumed to be i.i.d. standard normal random variables. The shocks discretization
+                                                          i          i    i          i
+transforms them into nite Markov chains                Zf   i
+                                                               {Z1     , Z2 , ...., ZF } for all i  {1, ..., N },
+ X    X    X          X                   G       G    G          G
+Zh  {Z1 , Z2 , ...., ZH }          and   Zu     {Z1 , Z2 , ...., ZU }, for the biomass of each zone, the
+exogenous demand factor and the global biomass shock respectively.
+
+     i
+     fi   is the transition probability from the current biomass shock
+                                                                                                    i
+                                                                                                   Z0   to a biomass shock
+
+
+
+                                                             42
+ i
+Zf i
+       in the following period. For the exogenous demand shock,                                  X
+                                                                                                 g   represents the transition
+                                                        X                        X
+probability from the current exogenous demand shock Z0 to a demand shock Zh . Finally,
+                               G
+for the global biomass shock, u is the transition probability from the global biomass shock
+ G                       G
+Z0     to a shock       Zu .
+
+       Using the discretization of the state space, value function, harvesting policies and shocks,
+
+Equation (26) can then be re-written as:
+
+
+
+   i
+  Vm 1 ,...,mN ,j
+                  =                max             (I1,m1 , I2,m2 , ..., IN,mN , Xj , qi,ki )+
+                        qi,ki {qi,1 ,...,qi,K }
+          F         F    U     H      N
+ 1
+              ...                          i   G  X   i
+                                           fi ×u ×h ×V (I1,m1 + I1,m1 , ..., IN,mN + IN,mN , Xj + Xj )
+1+r
+        f1 =1   fN =1u=1h=1          i=1
+                                                                                                                                    (27)
+
+where      Imi + Imi           for all     i  {1, 2, ..., N }       and   Xj + Xj     are the state of the biomass of each
+
+zone and exogenous demand factor in the next period.
+
+       These values are calculated using the stochastic processes dened in Equations (1), (4),
+
+(9) and (10) for the biomass and the exogenous demand factor.
+
+       For the set of optimal policies is                   q   and stochastic shocks
+                                                                                             1
+                                                                                            Zf 1
+                                                                                                         N
+                                                                                                 , ..., Zf N
+                                                                                                                G
+                                                                                                             , Zu    X
+                                                                                                                  , Zh    , the next
+
+period biomass state for zone                     i   is:
+
+
+                                                            Ii,mi       
+Ii,mi + Ii,mi = Ii,mi +  i Ii,mi 1 -                         i
+                                                                     - qi (m1 , ..., mN , j ) + Ii,mi ×  i × Zf
+                                                                                                              i         G
+                                                                                                                  +  × Zu
+                                                            Imax                                                i
+
+                                                                                                                                    (28)
+
+       The next period exogenous demand factor is:
+
+
+                                                                                       X
+                                                       Xj + Xj = Xj eµX +X Zh                                                       (29)
+
+
+
+       The solution algorithm starts from guesses of the value function                              V 0,i = Vm
+                                                                                                              i
+                                                                                                                1 ,...,mN ,j
+                                                                                                                               and the
+
+set of optimal policies              q 0 , .   First, for each zone        i  {1, 2, ..., N }     individually, the algorithm
+
+iterates over each point of the state space                         {I1,m1 , ..., IN,mN , Xj }.   In each of these states, the
+
+right-hand-side of Equation (27) is maximized using the stochastic optimal control                                             qi,ki .   If
+
+the optimized value of the current iteration is greater than the current value function for the
+
+state, then the old value function is replaced by the newly maximized value and the optimal
+
+policy of the zone             i   is replaced by the respective harvest. The process is repeated until no
+
+signicant changes are made to the value function in the latter iteration.
+
+       After the value-maximization procedure is nished for all the zones, the set                                 q 0, is updated
+with the newly computed optimal policies. Using this updated set of policies                                       q 1, , the value-
+maximization procedure is repeated for all zones. This method is repeated until no signicant
+
+
+
+                                                                       43
+changes in the optimal set of policies are made in the latter global iteration.
+
+
+
+
+                                              44
+

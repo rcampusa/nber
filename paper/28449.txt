@@ -1,0 +1,2733 @@
+                              NBER WORKING PAPER SERIES
+
+
+
+
+  ADDRESSING PARTIAL IDENTIFICATION IN CLIMATE MODELING AND POLICY
+                              ANALYSIS
+
+                                      Charles F. Manski
+                                       Alan H. Sanstad
+                                      Stephen J. DeCanio
+
+                                      Working Paper 28449
+                              http://www.nber.org/papers/w28449
+
+
+                    NATIONAL BUREAU OF ECONOMIC RESEARCH
+                             1050 Massachusetts Avenue
+                               Cambridge, MA 02138
+                                   February 2021
+
+
+
+
+Dr. Sanstad's work was partially supported by the National Science Foundation through the
+Center for Robust Decision-Making on Climate and Energy Policy at the University of Chicago.
+We would like to thank the research team of Professor Elizabeth Moyer, Department of
+Geosciences, University of Chicago, for providing CMIP5 model output, and Valentyn Litvin,
+Department of Economics, Northwestern University, for his technical review. We have benefitted
+greatly from the comments of Robert Pindyck and Robert Rosner. The views expressed herein are
+those of the authors and do not necessarily reflect the views of the National Bureau of Economic
+Research.
+
+NBER working papers are circulated for discussion and comment purposes. They have not been
+peer-reviewed or been subject to the review by the NBER Board of Directors that accompanies
+official NBER publications.
+
+© 2021 by Charles F. Manski, Alan H. Sanstad, and Stephen J. DeCanio. All rights reserved.
+Short sections of text, not to exceed two paragraphs, may be quoted without explicit permission
+provided that full credit, including © notice, is given to the source.
+Addressing Partial Identification in Climate Modeling and Policy Analysis
+Charles F. Manski, Alan H. Sanstad, and Stephen J. DeCanio
+NBER Working Paper No. 28449
+February 2021
+JEL No. D81,Q54,Q58
+
+                                         ABSTRACT
+
+Numerical simulations of the global climate system provide inputs to integrated assessment
+modeling for estimating the impacts of greenhouse gas mitigation and other policies to address
+global climate change. While essential tools for this purpose, computational climate models are
+subject to considerable uncertainty, including inter-model "structural" uncertainty. Structural
+uncertainty analysis has emphasized simple or weighted averaging of the outputs of multi-model
+ensembles, sometimes with subjective Bayesian assignment of probabilities across models.
+However, choosing appropriate weights is problematic. To use climate simulations in integrated
+assessment, we propose instead framing climate model uncertainty as a problem of partial
+identification, or "deep" uncertainty. This terminology refers to situations in which the
+underlying mechanisms, dynamics, or laws governing a system are not completely known and
+cannot be credibly modeled definitively even in the absence of data limitations in a statistical
+sense. We propose the min-max regret (MMR) decision criterion to account for deep climate
+uncertainty in integrated assessment without weighting climate model forecasts. We develop a
+theoretical framework for cost-benefit analysis of climate policy based on MMR, and apply it
+computationally with a simple integrated assessment model. We suggest avenues for further
+research.
+
+Charles F. Manski                              Stephen J. DeCanio
+Department of Economics                        Department of Economics (emeritus)
+Northwestern University                        University of California at Santa Barbara
+2211 Campus Drive                              stephen.decanio@gmail.com
+Evanston, IL 60208-2600
+and NBER
+cfmanski@northwestern.edu
+
+Alan H. Sanstad
+1849 Shattuck Avenue Apt.
+407
+Berkeley, CA 94709
+USA
+alansanstad@gmail.com
+1. Introduction
+
+
+
+     Computational modeling of the global climate system provides a foundation for estimating the
+
+effects of greenhouse gas (GHG) mitigation and other policies on global climate change. Climate models
+
+project the future path of the climate as a function of trajectories of anthropogenic GHG emissions and
+
+other inputs. *They are used to predict the climatic and other impacts of altering emission trajectories by
+
+means of various GHG reduction policies, which in turn supports analysis of how to address the climate
+
+change problem.
+
+     Climate models aim to represent the immensely complicated climate system in a tractable manner.
+
+Scientific understanding of the climate, as developed over decades of research by many scholars around
+
+the world, is at this point remarkable in its scope and depth. It remains, however, incomplete, and
+
+continues to evolve. Hence, the construction and use of climate models entail choices by modelers
+
+regarding model elements that are not fully specified by physical theory or exactly determined by
+
+empirical evidence. Over time, different sets of choices have yielded different climate models
+
+     Researchers have sought to understand and quantify the uncertainties in climate models and the
+
+predictions that they yield. One primary approach is multi-model ensemble (MME) analysis of inter-
+
+model structural choices (1). This paper offers a perspective on the uncertainties MME analysis seeks to
+
+address, from the vantage point of econometrics, decision theory, and energy policy analysis. We frame
+
+climate model uncertainty as a problem of partial identification, or "deep uncertainty." This terminology
+
+refers to situations in which the underlying mechanisms governing a system are not completely known
+
+and cannot be credibly modeled definitively even in the absence of data limitations in a statistical sense.
+
+
+
+*
+  This paper focuses on coupled atmospheric, ocean, and land-surface models; we follow the custom of using the
+term "climate model" to refer to these coupled systems.
+
+
+                                                        1
+     The predictions yielded by a partially identified model of a system are set-valued rather than exact or
+
+probabilistic. Thus, partial identification generates what is referred to in various disciplines as
+
+"ambiguity," "model uncertainty," "deep uncertainty," or "epistemic uncertainty." Study of partial
+
+identification has origins mainly in econometrics, which applies statistical methods to study economic
+
+phenomena. In this field, partial identification refers to circumstances in which the probability distribution
+
+governing a stochastic system is not completely known theoretically and its unknown aspects cannot be
+
+fully learned empirically even in the absence of data limitations in the sense of statistical imprecision. In
+
+the limit case where these unknown aspects can be fully learned empirically given sufficient data, the
+
+probability distribution is said to be point identified or simply identified.
+
+     The fundamental mathematical and physical theory underlying computational climate modeling is
+
+not based on probability distributions, but rather comprises a set of deterministic nonlinear partial
+
+differential equations describing large-scale atmospheric dynamics. However, due to incomplete
+
+knowledge of other physical processes and differences in ways to represent them numerically, multiple
+
+climate models have been developed around the world and are currently in use, each reflecting different
+
+but credible choices in model design and implementation. Existing models yield different projections of
+
+the global climate even with broadly-harmonized input assumptions. Put differently, neither a
+
+"consensus" climate model nor quantitative climate projections can be definitively specified with current
+
+knowledge. These inter-model differences are referred to as reflecting "structural" uncertainty. We show
+
+how this can be framed in terms of partial identification or deep uncertainty.
+
+     This paper applies partial-identification thinking to climate modeling in two ways. First, we argue on
+
+decision-theoretic grounds against the prevalent practice in climate modeling of computing simple or
+
+weighted averages of predictions across models considered in MME analysis. Computation of simple
+
+averages of predictions assumes that equal weight should be given to each model, an assumption lacking
+
+a compelling foundation (2). But determining appropriate weights is challenging, for reasons including
+
+the weak link between metrics of model validity and predictive skill (1). Some researchers have attempted
+
+to motivate computation of weighted averages as an exercise in Bayesian judgment, the weights
+
+                                                       2
+expressing subjective probabilities that particular models represent truth (3). However, it may be difficult
+
+to judge the credibility of the subjective probability distribution used. Rather than compute averages of, or
+
+assigning probability distributions to, predictions across models, partial identification analysis would
+
+present the set of predictions yielded by model ensembles as the starting point for decision-making,
+
+foregoing an attempt to reduce the set to a point through averaging.
+
+     Second, we use classical ideas in decision theory to show how these ensemble outputs can be applied
+
+directly in policy applications of climate modeling, specifically the min-max (4) and min-max regret (5)
+
+decision rules. In decision problems in general, min-max reflects the principle of preparing for the worst
+
+case. In the climate context, it would entail making policy decisions, such as carbon abatement levels,
+
+using the most "pessimistic" climate model in an ensemble ­ the one projecting the highest temperature
+
+changes. Min-max regret (MMR) uses multi-model information in a more nuanced way. If a climate
+
+policy maker selects one model from an ensemble and chooses, say, an emissions abatement path that is
+
+optimal for that model according to some economic metric, the economic penalty, or regret, is the excess
+
+cost of that abatement path if a different model is actually the correct one. That is, regret measures the
+
+potential sub-optimality of policies relative to climate models. The MMR rule is to choose a policy that
+
+minimizes the maximum regret, or largest degree of sub-optimality, across the climate model ensemble. 
+
+        MMR has been applied in several policy areas, including criminal justice (6) and public health
+
+(7). It has been used in computational modeling of energy and climate policy in a number of studies (8-
+
+12). (Cai (13) reviews this research). The present paper complements this previous work in several ways.
+
+The paper is aimed in part at climate modelers and other researchers who are non-specialists in economics
+
+but interested in the policy applications of climate modeling. Our approach is primarily conceptual rather
+
+than computational. We emphasize the partial identification paradigm and its suitability for framing
+
+structural uncertainty in climate models. We provide a theoretical discussion of MMR for climate policy,
+
+to highlight the basic idea in non-computational form. We then present a deliberately simple numerical
+
+
+ The other primary approach to studying climate model uncertainty is Perturbed Physics Ensemble (PPE) analysis
+of parametric uncertainty. Mutatis mutandis, the concepts and methods discussed in this paper can also be applied to
+understanding PPEs from a decision perspective.
+
+                                                         3
+integrated assessment example of MMR applied to carbon abatement policy, in order to illustrate the
+
+method in a transparent way.
+
+     In what follows, Section 2 discusses the theory of partial identification as developed in econometrics
+
+and describes how climate model uncertainties can be framed in this way. Section 3 discusses technical
+
+aspects of structural uncertainties in climate modeling as a partial identification problem. Section 4 turns
+
+to decision-making under partial identification, providing background and discussing the min-max and
+
+min-max regret decision rules. Section 5 develops a numerical example illustrating their application to the
+
+problem of choosing dynamic carbon abatement policies that optimally balance abatement costs and
+
+climate economic damages. The paper ends with a summary and concluding remarks.
+
+
+
+2. Partial Identification in Econometrics and Climate Modeling
+
+     Econometrics is the term used by economists to describe study of the logic of empirical inference.
+
+Whatever the field of science may be, the logic of empirical inference is summarized by the relationship:
+
+assumptions + data  conclusions. Data alone do not suffice to draw useful conclusions. Inference
+
+requires assumptions that relate the data to a question of interest. Holding fixed the available data, a
+
+fundamental difficulty of empirical research is deciding what assumptions to maintain.
+
+
+
+2.1. Identification and Statistical Inference
+
+        Economists and many other researchers use sample data to learn about theoretically unknown
+
+aspects of the mechanisms that govern stochastic systems. Empirical research confronts problems of
+
+statistical imprecision and identification problems. Statistical theory characterizes the inferences that can
+
+be drawn by observing a finite sample of outcomes generated by a system. Identification analysis studies
+
+inferential difficulties that persist even when sample size grows without bound. The distinction between
+
+identification and statistical inference, first formalized by Koopmans (14), has long been central to the
+
+field of econometrics.
+
+
+
+                                                     4
+        A simple example of statistical imprecision occurs when one observes a random sample of
+
+outcomes generated by a stationary system and uses this sample average to estimate the mean outcome
+
+that the system produces. Statisticians typically measure imprecision of the estimate by its variance,
+
+which decreases to zero as sample size increases. The famous "Laws of Large Numbers" imply that
+
+imprecision vanishes as sample size increases to infinity.
+
+        Identification problems encompass the spectrum of issues that are sometimes called non-sampling
+
+errors or data-quality problems. These issues cannot be resolved by amassing so-called "big data." They
+
+may be mitigated by collecting better data, but not by merely collecting more data.
+
+        A simple example of an identification problem is generated by measurement errors. Suppose that
+
+a stationary system generates a random sample of outcomes, but one observes these outcomes with error.
+
+Increasing sample size adds new observations, but it also yields further measurement errors. If one has
+
+incomplete knowledge of the process creating measurement errors and cannot collect better data that are
+
+error-free, one cannot precisely learn the system mean outcome as sample size increases to infinity.
+
+
+
+2.2. Point and Partial Identification
+
+     For most of the twentieth century, econometricians studying inference commonly thought of
+
+identification as a binary event ­ a parameter of a model is either point-identified or it is not. Empirical
+
+researchers combined available data with assumptions that yield point identification and they reported
+
+point estimates of model parameters. Economists recognized that point identification often requires strong
+
+assumptions that are difficult to motivate, but they saw no other way to perform inference.
+
+     Yet there is enormous scope for fruitful inference using weaker and more credible assumptions that
+
+partially identify objects of interest. A parameter in a probabilistic model is partially identified if the
+
+sampling process and maintained assumptions reveal that the object lies in a set, called the identification
+
+region or identified set, that is smaller than the logical range of possibilities but larger than a single point.
+
+Sample estimates of partially identified objects generically are set-valued.
+
+
+
+                                                       5
+    To illustrate, suppose economic theory posits that there are positive parameters a, b, and c such that
+
+Y = ( a  c )  X + b +  . Given a random sample of observations of pairs ( X , Y ) , the product d= a  c
+
+can be estimated by the method of least squares if it is known that  has mean zero conditional on X.
+
+Statistical imprecision regarding d vanishes as sample size increases. However, absent additional
+
+assumptions, all that can be inferred empirically about a and c is that they lie in the set of all pairs of
+
+positive real numbers such that a  c =d . That is, these parameters are partially identified, with the
+
+identification region defined by this identity.
+
+     Part of the modern literature on partial identification in econometrics focuses on the identification
+
+problems generated by imperfect data quality, including measurement error and missing data. Part focuses
+
+on identification of structural econometric models used to describe human behavior and interactions.
+
+Manski (15, 16), Tamer (17), and Molinari (18) provide in-depth reviews of the literature at different
+
+technical levels and with different emphases. Section 1 in the Supporting Information (SI) provides a brief
+
+history and some key references.
+
+     Whatever the specific subject under study, a common theme runs through the literature. One first
+
+asks what available data combined with relatively weak and highly credible assumptions reveal about the
+
+population of interest. One then studies the identifying power of stronger assumptions that still aim to
+
+retain acceptable credibility, keeping in mind a principle called (ref. 15, p. 1):
+
+
+
+     The Law of Decreasing Credibility: The credibility of inference decreases with the strength of
+     the assumptions maintained.
+
+
+
+This principle implies that researchers face a dilemma as they decide what assumptions to maintain:
+
+Stronger assumptions yield inferences that may be more powerful but less credible.
+
+     This approach to inference makes clear the conclusions one can draw in empirical research without
+
+imposing untenable assumptions. It establishes a domain of consensus among researchers who may hold
+
+disparate beliefs about what assumptions are appropriate. Partial identification analysis also makes plain
+
+                                                       6
+the limits to credible inference. When identification regions turn out to be large, researchers should face
+
+up to the fact that the available data and acceptable assumptions do not support inferences as tight as they
+
+might like to achieve.
+
+
+
+2.3. Partial Identification of Climate Models
+
+     One might think that econometrics and climate modeling are so different that econometric
+
+methodology would have little if any application to climate modeling. In this sub-section we explain why
+
+the ideas of partial identification do, in fact, apply to climate models and can serve to frame and interpret
+
+their uncertainties.
+
+     First, research in both domains faces broadly similar identification problems due to data
+
+imperfections. Climate data that might have been available in principle may have measurement errors or
+
+be missing in practice, especially data documenting climate dynamics prior to the existence of modern
+
+instrumentation. Moreover, climate data in counterfactual settings is unavailable in principle. We cannot
+
+observe what climate change would have occurred over the past century if the trajectory of anthropogenic
+
+GHG emissions had differed from its actual path.
+
+     Second, research in both domains faces the problem of modeling a complex system. The climate
+
+system comprises many different physical processes and mechanisms occurring at a range of spatial and
+
+temporal scales. Designing and implementing a climate model requires many choices regarding the
+
+underlying architecture, the methods of numerical approximation, solution technique, which physical
+
+processes to include as model components, and how to represent these processes (19). Climate model
+
+structural uncertainty arises from incomplete scientific understanding of physical phenomena, limitations
+
+of quality and quantity of empirical data available to fit models, and the need to make approximations for
+
+computational tractability.
+
+     With respect to underlying scientific principles, all general circulation models of the climate are
+
+based on a set of five deterministic equations governing atmospheric variables including temperature,
+
+pressure, humidity, and wind flow (20). These so-called "primitive equations" instantiate first-principle
+
+                                                     7
+laws of physics; they include partial differential equations describing a form of the classical conservation
+
+laws of momentum, mass, and energy.
+
+     However, the highly complex and nonlinear nature of the climate system makes it inevitable that the
+
+computational models used to represent it are subject to a degree of irreducible imprecision (21).
+
+Although the basic set of primitive equations is common across models in a theoretical sense, the exact
+
+way in which the equations are rendered in a particular model is subject to numerous practical choices of
+
+implementation, including choice of coordinate system, discretization approach, and numerical solutions.
+
+In addition, climate models differ in the details of which physical processes are selected for inclusion ­
+
+i.e., the overall strategy used to simplify the climate into a tractable form for modeling ­ and how they are
+
+represented. The multiplicity of models and inter-model variations of the quantitative outputs they
+
+generate are generally referred to as reflecting "structural" uncertainty (22, 23, 24, 25).
+
+     It is important to note that this is not an exhaustive description of uncertainty in climate modeling,
+
+nor would it be if parametric uncertainty were also taken into account. The factors just discussed are
+
+"known unknowns" ­ they have been explicitly determined to be sources of uncertainty. By contrast,
+
+"unknown unknowns" are also presumptively present ­ it cannot be assumed that the models encompass
+
+all physical processes affecting the climate to an extent that is policy relevant.
+
+     To summarize, the present state of science, modeling methods, and empirical knowledge are not such
+
+that the climate system can be uniquely represented in mathematical or computational form. Nor can
+
+climate dynamics be predicted deterministically or stochastically ­ one can only predict a range of
+
+possible trajectories (26). Thus, we see an underlying correspondence between econometric and climate
+
+models with respect to structural uncertainty, making the concept of partial identification applicable to
+
+climate modeling.
+
+     In the following sections we elaborate on this perspective and show how it can be applied to climate
+
+change-related policy decision-making.
+
+
+
+
+                                                       8
+3. Partial identification and multi-model ensemble analysis
+
+     At the beginning of the paper we introduced the terminology of climate model "ensembles." It is
+
+difficult to vary a given model's components such as sub-grid process representations (much less
+
+numerical integration schemes) to assess the effects of variations in structural components on the model's
+
+performance. Thus, to quantify and analyze structural uncertainty, sets of models are run to study how the
+
+different structural choices across models affect the outputs across the set. This is "multi-model ensemble
+
+(MME)" analysis, which we discuss next.
+
+
+
+     3.1. MMEs background
+
+     MMEs are based on model intercomparison projects in which the characteristics and performance of
+
+individual and multiple models are analyzed. First conducted in the 1980s (27), such projects have since
+
+proliferated and greatly increased in scope and detail. Most MME analyses have been generated in the
+
+Coupled Model Intercomparison Project (CMIP), which began in the 1990s and has thus far completed
+
+five studies (28, 29). These studies examine the individual and collective ability of models to simulate the
+
+current and historical climate, analyze the factors driving model behavior and inter-model differences,
+
+and provide a means of assessing changes in model performance over time (30).
+
+     The performance of climate models in simulating present and past climate has been gauged by
+
+various metrics based on the mean squared error of differences between model outputs, or "fields," and
+
+their observed counterparts, such as global mean temperature and precipitation (31). Comparison of
+
+model performance based on such metrics has been conducted using CMIP MMEs of historical
+
+simulations (32).
+
+     The CMIP and other intercomparison projects have been part of a substantial international research
+
+effort to develop and improve the models. Advances in computational hardware and software have also
+
+been critical. The models have been refined and improved in a number of ways, including the ability to
+
+simulate key aspects of the historical climate.
+
+
+
+                                                     9
+     Nevertheless, there continue to be shortcomings in the models' accuracy and precision (1). There are
+
+non-trivial biases and uncertainties in particular fields across models that have persisted through
+
+development cycles (33, 34, 35). As noted previously, structural uncertainty arises from the fact that
+
+theory and evidence do not completely constrain design and implementation choices such as which sub-
+
+grid processes to include, at what levels of detail. When assessing model performance in historical
+
+simulations, there are multiple model fields for which performance metrics can be defined and quantified,
+
+and modelers have not been able to develop a single metric that effectively captures all the dimensions of
+
+interest (24). Because the relative accuracies of different models can depend on which field is measured,
+
+it has not proven possible to unambiguously rank models with respect to performance or to identify a
+
+"best" model using historical climate information (31). The extent of structural uncertainty can be gauged
+
+by the fact that there are currently several dozen different modeling groups around the world, each
+
+running one or more versions of its own model (36).
+
+     Abramowitz et al. (37) take the view that different models can be thought of as representing different
+
+"working hypotheses" about how to best represent the details of the structure and dynamics of the
+
+climate. Parker (26) characterizes the climate modeling community's acceptance of multiple, co-existing
+
+models as "model pluralism," with different models seen as complementary. In the language of the
+
+present paper, the climate models are only partially identified.
+
+
+
+3.2. MME projections of future climate
+
+     Model pluralism has generally been maintained in MME studies of the future climate, in that the sets
+
+of models used in specific studies have usually been determined simply by which modeling teams choose
+
+to participate, a procedure Knutti (2) describes as "model democracy." That available models are not
+
+assessed or screened for inclusion essentially reflects the unavailability of reliable, agreed-upon criteria
+
+for doing so: If ab initio structural uncertainty (partial identification) cannot be resolved through standard
+
+evaluation and performance intercomparison, there are no obvious grounds to omit particular models from
+
+climate projection studies. Nevertheless, some modelers and climate scientists believe that there are
+
+                                                     10
+important shortcomings in model democracy for projective MME analysis (2). Developing better
+
+approaches has been the focus of considerable research on narrowing model selection criteria and/or
+
+finding ways of assessing candidate models according to some informational criterion.
+
+     Most of this work is closely tied to, or part of, a broader long-term effort to address uncertainty in
+
+MMEs of future climate. A number of methods have been developed and applied to MME uncertainty
+
+quantification and analysis, virtually all of which involve combining MME outputs into single projected
+
+climate trajectories. There appear to be two primary reasons that this form of model combination
+
+predominates: Simple averaging across models can improve accuracy relative to individual models in
+
+historical simulations (38), and modelers perceive policy-makers as requiring single projections (as
+
+functions of individual GHG emissions scenarios) for use in decision-making (26).
+
+     Simple averaging reflects model democracy. Weighted averaging is sometimes performed when it is
+
+felt that models can be ranked with respect to relative accuracy in specific fields in historical simulations
+
+(even if not overall) (39). Thus, models may be weighted along particular dimensions of policy interest,
+
+and the results then averaged.
+
+     Expanding on this approach, numerous studies have quantified MME uncertainty and combined
+
+model projections by creating multi-model probability distributions across predictions of key variables
+
+such as global temperature, and by using them to compute mean trajectories. Bayesian techniques are one
+
+approach to doing this ­ e.g., Smith et al. (3) and Sexton et al. (40) ­ building in particular on the work of
+
+Tebaldi et al. (41, 42).
+
+     As this type of work has proceeded, climate modelers and scientists and others have recognized
+
+some persistent methodological problems in combining model projections (43, 1). Regarding the finding
+
+that model averages can improve upon the predictions of individual models, Manski (44, 45) has shown
+
+that this may be the consequence of a mathematical relationship rather than an empirical result. Also,
+
+
+
+
+ Specifically, Jensen's Inequality implies that when mean square error or another convex loss function is used to
+measure predictive accuracy, the accuracy of a simple or weighted mean prediction is algebraically better than the
+corresponding average accuracy of individual model predictions.
+
+                                                         11
+model performance with respect to specific fields in historical data has not been demonstrated to imply
+
+skill in predicting climate (46), weakening the case for this approach to weighting projections.
+
+     Other issues have to do with how relationships among the models, and the selection of model
+
+ensemble subsets from the entire set of extant models, affect the informational content and quality of the
+
+ensemble results. These topics have been framed in terms of the degrees or levels of model
+
+"independence" in ensembles, although the formal meaning of "independence" has not been clear. In
+
+particular, one should be wary of conceptualizing independence in statistical terms, in the absence of a
+
+probabilistic theory of model development. As noted above, ensembles are typically assembled by
+
+convenience, in the sense that they are determined by the availability and interests of modelers. Thus, one
+
+cannot reasonably assert that any given ensemble is a random sample drawn from a population of
+
+potential models. Nor can one reasonably assert that any given ensemble adequately expresses the full
+
+range of structural uncertainty in model projections (24). Indeed, it is not known how well the world's
+
+complete set of existing climate models expresses the full range of uncertainty.
+
+     While it is inappropriate to conceptualize model independence in statistical terms, there may be good
+
+reason to think non-statistically about dependence across models. Modeling teams communicate with one
+
+another and they may, hence, influence the modeling choices that they collectively make. In fact, some
+
+models share parts of their codes (47).
+
+     As discussed by Sanderson (1), researchers are actively working on ways to address these problems.
+
+However, combining climate model ensemble outputs into single projected trajectories of the future
+
+global climate remains a challenging and unresolved problem. In the following sections we discuss how
+
+viewing model structural uncertainty in terms of partial identification facilitates an alternative approach to
+
+using MME information in climate policy and decision-making.
+
+
+
+
+                                                     12
+4. Climate policy under partial identification: Cost-benefit analysis with the min-max and
+    min-max regret decision rules
+
+     The issues with standard approaches to defining and quantifying uncertainties in climate modeling
+
+that we have reviewed do not obviate the fact modeling is essential for developing policies to address the
+
+risks of global climate change. What is clearly the case, however, is that addressing uncertainties remains
+
+an open, and challenging, problem. Parker (48) observed that a primary rationale for using weighting or
+
+probability analysis to combine climate model outputs into single time paths of important variables
+
+appears to be modelers' perception that policy makers require uncertainty to be represented in this form to
+
+make decisions. In this section we show that, in fact, this is not the case, and that a partial identification
+
+framing of climate modeling opens the way to alternative methods for dealing with uncertainties in
+
+decision-making. We might say that these methods allow for single decisions to be made without needing
+
+single inputs from the models.
+
+     Our departure point is climate model ensemble analysis, so the models discussed in the following
+
+sections express partial identification in terms of a discrete set of climate models. As noted earlier, our
+
+analysis does not encompass the full uncertainty inherent in numerical climate simulation. By its very
+
+nature decision analysis must explicitly specify possible "states of nature," which list only known
+
+unknowns. Our goal is to advance understanding within that paradigm.
+
+
+
+4.1. Economic uncertainty in integrated assessment modeling
+
+     Although not our focus in this paper, for the sake of context we begin with a brief discussion of
+
+uncertainty in the economic elements of quantitative climate policy analysis, which as a rule uses
+
+computational energy-economic or integrated assessment (IA) models. (This subject is discussed by
+
+Sanstad in (49)). These are, characteristically, long-run (century-scale or more) models of the global
+
+economy including the energy system and its role in economic production, and are applied to estimating
+
+the costs of policy-induced GHG emissions reductions. IA models incorporate reduced-form
+
+representations of the climate (or more generally, the carbon cycle) and its links to the economy,
+
+
+                                                     13
+particularly the climatic effects of anthropogenic GHG emissions and in turn their effects on the
+
+economy.
+
+        The development of integrated assessment models has enabled economic analysis of how the global
+
+climate and social systems interact with one another, which has played a critical role in the development
+
+of policies to reduce GHG emissions (50). IA models are subject to uncertainty not just in their
+
+representation of the climate but also in their economic assumptions (50). Examples arise in highly-
+
+aggregated IA models in which the direct economic costs of climate change and those of GHC abatement
+
+are both represented explicitly, so that trade-offs between emissions reduction and reduced climate
+
+change-induced economic losses can be assessed. The paradigmatic example is Nordhaus's DICE
+
+(Dynamic Integrated Climate Economy) model, the most influential IA model of the last several decades
+
+(51).
+
+        In DICE and models based on it, the economic losses from climate change are represented in terms
+
+of "damage functions" that give the decreases in world-wide output resulting from increases in mean
+
+global temperature, as a proportional reduction or in dollar terms. It is recognized that these functions
+
+have uncertain theoretical and empirical grounding (52). §
+
+        Another feature of these models is dynamic optimization by a representative decision maker, which
+
+entails discounting to quantify the present value of future economic costs and benefits. The appropriate
+
+definition and magnitude of the discount rate is a long-standing issue in climate change economics and
+
+integrated assessment modeling (56 - 58). Controversy persists in part due to the fact that this is not only
+
+an empirical question but also a matter of theory and of ethics in regard to intergenerational equity (59).
+
+        In addition to these issues, integrated assessment model estimates of the long-run costs of large-
+
+scale GHG emissions abatement vary considerably, by some measures up to an order of magnitude (60).
+
+
+
+§
+  Some of this work has focused on improving aggregate damage functions with respect to both aggregate-level
+evidence and functional forms (53). Moreover, it is also the case that aggregation per se is a major source of this
+type of uncertainty, and increasing attention is being paid to empirical, statistical estimation of spatially and
+sectorally disaggregated climate damages (54, 55).
+
+
+                                                        14
+As evidenced by comparing these more recent estimates with examples from the 1990s (61), this
+
+uncertainty has persisted over several decades of model development
+
+      While improving estimates of the economic impacts of climate change is an active area of research,
+
+uncertainty persists. Damage functions in aggregate models continue to be debated, and model-based
+
+abatement cost estimates continue to proliferate but are not converging. Because our focus is partial
+
+identification of climate models and its implications for decision-making, this paper limits formal analysis
+
+of economic uncertainties to sensitivity analysis with respect to the exogenous economic parameters
+
+governing abatement and damage costs. However, our decision framework can be readily applied to
+
+economic uncertainty.
+
+
+
+4.2. A simple theoretical framework
+
+    In what follows, we consider climate policy from a cost-benefit perspective in the context of partial
+
+identification of climate models, in which emissions abatement policy is based on comparing the costs of
+
+reducing GHG emissions with the resulting benefit in terms of avoided climate change damages. The key
+
+consideration is that the decision-maker's knowledge of these benefits is subject to uncertainty arising
+
+from the partial identification. We first develop an abstract theoretical framework and then, in the
+
+following section, implement it quantitatively using a simple integrated assessment model.
+                                                                                                    
+    Let  represent the state at time      t   of a baseline energy-economic scenario, and let   be the
+
+corresponding baseline GHG emissions. Let  be GHG abatement actions at time            t   under some climate
+
+                                                                                    
+policy, measured in the same units as emissions, let  ( ) be their cost, and   be the resulting net
+
+                                                                                                 
+emissions. In what follows, we will slightly abuse terminology by also referring to  and   as "paths"
+
+or "trajectories." We assume that abatement paths are chosen from some space of feasible paths.
+
+    Emissions paths are used as inputs to a climate model M. We focus on the global mean temperatures
+
+                                                          (       )
+projected by M as a function of these paths. Thus, let T EtAt , M be the global mean temperature at time
+
+
+
+
+                                                     15
+                                         
+t   determined by the GHG trajectory   when it is simulated in the climate model M. Then a damage
+
+                                                       (
+function ­ as discussed above ­ can be written as D T ( EtAt , M ) .  )
+
+4.2.1. Cost-benefit analysis
+
+4.2.1.1. The min-max decision rule
+
+      For an abatement path  and climate model M, denote the associated total (abatement plus
+
+                                                             
+damages) cost at time t as ( , )   ( ) + (  , ). A policy-maker seeks to minimize the
+
+present value of the cumulative cost over a planning horizon which, as is customary in the climate
+
+economics literature, we assume to be infinite. The cost-benefit climate policy problem given a particular
+
+climate model M is
+
+                                                 
+                                          min  C ( At , M ) e - t dt ,                                 (1)
+                                            At   0
+
+
+where  is a discount rate. In this approach, the optimal  is chosen with commitment at time zero ­
+
+that is, it is not updated over time as new climate or cost information is obtained. As stated, (1) is a
+
+deterministic optimization problem that, under certain technical assumptions regarding the feasible
+
+abatement path space and the cost and damage functions, has a unique solution. We will assume that such
+
+conditions hold for the series of problems we describe.
+
+      Reflecting the discussion in Section 3, let M = {1 , ... ,  } be a model ensemble. We amend the
+
+                                                                              
+damage and cost function notations to ( ,  )   ( ) + (  ,  ,  = 1, ... , . The
+
+hypothetical policy-maker now faces the problem of minimizing total cost while taking account of the
+
+model uncertainty. One way of approaching this problem is to assign a probability distribution or some
+
+other weighting scheme to M and minimize the expected cost. However, this strategy is unsatisfactory if
+
+one lacks a credible basis for assigning a distribution or weights.
+
+      Under a partial identification perspective, one alternative way to proceed is to apply the min-max
+
+decision rule, which can be characterized colloquially as "preparing for the worst." Here, the "worst" is
+
+
+                                                      16
+the model  that results in the highest total abatement plus damage costs. Given an abatement path 
+
+                                    
+and associated emissions path   the most costly outcome will correspond to the model that solves the
+
+problem
+
+                                                           
+                                             max  C ( At , M i ) e - t dt.                                              (2)
+                                                  i        0
+
+
+This maximum cost will vary across possible abatement paths, and the min-max decision is to select the
+
+path that solves
+
+                                                               
+                                            min max  C ( At , M i ) e - t dt.                                           (3)
+                                             At        i       0
+
+
+That is, the decision rule chooses the abatement policy that minimizes the total cost of abatement and
+
+damages under the most pessimistic assumption regarding the climate model.
+
+
+
+4.2.1.2. The min-max regret decision rule
+
+     Policies chosen using the min-max criterion are conservative by design. An alternative decision rule
+
+that is applicable under conditions of partial identification but is less conservative is called min-max
+
+regret, which Manski and Tetenov (62) characterizes as seeking uniformly near-optimal solutions to
+
+decision    problems.     For        each         model                          in   the   ensemble    = {1 , ... ,  } let
+
+                                
+( ,  )   ( ) + (  ,  ) be the associated time t cost with abatement and emissions paths 
+
+                            
+and   respectively. Let At ; M i be the abatement path that solves the problem
+
+                                                           
+                                             min  C ( At , M i ) e - t dt ,                                             (4)
+                                                  At       0
+
+
+
+
+and  ; ,   be the resulting minimum cost:
+
+
+
+                                       (                   )
+                                                                             
+                                   C  At;M i , M i  min  C ( At , M i ) e - t dt.                                       (5)
+                                                                   At        0
+
+
+
+
+                                                                        17
+(Note the change in notation: Previously, C ( At , M i ) was total cost at time t; now, C
+                                                                                                        
+                                                                                                           (A  
+                                                                                                               t ;M i       )
+                                                                                                                        , M i is
+
+total discounted cost, i.e., an integral.) Now consider any other feasible trajectory  and its cost ­ not
+
+                                                                              
+                                                                              C ( A , M ) e dt.
+                                                                                                  - t
+necessarily optimal ­ over the entire time horizon with  ,                           t        i                The regret
+                                                                             0
+
+
+R ( At , M i ) associated with  when climate model  is used in determining damages is the difference
+
+between its cost and the cost of the optimal policy associated with  :
+
+
+
+
+                                                                         (           )
+                                             
+                            R ( At , M i )   C ( At , M i ) e- t dt - C  At;M i , M i .                                      (6)
+                                            0
+
+
+
+The regret is non-negative because C  ( At; M i , M i ) is the minimum cost with  . Regret measures the
+
+sub-optimality of  when temperature is determined by  . That is, it is the excess cost resulting from
+
+this abatement path relative to the minimal cost associated with this model.
+
+    To apply the min-max regret rule, a decision-maker first considers each feasible abatement path 
+
+and finds the model version that maximizes regret as defined in Equation (6), solving the problem
+
+
+                                                                                 (            )
+                                                       
+             max R ( At , M i ) max  C ( At , M i ) e - t dt - C  At;M i , M i .
+             =                                                                                                               (7)
+                       Mi                    Mi    0
+
+
+
+
+The min-max regret solution is then to find  to solve the problem
+
+
+                                                                                          (                )
+                                                                
+            min max R ( At , M i ) min max  C ( At , M i ) e - t dt - C  At;M i , M i .
+            =                                                                                                                (8)
+                      At    Mi                    At      Mi    0
+
+
+      This discussion highlights the fact that, in any application, MMR requires an explicit criterion to
+
+measure the differences in social welfare between optimal and sub-optimal outcomes. For example,
+
+applying the technique to analyze policies that entail exogenously-set "caps" on GHG emissions would
+
+necessitate measurement of the social cost of exceeding those caps.
+
+
+5. A numerical example
+
+
+
+                                                           18
+        In this section we describe a computational implementation of the min-max regret (MMR)
+
+framework described above. We present a simple integrated assessment model defining an optimal
+
+control problem that formalizes the dynamic economic trade-off between emissions abatement and
+
+reduced damages from emissions-caused temperature increases. We also contrast the results of applying
+
+the MMR criterion with those obtained with the min-max decision rule. **
+
+5.1. A simple integrated assessment model
+
+5.1.1. Emissions and temperature
+
+        In the previous section we represented the link between carbon emissions, in the form of a trajectory
+     
+  , and projected global mean temperature  , as a functional relationship based on a climate model M:
+
+          (       )    
+Tt  T EtAt , M , where   are net emissions at time t when baseline emissions  are reduced by
+
+abatement  , and are used to project temperature using M. For quantitative analysis, we now simplify
+
+this representation by adapting the approach of Matthews et al. (64) to summarize the long-term
+
+relationship between aggregate carbon emissions and global mean temperature. Using a combination of
+
+modeling and observational data analysis, these researchers showed that the ratio of temperature increase
+
+to cumulative emissions, the "carbon-climate response (CCR)," is roughly constant over decades up to
+
+several centuries. We use the CCR to capture the influence of emissions on temperature. (This approach is
+
+further discussed in NAS (65) and Cline (66).
+                                                                                                              
+        Let   be cumulative emissions between an initial time 0 and time t given a net emissions path  
+
+                                                        t
+                                                 EtAt =  EsAs ds.                                             (9)
+                                                        0
+
+
+
+
+**
+  Our model is similar to that of Goulder and Mathai (63), which was adapted to min-max regret analysis of carbon
+abatement policy by Cai and Sanstad (11). Rezai and van der Ploeg (12) developed a more complex integrated
+assessment model and applied it to max-min and min-max regret analysis of climate analysis under uncertainty,
+using temperature projections from several different IA models.
+
+                                                       19
+Let m(M) be the CCR associated with a climate model M. Then the Matthews et al. approximation of
+                                                                     
+global mean temperature projected by M when it is driven by   is
+
+
+                                           (
+                                    Tt = T EtAt , M    )
+                                                   t
+                                                                                                       (10)
+                         = m
+                           = ( M )  EsAs ds m ( M ) EtAt .
+                                                   0
+
+
+
+    Slightly amending our notation from the previous section, we will use the parameter m to
+
+characterize the models being compared. Different models might in principle have the same m, but this is
+
+not the case for the six we examine here. Thus, we can write the model-projected temperature as
+
+       (       )
+Tt = T EtAt , m .
+
+
+
+5.1.2. Costs and damages
+
+    We assume that the functions for abatement cost and climate damage at time t are quadratic:
+
+                                     1
+                           C ( At ) =  At 2
+                                     2
+                                                                                                       (11)
+                           D (Tt ) =
+                                     1
+                                               (1
+                                                           )
+                                              2
+                           =            mEtAt      m 2 (EtAt ) 2 .
+                                     2          2
+
+The quadratic is a convenient and tractable functional form; in the present case, it enables us to solve our
+
+optimization model in closed form (see below). The shape of the damage function has been controversial
+
+in climate economics. Nordhaus and Moffat (53) conducted a comprehensive survey of empirical damage
+
+estimates in the literature and conducted their own estimations; their preferred specification was
+
+quadratic.
+
+      =
+      With Tt T=     (       )
+               EtAt , m mEtAt , the total cost at time t is
+
+
+
+                                                               ( (
+                                  C ( At , m )  C ( At ) + D T EtAt , m   ))
+                                         1      1                                                      (12)
+                                       =  At 2 +  m 2 (EtAt ) 2 .
+                                         2      2
+
+                                                       20
+5.1.3. Optimization
+
+     In the abstract framework of Section 4.2, any constraints that might be imposed on the optimizations
+
+were implicit. In optimal control problems, the key type of constraint specifies the dynamic relationship
+                                                                           
+between the decision variable and the "state" variable ­ here    as an ordinary differential equation.
+
+We write the cost-minimization problem for a given climate model as
+
+                                              
+                                       min 
+                                        At
+                                                   1
+                                                   2
+                                                     (  At 2 +  Tt 2 ) e - t dt
+                                               0
+
+                                             subject to
+                                        d At
+                                          Et= EtA =
+                                                  t
+                                                    Bt - At                                             (13)
+                                       dt
+                                       Tt = mEtAt
+                                        At
+                                       E0  = E0 ,
+
+
+where the last expression defines an initial condition for cumulative emissions. Solving (13) yields the
+
+                   
+abatement path At , m that minimizes the present (discounted) values of abatement costs plus climate
+
+damages subject to the relationships among emissions, temperature, and damages. Conceptually, this path
+
+makes the optimal trade-off over time between abatement and damages.
+
+
+
+5.2. Calibration
+
+5.2.1. Baseline emissions projection
+
+     We created our baseline emissions path using the "Representative Concentration Pathway (RCP)
+
+8.5" of carbon and other emissions and atmospheric concentrations created by integrated assessment
+
+modelers circa 2010 (67). It is one of four such scenarios, each corresponding to a different level of global
+
+average watts per meter squared in 2100 that was projected in one or more IAMs (68, 69). The 8.5
+
+watts/meter-squared pathway is the highest-warming of the RCPs, reflecting a pessimistic scenario
+
+
+
+
+                                                           21
+regarding the increase in global emissions over the 21st century; it has been used as a baseline in
+
+numerous studies.
+
+     We used the RCP 8.5 projection of annual carbon emissions (fossil and land use sources) from 2000
+
+to 2500 in gigatons of carbon (GtC), obtained from the RCP repository at the Potsdam Institute for
+
+Climate Impact Research.  For a baseline emissions path approximating the projection, we fitted the
+
+following functional form to these data:
+
+                                                   B0   
+                                   Bt =   t +            exp ( - ( t -  ) ) ,                         (14)
+                                                exp ( ) 
+
+
+where 0 is 8 GtC, the RCP 8.5 emissions in 2000. The fitted parameter values are  = 0.0123125 and
+
+ = 339.565. Further details are provided in SI Section 2.
+
+
+
+5.2.2. Temperature projections under structural uncertainty
+
+     To calibrate temperature as a function of cumulative emissions for structural uncertainty analysis, we
+
+used outputs of six earth system models (ESMs) from CMIP5 that each projected the effects of RCP 8.5.
+
+We first computed decadal averages of the CMIP5-reported monthly surface air temperature projections
+
+from these models under RCP 8.5 for the period 1900-1909 to 2090-2099. Following Matthews et al. (64)
+
+as described above, we then calculated decade-by-decade temperature increases over this period relative
+
+to 1900-1909 as projected by each ESM, along with the corresponding decade-by-decade increases in
+
+cumulative carbon emissions in RCP 8.5. Extending the notation introduced above, denote the latter
+
+             Bt
+quantity as ECum .
+
+     For each ESM, indexed by i = 1,...,6, we represented the relationship between temperature and
+
+cumulative net emissions as
+
+
+
+
+
+   http://www.pik-potsdam.de/~mmalte/rcps/.
+
+
+                                                        22
+                                                 Ti = mi ECum
+                                                          Bt
+                                                              .                                      (15)
+
+
+
+
+To estimate the  's we fitted (15) to the decadal average time series for each model. See SI Section 2
+
+for details.
+
+      The six models and fitted values of  are shown in Table 1. The range among these estimates is a
+
+simple gauge of structural uncertainty.
+
+
+                                                TABLE 1 HERE
+
+5.2.3. Economic parameters
+
+     We derived low, median, and high estimates of the abatement cost parameter  from Dietz and
+
+Venmans (70), who summarized global marginal abatement costs as a percent of global economic output
+
+as documented in the IPCC Fifth Assessment Report. Because these costs were derived from energy-
+
+economic and integrated assessment model analyses that assumed a 5% discount rate, we used this value
+
+exclusively. For the central value of the damage cost parameter  we used Nordhaus's and Moffat's (53)
+
+central estimate from their preferred (quadratic) specification and estimation of the climate damage
+
+function. We also specified low and high values for sensitivity analysis. The values for these parameters
+
+are presented in Table 2.
+
+                                                TABLE 2 HERE
+
+
+5.3 Analytical and numerical solutions
+
+     Using standard methods, the model is solved in closed form analytically and the numerical solution
+
+is computed using the Mathematica (71) software; details are presented in SI Section 3. The results are
+
+                            
+optimal abatement paths At ;mi and minimum costs
+
+
+                                  (         )
+                                                       
+                               C  At;mi , mi = min  C ( At , mi ) e - t dt
+                                                  At   0
+                                                                                                     (16)
+                                                                (  At 2 +  Tt 2 ) e - t dt ,
+                                                              1
+                               = min 
+                                                 At    0      2
+
+                                                       23
+subject to the constraints in (13).  Details are presented in SI Section 3.
+
+
+
+5.4. Min-Max Regret under structural uncertainty
+
+     We begin with an example of how regrets are calculated, in the case that FIO is the correct model
+
+and with the median and central values of  and , respectively. Our analysis assumes that the state space
+
+of possible real worlds includes only those represented by the six models. That is, it excludes the
+
+possibility that all six models are wrong. In principle, the calculations could be done with a larger state
+
+space that has more distinct models. However, we reiterate the point made earlier: No finite ensemble can
+
+enable analysis of the "unknown unknowns" of climate modeling.
+
+     The first row of Table 3 shows C  ( At;mi , mi ) , i = 1,K , 6, the minimum total discounted abatement
+
+                                                                                      
+costs plus climate damages, associated with the optimal trajectory At ;mi for each model for the median 
+
+and central  parameter case. We assign the indices i in the order in which the models are listed in Table
+
+1; that is according to ascending values of the CCR parameter.
+
+     To explain the second row, we recall the idea of a sub-optimal trajectory from Section 4.3, here
+
+assuming for the sake of discussion that FIO (i = 3) is the correct model. For legibility, we again amend
+
+                                
+our previous notation: Let At ,i  3 be the optimal trajectory for one of the models other than FIO and
+
+
+E ( At,i 3 ) be the net emissions at time t when this trajectory is used to reduce emissions from the baseline
+
+ , i.e., E ( At,i 3=
+                   ) Bt - At,i3. We write the resulting cumulative emissions path as
+                                                      t
+                                       Et ( At,i 3 ) =  E ( As,i 3 ) ds
+                                                      0
+                                                      t
+                                                                                                          (17)
+
+                                                      (B                      ) ds.
+                                                                    
+                                              =                s   -A
+                                                                    s ,i  3
+                                                      0
+
+
+
+
+
+  Under our assumptions, the necessary conditions are also sufficient, and the model will have unique solutions
+with the parameters we use.
+
+
+                                                          24
+Now consider using this emissions path to project temperature with the FIO CCR, 3 :
+
+                                                             (
+                                                    Tt = T E ( At,i 3 )     )
+                                                                 t
+                                                      = m3  E ( As,i 3 ) ds                                (18)
+                                                                 0
+
+                                                      = m3Et ( At,i 3 ) .
+
+                  (       )
+That is, Tt = m3Et At,i 3 is the temperature path when the optimal trajectory for a different model is used
+
+                                                                                                        
+with the FIO CCR. In turn, we calculate the time t abatement costs associated with At ,i  3 and climate
+
+
+                                   (
+damages associated with m3Et At,i 3 :       )
+                              C ( At=
+                                    ,i  3 , m3 )
+                                    
+                                                                          ( (
+                                                 C ( At,i 3 ) + D T E ( At,i 3 )          ))
+                                                                                                           (19)
+                                                     1
+                                                                                (
+                                                        ( At,i 3 ) +  m32 Et ( At,i 3 ) .
+                                                                    1
+                                                                                                 )
+                                                                  2                    2
+                                =
+                                                     2              2
+
+The present value of these costs is then
+
+
+                                                 ( C ( A ) + D (T ( E ( A ) ) ) ) e
+                                                
+
+                           ( At,i3 , m3 )
+                      C PV =                             
+                                                         s ,i  3
+                                                                                
+                                                                                s ,i  3
+                                                                                               - s
+
+                                                0
+                                                
+                                                                                                           (20)
+                          1
+                                                                                (                   )
+                                                            2
+                       =    ( As,i 3 ) +  m32 E s ( As,i 3 )  e - s .
+                                      2 1
+                         0                                   
+                           2            2
+
+Equation (20) displays the sub-optimality we have referred to: It is a cost, but not the optimal cost, using
+
+the FIO model to project temperature. These sub-optimal costs for the models i = 1, 2, 4, 5, 6 comprise
+
+the second row of Table 3.
+
+
+
+                                                      TABLE 3 HERE
+
+
+
+The last row of the Table presents the associated regrets, the differences between the sub-optimal costs
+
+and the optimal (minimum) cost with the FIO model:
+
+                                                                                    (
+                              R ( At,i 3 , m3 ) C PV ( At,i 3 , m3 ) - C  At, m3 , m3 ,
+                              =                                                                 )          (21)
+
+
+                                                                     25
+for i = 1,2,4,5,6. As discussed in Section 4.3, these are the post hoc losses when a decision-maker
+
+implements the optimal abatement policy assuming that one of the models other than FIO is correct, but
+
+FIO is in fact the correct model.
+
+     The full set of regrets across the six models for the median  and central  case is shown in Table 4:
+
+                                                                           (           )
+                           R ( At,i  j , m j ) C PV ( At,i  j , m j ) - C  At, m j , m j ,
+                           =
+
+i, j = 1, , 6. The rows are regrets with respect to the models listed at the left, with the FIO row values
+
+equal to those in the last line of Table 3. For example, the number in the second row, fourth column
+
+(0.01266) is the regret from using the Hadley model to perform the optimization when the correct model
+
+is the BCC. The min-max regret (MMR) solution across entire the table is in shown bold italics, and
+
+occurs when FIO is the correct model and MIROC used instead for the optimization.
+
+
+                                                TABLE 4 HERE
+
+
+     Note that the values in each row form a "U" shape with respect to the zero value for the correct
+
+model for the row. In the rows with the three lowest CCRs ­ GFDL, BCC, and FIO ­ the maximum
+
+regret occurs with the MIROC model, while for the rows with the three highest CCRs ­ Had, IPSL, and
+
+MIROC ­ it occurs with the GFDL. This is intuitive given the relative magnitudes of the various CCRs.
+
+     This calculation of the MMR solution assumes that the action space (that is, the set of feasible
+
+abatement paths) includes only the six abatement paths that are optimal under one of the models. Thus, it
+
+takes the action space to be the set of "best response" paths. More generally, society could consider
+
+abatement paths that are not optimal under any of the six models. Even if the state space comprises only
+
+the six models, it is possible that the MMR path will be one that is not optimal in any state. Thus, Table 4
+
+gives a constrained MMR solution. Finding the unconstrained MMR abatement path would be a much
+
+more complex computational problem.
+
+     To explore the sensitivity of the MMR to the economic parameters, we calculated nine tables for the
+
+nine ,  pairs. Table 5 summarizes the results, showing the MMR for each combination of  and . For
+
+
+                                                         26
+all these parameter pairs the MMR occurs with FIO as the model selected for optimization and MIROC as
+
+the incorrect model.
+
+                                            TABLE 5 HERE
+
+It is interesting to see that the MMR is increasing in  for each value of , that is, the greater the
+
+sensitivity of climate damages to cumulative carbon, the greater the regret for using an incorrect ESM.
+
+The MMR is also increasing in  for the central and high values of , but not for the low value.
+
+    A sensitivity analysis of the model with respect to the economic parameters is presented in SI
+
+Section 3; its results and the data in Table 4 allow us to compare the MMR and min-max decision rule
+
+outcomes. The sensitivity analysis shows that the MIROC model yields the highest cost optimal solution
+
+for all ,  pairs ­ that is, if MIROC correctly embodies the CCR, the outcome is the worst using our
+
+optimization model. It is natural to ask, what will the cost turn out to be if MIROC is correct, but another
+
+model is chosen? The answer is of course the set of regrets associated with MIROC. Comparing the
+
+MIROC and FIO rows in Table 4, we see that the MIROC regrets are in some cases higher and in some
+
+cases lower than those for FIO. But its maximum regret (0.06558, when GFDL is chosen but MIROC is
+
+correct) is greater than FIO's maximum regret (0.01749). The difference between the two can be
+
+interpreted as the potential cost of using the min-max rather than the MMR decision rule with this
+
+optimization model.
+
+
+
+6. Conclusion
+
+
+
+    Computational climate modeling is a challenging endeavor. Over decades, the efforts of many
+
+modelers around the world have yielded steady progress in model development. The models enable
+
+policy-makers to analyze the long-range consequences of societal decisions about energy production and
+
+use. However, the complexities of the climate system and computational difficulties generate structural
+
+
+
+
+                                                    27
+uncertainty. A consequence is that a number of distinct models have been developed over time and are
+
+currently in use,
+
+     Taking account of this uncertainty in integrated assessment modeling and other policy applications
+
+has with few exceptions relied on climate model weighting of one kind or another, including Bayesian
+
+probabilistic analysis. The shortcomings of these weighting schemes are known and well-documented in
+
+the technical literature. As an alternative, we have proposed a partial identification framing and cost-
+
+benefit analysis of climate policy using the min-max regret criterion. We have provided a theoretical
+
+treatment of min-max regret decision-making under structural uncertainty, and a simple numerical
+
+integrated assessment example. The min-max regret criterion offers a rationally grounded way to deal
+
+with structural uncertainty, and our results establish that the partial identification approach is a promising
+
+avenue for further development of computational modeling for climate policy.
+
+     There are several ways this work could be extended. MMR analysis of joint parametric and structural
+
+climate model uncertainty could be conducted by explicitly distinguishing the two in the link between
+
+cumulative emissions and temperature. Of particular interest is MMR analysis of the types of economic
+
+uncertainties we discussed, both in their own right and jointly with climate model uncertainty. Such
+
+research could greatly enhance the capacity of decision-makers to address this most challenging of
+
+environmental problems.
+
+
+
+
+                                                     28
+References
+
+1. B. M. Sanderson, Uncertainty Quantification in Multi-Model Ensembles. Oxford Research
+Encyclopedia of Climate Science, Online, October (2018).
+
+2. R. Knutti, The end of model democracy? Climatic Change 102, 395-404 (2010).
+
+3. R. L. Smith, C. Tebaldi, D. Nychka, L. O. Mearns, Bayesian Modeling of Uncertainty in Ensembles of
+Climate Models. J. Am. Stat. Assoc 104, 485, 97-116 (2009).
+
+4. A. Wald, Statistical Decision Functions (New York: Wiley, 1950).
+
+5. L. J. Savage, The Theory of Statistical Decision. J. Am. Stat. Assoc. 46, 55-67 (1951).
+
+6. Manski, C., "Search Profiling with Partial Knowledge of Deterrence," The Economic
+Journal, 116, F385-F401 (2006).
+
+7. Manski, C., "Vaccination with Partial Knowledge of External Effectiveness," Proc. Natl. Acad. Sci.
+U.S.A. 107, 3953-3960 (2010).
+
+8. R. Loulou, A. Kanudia, Minimax regret strategies for greenhouse gas abatement: methodology and
+application. Oper. Res. Lett. 25, 5, 219-230 (1999).
+
+9. T. Iverson, Communicating Trade-offs amid Controversial Science: Decision Support for Climate
+Policy. Ecol. Econ. 77, 74-90 (2012).
+
+10. D. Anthoff, R. Tol, Climate policy under fat-tailed risk: an application of FUND. Ann. Oper. Res.,
+Springer, 220, 1, 223-237, September (2014).
+
+11. Y. Cai, A. H. Sanstad, Model uncertainty and energy technology policy: The example of induced
+technical change. Comput. Oper. Res. 66, 362-373 (2016).
+
+12. A. Rezai, F. v. d. Ploeg, Climate policies under climate model uncertainty: Max-min and min-max
+regret. Energ. Econ. 68, 4-16 (2017).
+
+13. Y. Cai, Computational Methods in Environmental and Resource Economics. Ann. Rev. Resour. Econ.
+11, 59-82 (2019).
+
+14. T. Koopmans, Identification Problems in Economic Model Construction. Econometrica 17, 125-144
+(1949).
+
+15. C. Manski, Partial Identification of Probability Distributions (New York: Springer-Verlag, 2003).
+
+16. C. Manski, Identification for Prediction and Decision (Cambridge: Harvard University Press, 2007a).
+
+17. E. Tamer, Partial Identification in Econometrics. Annu. Rev. Econ. 2, 167-195 (2010).
+
+18. F. Molinari, Microeconomics with partial identification. Handbook of Econometrics (Elsevier, 2020).
+
+
+
+                                                    29
+19. K. McGuffie, A. Henderson-Sellers, A Climate Modelling Primer ­ Third Edition. (Chichester,
+England: John Wiley & Sons, 2005).
+
+20. CCSP, Climate Models: An Assessment of Strengths and Limitations. A Report by the U. S. Climate
+Change Science Program and the Subcommittee on Global Change Research [Bader D. C., C. Covey, W.
+J. Gutowski Jr., I. M. Held, K. E. Kunkel, R. L. Miller, R. T. Tokmakian and M. H. Zhang (Authors),
+Department of Energy, Office of Biological and Environmental Research, Washington, D. C., USA, 124
+pp. (2008).
+
+21. J. C. McWilliams, Irreducible imprecision in atmospheric and oceanic simulations. P. Natl. Acad. Sci.
+USA 104, 21, 8709-8713 (2007).
+
+22. T. N. Palmer, G. J. Shutts, R. Hagedorn, F. J. Doblas-Reyes, T. Jung, M. Leutbecher, Representing
+Model Uncertainty in Weather and Climate Prediction. Annu. Rev. Earth Pl. Sc. 33, 163-193 (2005).
+
+23. D. A. Stainforth, M. R. Allen, E. R. Tredger, L. A. Smith, Confidence, uncertainty and decision-
+support in climate predictions. Phil. Trans. R. Soc. A 365, 2145-2161 (2007).
+
+24. R. Knutti, R. Furrer, C. Tebaldi, J. Cermak, G. A. Meehl, Challenges in Combining Projections from
+Multiple Climate Models. J. Climate 23, 15 May, 2739-2758 (2010).
+
+25. W. S. Parker, Ensemble modeling, uncertainty and robust predictions. WIRES Clim. Change 4, 213-
+223 (2013).
+
+26. W. S. Parker, Understanding Pluralism in Climate Modeling. Found. Sci. 11, 349-368 (2006).
+
+27. S. J. Lambert, G. J. Boer, Atmosphere-ocean heat fluxes and stresses in general circulation models.
+Atmos. Ocean 27:4, 692-715 (1989).
+
+28. G. A. Meehl, G. J. Boer, C. Covey, M. Latif, R. J. Stouffer, The Coupled Model Intercomparison
+Project. B. Am. Meteorol. Soc. (BAMS) 81, 2, 313-318 (2000).
+
+29. G. A. Meehl, C. Covey, B. McAvaney, M. Latif, R. J. Stouffer, Overview of the Coupled Model
+Intercomparison Project. B. Am. Meteorol. Soc. (BAMS), January, 89-93 (2005).
+
+30. K. E. Taylor, R. J. Stouffer, G. A. Meehl, An Overview of CMIP5 and the Experimental Design. B.
+Am. Meteorol. Soc. (BAMS), April, 485-498 (2012).
+
+31. P. J. Gleckler, K. E. Taylor, C. Doutriaux, Performance metrics for climate models. J. Geophys. Res.
+113, D06104 (2008).
+
+32. M. Collins, B. B. B. Booth, B. Bhaskaran, G. R. Harris, J. M. Murphy, D. M. H. Sexton, M. J. Webb,
+Climate model errors, feedbacks, and forcings: a comparison of perturbed physics and multi-model
+ensembles. Clim. Dynam. 36, 1737-1766 (2011).
+
+33. C. Wang, L. Zhang, S-K. Lee, L. Wu, C. R. Mechoso, A global perspective on CMIP5 climate model
+biases. Nat. Clim. Change 4, March, 201-205 (2014).
+
+34. A. Gainusa-Bogdan, F. Hourdin, A. K. Traore, P. Braconnot, Omens of coupled model biases in the
+CMIP5 AMIP simulations. Clim. Dynam. 51, 2927-2941 (2018).
+
+
+                                                   30
+35. B. J. Soden, W. D. Collins, D. R. Feldman, Reducing uncertainties in climate models. Science 361,
+6400, 27 July, 326-327 (2018).
+
+36. World Climate Research Programme (WCRP), Overview [of] CMIP6 Experimental Design and
+Organization. https://www.wcrp-climate.org/wgcm-cmip/wgcm-cmip6 (2016).
+
+37. G. Abramowitz, N. Herger, E. Gutmann, D. Hammerling, R. Knutti, M. Leduc, R. Lorenz, R. Pincus,
+G.A. Schmidt, Model dependence in multi-model climate ensembles: weighting, sub-selection and out-of-
+sample testing. Earth Syst. Dynam. Discussions (2018). Available at https://doi.org/10.5194/esd-2018-51.
+
+38. T. Reichler, J. Kim, How Well Do Coupled Models Simulate Today's Climate? B. Am. Meteorol. Soc.
+(BAMS), March, 303-311 (2008).
+
+39. F. Giorgi, L. O. Mearns, Probability of regional climate change based on the Reliability Ensemble
+Averaging (REA) method. Geophys. Res. Lett. 30, 12, 1629 (2003).
+
+40. D. M. H. Sexton, J. M. Murphy, M. Collins, M. J. Webb, Multivariate probabilistic projections using
+imperfect climate models part I: outline of methodology. Clim. Dynam. 38, 2513-2542 (2012).
+
+41. C. Tebaldi, L. Mearns, D. Nychka, R. Smith, Regional probabilities of precipitation change: a
+Bayesian analysis of multimodel simulations. Geophys. Res. Lett. 31, L24, 213 (2004).
+
+42. C. Tebaldi, R. L. Smith, D. Nychka, L. O. Mearns, Quantifying uncertainty in projections of regional
+climate change: A Bayesian approach to the analysis of multimodel ensembles. J. Climate 18, 10, 1524-
+1540 (2005).
+
+43. C. Tebaldi, R. Knutti, The use of the multi-model ensemble in probabilistic climate projections. Phil.
+Trans. R. Soc. A, 365, 2053-2075 (2007).
+
+44. C. Manski, Interpreting and combining heterogeneous survey forecasts. In M. Clements and D.
+Hendry, Eds., Oxford Handbook on Economic Forecasting, 457-472 (2011).
+
+45. C. Manski, Interpreting Point Predictions: Some Logical Issues. Found. Trends Accounting 10, 2-4,
+238-261 (2016).
+
+46. G. Flato, J. Marotzke (Coordinating Lead Authors), "Evaluation of Climate Models," in Stocker, T.
+F., et al, Eds., Climate Change 2013: The Physical Science Basis. Contribution of Working Group I to the
+Fifth Assessment Report of the Intergovernmental Panel on Climate Change, Cambridge University Press
+(2013).
+
+47. R. Knutti, D. Masson, A. Gettelman, Climate model genealogy: Generation CMIP5 and how we got
+there. Geophys. Res. Lett. 40, 1194-1199 (2013).
+
+48. W. S. Parker, Whose Probabilities? Predicting Climate Change with Ensembles of Models. Philos.
+Sci. 77, 5, 985-997 (2010).
+
+49. A. H. Sanstad, Energy-economic policy modeling. AIP Conference Proceedings 1924, 020011 (2018);
+https://doi.org/10.1063/1.5020291
+
+50. J. Weyant, Some Contributions of Integrated Assessment Models of Global Climate Change. Rev.
+Env. Econ. Policy 11, 1, Winter, 115-137 (2017).
+
+                                                    31
+51. W. D. Nordhaus, Climate Change: The Ultimate Challenge for Economics. Am. Econ. Rev. 109 (6),
+1991-2014 (2019).
+
+52. R. Pindyck, Climate Change Policy: What Do the Models Tell Us? J. Econ. Lit. 51, 3, September,
+860-872 (2013).
+
+53. W. D. Nordhaus, A. Moffat, A Survey of Global Impacts of Climate Change: Replication, Survey
+Methods, and a Statistical Analysis. NBER Working Paper No. 23646 (2017).
+
+54. S. Hsiang et al., Estimating economic damage from climate change in the United States. Science 356,
+1362-1369, 30 June 2017.
+
+55. M. Auffhammer, Quantifying Economic Damages from Climate Change. J. Econ. Perspect. 32, 4,
+Fall, 33-52 (2018).
+
+56. F. Ackerman, S. J. DeCanio, R. B. Howarth, K. Sheeran, Limitations of integrated assessment models
+of climate change. Climatic Change 95, 297-315 (2009).
+
+57. D. A. Weisbach, C. R. Sunstein, Climate Change and Discounting the Future: A Guide for the
+Perplexed. 27 Yale L. & Pol'y Rev. 433 (2009).
+
+58. R. Pindyck, The Use and Misuse of Models for Climate Policy. Rev. Env. Econ. Policy 11, 100-114
+(2017).
+
+59. P. Dasgupta, Discounting climate change. J. Risk Uncertainty 37, 2/3, Special Issue on Discounting
+Dilemmas (December), 141-169 (2008).
+
+60. L. Clarke, L., K. Jiang, Assessing Transformation Pathways. In O. Edenhofer et al., eds., Climate
+Change 2014: Mitigation of Climate Change. Contribution of Working Group III to the Fifth Assessment
+Report of the Intergovernmental Panel on Climate Change. Cambridge University Press, Cambridge,
+United Kingdom and New York, NY, USA (2014).
+
+61. C. Fischer, R. D. Morgenstern, Carbon Abatement Costs: Why the Wide Ranges of Estimates? Energ.
+J. 27, 2, 73-86 (2006).
+
+62. C. Manski, A. Tetenov, Sufficient Trial Size to Inform Clinical Practice. P. Natl. Acad. Sci. USA 113,
+10518-10523 (2016).
+
+63. L. H. Goulder, K. Mathai, Optimal CO2 Abatement in the Presence of Induced Technical Change. J.
+Environ. Econ. Manag. 39, 1-38 (2000).
+
+64. H. D. Matthews, N. P. Gillett, P. A. Stott, K. Zickfeld, The proportionality of global warming to
+cumulative carbon emissions. Nat. Lett. 459, 829-832 (2009).
+
+65. National Academies of Sciences, Engineering, and Medicine (NAS), Assessment of Approaches to
+Updating the Social Cost of Carbon: Phase 1 Report on a Near-Term Update. Committee on Assessing
+Approaches to Updating the Social Cost of Carbon, Board on Environmental Change and Society.
+Washington, DC: The National Academies Press, doi: 10.17226/21898 (2016).
+
+
+
+                                                    32
+66. W. R. Cline, Transient Climate Response to Cumulative Emissions (TCRE) As A Reduced-form
+Climate Model. Economics International, Inc. (2020).
+
+67. K. Riahi et al., RCP 8.5 ­ A scenario of comparatively high greenhouse gas emissions. Climatic
+Change 109, 33-57 (2011).
+
+68. R. H. Moss et al., The next generation of scenarios for climate change research and assessment.
+Nature 463, 747-756, doi: 10.1038/nature08823 (11 February 2010).
+
+69. M. Meinshausen et al., The RCP greenhouse gas concentrations and their extensions from 1765 to
+2300. Climatic Change 109, 213-241, DOI 10.1007/s10584-011-0156-z (2011).
+
+70. S. Dietz, F. Venmans, Cumulative carbon emissions and economic policy: In search of general
+principles. J. Environ. Econ. Manag. 96, 108-129 (2019).
+
+71. Wolfram Research, Inc., Mathematica 12. Champaign, IL (2020).
+
+
+
+
+                                                33
+             Table 1. Carbon-climate response estimates ­ six earth system models,
+                        CMIP5 temperature projections under RCP 8.5
+
+
+                                                Fitted  under RCP 8.5 (degrees Celsius per
+            Earth system model
+                                                           teraton carbon)
+
+GFDL-ESM-2G - Geophysical Fluid Dynamics
+                                                                    1.573
+   Laboratory Earth System Model version 2G
+
+BCC-CSM-1 - Beijing Climate Center Climate
+                                                                    1.864
+   System Model version 1.1
+
+FIO-ESM - FIO-ESM - First Institute of
+                                                                    1.937
+    Oceanography Earth System Model
+
+Had-GEM2-ES - Hadley Global Environmental
+                                                                    2.286
+    Model 2 - Earth System
+
+IPSL-CM5A-MR - Institut Pierre Simon Laplace
+                                                                    2.361
+    Coupled Model 5A - Medium Resolution
+
+MIROC-ESM - Model for Interdisciplinary
+                                                                    2.438
+   Research on Climate - Earth System Model
+
+
+
+
+                                               34
+             Table 2. Values of economic parameters used for calibration
+
+
+   Abatement cost parameter                      Climate damage cost parameter 
+  (Fractional GDP lost per GtC               (Fractional GDP loss per degrees Celsius
+         abated)                                         increase)
+
+Low                0.000078                    Low                     0.014
+
+                                          Central (Nordhaus
+Median             0.000125                                            0.018
+                                          & Moffat 2017)
+
+High                 0.0002                    High                    0.022
+
+
+
+
+                                     35
+                  Table 3. Example of regrets calculation ­ with FIO the correct model,
+                                    median  and central 
+
+                                                                          Model
+
+               Calculations                    GFDL     BCC       FIO      Had    IPSL    MIROC
+
+      Optimal values for each model
+                                                0.293   0.381    0.4029   0.509   0.531   0.554
+         (assuming it is correct)
+
+Sub-optimal values (if other models' optimal
+                                                0.413   0.4033     -      0.412   0.416   0.420
+paths are used but FIO is the correct model)
+
+        Regrets: Sub-optimal values
+                                               0.01059 0.0004      0      0.0088 0.01274 0.01749
+           minus FIO optimum
+
+
+
+
+                                                36
+          Table 4. Values of regret across six ESMs, median  and central ,
+                 including Min-Max Regret solution (in bold italics)
+
+                            INCORRECT MODEL (COLUMN)
+
+CORRECT
+                                                                                  Row
+ MODEL    GFDL       BCC          FIO         Had        IPSL       MIROC
+                                                                                 maxima
+ (ROW)
+
+ GFDL            0   0.00608     0.00939     0.03436     0.04137     0.04914     0.04914
+
+ BCC      0.00669          0     0.00039     0.01266     0.01726     0.02266     0.02266
+
+  FIO     0.01059     0.0004            0     0.0088     0.01274     0.01749     0.01749
+
+  Had     0.04357    0.01459      0.0099            0    0.00041     0.00166     0.04357
+
+ IPSL     0.05379     0.0204      0.0147     0.00042            0    0.00043     0.05379
+
+MIROC     0.06558    0.02748     0.02071     0.00175     0.00044             0   0.06558
+
+
+
+
+                                        37
+ Table 5. Values of Min-Max Regret among six climate models across
+economic parameters (from the FIO/MIROC model pair in each case)
+
+                                       Value of 
+
+                          Low          Central      High
+
+           Value of 
+
+              Low       0.01300        0.01538     0.01719
+
+             Median     0.01387        0.01749     0.02053
+
+              High      0.01312        0.01763     0.02179
+
+
+
+
+                                  38
+Supporting Information
+
+1. Research on Partial Identification
+
+1.1. Partial Identification Due to Imperfect Data
+      A large body of research on partial identification has studied the inferential problems created by
+imperfect data, where imperfection can mean measurement error or missing data. Obtaining larger
+samples does not resolve these inferential problems. Measurement error and missing data generate
+identification problems, not merely statistical imprecision.
+      Notable early studies of partial identification with measurement error include (1) and (2). They
+derived sharp bounds on the slope parameter of a simple linear regressions with errors-in-variables; that
+is, white-noise measurement error in the outcome and covariate. These early findings were later extended
+to multiple linear regression by (3). More recent work on partial identification with measurement error
+has studied nonparametric inference with contaminated and corrupted sampling (4) and misclassification
+(5) rather than white-noise error.
+      Another notable early subject of study was use of knowledge of the marginal distribution of each
+element of a vector of random variables to partially identify the joint probability distribution of the vector
+or conditional distributions (6). See (7) and (8) respectively for more recent contributions to these
+subjects. In this body of work, the data imperfection is that one can observe each element of a vector in
+isolation from one another, but one lacks data on the vector in totality.
+      A prominent concern of econometricians has been partial identification with missing data. Early on,
+(9) suggested conservative analysis of surveys with missing data due to nonresponse by sample members,
+informally distinguishing between identification problems and those of statistical inference. Manski (10)
+initiated formal analysis of partial identification with missing data, determining what can be concluded
+about a population mean and distribution function if nothing is known about the missingness process.
+Many subsequent contributions have studied partial identification of various population parameters given
+alternative assumptions about the missingness process. Manski (11, 12) provides monograph and
+textbook expositions of this body of work.
+      Consideration of missing data problems has led to a large literature studying partial identification of
+treatment response, beginning with (13). Again, (11, 12) give monograph and textbook expositions of the
+ensuing literature. Analysis of treatment response poses a distinctive problem of missing outcome data.
+Studies of treatment response aim to predict the outcomes that would occur if counterfactual treatment
+rules were applied to a population. Treatments are mutually exclusive, so one cannot observe the
+outcomes that a person would experience under all treatments. At most, one can observe the outcome that
+a person experiences under the treatment he actually receives. The counterfactual outcomes that a person
+would have experienced under other treatments are logically unobservable.
+
+1.2 Partial Identification of Structural Econometric Models
+      Structural econometric models place assumptions on the behavior of economic agents (consumers,
+firms, or governments) and on the ways that they interact with one another. These assumptions are
+combined with data on observed behavior and interactions to estimate model parameters. Estimated
+models are used to predict the choices that agents would make and the interactions that would occur in
+counterfactual settings. Particularly prominent are applications of the models to predict economic
+outcomes under counterfactual public policies.
+      A classic example is analysis of competitive markets. Economists assume that firm and consumer
+behavior are expressed by supply and demand functions. They restrict the heterogeneity of behavior
+across by markets through functional form assumptions (e.g., linear supply and demand) and
+distributional assumptions (e.g., mean independence involving so-called instrumental variables). They
+assume that observed transactions are market equilibria. Estimated models are used to predict the
+
+
+                                                     39
+transactions that would occur in counterfactual settings, such as under counterfactual tax and subsidy
+policies.
+      The traditional practice of applied econometrics has been to make assumptions that are strong
+enough to yield point identification of structural models when the assumptions are combined with data on
+the observable behavior of the relevant economic agents. However, the assumptions imposed are often
+criticized for lacking credibility.
+      Studies of partial identification of structural models investigate inference under weaker assumptions
+that may be more credible. Given such assumptions, findings distinguish models that are consistent with
+available data from those that are not. Thus, one narrows the scope of scientific inquiry to a set of feasible
+models, but one does not claim to have found a unique best model. Having determined a set of feasible
+models, one may use each model to predict economic outcomes in counterfactual settings. The result is a
+set of predictions, one for each feasible model, rather than an exact prediction or a probability distribution
+of predictions.
+      Discussion of partial identification of structural econometric models occurred as early as the 1940s,
+but formal analysis is more recent. Manski (13) studied partial identification of the market demand for a
+good when data on transactions are combined with the weak and credible assumption that demand
+decreases as price rises. Haile and Tamer (14) studied partial identification of the bidding rules used by
+participants in auctions when data on observed bids are combined with weak and credible assumptions on
+bidding behavior. Ciliberto and Tamer (15) studied partial identification of the rules that oligopolistic
+airlines use to decide whether to initiate service between specific city pairs. Manski (16, 17) studied
+partial identification of discrete choice models in generality and of labor supply models in particular.
+Barseghyan, Molinari, and Teitelbaum (18) studied partial identification of the decision rules that
+households use to make insurance purchases.
+      Studies of partial identification of structural econometric models build on the literature on partial
+identification due to imperfect data. In general, the data available for structural modeling suffers from
+measurement error and missingness. A fundamental missing data problem is that one can only observe the
+historical behavior of economic agents under the policies that existed at the time. The counterfactual
+choices that agents would have made under other policies are logically unobservable. Thus, research on
+structural models faces the same missing data problem that arises in analysis of treatment response.
+
+
+2. Calibration
+
+2.1. Fitting a Functional Form to RCP 8.5
+
+     The exogenous baseline emissions projection Bt driving the results of the model is the Representative
+Concentration Pathway (RCP) 8.5 (see main body of the text). The functional form fitted to this emissions
+path is given by equation (14) in the text, reproduced here as equation SI.2.1:
+                                B0    
+                 Bt =   t +            exp ( - ( t -  ) )                                     (SI.2.1)
+                            exp ( ) 
+We used Mathematica's "NonlinearModelFit" procedure specifying the Levenberg-Marquardt method
+(19, 20, 21). Both RCP 8.5 and the fitted version of (SI.2.1) are shown in Fig. S1.
+     We make no claim about any statistical properties of this curve-fitting. Our objective was solely to
+obtain a functional form that is analytically tractable and closely resembles the projected emissions
+pathway. Equation (SI.2.1) with the fitted parameters shown in the main text accomplishes this; the
+adjusted R2 measure of goodness of fit is 0.927 and the fitted function exhibits the same pattern of rising
+and then falling gross emissions shown by RCP 8.5.
+
+
+
+
+                                                     40
+2.2. Temperature data
+
+     To estimate the simple carbon-climate response model described in Section 5.2 of the main text, we
+adapted the CMIP5 variable "tas" ­ near surface air temperature in Kelvin ("CMIP5 PCMDI
+standard_output.pdf," p. 19, table "CMOR Table Amon: Monthly Mean Atmospheric Fields and some
+Surface Fields," https://pcmdi.llnl.gov/mips/cmip5/docs/standard_output.pdf?id=54). The model output
+was generously provided by the research group of Professor Elizabeth Moyer, Department of
+Geosciences, University of Chicago. We used the projections of this variable generated by the CMIP5
+earth systems models (ESMs) listed in Section 5.2. As noted there, these observations were averaged into
+decades starting in 1900 and ending at 2100. Information on the models, including technical references,
+can be found in (22).
+
+
+2.3.    Comparisons of Actual and Fitted Values of Temperature, Equation (15) of Main Text, Six
+        Models Separately (Fig. S2a-f) and Together (Fig. S3).
+
+Actual and fitted values for each model were computed using EViews11 (23). Each series for
+temperature and cumulative emissions had 19 observations (decadal averages), and the equation was
+fitted by least squares with no constant and an AR(1) process specified for the disturbance term. Fitting
+without specifying an autocorrelated error indicated a great deal of serial correlation of the residuals.
+While these estimates of the mi were not too different from those we report, our judgment was that it was
+best to fit equation (15) while removing most of the autocorrelation. We make no statistical claims, but
+conventional measures were all indicative of a tight fit (R2 values greater than 0.99) and the inverted AR
+roots were less than one.
+
+
+3. Model Solutions
+
+       The current-value Hamiltonian of the simple model in Section 5 is
+
+                 1        1
+                               (        )
+                                            2
+          H=        At 2 +  mEtAt               + t ( Bt - At ),                                 (SI.3.1)
+                 2        2
+
+where t is an adjoint or co-state variable (a counterpart to the Lagrange multiplier in static
+optimization). The first-order necessary conditions are
+             t =  At
+           d t
+             = t -  m 2 EtA         t
+
+            dt
+            E0At
+                 = E0                                                                             (SI.3.2)
+            lim e - t t EtAt = 0.
+            t 
+
+
+
+The first two equations in (SI.3.2) can be re-arranged to yield
+
+
+
+
+                                                                   41
+          dAt          m 2 At
+           =  At -        Et
+           dt            
+                                                                                                    (SI.3.3)
+         dEtAt
+             = Bt - At .
+          dt
+This is a two-dimensional system of linear, first-order, constant-coefficient ordinary differential
+equations, and can be solved in closed form with elementary methods: first a diagonalization procedure to
+uncouple the two equations, and second the use of an integrating factor to solve the resulting system in
+terms of exponential functions. Reversing the diagonalization and applying the initial and transversality
+conditions (the third and fourth lines in (SI.3.2)) then yields closed-form solutions for the optimal
+abatement path At;mi and cumulative carbon emissions Et t for most values of  ,  , and m.
+                                                       A
+
+
+     We obtained numerical values of  and  from Figure 3, p. 113, of (24) using the Web Plot Digitizer
+software (https://automeris.io/WebPlotDigitizer/).
+     We solved the system both by hand and using Mathematica's "DSolve" command. We also used
+Mathematica to solve the optimal control problem: Mathematica's "Integrate" command calculated the
+optimal values ­ minimum discounted abatement costs plus climate damages ­ as a function of the
+optimal solution paths At and Et . We present these results in the next section for the values of
+ ,  , and m presented in the main text.
+     For both analytical and numerical solutions there is general and a special case defined by particular
+combinations of parameters. Our parameter values reflect the general case, but the difference between the
+two raises certain computational issues that we discuss in Section 3.3 below.
+
+3.1. Numerical solutions
+     Fig. S4 displays the optimal abatement paths over the 21st century for each of the six ESMs as
+proxied by mi , i = 1, ,6, for the median value of  and the central value of . Fig. S5 shows the
+corresponding optimal net emissions paths ( Et =       Bt - At for each model) as well as the fitted baseline
+                                                 A  t
+
+
+RCP 8.5 emissions path from equation (14) of the main text. The figures show that the optimal control
+model with our calibration finds fairly aggressive abatement to be optimal across the ESMs. They also
+show an inverse correspondence, as it were, between the geometry of these paths and the values of the
+CCRs: the higher the CCR, the greater is optimal abatement and the lower is optimal net emissions, with
+the spacing of the paths reflecting the relative differences among the numerical values of mi.
+     Table S1 shows sensitivity of optimal (minimum) costs with respect to the low, middle, and high
+values of both  and , for each value of mi . The results are as would be expected: For each mi , the
+optimal cost is increasing in both  and , conversely, for each ,  pair, it is increasing in mi . These
+results allow us to compare climate uncertainty and economic sensitivity in the calibrated simple model.
+In each row (corresponding to a value of mi ), the lowest optimal cost is in the low  , low  case, and
+the highest cost is in the high  , high  case. The largest row range (highest value minus lowest value) is
+0.341, with the MIROC ESM. Conversely, in each column (representing an  ,  pair), the lowest cost is
+the in first row ­ the GFDL model ­ and the highest in the last row ­ the MIROC model. The largest
+column range is 0.362, again with MIROC. That is, the magnitudes of climate uncertainty and economic
+sensitivity are roughly equivalent. This finding highlights the importance of taking account of both
+climate-model and economic uncertainty in quantitative studies of optimal carbon policy.
+
+
+
+
+                                                     42
+3.2. Closed form analytical solutions
+
+3.2.1. General case:  + 1  0
+     Diagonalization of the system involves determining eigenvalues of the fundamental matrix
+                    m2 
+                 -
+          M =       .
+                                                                                                         (SI.3.5)
+              -1
+                   0   
+
+There are two, 1 and 2 , which are negative and positive, respectively. We recall that the baseline
+                                                        - (t - )
+                                                         B0
+                                     Bt   t +
+emissions trajectory in our model is =                 e         . The parameter condition for the general
+                                                         e 
+case arises in solving the diagonalized form of the equation for At :
+                                   2           B0  - (t - )
+         y1 ( t ) =1 y1 ( t ) -            t +    e         ,
+                                ( 2 - 1 )  e 
+or                                                                                                       (SI.3.6)
+                                           2          B0  - (t - )
+        y1 ( t ) - 1 y1 ( t ) =   -              t +    e          .
+                                     ( 2 - 1 )  e 
+Multiplying both sides by the integrating factor e - 1t yields
+                                                 2           B0  - (t - ) - 1t
+        e - 1t y1 ( t ) - e - 1t 1 y1 ( t ) =
+                                            -            t +    e        e ,
+                                              ( 2 - 1 )  e 
+i.e.,
+                                 2
+             ( e y1 ( t ) ) =
+          d - 1t
+          dt
+                            -
+                              ( 2 - 1 )
+                                        ( e  t + B0 ) e -( + 1 )t ,
+
+         (SI.3.7)
+and
+                                 
+                          - ( 2 -2 1 ) ( e  t + B0 ) e
+         e - 1t y1 ( t ) =                               -( + 1 )t
+                                                                     dt.
+
+When  + 1  0 , the right-hand side of the last equation of (SI.3.7) is
+         2            B0    - (t - ) - 1t       2              B0           -( + 1 )t
+ - (    2 - 1 ) 
+                  t + 
+                     e     
+                           e        e dt = -
+                                             ( 2 - 1 )  e  t + 
+                                                              e            
+                                                                           e          dt
+                                                                                                         (SI.3.8)
+       2 e                              2 e                              2
+                   e - ( + )t t +                    e - ( + )t +                  B0 e -( + )t + C1 ,
+                                                                                           
+=                            1                                        1                      1
+
+  ( 2 - 1 )( + 1 )                ( 2 - 1 )( + 1 )
+                                                   2
+                                                                  ( 2 - 1 )( + 1 )
+where C1 is a constant. Substituting back into Equation (SI.3.7) and multiplying both sides by e 1t yields
+the solution:
+                         2 e                          2          e             - t
+ =y1 ( t )                           e - t t +                           + B   e + C1e t         1
+                                                                                                         (SI.3.9)
+                    ( 2 - 1 )( + 1 )           ( 2 - 1 )( + 1 )  ( + 1 )    0
+                                                                              
+
+The solution for y2 ( t ) is obtained analogously.
+
+
+                                                             43
+     In this general case, returning to the original coordinates and setting C1 using the initial condition
+for Et , the solutions to (SI.3.3) are of the form
+         At = A1e - t t + A 2 e - t + A 3e1 t
+                                                                                                       (SI.3.10)
+         Et = E1e - t t + E 2 e - t + E 3e1 t ,
+
+where the A i ' s and Ei 's are algebraic expressions in the model parameters.
+3.2.2 Special case:  + 1 =
+                         0
+     The growth rates of the terms with e - t and e 1t are -  and 1 , respectively, and the growth rate of
+                             d              1
+the terms with e - t t is       ln e - t t= -  , i.e., - asymptotically. Thus if  + 1 = 0, these growth rates
+                             dt             t
+coincide as t  . Given that the eigenvalues of the diagonalized system have opposite signs
+( 1 < 0 and 2 > 0 ) , it is saddle-path stable, with the stable arm corresponding to 1. Thus, this special
+case amounts to the asymptotic growth rates equaling that along the stable arm of the system (25).
+     This affects the solutions in a particular way. Specifically, if  + 1 = 0, the diagonalized equation
+for At is the same as for Equation (SI.3.6) above, but applying the integrating factor e - 1t yields
+                                                  
+         e - 1t y1 ( t ) - e - 1t 1 y1 ( t ) =
+                                             -      2
+
+                                               ( 2 - 1 )
+                                                         ( e  t + B0 ) e - ( + 1 )t
+                                                                                                       (SI.3.11)
+                                                  2
+                                        =
+                                        -
+                                          ( 2 - 1 )
+                                                    ( e  t + B0 ) .
+                                                            
+
+
+
+
+Note that there is no exponential term with time as an argument in the last expression. Therefore
+                 2                         2 e  1 2 2 e 
+         -   ( 2 - 1 )
+                       ( e
+                            t + B0) dt -
+                                       =            t -       B t +C
+                                         ( 2 - 1 ) 2 ( 2 - 1 ) 0 2
+                                                                                                       (SI.3.12)
+
+
+and the solution to the differential equation is
+                    e  1 2 1t 2 e 
+         y1 (t ) =
+                 - 2       t e -        B0te1t + C2 e1t
+                  ( 2 1)
+                     -   2       ( 2 1)
+                                    - 
+                                                                                                       (SI.3.13)
+                    e  1 2 - t 2 e 
+                =
+                - 2          t e -           B0te - t + C2 e - t
+                 ( 2 - 1 ) 2       ( 2 - 1 )
+             0 in this case. The solution for y2 ( t ) is obtained in a similar manner.
+because 1 +  =
+     In this special case, the solutions to the system in the original coordinates are of the form
+                   S - t 2  S - t    S - t
+         AtSpec = A1 e t + A2 e t + A3 e
+                                                                                                       (SI.3.14)
+                   S - t 2  S - t    S - t
+         EtSpec = E1 e t + E2 e t + E3 e ,
+
+where A iS 's and E iS 's are again algebraic expressions in the model parameters. These coefficients are
+different from those in the general case, and the primary structural difference is the presence of the
+quadratic term.
+
+
+
+
+                                                               44
+3.3. Continuity of solutions in parameter space
+
+     Given that the system parameters  ,  , and m can also vary, what we mean more precisely in the
+preceding discussion is that the condition  + 1  0 does or does not hold given any particular
+combination ( ,  , m ) . The coefficient expressions in the solutions for the general case (Equation
+                                1
+(SI.3.10)) contain the term           , which approaches infinity as  approaches -1 in parameter space.
+                              ( + 1 )
+The eigenvalues 1 and 2 are functions of the model parameters  ,  , m, and  , and it can be shown that
+ + 1 = 0 is equivalent to
+   m 2
+     =  ( +  ) .                                                                               (SI.3.15)
+     
+The parameters , , and  are fixed for all versions of the model ( and  from the fitted exogenous
+emissions path and  as the IPCC conventional value of 0.05). However, our model solutions were a
+function of m corresponding to different climate models, and we conducted sensitivity analysis with
+respect to  and  . The difference between the general and special case solutions therefore raises a
+question of continuity as the parameters of the two solutions approach each other. Using Mathematica we
+confirmed that the solutions at the parameter configuration (SI. 3.15) are limits of those at nearby points
+as the parameters approach (SI.3.15), so there is no discontinuity. However, there are additional
+considerations for numerical solutions, as we discuss next.
+
+
+3.4. Numerical stability issues.
+
+      None of the numerical values used in the cases reported in the text used parameter values that lie
+exactly on the hypersurface in parameter space defined by (SI.3.15). However, this surface does divide
+the region in parameter space in which these values lie, and there are numerical issues in the transition
+between the two cases. Using the general solutions (SI.3.10) in calculations for parameter combinations
+that are very close to, but not on, the special case gave rise to numerical instabilities because of cumulated
+rounding errors and the intrinsic precision limits of machine computations. Therefore, it is important to
+check whether any of the (, , m) parameter combinations used in the calculations reported in the text are
+close enough to satisfying (SI.3.15) that the special case solution needs to be employed rather than the
+general case in calculating the numerical results. In general, care needs to be taken in numerical
+implementation of the model to make sure that the correct solutions of the system are the ones employed.
+      An illustration of the potential problem that could arise from using the general solutions if the
+parameters are too close to satisfying (SI.3.15) is shown in Fig. S6, a 2-D color plot of the optimal value
+of the objective function (equation (16) in the text) as a function of  and m. The region with pixels of a
+color different from the yellow-to-gray shade (which represents values of the objective function) shows
+the region in which numerical instability is occurring. It can be seen that one of our parameter
+combinations, m = 0.00286 (Hadley) and  = 0.018 (Nordhaus and Moffat), lies fairly close to the region
+of numerical instability.
+      To double-check that this parameter combination is far enough away from satisfying (SI.3.15) to be
+numerically stable we proceeded as follows. First, we calculated the 18 values of  for which (SI.3.15) is
+satisfied for the 18 combinations of  and m we used (three 's, six m's). These 's for each (, m) pair are
+shown in Table S2. We inspected this table to see which values of  in the Table appeared to be close to
+one of the  values used in our analysis. For example, the value 0.0183465 associated with the median 
+and the Hadley m is fairly close to our central  of 0.018. Is it close enough that numerical instability
+might be a problem affecting the MMR calculations?
+
+                                                     45
+     To answer this question, we narrowed down the range around the critical value 0.0183465 to see
+how close one has to be to this value for numerical instability to appear. We then plotted At and Et for
+the range 0  t  1000 over ever-narrowing intervals around this critical value. With increments of
+1/10,000,000,000, the plots for At over the interval 0.01834649905    0.01834650395 are displayed in
+Fig. S7. (There were 50 incremental steps in this interval given the specified width of each step; the plots
+for Et are similar in appearance.)
+     What is evident from this figure is that for the first 10 or so steps, the plots of At are smoothly well-
+behaved. After that, the plots begin to get "fuzzy" as the  being used to calculate At gets closer to the
+critical value. From around step 16 through step 35, the numerical instability is more pronounced;
+beginning with step 22 the numerical calculation of At breaks down and even begins showing
+(theoretically impossible) negative values.
+      By around step 40, the At function becomes well-behaved again, indicating that the value of  is far
+enough from the critical value that division by a number close enough to zero to cause numerical
+instability is no longer an issue. Being very conservative, we can conclude that outside the interval,
+0.01834649905    0.01834650395, the solutions to the model are well-behaved when the general form
+of the solutions are used. The central value of  used in the calculations reported in the main body of the
+paper is 0.018, safely outside this interval.
+      We did a similar analysis for another candidate for instability,  = 0.0241934, associated with the
+low  value of 0.000078 and the GFDL m of 0.001572749 and shown in Table S2. This was the critical
+value closest to our high value of , which was 0.022. Again, the width of the interval of numerical
+instability around the critical  value was narrow enough that 0.022 was safely outside of it. Other critical
+values of  shown in Table S2 are farther away from the values we used than the critical value
+0.01834649905 was. We conclude that numerical instability is not a problem for any of the calculations
+reported in the main body of the paper which were based on the general solutions (SI.3.10).
+
+
+
+
+                                                     46
+                                                   RCP 8.5
+
+
+                                                    Fitted SI.2.1
+
+
+
+
+                                                Years after 2000
+
+
+
+Fig. S1. RCP 8.5 and fitted equation (SI.2.1)
+
+
+
+
+                     47
+Temperature
+
+
+
+
+                                                 Year
+
+
+              Fig. S2a. GFDL Actual and Fitted
+
+
+
+
+                         48
+Temperature
+
+
+
+
+                                                Year
+
+              Fig. S2b. BCC Actual and Fitted
+
+
+
+
+                        49
+Temperature
+
+
+
+
+                                                Year
+
+
+              Fig. S2c. FIO Actual and Fitted
+
+
+
+
+                        50
+Temperature
+
+
+
+
+                                                   Year
+
+
+              Fig. S2d. Hadley Actual and Fitted
+
+
+
+
+                          51
+Temperature
+
+
+
+
+                                                 Year
+
+
+              Fig. S2e. IPSL Actual and Fitted
+
+
+
+
+                         52
+Temperature
+
+
+
+
+                                                  Year
+
+              Fig. S2f. MIROC Actual and Fitted
+
+
+
+
+                         53
+Temperature
+
+
+
+
+                                                                      Year
+
+
+
+
+    Fig. S3. Actual and Fitted Values from Equation (15), all six models
+
+
+
+
+                                    54
+                                                                  Year
+
+
+
+Fig. S4. Optimal Abatement, six ESMs, 2010-2100,  = 0.000125,  = 0.018
+
+
+
+
+                                 55
+GtC
+
+
+
+
+                                                                            Year
+
+ Fig. S5. Baseline (uncontrolled) and net emissions, six ESMs, 2010-2100,
+                               = 0.000125,  = 0.018
+
+
+
+
+                                   56
+          0.002275
+
+
+
+
+           0.00228
+
+     m-axis
+  (decreasing )
+
+
+
+
+Hadley m = 0.002286
+
+
+
+
+           0.00229                                                          
+                               0.0175        0.0180         0.0185
+
+                          Fig. S6.: 2-D Color Plot of Objective Function,
+                       = 0.000125; 0.017    0.019; 0.002275  m  0.002290
+
+
+
+
+                                        57
+            Fig. S7. Numerical instability test on At,
+0.01834649905    0.01834650395, steps of width 1/10,000,000,000
+
+
+
+
+                              58
+        Table S1. Optimal (minimum) costs across values of economic parameters:
+        Present values of abatement costs plus climate damages in optimal solutions.
+
+                                                   Value
+
+                          Low                     Central                     High
+
+                         Value                     Value                     Value
+
+   Model         Low    Median     High    Low    Median     High    Low    Median     High
+
+GFDL-ESM-2G     0.217    0.262    0.301 0.239      0.293    0.343 0.256      0.318     0.377
+
+ BCC-CSM1-1     0.279    0.331    0.378 0.315      0.381    0.441 0.343      0.423     0.496
+
+  FIO-ESM       0.294    0.348    0.396 0.334      0.403    0.465 0.366      0.450     0.526
+
+Had GEM2-ES     0.367    0.429    0.482 0.427      0.509    0.581 0.479      0.582     0.675
+
+IPSL-CM5A-MR 0.382       0.445    0.500 0.447      0.531    0.605 0.504      0.610     0.706
+
+ MIROC-ESM      0.398    0.462    0.518 0.468      0.554    0.630 0.530      0.640     0.739
+
+
+
+
+                                            59
+                        Table S2.  values for which (SI.3.15) is satisfied,
+                           m and  values used for calculations in text
+
+                                 Model and associated m (columns)
+
+             GFDL         BCC             FIO           Hadley           IPSL       MIROC
+ (rows)
+           0.001572749 0.00186463 0.001936724 0.002286328 0.00236084              0.002437833
+
+0.000078    0.241934   0.0172119      0.0159544        0.114482        0.010737    0.0100695
+
+0.000125   0.0387714   0.0275832      0.0254579       0.0183465       0.0172067    0.0161370
+
+0.00020    0.0620342   0.0441332      0.0409086       0.0293544       0.0275307    0.0258192
+
+
+
+
+                                            60
+SI References
+
+1. R. Frisch, Statistical Confluence Analysis by Means of Complete Regression Systems. Oslo, Norway:
+University Institute for Economics (1934).
+
+2. O. Reiersol, Confluence Analysis by Means of Lag Moments and Other Methods of Confluence
+Analysis. Econometrica 9, 1­24 (1941).
+
+3. S. Klepper, E. Leamer, Consistent Sets of Estimates for Regressions with Errors in All Variables.
+Econometrica 52, 163­183 (1984).
+
+4. J. Horowitz, C. Manski, Identification and Robustness with Contaminated and Corrupted Data.
+Econometrica 63, 281-302 (1995).
+
+5. F. Molinari, Partial Identification of Probability Distributions with Misclassified Data. J. Econometrics
+144, 81-117 (2008).
+
+6. Duncan, O. and B. Davis, An Alternative to Ecological Correlation. Am. Sociol. Rev. 18, 665­666
+(1953).
+
+7. L. Rüschendorf, Sharpness of Frechet-Bounds. Z. Wahrscheinlichkeit. 57, 293­302 (1981).
+
+8. P. Cross, C. Manski, Regressions, Short and Long. Econometrica 70, 357-368 (2002).
+
+9. W. Cochran, F. Mosteller, and J. Tukey, Statistical Problems of the Kinsey Report on Sexual Behavior
+in the Human Male (Washington, DC: American Statistical Association, 1954).
+
+10. C. Manski, Anatomy of the Selection Problem. J. Human Resour. 24, 343­360 (1989).
+
+11. C. Manski, Partial Identification of Probability Distributions (New York: Springer-Verlag, 2003).
+
+12. C. Manski, Identification for Prediction and Decision (Cambridge: Harvard University Press, 2007a).
+
+13. C. Manski, Monotone Treatment Response. Econometrica 65, 1311­1334 (1997).
+
+14. P. Haile, E. Tamer, Inference with an Incomplete Model of English Auctions. J. Polit. Econ. 111, 1-
+51 (2003).
+
+15. F. Ciliberto, E. Tamer, Market Structure and Multiple Equilibria in Airline Markets. Econometrica 77,
+1791-1828 (2004).
+
+16. C. Manski, Partial Identification of Counterfactual Choice Probabilities. Int. Econ. Rev. 48, 1393-
+1410 (2007b).
+
+17. C. Manski, Identification of Income-Leisure Preferences and Evaluation of Income Tax Policy.
+Quant. Econ. 5, 145-174 (2014).
+
+18. L. Barseghyan, F. Molinari, J. Teitelbaum, Inference under Stability of Risk Preferences. Quant.
+Econ. 7, 367-409 (2016).
+
+
+                                                    61
+19. Wolfram Research, Inc., Wolfram Mathematica 12.1. Champaign, IL (2020).
+
+20. E. Weisstein, Levenberg-Marquardt Method. From MathWorld--
+A Wolfram Web Resource. https://mathworld.wolfram.com/Levenberg-MarquardtMethod.html.
+
+21. M. I. A. Lourakis, A Brief Description of the Levenberg-Marquardt Algorithm Implemened{sic] by
+levmar (2005).
+https://www.researchgate.net/publication/239328019_A_Brief_Description_of_the_Levenberg-
+Marquardt_Algorithm_Implemened by levmar.
+
+22. M. Collins, M. et al., Long-term Climate Change: Projections, Commitments and Irreversibility. In
+Climate Change 2013: The Physical Science Basis. Contributions of Working Group I to the Fifth
+Assessment Report of the Intergovernmental Panel on Climate Change [Stocker, T. F. et al. (eds.)].
+Cambridge University Press, Cambridge, United Kingdom and New York, NY, USA (2013).
+
+23. IHS Global, EViews11. Irvine, CA (2020).
+
+24. S. Dietz, F. Venmans, Cumulative carbon emissions and economic policy: In search of general
+principles. J. Environ. Econ. Manag. 96, 108-129 (2019).
+
+25. R. J. Barro, X. Sala-i-Martin, Economic Growth (New York: McGraw Hill, 1995).
+
+
+
+
+                                                 62
+

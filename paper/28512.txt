@@ -1,0 +1,1899 @@
+                            NBER WORKING PAPER SERIES
+
+
+
+
+                     SCHOOL ASSIGNMENT BY MATCH QUALITY
+
+                                   Atila Abdulkadiroglu
+                                       Umut M. Dur
+                                     Aram Grigoryan
+
+                                    Working Paper 28512
+                            http://www.nber.org/papers/w28512
+
+
+                   NATIONAL BUREAU OF ECONOMIC RESEARCH
+                            1050 Massachusetts Avenue
+                              Cambridge, MA 02138
+                                  February 2021
+
+
+
+
+Abdulkadiro lu: Department of Economics, Duke University and National Bureau of Economic
+Research (NBER), aa88@duke.edu; Dur: Department of Economics, North Carolina State
+University, udur@ncsu.edu, Grigoryan: Department of Economics, Duke University,
+ag404@duke.edu. The views expressed herein are those of the authors and do not necessarily
+reflect the views of the National Bureau of Economic Research.
+
+NBER working papers are circulated for discussion and comment purposes. They have not been
+peer-reviewed or been subject to the review by the NBER Board of Directors that accompanies
+official NBER publications.
+
+© 2021 by Atila Abdulkadiroglu, Umut M. Dur, and Aram Grigoryan. All rights reserved. Short
+sections of text, not to exceed two paragraphs, may be quoted without explicit permission
+provided that full credit, including © notice, is given to the source.
+School Assignment by Match Quality
+Atila Abdulkadiroglu, Umut M. Dur, and Aram Grigoryan
+NBER Working Paper No. 28512
+February 2021
+JEL No. D47,I20
+
+                                         ABSTRACT
+
+Proponents of school choice argue that it improves educational outcomes by allowing parents to
+self-select into schools that are most effective for their children. Contrary to these arguments,
+empirical evidence suggests that parents may not incorporate school effectiveness or match
+quality when choosing schools. The findings potentially impugn proponents' effectiveness
+arguments of choice-based assignment. We develop novel solutions that restore effectiveness by
+maximizing match quality subject to stability constraints. Maximization algorithms are provided
+for both small and large school districts. Simulations reveal substantial match quality gains from
+our solutions compared to the celebrated Deferred Acceptance mechanism with a random tie-
+breaker. Our methodology can be used to optimize for other policy objectives in school choice or
+other priority-based matching problems.
+
+Atila Abdulkadiroglu                            Aram Grigoryan
+Department of Economics                         Duke University
+Duke University                                 aram.grigoryan@duke.edu
+213 Social Sciences Building
+Durham, NC 27708
+and NBER
+atila.abdulkadiroglu@duke.edu
+
+Umut M. Dur
+North Carolina State University
+College of Management
+umutdur@gmail.com
+                          School Assignment by Match Quality
+
+                       Atila Abdulkadiroglu, Umut Dur and Aram Grigoryan
+
+                                              February 24, 2021
+
+
+
+
+                                                     Abstract
+
+           Proponents of school choice argue that it improves educational outcomes by allowing parents
+       to self-select into schools that are most effective for their children. Contrary to these arguments,
+       empirical evidence suggests that parents may not incorporate school effectiveness or match qual-
+       ity when choosing schools. The findings potentially impugn proponents' effectiveness arguments
+       of choice-based assignment. We develop novel solutions that restore effectiveness by maximizing
+       match quality subject to stability constraints. Maximization algorithms are provided for both
+       small and large school districts. Simulations reveal substantial match quality gains from our so-
+       lutions compared to the celebrated Deferred Acceptance mechanism with a random tie-breaker.
+       Our methodology can be used to optimize for other policy objectives in school choice or other
+       priority-based matching problems.
+
+
+
+1      Introduction
+
+Parental choice over public schools has become an integral education reform tool around the world.
+Market Design for school choice (Abdulkadiro       glu and S¨ onmez, 2003)1 has led to creation and
+implementation of efficient and transparent admissions processes in school choice programs. It is
+argued that parental choice may boost educational outcomes for students by creating competitive
+pressure on schools (Friedman, 1962; Tweedie et al., 1990; Hoxby, 2003), by allowing students to
+sort into schools with better match quality (Hoxby, 2000), and by allowing parents to act on local
+information, in turn providing better incentives for schools to invest in educational effectiveness than
+a centralized accountability system would do (Peterson and Campbell, 2001). These mechanisms
+would be at work only if parents choose schools partly based on school effectiveness and match
+quality. Contrary to these claims, parents do not seem to incorporate school effectiveness when
+forming preferences. For example, Abdulkadiro       glu et al. (2020) find that parents do not prefer
+schools that are especially effective for their own children and do not enroll their children in schools
+that are a better-than-average match for them. These findings raise a new challenge for the Market
+    
+     Abdulkadiro glu: Department of Economics, Duke University and National Bureau of Economic Research (NBER),
+aa88@duke.edu; Dur: Department of Economics, North Carolina State University, udur@ncsu.edu, Grigoryan: De-
+partment of Economics, Duke University, ag404@duke.edu.
+   1
+     School choice problem is closely related to college admission problem (Gale and Shapley, 1962; Roth, 1985) and
+student placement problem (Balinski and S¨    onmez, 1999). It differs from college admission problem as schools are
+considered as objects, and it differs from student placement problem as respecting school priorities is not forced by
+the central authority.
+
+
+                                                         1
+Design agenda: Can school admissions process be designed to attain higher educational outcomes
+even in the absence of parental preferences for effectiveness and match quality?
+
+Given some measure of match quality of students at schools, finding an assignment of students to
+schools that maximizes sum of match qualities (hereafter, aggregate match quality) is a trivial linear
+programming problem. However, admissions to schools are constrained by parental preferences and
+by admissions priorities granted to students at schools. Preferences and priorities introduce to this
+otherwise standard linear programming problem the so-called stability constraint. Namely, an
+applicant can only be assigned to a school listed in her application form, and if an applicant prefers
+a school to her assignment, the school must be fully assigned to applicants with better or equal
+admissions priorities. Stability, also more aptly called justified-envy-freeness in the context of school
+assignment, has become critical in the design of school admissions processes (Abdulkadiro      glu et al.,
+2009). Finding a stable assignment that maximizes aggregate match quality, which we will refer to
+as match quality optimal assignment, is an NP-hard problem when priorities are weak. Hence, in
+general, this problem has no computationally tractable solution. We introduce an algorithm that
+is polynomial time in the number of students, but potentially exponential in the number of schools.
+Since the number of schools in a school districts is typically small, the algorithm is applicable for
+the majority of US school districts. Building on that solution, we also introduce a random search
+algorithm for large school districts. Our simulations show that even a single search produces an
+aggregate match quality that is close to that of the match quality optimal assignment.
+
+When preferences and priorities are strict, a match quality optimal assignment can be computed in
+polynomial time by formulating it as a linear programming problem (Roth et al., 1993). However,
+real life choice programs typically feature weak priorities. In most applications, schools sort students
+into thick priority classes based on residential address, status of sibling enrollment etc. Our strategy
+builds on bounding the set of stable assignments and then solving the optimization problem within
+subsets of stable assignments. Admissions cutoff, or simply cutoff, at a school is the worst priority
+admitted by the school.2 Our first building blocks are two new algorithms to compute lower and
+upper bounds for school cutoffs at stable assignments when priorities are weak.
+
+The first algorithm, which we refer to as Deferred Rejection (DR), works like the student proposing
+deferred acceptance algorithm (DA) (Gale and Shapley, 1962) with the caveat that, when there
+are more students applying to a school than available seats, the school finds the worst priority that
+would fill up its seats, rejects all students with strictly worse priorities and provisionally holds the
+remaining students. The algorithm then identifies students that would be rejected by schools for
+any possible tie breaking among equal priority students. Unlike the student proposing DA, under
+DR a school may hold more students than available seats. Therefore, DR produces bounds for
+cutoffs: schools attain weakly better priority cutoffs in every stable assignment.
+
+The second algorithm, which we refer to as Deferred Proposal (DP), works like the school proposing
+DA. Each school finds the worst priority that would fill up its seats, proposes to students with
+strictly better priority. Then, the algorithm identifies students that would reject schools for any
+possible tie breaking. Under DP schools do not necessarily fill up all of their seats. Therefore,
+DP too produces bounds for cutoffs: schools attain weakly worse priority cutoffs in every stable
+assignment.
+   2
+    For example, consider a school that grants priorities A, B and C such that A is better than B and B is better
+than C. Suppose that the worst priority students assigned to the school have priority B. Then the cutoff at the school
+is B.
+
+
+
+
+                                                          2
+Finally, using the bounds identified by DR and DP, we find a match quality optimal assignment
+using our Match Quality Optimal Algorithm (MQO). For a fixed vector of admission cutoffs, or a
+cutoff profile, MQO finds a stable assignment that has weakly higher match quality than any stable
+assignment with the given cutoff profile. This step involves a novel formulation of the problem as
+a minimum-cost flow problem. Then, by exhaustively searching within the set of cutoff profiles
+identified by DR and DP, MQO yields a match quality optimal assignment. Such exhaustive search
+is infeasible without DR and DP procedures for many realistic instances.
+
+MQO becomes computationally intractable as the number of schools increases. Therefore, we
+develop a random search algorithm for large districts, which we call Locally Match Quality Optimal
+Algorithm (L-MQO). Instead of searching within bounds, L-MQO first runs the student proposing
+DA with some random tie-breakers to identify cutoffs of some stable assignment. Then, using the
+minimum-cost flow formulation, it finds a stable assignment with a weakly higher match quality
+than any stable assignment with the given cutoffs. L-MQO finds a globally match quality optimal
+assignment if it uses the cutoffs of a globally match quality optimal assignment. Therefore, repeating
+L-MQO with distinct random tie-breakers yields a random search algorithm. Remarkably, even a
+single run of L-MQO yields locally optimal solutions that are very close to the global optimum.
+
+We run simulations with 1,000 students and 20 schools, with 50 seats each for 75 environments with
+different parameter values. The match quality gains are substantial. MQO on average results in
+around 40% higher aggregate match quality compared to the student proposing DA with random
+tie-breaker. Match quality gains under L-MQO is only slightly smaller than that of the MQO,
+i.e., less than 1%. Additionally, we consider a version of student proposing DA, where schools
+break ties among equal priority students based on the match quality, instead of applying a random
+tie-breaker. Such quality-based tie-breaking in DA significantly improves on random tie-breaking,
+however the match quality gains are less than two thirds of those under MQO or L-MQO.
+
+Data-driven effectiveness or match quality-based assignment is widely applied for many market
+design problems. Refugee resettlement is a major example. Hebrew Immigrant Aid Society (HIAS)
+uses a machine-learning based algorithm called Annie MOORE (Matching and Outcome Optimiza-
+tion for Refugee Empowerment), named after Annie Moore, the first immigrant on record at Ellis
+Island, New York in 1892, which, according to developers Trapp et al. (2018), is "... the first
+software designed for resettlement agency pre-arrival staff to recommend data-driven, optimized
+matches between refugees and local affiliates while respecting refugee needs and affiliate capacities."
+Organ transplantation is another example of an match quality-based assignment. The algorithm
+of United Network for Organ Sharing (UNOS) prioritizes those patients who are in most urgent
+need of the transplant, and/or who are "... most likely to have the best chance of survival if trans-
+planted".3 For school choice, on the other hand, assignment is typically determined only based on
+students preferences and priorities: match quality and effectiveness are completely ignored. To the
+best of our knowledge, ours is the first work to introduce a match quality-based algorithm for school
+choice. The practical value of such an algorithm is particularly enhanced by the recent advances
+in econometric techniques for assessing match quality or effectiveness in the school choice setting
+(Abdulkadiro  glu et al., 2017, 2020).
+
+Although our emphasis in this work is on finding match quality optimal assignment, our optimiza-
+tion solution under stability constraints can be used to address other important policy objectives
+such as improving diversity (Abdulkadiro  glu and S¨
+                                                   onmez, 2003; Abdulkadiroglu, 2005; Hafalir et al.,
+  3
+      https://unos.org/about/national-organ-transplant-system/
+
+
+
+                                                        3
+2013; Dur et al., 2018) or maximizing student welfare (Erdil and Ergin, 2008, 2017; Abdulkadiroglu
+et al., 2009). These extensions are briefly discussed in the Discussion section.
+
+The remainder of this work is organized as follows. Section 2 reviews the related literature. Section 3
+describes the school choice problem and discusses the NP-hardness of finding match quality optimal
+assignment. Section 4 introduces a solution based on a minimum-cost flow formulation. Section
+5 develops DA-based algorithms that bound the set of stable assignments, which is an important
+prerequisite for the tractability of the solution in Section 4. Section 6 introduces a partial solution
+for large school districts. Section 7 reviews simulations results and Section 8 concludes. Proofs are
+in Appendix A.
+
+
+
+2    Related Literature
+
+As mentioned above, our work contributes to the literature that advocates match quality- or
+effectiveness-based assignment. Slaugh et al. (2016) develop a data-driven algorithm to match
+children to families for adoption. The algorithm evaluates the probability of a successful adop-
+tion based on child's traits and family's preferences and incorporates this information to match
+them more effectively. Bansak et al. (2018) and Trapp et al. (2018) introduce similar data-driven
+solutions for refugee resettlement to maximize employment outcomes. Grigoryan (2020) provides
+match quality maximization algorithm for pandemic rationing problems. Our environment is dif-
+ferent from all the works above, and therefore, match quality maximization in our problem requires
+an original solution. We provide new algorithms for bounding cutoffs and a minimum-cost flow
+formulation for maximization under stability constraints.
+
+Our work is related to the widely studied problem of finding a stable assignment of largest size,
+i.e., one that assigns the most number of students. This is a special case of our match quality
+maximization problem where match quality is binary and equals zero if and only if a student is
+unassigned. In general, this problem is NP-hard (Manlove et al., 2002). Several heuristic and
+approximation algorithms have been discussed in the computer science literature. For example,
+Kwanashie and Manlove (2014) show that in practice the problem may be solved through integer
+programming. However, there are no theoretical guarantees that this approach is successful. Other
+papers provide -approximation algorithms (McDermid, 2009; Kir´     aly, 2011; Iwama et al., 2014),
+which guarantee that the value of the optimal solution is no more than  times larger than that of
+the approximating algorithm. These approximation bounds are typically not tight and the solutions
+may be far from the global optimum.
+
+Another strand of papers provide approximate solutions to NP-hard optimization and matching
+problems by utilizing the `sparsity' of the relevant constraint matrix. For example, Nguyen and
+Vohra (2013) study a multi-unit allocation problem and maximize social-welfare under fairness and
+incentive constraints. They assume that the number of objects each agent can receive is small rel-
+ative to the market size. Therefore, the number of fractional solutions in the linear programming
+relaxation is guaranteed to be small. After applying a rounding algorithm, the resultant solution
+is `approximately feasible', in a sense that constraints are violated only `slightly' violated. Similar
+approximately feasible solutions are obtain stable allocations in environments with complementari-
+ties (Nguyen and Vohra, 2018) and complex distributional constraints (Nguyen et al., 2020; Nguyen
+and Vohra, 2019). These last papers use versions of the Scarf's lemma and rounding algorithms to
+obtain approximate solutions. Unlike the works above, our main solution offers exact optimization.
+
+
+                                                  4
+Methodologically, our work is related to matching theory papers that use network flows, such Katta
+and Sethuraman (2006); Kim and Mierendorff (2013); Chandramouli and Sethuraman (2020) and
+Grigoryan (2020). The network flow approach allows to solve various optimization problem with
+integer solutions. This makes the method highly useful for matching problems with indivisible
+goods. Our setting, and therefore, the corresponding network flow formulation is different from all
+the works above.
+
+Our work is potentially closest to papers that solve optimization problems in the context of school
+choice. Despite the NP-hardness result, Bodoh-Creed (2020) (hereafter, BC) provides a computa-
+tionally feasible optimization algorithm under stability constraints using the fact that the number
+of schools and priority classes are typically small. Our solution is different from that of BC in
+several important ways. First, BC studies a continuum model and his method finds fractional
+solutions. In finite markets his fractional solutions may be interpreted as ex-ante stable stochas-
+                               ¨
+tic assignments (Kesten and Unver,     2015). We, on the other hand, study a finite market setting
+and use the standard definition of stability. Thus, our optimization problem requires an integral
+solution. We use a novel method based on minimum-cost flow formulation to solve the problem
+with integrality constraints. Second, BC's algorithm relies on the assumption that if a school has
+empty seats under student proposing DA with some tie-breaker, it also has empty seats in all stable
+assignments. Our solution does not require such an assumption. Instead, we develop procedures,
+namely DR and DP, that reduce the computational burden of our algorithm so that it can handle
+realistic problems without additional assumptions. Moreover, the reduction procedures allow us to
+work with larger problems, with potentially more priority classes at each school. Finally, we also
+introduce a partial solution for large school districts, which makes our contribution applicable to
+any school choice problem. Two other papers that study optimization problems in the school choice
+setting are Ashlagi and Shi (2016) and Shi (2019). These papers however ignore exogenously given
+priority rankings, which allows them to relax stability constraints.
+
+
+
+3       The Problem
+
+A typical school choice problem with weak priorities consists of a nonempty set of students S , a
+nonempty set of schools C , a profile of strict preferences of students P = (P )sS , a vector of school
+capacities  = (c )cC and a profile of priorities granted to students at schools  = (sc )sS,cC . Let
+c Ps c denote that s prefers c to c , and let Rs denote the weak preference relation, i.e., c Rs c if and
+only if c Ps c or c = c . Capacity c  N denotes the maximum number of students that can be
+assigned to c. We assume that cC c  |S |, i.e., the total number of school seats exceed the total
+number of students.4 We model priorities via integer numbers: sc  {1, 2, ..., K } denotes student
+s's priority at school c. Without loss of generality, we assume that a smaller number indicates
+better priority. That is, if sc < s c , then s has better priority than s at c, and if sc = s c ,
+then s and s have equal priority at c. Note that we allow for weak priorities by allowing students
+to have the same priority number at schools. For any k  N, we say student s has the k -th best
+priority at school c among students in S   ~  S , if the number of students in S ~ with strictly better
+                                               ~
+priorities at c is strictly k - 1, i.e., s  S : s c < sc = k - 1. We add match quality to
+this standard model: q (s, c)  R denotes the quality of match between s and c. A higher value of
+    4
+     Assuming that students rank all school as acceptable, and that there are enough seats for all students is without
+loss of generality as we can add a school that represents being `unassigned' and that has enough capacity for every
+student.
+
+
+
+                                                          5
+q (s, c) indicates a better match quality. Let q = q (s, c) sS,cC be the match quality profile. We
+represent a school choice problem, or simply a problem, with tuple (S, C, , P, , q ). We will fix the
+problem and omit references to it in the rest of the text.
+
+An assignment is a mapping µ : S  C  C  2S , such that for all s  S and c  C ,
+
+    · µ(s)  C ,
+    · µ(c)  2S , |µ(c)|  c ,
+    · c = µ(s)  s  µ(c).
+
+An assignment µ is stable if there is no blocking pair (s, c)  S × C such that c Ps µ(s) and
+either |µ(c)| < c or sc < s c for some s  µ(c). Let A denote the set of all stable assignments.
+It is well-known that A is not empty for any problem (Gale and Shapley (1962), Irving (1994)).
+
+Our objective is to find a stable assignment that maximizes the aggregate match quality among all
+stable assignments. Namely, a match quality optimal assignment µ is a stable assignment such
+that
+                                        q (s, µ (s))  q (s, µ(s)),
+                                        sS                    sS
+for any stable µ  A .
+
+Since the set of stable assignments is non-empty and finite, there always exists at least one match
+quality optimal assignment. When preferences and priorities are strict, which is a special case of
+our setting, a match quality optimal assignment can be found in polynomial time by formulating
+the set of stable assignments as linear programming constraints via Roth et al. (1993). In general,
+finding a match quality optimal assignment is an NP-hard problem. Therefore, it is unlikely to be
+polynomial time solvable.
+Proposition 1. When priorities are weak, finding a match quality optimal assignment is an NP-
+hard problem.
+
+Proposition 1 has been proved by Manlove et al. (2002) for the special case of our problem of finding
+the stable matching of maximum size.
+
+
+4     Our Solution
+
+The NP-hardness of finding match quality optimal assignment prohibits a general computationally
+tractable solution for all problems. In this section, we develop a solution that finds a match quality
+optimal assignment for problems with 30 and less schools in reasonable time. Thus, the solution
+is applicable for most school districts in the US (National Center for Education Statistics 2002). 5
+We discuss our solution for large districts in Section 6.
+   5
+     Only 323 of around 13,000 school districts in the US had more than 30 schools in the school year 2000-2001
+(National Center for Education Statistics 2002). Moreover, even if the school district is large, the number of schools
+serving the same grade may be below 30, in which case the district can be handled by our algorithm. For example,
+Boston Public Schools has around 130 schools, but only around 30 of those are high schools. So our solution will be
+tractable for assigning high school students in Boston. Moreover, not all schools in a school district admits students
+
+
+                                                          6
+In a nutshell, stable assignments can be characterized by admissions cutoffs at schools (Abdulka-
+diroglu et al., 2015; Azevedo and Leshno, 2016). Given a cutoff profile, we provide a linear program-
+ming formulation that finds a stable assignment with an aggregate match quality that is weakly
+higher than that at every stable assignment with the given cutoff profile, whenever one exists. This
+allows us to find a locally optimal assignment in polynomial time. Equipped with this solution, we
+search for a global optimum by tracing all cutoff profiles. However, this strategy may not generally
+be computationally tractable. We introduce two new algorithms to bound the set of cutoff profiles
+supporting a stable assignment (see Section 5). This allows us to restrict the search of a match
+quality optimal assignment only within these bounds. Simulations in Section 7 show that the global
+optimum, i.e., match quality optimal stable assignment, can be computed in reasonable time for
+realistic parameter values for problems with 30 schools and smaller.
+
+
+4.1    Locally Match Quality Optimal Assignment
+
+We first define (admissions) cutoffs at schools. Given a stable assignment µ  A , let cutoff at
+school c, c (µ)  {1, 2, ..., K + 1}, be
+
+                                               maxsµ(c) sc       if |µ(c)| = c ,
+                                  c (µ) :=
+                                               K +1              otherwise.
+
+
+In words, under assignment µ, if school c fills its capacity, then its cutoff is equal to the priority
+of the assignee with the worst priority at the school, otherwise the cutoff is set to K + 1. Let
+(µ) = (c (µ))cC denote the cutoff profile. Then, the following result is immediate.
+
+Proposition 2. An assignment µ is stable if and only if there is no pair (s, c)  S × C such that
+c Ps µ(s) and sc < (µ).
+
+For a vector r  {1, 2, ..., K + 1}|C | , let Ar  A be the set of stable assignments with cutoff profile
+equal to r, i.e., µ  Ar if and only if µ is stable and (µ) = r. We say that r  {1, 2, ..., K + 1}|C |
+supports a stable assignment if Ar = .
+
+For a given r  {1, 2, ..., K + 1}|C | , we construct a set of stable assignments that is a superset of
+Ar as follows. First, we define two disjoint subsets of schools: C + (r) := c  C : rc < K + 1 and
+C - (r) := C \ C + (r). Next, for every student s  S , define Cs (r)  C as
+
+               Cs (r) = {c  C : sc  rc and sc  rc for all c  C such that c Ps c}.
+
+Here, Cs (r) can be interpreted as the set of schools that s can potentially be assigned given cutoffs
+r. Let A¯                                                             ¯
+         r denote the the set of assignments satisfying, for all µ  Ar ,
+
+
+   1. µ(s)  Cs (r) for all s  S ,
+
+   2. |µ(c)| = c for all c  C + (r).
+via school choice. For instance, in Wake County public school system, which is the 15th largest school system in US,
+there are more than 170 schools (only magnet schools are admitting students via choice-based assignment). There
+and there 36 magnet schools, 23 elementary schools, 9 middle schools and 4 high schools.
+
+
+
+                                                         7
+That is, under any assignment in A¯ r each student s is assigned a school in Cs (r ) and each school
+c  C + (r) fills its capacity. It is immediate from the definition of A¯  r that (µ)  r for all
+                     | C |
+r  {1, 2, ..., K + 1} . The following lemma justifies our search for match quality maximizing
+assignments within A¯  r.
+
+Lemma 1. Each assignment in Ar is a member of A¯                         ¯
+                                               r and each assignment in Ar is stable. That
+is,
+                                    Ar  A¯ r A.
+
+
+Thus, maximizing match quality in A¯ r yields a stable assignment that has a weakly higher match
+quality than any assignment in Ar . We refer to this solution as a locally match quality optimal
+assignment for the vector r.
+
+Our final step formulates this optimization problem as a minimum-cost flow problem, which
+finds a locally match quality optimal assignment, whenever one exists, i.e., whenever A¯      6
+                                                                                         r = , in
+polynomial time. The minimum-cost flow problem has numerous practical applications, including
+the design of optimal electrical network, transportation system or house allocation (Ahuja et al.,
+1993). To the best of our knowledge, ours is the first application of minimum-cost flow method for
+optimization under stability constraints.
+
+To formulate the minimum-cost flow problem, consider the following components:
+
+      ­ a set of vertices V = S  C  {t}, for some t / S  C,
+
+      ­ a set of edges
+                             E = (c, t) : c  C - (r)  (s, c) : c  Cs (r)  V × V,
+
+      ­ a capacity u(e) for each edge e  E , given by
+
+                                                1   if e  S × C
+                                    u(e) =                                       ,
+                                                c   if e = (c, t)  C - (r) × {t}
+
+      ­ a cost l(e) for each edge e  E , given by
+
+                                                -q (e)       if e  S × C
+                                       l(e) =                                    ,
+                                                0            if e  C - (r) × {t}
+
+      ­ a value b(v ) for each vertex v  V , given by
+                                         
+                                          1                            if   v   S
+                                                                                 C - (r)
+                                         0                             if   v
+                                 b(v ) =                                                 .
+                                          -v                           if   v    C + (r)
+                                         -|S | +
+                                                    cC + (r) c         if   v   =t
+
+Figure 1 illustrates the constructed minimum-cost flow graph using for an example with three
+students S = {s1 , s2 , s3 } and two schools C + = {c1 } and C - = {c2 }.
+  6
+      Otherwise, our minimum-cost flow algorithm/solver outputs that A¯
+                                                                      r = .
+
+
+
+                                                         8
+                            s1
+
+                                                                  c1
+
+                            s2
+
+                                                                  c2                     t
+
+                            s3
+
+
+                                     Figure 1: Minimum-cost flow graph
+
+
+A positive value of b(v ) indicates that v is a supply vertex and a negative value of b(v ) indicates
+that v is a demand vertex. A vertex with b(v ) = 0 is a transshipment vertex. We represent a flow
+function with a mapping f : E  R. Our goal is to find a least costly way of transferring values
+from supply vertices to demand vertices without exceeding the capacity of edges. Formally, we
+solve the following linear program:
+                                           min      l(e)f (e)
+                                                f :E R
+                                                         eE
+
+subject to
+                                        f (v, v ) -                   f (v , v ) = b(v ), v  V,                   (1)
+                         v V :(v,v )E                 v V :(v ,v )E
+
+                                            0  f (e)  u(e), e  E.                                                 (2)
+
+A flow function f is feasible if it satisfies constraints 1 and 2. A flow function is integral if f (e)  Z
+for all e  E . By condition 2, for any feasible and integral flow function f , f (e) takes values 0 or 1
+for each edge e  S × C . We establish a connection between the set of feasible and integral solutions
+of the minimum-cost flow problem and that set of locally match quality optimal assignments for
+vector r. Formally, with each feasible and integral flow function f we associate an assignment µf
+such that for each edge (s, c)  S  C ,
+
+                                     µf (s) = c if and only if f (s, c) = 1.7
+
+Conversely, with each assignment µ we associate a flow function fµ , where
+                                     
+                                     1
+                                                      if e = (s, c)  S × C, µ(s) = c
+                             fµ (e) = 0               if e = (s, c)  S × C, µ(s) = c .
+                                     
+                                      |µ(c)|          if e = (c, t)  C - (r) × {t}
+                                     
+
+Then,
+
+Lemma 2. If f is feasible and integral, then µf  A¯                      ¯
+                                                  r . Conversely, if µ  Ar , then fµ is feasible
+and integral.
+   7
+    Note that for µf to be an assignment we need that for each s  S , f (s, c) = 1 for exactly one c  C . As we verify
+in Lemma 2, this is indeed the case.
+
+
+
+                                                            9
+We briefly discuss the intuition behind Lemma 2. A non-zero flow from a student to a school is
+interpreted as the student being assigned to the school. Constraint 1 requires that each supply
+vertex has an outgoing flow that equals its value, and each demand vertex has an incoming flow
+that equals its value. Each student s  S has a value b(s) = 1, therefore, she is assigned to exactly
+one school in Cr (s) in any integral solution of the minimum-cost flow problem. By definition, this is
+required for every assignment in A¯                         +
+                                      r . Each school c  C (r ) has a value b(c) = -c , meaning that
+c students are assigned to c in any integral solution of the minimum-cost flow problem. Again, by
+definition, this is required for every assignment in A¯ r . There are no such requirements for schools
+in C - (r). However, these schools are connected to vertex t, and b(t) = -|S | + cC + (r) c . This
+means that schools in C - (r) cumulatively accommodate all students who are not assigned to a
+school in C + (r) in any integral solution of the minimum-cost flow problem. Finally, constraint 2
+guarantees that no school c  C - (r) is assigned more than c students.
+
+Given the equivalence established in Lemma 2, we conclude that there is a feasible and integral flow
+function if and only if A¯                    
+                         r = . Moreover, if f is an optimal integral solution to the minimum-cost
+flow problem, then µf   A¯                                   ¯
+                             r maximizes match quality in Ar . There are known polynomial time
+algorithms that find an optimal integral solution to the minimum-cost flow problem, whenever one
+exists. For example, the problem can be solved by a cycle-canceling algorithm (Ahuja et al., 1993;
+Sokkalingam et al., 2000). Hence, the following result is an immediate consequence of Lemma 2
+and polynomial time solvability of the minimum-cost flow problem.
+
+Proposition 3. There are polynomial time algorithms that find a locally match quality optimal
+assignment for a vector r, whenever one exists.
+
+In Example 1 in Appendix B we illustrate how a locally match quality optimal assignment is found
+using the minimum-cost flow formulation.
+
+
+4.2   Match Quality Optimal Assignment
+
+Equipped with these results, we are ready to introduce an algorithm for match quality optimal
+assignment.
+
+Match Quality Optimal Algorithm (MQO)
+
+Step 0: Set Q = -.
+
+Step t  1: Select an r  {1, 2, ..., K + 1}|C | which has not been selected in previous steps. If such
+an r does not exist, the algorithm terminates. Otherwise, using the minimum-cost flow formulation
+described in Section 4.1 we find a locally match quality optimal assignment µr for vector r, if one
+exists. If sS q (s, µr (s)) > Q , we set Q = sS q (s, µr (s)) and µ = µr . We continue with
+Step t + 1.
+
+The outcome of MQO algorithm is assignment µ . In other words, the above algorithm find a
+locally match quality optimal assignment for every r  {1, 2, ..., K + 1}|C | , whenever they exist,
+and picks the one that gives the largest aggregate match quality. The fact that MQO algorithm
+considers all possible vectors that can support a stable assignment implies the following result.
+
+Proposition 4. MQO algorithm gives a match quality optimal assignment.
+
+
+                                                 10
+The time complexity of MQO algorithm is
+
+                                         P |S | + |C | × (K + 1)|C | ,
+
+where P |S | + |C | is some polynomial function of |S | + |C |. Without further reductions in com-
+putation, the algorithm becomes intractable for moderately large problems, as its time complexity
+grows exponentially in the number of schools. Therefore, in Section 5 we provide algorithms that
+reduce the computational burden of MQO, by eliminating many cutoff profiles that do not support
+a stable assignment. With these reductions, the solution becomes applicable for most of the real-life
+student assignment systems.
+
+
+5       Upper and Lower Bounds for Stable Assignment Cutoffs
+
+The method developed in the previous section is not computationally tractable for problems with
+moderately large number of schools and priority classes. To lower the computational burden, in this
+section we introduce two algorithms, Deferred Rejection and Deferred Proposal, that identify upper
+and lower bounds for cutoff profiles that support a stable assignment. This helps us eliminate a
+significant number of cutoff profiles that do not support a stable assignment. Then, match quality
+optimal assignment is found by computing the minimum-cost flow solution only for cutoff profiles
+within the identified bounds.
+
+The new algorithms are based on student proposing and school proposing versions of DA. Apply-
+ing DA with an arbitrary tie-breaker results in a cutoff profile that supports a stable assignment.
+Identifying all cutoff profiles that support a stable assignment by applying different tie-breakers is
+computationally intractable. In contrast, our algorithms utilize no tie-breaker and operate in poly-
+nomial time. Although they do not eliminate all cutoff profiles not supporting a stable assignment,
+simulations in Section 7 show that the amount of eliminations is substantial.
+
+We first describe the conventional DA algorithms. At every step of the student proposing DA,
+each student applies to her most preferred school that has not rejected her yet. Each school c
+provisionally accepts from all of its applicants up to c in the order of priorities and tie-breakers, and
+rejects the rest. The algorithm terminates when there is no rejection, the provisional acceptances
+at that point are finalized. At every step of the school proposing DA, each school proposes to up to
+c students who have not rejected the school in the order of priorities and tie-breakers. Students
+provisionally accept the proposal of their most preferred school and reject the rest. The algorithm
+terminates when there is no rejection, the provisional acceptances at that point are finalized.
+
+Unlike the student proposing DA, our Deferred Rejection algorithm only rejects students who
+cannot be assigned to the school at any stable assignment. Consequently, the number of students
+tentatively held by each school may exceed the school's capacity. The resulting assignment provides
+upper bounds for cutoff profiles that support a stable assignment.
+
+DR runs through multiple rounds until it cannot reject any more students. In each round, it
+goes through two stages. The first stage identifies "immediate unstable demand" at every school
+by students who cannot be assigned to the school at any stable assignment.8 The second stage
+    8
+    Kwanashie and Manlove (2014) introduce algorithms analogous to the first stages of our algorithms. The authors
+use the algorithms to reduce the problem's size by shortening students' preference lists. Our goal is to bound the
+stable assignment cutoffs.
+
+
+                                                       11
+identifies "future unstable demand" at each school by students who have not been considered at
+the school yet but will apply to the school under DA with any tie-breaker.
+
+Deferred Rejection Algorithm (DR):
+
+The following two stages are run in each round until the algorithm terminates.
+
+Stage 1: Immediate Unstable Demand
+
+ Step t  1: Each student s applies to her most preferred school which has not rejected her yet. Let
+Ac be the set of students applying to school c in this step. For every student s  Ac , her demand
+for c is stable among Ac if |{s  Ac : s c < sc }| < c ; otherwise her demand is unstable. Each
+school c rejects students in Ac with unstable demand and provisionally holds the remaining students
+in Ac .
+
+Stage 1 proceeds to the next step and terminates when no student is rejected.
+
+By the end of Stage 1, the number of students a school holds may exceed its capacity. Some of
+these students with the worst priority need to be rejected, who then will try to apply to their next
+best choice. Stage 2 identifies such students and their unstable demand at their next best choice.
+
+Stage 2: Future Unstable Demand
+
+Let µ : S  C  C  2S denote the outcome of Stage 1.9
+
+ Step 0: Let Dc denote the students who prefer c to their tentative assignment at µ, i.e., Dc =
+{s  S : c Ps µ(s)}. For each school c, we define the school's threshold priority r¯c (µ) at µ as
+follows:
+
+   1. if |µ(c)|  c , then r
+                          ¯c (µ) = maxsµ(c) sc ,
+
+   2. if |µ(c)| < c and Dc = , then r
+                                    ¯c (µ) = K + 1,
+
+   3. if |µ(c)| < c and Dc = , then r
+                                    ¯c (µ) = minsSc
+                                                  a sc .
+                                                         10
+
+
+
+Find students who will be rejected by c and whose next best alternative is c. To this end, let Mc be
+the set of students in µ(c ) who have priorities equal to r
+                                                          ¯c (µ). Refer to them as marginal students
+             c
+at c . Let Dc  Mc be the subset of marginal students whose next best alternative is c, i.e., each
+s  Dc  c weakly prefers c to any school c  C \ {c } which has not rejected her yet. Also define g 1
+                                                                                                   c
+as the number of students in µ(c ) who have priorities strictly better than r¯c (µ).
+
+ Step t  1: The best priority gc    t students in µ(c ) are guaranteed to be held by c at this step. This
+                t
+leaves c - gc seats available for marginal students. Recall that Dc     c is the set of marginal students
+
+at µ(c ) and whose next best alternative is c. If |Dc  c | >  - g t , then some of these students must
+                                                               c    c
+be rejected by c . Let D  ~  D be such that |D
+                           c      c                ~ | = max 0, |Dc | - (c - g t ) and no student in
+                                                    c
+                           c      c                 c                 c           c
+D~ c has strictly better priority than the ones in Dc \ D   ~ c for school c. Let D   ~ c = c C D~ c . For
+   c                                                    c     c                                    c
+each school c, let  ^c be the priority of c -th best priority student in µ(c)  D  ~ if |µ(c)  D
+                                                                                    c           ~ c |  c .
+If |µ(c)  D~ c | < c , let ^c = r
+                                ¯c (µ).
+  9
+      Note that µ is not an assignment as the number of students at schools may exceed its capacity.
+ 10
+      This last case is not relevant in the initial round.
+
+
+                                                         12
+ We consider each school c  C one by one. If |µ(c)  D          ~ c |  c , we set g t+1 to the number of
+                                                                                     c
+students in µ(c)  D ~ c who have a strictly better priority than the c -th priority student in µ(c)  D  ~ c.
+                     t +1           ~ c
+Otherwise, we set gc to |µ(c)  D |. If      ^c < r
+                                                 ¯c (µ), then school c rejects all students with priorities
+strictly greater than  ^c and continue with Stage 1 of the next round. If    ^c  r ¯c (µ) for all c  C and
+ t+1      t
+gc > gc for some c  C , then we continue with Step t + 1 of Stage 2. Otherwise, the procedure
+terminates and the final outcome is µ.
+
+Given the final outcome µ of DR, we calculate r¯(µ) as described in Stage 2 (see Step 0) of DR.
+As stated in our next result, r
+                              ¯(µ) gives an upper bound on cutoff profiles that support a stable
+assignment.
+
+Proposition 5. If µ                               µ)  r
+                  ¯ is a stable assignment, then (¯   ¯(µ).
+
+Here is a brief intuition behind the algorithm and the result. In Stage 1 of the DR algorithm,
+we run student proposing DA algorithm by only rejecting students who cannot be assigned to the
+schools they are applying to for any tie-breaker. Among the set of students who are tentatively
+held by school c in the outcome of Stage 1, we can determine the number of students who cannot be
+assigned to c for any tie-breaker and whose next achievable choice is c . By using this information,
+we further update the set of schools that cannot be achieved by each students in any stable matching
+in Stage 2 of DR algorithm. This information allows us to rerun Stage 1 and repeat the procedure.
+
+Next, we define the Deferred Proposal Algorithm (DP), which is the schools proposing analog of the
+of DR. Unlike the school proposing DA, our Deferred Proposal algorithm only proposes to students
+who clear the school's (admissions) cutoff at any stable assignment. Consequently, the number
+students tentatively held by each school may be less than the school's capacity. The resulting
+assignment provides lower bounds for cutoff profiles that support a stable assignment.
+
+DP runs through multiple rounds until no more school is rejected by students. In each round, it
+goes through two stages. Again, first stage identifies "immediate unstable demand" of every school
+for students who cannot be assigned to the school at any stable assignment. The second stage
+identifies "future unstable demand" at each school by students who have not been proposed by the
+school yet but will have a guaranteed proposal under DA with any tie-breaker.
+
+Deferred Proposal Algorithm (DP)
+
+The following two stages are run in each round until the algorithm terminates.
+
+Stage 1: Immediate Unstable Demand
+
+ In the first stage, we run a modified version of school proposing DA. For each school c  C , let Ac
+denote the set of students who have not rejected school c yet.
+
+ Step t  1: Each school c considers students in Ac one by one. Each school c proposes to student
+s  Ac if the number of students in Ac with weakly better priority than s is less than or equal to
+c , i.e., |{s  Ac : s c  sc }|. A school's demand for a student is unstable, if the student receives
+a proposal from a more preferred school. Each student s provisionally accepts her most preferred
+proposing school. All schools with unstable demand are rejected by corresponding students. If there
+are no more rejection, Stage 1 terminates.
+
+Stage 2: Future Unstable Demand
+
+                                                    13
+Let µ : S  C  C  2S denote the outcome of Stage 1. In this stage, given the outcome of Stage 1,
+we identify schools that each student is guaranteed under any tie-breaker. For each s  S define
+Ds as the set of schools preferred to µ(s), i.e., Ds = {c  C : c Ps µ(s)}. Each student s rejects
+any school c / Ds  µ(s) and s is removed from Ac . We proceed with the following steps:
+
+  (i) Select a student s  S such that |Ds |  2 and who has not been considered before.                         Define
+      Es = (Ds × Ds ) \ cDs {(c, c)}.
+
+ (ii) We consider each pair in Es one by one. Let (c1 , c2 ) be the pair under consideration. Let
+      ¯ be the set of students such that for all s  S
+      S                                             ¯ we have s  Ac and s c < sc for some
+      c  {c1 , c2 }.
+
+ (iii) If |S¯|  c + c , then move s from Ac for any school c less preferred than c1 and c2 . If
+                  1     2
+        ¯
+       |S | > 1 + 2 and there is a school pair in Ds not considered, then go back to bullet (ii).
+       Otherwise, go back to bullet (i).11
+
+If Ac is updated during the Stage 2, we continue with Stage 1 of the next round. Otherwise, the
+algorithm terminates. Let µ denote the outcome of DP.
+
+Due to finiteness of the sets of S and C , the algorithm terminates in finite number of rounds. For
+each c  C , we define threshold priority r¯c (µ) as follows:
+
+   1. if |µ(c)| = c , then r
+                           ¯c (µ) = maxsµ(c) sc ,
+
+   2. if µ(c) = , then r
+                       ¯c (µ) = 0,
+
+   3. if µ(c) =  and |µ(c)| < c , then r
+                                       ¯c (µ) = maxsµ(c) sc + 1.
+
+As stated in the next result, r
+                              ¯(µ) gives a lower bound on cutoff profiles that support a stable
+assignment.
+
+Proposition 6. If µ                             µ)  r
+                  ¯ is a stable matching, then (¯   ¯(µ).
+
+Here is a brief intuition behind the algorithm and the result. In Stage 1 of the DP algorithm,
+each school c proposes to the set of highest ranked students in its priority order up to its capacity
+(possibly fewer than its capacity) without using a tie-breaker. As a result, when Stage 1 terminates,
+some school c's proposals might be accepted by strictly less than c students. Some students who
+have not been proposed during Stage 1 might prefer c to their match. Such students can be
+considered as the students in wait lists of the schools. In Stage 2, we determine the worst school
+that a student can guarantee by considering the overlaps in schools' wait lists. Hence, we can
+eliminate some schools from students consideration and repeat the procedure by using this updated
+information.
+
+We illustrate DR and DP through an example in Appendix B.
+  11
+     We can do this stage for any subset of schools, instead of pairs only, to determine the guaranteed schools for the
+students. The cost of increasing the number of schools is increasing the computational burden.
+
+
+
+
+                                                          14
+6        Random Search Algorithm for Large School Districts
+
+Our solution in Section 4 traces all possible cutoff vectors to find a match quality optimal as-
+signment. Doing so is a computationally demanding task. Although the algorithms introduced
+in Section 5 diminish the set of cutoff vectors to be considered, for large schools districts we may
+still face problems due to computational tractability. In this section, we introduce a polynomial
+time algorithm that maximizes aggregate match quality in a subclass of stable assignments. We
+start with a cutoff profile resulting from student proposing DA with a random tie-breaker. Then,
+we find a locally match quality optimal assignment for cutoff profile using the minimum-cost flow
+algorithm of Section 4.1. The cutoff profile of the resulted stable assignment may be different from
+the original one. In that case, we repeat the local optimization, and check the new cutoff profile.
+When the cutoff profile does not change at some step, we terminate the procedure. Here is the
+formal description of the algorithm.
+
+    Locally Match Quality Optimal Algorithm (L-MQO)
+
+ Step 0: Let µ be the outcome of student proposing DA with a random tie-breaker. Let r0 be the
+cutoff profile of µ , i.e., r0 = (µ ).
+
+ Step t  1: Let µrt-1 be the locally match quality optimal assignment for rt-1 , found by the
+minimum-cost flow algorithm described in Section 4.1.12 and let rt = (µrt-1 ) be its cutoff profile.
+If                                                  
+     sS q (s, µrt-1 (s)) > sS q (s, µ (s)), we set µ = µrt-1 . If rt = rt-1 , then the algorithm
+                                            
+terminates and its outcome is assignment µ . Otherwise, continue with Step t + 1.
+
+By construction of A¯            t
+                      r , rt = (µr )  rt-1 for each t > 1, i.e., the cutoff profile increases throughout
+the algorithm. Therefore, the number of steps it takes the algorithm to terminate is bounded by
+|K | × |C |, which means that L-MQO terminates in polynomial time.
+
+Let R¯ denote the set of vectors that have been considered during the implementation of L-MQO, i.e.,
+ ¯
+R = {rt }T                                                         
+         t=1 , where T is the last step of L-MQO. The outcome µ of the L-MQO is not necessarily
+match quality optimal. However, it is immediate from its description that the algorithm creates
+weakly higher aggregate match quality than any assignment in rR        ¯A¯r . Therefore, we can state
+the following result.
+                                                                                    ¯ . Then,
+Proposition 7. Suppose there is a match quality optimal assignment µ such that (µ)  R
+L-MQO gives a match quality optimal assignment.
+
+In simulations of Section 7 we report the results for a simpler version of the procedure that only
+includes Steps 0 and 1, i.e., locally match quality optimal assignment is only found in the cutoffs
+identified by the DA. Even for this simple version, the aggregate match quality is remarkably close
+to the (globally) match quality optimal assignment.
+    A locally match quality optimal assignment exists since A¯
+    12
+                                                             rt-1 =  for any t  1. In fact, µ
+                                                                                              
+                                                                                                A¯
+                                                                                                 r0 and
+         ¯
+µrt-2  Art-1 for t  2.
+
+
+
+
+                                                  15
+7         Simulations
+
+7.1         Setting
+
+The algorithm described in Section 4.2 finds a match quality optimal assignment by searching in
+the set of all cutoff profiles. Without bounding the set of cutoff profiles to be searched within, we
+may need to consider (K + 1)|C | cutoff profiles. Section 5 introduces two algorithms that decrease
+the number of cutoff profiles supporting stable matchings. In this section, by using computer
+simulations we first measure the possible reduction in the number of cutoff profiles supporting
+a stable assignment can be done by DR and DP. Then, we find a match quality optimal stable
+assignment and compare it with the student proposing DA outcome with a random tie-breaker.
+
+In our simulations, we consider an environment that mimics a standard school choice setting.
+In particular, we consider environments with 20 and 30 schools each with 50 available seats. As
+explained in Introduction, these numbers are representative for a moderately large school district.13
+The number of students is equal to the total capacities of the schools.
+
+In the construction of school priorities we use two criteria: sibling status and distance between
+students and schools. We set the fraction of students with sibling status to 0.4 and determine the
+students with sibling priority and at which school they have the sibling priority randomly. Let
+sib : S × C  {0, 1} be an indicator function such that sib(s, c) = 1 means student s has sibling
+priority at c and cC sib(s, c)  1 for all s  S .
+
+In order to determine the neighborhood (walk-zone) priority, we randomly distribute schools and
+students on an 1 × 1 unit map. In particular, we represent the location of agent i  C  S with
+        1 2              1      1
+ i = ( i , i ) and both i and i are i.i.d. standard uniformly distributed random variables. Given
+the locations of each student s and school c, we calculate the euclidean distance and denote it with
+d(s, c), i.e., d(s, c) = ( 1    1 2    2    2 2
+                           s - c ) + ( s - c ) . We set the neighborhood radius of each school to
+0.2. If d(s, c)  0.2, then student s has neighborhood priority at school s.
+
+Given the sibling and neighborhood status, we group students into four groups for each school.
+For each school c  C , students having sibling priority at school c are ranked higher than students
+without sibling priority at c. Then, we subgroup students based on the neighborhood priority.
+That is, first priority group is composed of students with sibling and neighborhood priority. Second
+priority group is composed of students with sibling priority but not neighborhood priority. Third
+priority group is composed of students with neighborhood priority but not sibling priority. The
+remaining students constitute the fourth priority group.
+
+Preferences of students are constructed by taking various criteria into account including: students'
+common and individual taste over schools, having siblings, and distance. To construct the preference
+of each student s we calculate her utility from being assigned to each school c, denoted by Usc , as
+follows:
+
+
+                                 Usc = Xc + (1 - )Ysc + sib(s, c) - dist(s, c),
+
+where Xc  (0, 1) and Ysc  (0, 1) represents all students common taste and student s's in-
+    13
+         For example, Boston Public Schools has around 30 high schools.
+
+
+
+                                                           16
+dividual taste over school c, respectively. Both Xc and Ysc are i.i.d. standard uniformly dis-
+tributed random variables. The level of correlation in the preferences of students is captured by
+  {0, 0.25, 0.5, 0.75, 1}, i.e., as  increases preferences become more correlated. Variable sib(s, c)
+takes value 0 or 1 and coefficient   {0, 0.25, 0.5, 0.75, 1} is the additional utility received from
+attending the same school with sibling. Finally, travel time is usually considered as disutility for
+the students and we capture this by multiplying distance between students and schools with coeffi-
+cient - .14 The utility values of students are used to construct the ordinal preferences of students
+over the schools. Match quality of each student-school pair is drawn i.i.d. uniformly from the
+(0, 1) interval. Thus, in our simulations preferences are uncorrelated with the idiosyncratic match
+quality, which is consistent with the empirical evidence in Abdulkadiro glu et al. (2020).
+
+
+7.2      Reductions in Cutoff Profiles by DR and DP
+
+In simulations, under each scenario we calculate the outcomes of the DR and DP algorithms 100
+times by using different draws for X , Y , and locations. Table 1 presents the average number of
+schools having a unique cutoff at every stable assignment when the number of schools is 20. In
+Appendix C we report results for 30 schools.
+
+In our setting there are enough seats to accommodate all students, therefore all schools fill up
+their seats in any stable assignment. This means that there are at most 420 cutoff profiles that our
+optimization algorithm need to consider to find a match quality optimal assignment. However, in
+our setup, for each school c, the number of students having sibling priority does not exceed the
+capacity of the school. Therefore, it is immediate that for any problem DR and DP eliminate all
+cutoff profiles where a school has an admission cutoff equal to 1 or 2. This reduces the number of
+cutoff profiles to consider to 220 . Moreover, whenever a school is guaranteed to have a unique cutoff
+under any stable assignment, that school does not cause any additional computational burden. Our
+simulations show that for parameter values   0.5,   0.5,   0.25, DR and DP eliminate at
+least around 97% of the remaining cutoff profiles. Comparing columns (1)-(3) in Table 1, we can
+see that as  increases, the reduction algorithms give tighter bounds in most of the cases.
+
+In our simulations, all students rank all schools acceptable and the total number of seats at schools
+have enough seats to accommodate all students. This fact allows us not to consider cutoffs equal to
+five, and potentially reduces the computational burden. Although, assuming more school seats than
+applicants is a realistic assumption in the public school choice setting, school districts commonly
+restrict the number of choices in the students' preference lists, therefore cutoffs at some schools
+can equal to five at some stable assignments. However, in the environment with restricted lists
+computational burden is not necessarily heavier than with unrestricted ones. The reason behind
+this is that when preference lists are restricted many schools do not fill their seats at any stable
+assignment, and DR and DP algorithms partially identify some of those schools. As a result, the
+number of cutoff profiles that can support stable assignments in a setting with restricted lists may
+decrease compared to our environment.
+
+
+
+
+ 14
+      When  = 0, travel distance does not have affect on preferences.
+
+
+                                                         17
+                             = .                     = .                   = . 
+
+                                (1)                     (2)                  (3)
+
+
+
+           0.00                     0                    0                   0
+           0.25                     0                  0.01                  0
+0.00       0.50                     0                  0.52                  0
+           0.75                     0                  1.49                 0.02
+           1.00                     0                  2.93                 0.03
+
+            0.00                    0                    0                  0.14
+            0.25                    0                  0.22                 0.28
+0.25        0.50                    0                  1.91                 0.67
+            0.75                    0                  3.06                 0.77
+            1.00                    0                  3.33                 0.39
+
+            0.00                  0.15                 1.31                 5.30
+            0.25                  0.59                 2.77                 6.57
+0.50        0.50                  0.44                 5.18                 6.41
+            0.75                  0.20                 5.42                 5.56
+            1.00                  0.21                 5.31                 4.69
+
+            0.00                  2.63                 4.63                 7.54
+            0.25                  4.42                 5.88                 7.85
+0.75        0.50                  2.96                 7.05                 8.03
+            0.75                  2.26                 8.28                 7.87
+            1.00                  2.21                 8.68                 7.80
+
+            0.00                  7.11                 5.65                 7.81
+            0.25                  7.42                 6.35                 8.09
+1.00        0.50                   7                   6.98                 8.28
+            0.75                  6.55                 8.06                 8.12
+            1.00                  6.66                 9.31                 8.02
+
+
+
+  Table 1: Average number of schools with a unique stable assignment cutoff, 20 schools
+
+
+
+
+                                           18
+7.3   Comparing Match Quality
+
+We compare aggregate match quality across stable algorithms when the number of schools is 20.
+In Table 2 we report the results for  = 0.25, and all combinations of  and  . Results for  = 0
+and  = 0.5 are reported in Appendix C.
+
+Numbers in Table 2 denote percentage gains in match quality compared to student proposing DA
+algorithm with a random tie-breaking. Columns (1) and (2) report the results for MQO and L-MQO
+algorithms, respectively. The last row denotes the average percentage gains in match quality across
+all possible values of  and  parameters. The match quality gains from our optimization algorithms
+are remarkable: both MQO and L-MQO create around 40% higher match quality compared to DA
+with random tie-breaking. Moreover, the performance of L-MQO is almost indistinguishable from
+that of MQO. Additionally, in Column (3) we report the result for DA algorithm when ties are
+broken according to the school specific match quality. We call this algorithm DA with quality-based
+tie-breaking. Such a heuristic solution significantly improves on DA with a random tie-breaking.
+However, the match quality gains are less than two thirds of those of MQO and L-MQO.
+
+
+
+
+                                                19
+                                                                          DA with quality-based
+                                   MQO                   L-MQO
+                                                                              tie-breaking
+                                    (1)                     (2)                     (3)
+
+
+
+            0.00                  50.044                  50.044                  22.746
+            0.25                  44.816                  44.816                  20.134
+  0.00      0.50                  39.682                  39.682                  14.414
+            0.75                  35.708                  35.708                  16.040
+            1.00                  32.496                  32.426                  16.046
+
+             0.00                 44.224                  44.224                  24.498
+             0.25                 38.978                  38.978                  21.406
+  0.25       0.50                 34.510                  33.860                  18.134
+             0.75                 30.194                  29.868                  16.754
+             1.00                 29.906                  29.540                  16.024
+
+             0.00                 49.878                  49.728                  28.766
+             0.25                 43.326                  43.326                  24.994
+  0.50       0.50                 36.890                  36.890                  21.486
+             0.75                 34.570                  34.570                  20.824
+             1.00                 34.154                  34.154                  19.738
+
+             0.00                 50.252                  50.066                  31.142
+             0.25                 44.682                  44.682                  29.690
+  0.75       0.50                 41.390                  40.948                  26.892
+             0.75                 37.620                  36.070                  23.922
+             1.00                 37.154                  37.154                  24.398
+
+             0.00                 50.236                  46.780                  31.112
+             0.25                 46.632                  46.632                  29.480
+  1.00       0.50                 43.698                  43.698                  29.984
+             0.75                 40.018                  39.612                  26.390
+             1.00                 38.070                  36.806                  25.124
+
+
+
+      Average gain                40.365                  40.010                  23.206
+
+
+
+
+Table 2: Percentage gains compared to student proposing DA with a random tie-breaking,  = 0.25
+
+
+
+
+                                             20
+8    Discussion
+
+Student proposing DA with a random tie-breaker assigns students to schools solely based on pref-
+erence reports and priorities. Given the empirical evidence that parents' preferences may not
+reflect match quality (Abdulkadiroglu et al., 2020), those solutions are likely to lead to ineffec-
+tive assignments. We provide a novel match quality-based solution to the school choice problem
+that maximizes aggregate match quality among all stable assignments. Simulations show that our
+algorithms substantially improve match quality compared to the widely used DA algorithm.
+
+Our solution partially addresses another potential challenge in school choice. There is an ongo-
+ing academic debate on whether parents form their preferences based on peer composition and
+achievement, or whether they align with effectiveness (Hanushek, 1981; Jacob and Lefgren, 2007;
+Abdulkadiro   glu et al., 2020). Moreover, even when parents value effectiveness, informational and
+cognitive barriers may preclude separation of a school's effectiveness from achievement of its stu-
+dent body (Kane and Staiger, 2002). Then, higher demand for schools that recruit higher-achieving
+students may create incentives for school principals to devote resources to screening and selection
+rather than better instruction (Ladd, 2002; MacLeod and Urquiola, 2015). Our solution does not
+fully address this issue, as preferences still play a role in determining the final assignment. However,
+the issue is likely to be alleviated: match quality- or effectiveness-based assignment gives schools
+incentives to improve and become more effective.
+
+Although our primary motivation is finding a match quality optimal assignment, the methodology
+can be easily applied to optimize other policy objectives. For instance, student welfare has been
+an important consideration in school choice. Typically, there are multiple stable assignments to
+choose from, and there is no obvious selection rule for a policy maker who cares for both stability
+and student welfare. Erdil and Ergin (2008) provide an algorithm that finds a stable assignment
+that is not Pareto dominated by other stable assignment. Our method allows to find stronger
+results. For example, with an appropriate choice of match quality matrix, our method can be used
+to find stable assignment that maximizes the number of students that are assigned to their first
+choices. Another common policy objective is achieving desirable distributional outcomes, such as
+a more diverse student body or more students assigned to neighborhood schools. Such goals, too,
+can be achieved using our optimization method with the appropriate choice of the match quality
+matching. Finally, it is worth mentioning that the applicability of our solution is broader than the
+school choice problem. Our optimization algorithms under stability constraints may be applied to
+an arbitrary two-sided or priority-based matching problem.
+
+
+
+
+                                                  21
+References
+Abdulkadirog lu, A. (2005): "College Admission with Affirmative Action," International Journal
+ of Game Theory, 33, 535­549.
+
+Abdulkadirog  lu, A., J. D. Angrist, Y. Narita, and P. A. Pathak (2017): "Research De-
+ sign Meets Market Design: Using Centralized Assignment for Impact Evaluation," Econometrica,
+ 85, 1373­1432.
+
+Abdulkadirog    lu, A., P. A. Pathak, and A. E. Roth (2009): "Strategy-Proofness versus
+ Efficiency in Matching with Indifferences: Redesigning the New York City High School Match,"
+ American Economic Review, 99(5), 1954­1978.
+
+Abdulkadirog                ¨ nmez (2003): "School Choice: A Mechanism Design Approach,"
+             lu, A. and T. So
+ American Economic Review, 93, 729­747.
+
+Abdulkadirog  lu, A. A., P. A. Pathak, J. Schellenberg, and C. R. Walters (2020): "Do
+ Parents Value School Effectiveness?" American Economic Review.
+
+Abdulkadirog lu, A., Y.-K. Che, and Y. Yasuda (2015): "Expanding "Choice" in School
+ Choice," American Economic Journal: Microeconomics, 7, 1­42.
+
+Ahuja, R. K., T. L. Magnanti, and J. B. Orlin (1993): Network Flows: Theory, Algorithms
+ and Application.
+
+Ashlagi, I. and P. Shi (2016): "Optimal Allocation without Money: An Engineering Approach,"
+ Management Science, 62, 1078­1097.
+
+Azevedo, E. M. and J. D. Leshno (2016): "A Supply and Demand Framework for Two-sided
+ Matching Markets," Journal of Political Economy, 124, 1235­1268.
+                     ¨ nmez (1999): "A Tale of Two Mechanisms: Student Placement," Journal
+Balinski, M. and T. So
+ of Economic Theory, 84, 73­94.
+
+Bansak, K., J. Ferwerda, J. Hainmueller, A. Dillon, D. Hangarter, D. Lawrence,
+ and J. Weinstein (2018): "Improving Refugee Integration through Data-driven Algorithmic
+ Assignment," Science, 359, 325­329.
+
+Bodoh-Creed, A. L. (2020): "Optimizing for Distributional Goals in School Choice Problems,"
+ Management Science.
+
+Chandramouli, S. and J. Sethuraman (2020): "A Note on the Rationing of Divisible and
+ Indivisible Goods in a General Network," Working Paper.
+
+Dur, U., S. D. Kominers, P. A. Pathak, and T. So¨ nmez (2018): "Reserve Design: Unintended
+ Consequences and the Demise of Boston's Walk Zones," Journal of Political Economy, 6, 2457­
+ 2479.
+
+Erdil, A. and H. Ergin (2008): "What's the Matter with Tie-Breaking? Improving Efficiency
+ in School Choice," American Economic Review, 98, 669­689.
+
+------ (2017): "Two-sided Matching with Indifferences," Journal of Economics Theory, 171, 268­
+  292.
+
+
+                                             22
+Friedman, M. (1962): "Capitalism and Freedom: With the Assistance of Rose D. Friedman,"
+ University of Chicago Press.
+
+Gale, D. and L. S. Shapley (1962): "College Admissions and the Stability of Marriage," Amer-
+ ican Mathematical Monthly, 69, 9­15.
+
+Grigoryan, A. (2020): "Effective, Fair and Equitable Pandemic Rationing," Working Paper.
+
+Hafalir, I. E., M. B. Yenmez, and M. A. Yildirim (2013): "Effective Affirmative Action in
+ School Choice," Theoretical Economics, 8, 325­363.
+
+Hanushek, E. A. (1981): "Throwing Money at Schools," Journal of Policy Analysis, 1, 19­41.
+
+Hoxby, C. (2000): "Does Competition among Public Schools Benefit Students and Taxpayers?"
+ American Economic Review, 90(5), 1209­1238.
+
+------ (2003): "School Choice and School Productivity (Or, Could School Choice be a Rising Tide
+  that Lifts All Boats)," in The Economics of School Choice, ed. by C. Hoxby, Chicago: University
+  of Chicago Press.
+
+Irving, R. W. (1994): "Stable Marriage and Indifference," Discrete Applied Mathematics, 48,
+  261­272.
+
+Iwama, K., S. Miyazaki, and H. Yanagisawa (2014): "A 25/17-approximation Algorithm for
+  the Stable Marriage Problem with One-sided Ties," Algorithmica, 68, 758­775.
+
+Jacob, B. A. and L. Lefgren (2007): "What do Parents Value in Education? An Empirical In-
+  vestigation of Parents' Revealed Preferences for Teachers," The Quarterly Journal of Economics,
+  122, 1603 ­ 1637.
+
+Kane, T. J. and D. O. Staiger (2002): "The Promise and Pitfalls of Using Imprecise School
+ Accountability Measures," Journal of Economic Perspectives, 16(4), 91­114.
+
+Katta, A.-K. and J. Sethuraman (2006): "A Solution to the Random Assignment Problem on
+ the Full Preference Domain," Journal of Economic Theory, 131(1), 231­250.
+                     ¨
+Kesten, O. and U. Unver  (2015): "A Theory of School Choice Lotteries," Theoretical Eco-
+ nomics, 10(2), 543­595.
+
+Kim, Y. C. J. and K. Mierendorff (2013): "Generalized Reduced-Form Auctions: A Network-
+  Flow Approach," Econometrica, 81, 2487­2520.
+
+Kira´ ly, Z. (2011): "Better and Simpler Approximation Algorithms for the Stable Marriage Prob-
+  lem," Algorithmica, 60, 3­20.
+
+Kwanashie, A. and D. F. Manlove (2014): "An Integer Programming Approach to the Hospi-
+ tals/residents Problem with Ties," In Operations Research Proceedings, 263­269.
+
+Ladd, H. F. (2002): Market-Based Reforms in Urban Education, Economic Policy Institute.
+
+MacLeod, B. W. and M. Urquiola (2015): "Reputation and school competition," American
+ Economic Review, 105, 3471 ­ 3488.
+
+Manlove, D. F., R. W. Irving, K. Iwama, S. Miyazaki, and Y. Morita (2002): "Hard
+ Variants of Stable Marriage," Theoretical Computer Science, 276, 261­279.
+
+                                               23
+McDermid, E. (2009): "A 3/2-approximation Algorithm for General Stable Marriage," In Inter-
+ national Colloquium on Automata, Languages, and Programming, 689­700.
+
+Nguyen, T., H. Nguyen, and A. Teytelboym (2020): "Stability in Matching Markets with
+ Complex Constraints," Management Science.
+
+Nguyen, T. and R. Vohra (2013): "The Allocation of Indivisible Objects via Rounding," Work-
+ ing Paper.
+
+------ (2018): "Near-feasible Stable Matchings with Couples," American Economic Review, 108,
+  3154­3169.
+
+------ (2019): "Stable Matching with Proportionality Constraints," Operations Research, 67, 1503­
+  1519.
+
+Peterson, P. E. and D. E. Campbell (2001): Charters, Vouchers, and Public Education,
+ Brookings Institution Press.
+
+Roth, A. E. (1985): "The College Admission Problem is not Equivalent to the Marriage Problem,"
+ Journal of Economic Theory, 36, 277­288.
+
+Roth, A. E., U. G. Rothblum, and J. H. V. Vate (1993): "Stable Matchings, Optimal
+ Assignments, and Linear Programming," Mathematics of Operations Research, 18, 803­828.
+
+Shi, P. (2019): "Optimal Priority-Based Allocation Mechanisms," Working Paper.
+
+Slaugh, V. W., M. Akan, O. Kesten, and M. U. Unver ¨        (2016): "The Pennsylvania Adoption
+  Exchange Improves its Matching Process," Interfaces, 46, 133­153.
+
+Sokkalingam, P. T., R. K. Ahuja, and J. B. Orlin (2000): "New Polynomial-time Cycle-
+  canceling Algorithms for Minimum-cost Flows," Networks: An International Journal, 36, 53­63.
+
+Trapp, A. C., A. Teytelboym, A. Martinello, T. Andersson, and N. Ahabi (2018):
+ "Placement Optimization in Refugee Resettlement," Working Paper.
+
+Tweedie, J., D. D. Riley, J. E. Chubb, and T. M. Moe (1990): "Should Market Forces
+ Control Educational Decision Making?" The American Political Science Review, 549­567.
+
+
+
+
+                                               24
+A     Proofs of Main results
+
+A.1    Proof of Lemma 1
+
+First we prove Ar  A¯
+                    r . Suppose µ  Ar . We show that µ satisfies conditions in the definition of
+ ¯
+Ar one by one.
+
+We start with the first condition. On the contrary, suppose the first condition does not hold. That
+is, there exists a student s such that c = µ(s)    / Cs (r). By definition of (µ), sc  c (µ) = rc .
+Therefore, c  / Cs (r) implies that there is a school c  C such that c Ps c and sc < rc = c (µ).
+By Proposition 2, this contradicts the stability of µ.
+
+We continue with the second condition. If C + (r) = , then second condition holds trivially. Suppose
+C + (r) =  and c  C + (r). By definition of C + (r), c (µ) = rc < K + 1. Hence, by definition of
+cutoffs, |µ(c)| = c . This completes the proof of the first part, i.e., Ar  A¯
+                                                                             r.
+
+Next we prove A¯                      ¯
+                 r  A . Suppose µ  Ar . We first show that (µ)  r . By definition of C (r ),
+                                                                                      -
+                       -                                          -
+rc = K + 1 for any c  C (r). Hence, c (µ)  K + 1 = rc for any c  C (r).
+
+Now consider a school c  C + (r). Recall that, |µ(c)| = c . Therefore, by definition of c (µ),
+                                            c (µ) = max sc .                                     (3)
+                                                     sµ(c)
+
+By definition of A¯
+                  r,
+                                           sc  rc , s  µ(c).                                     (4)
+
+Equations 3 and 4 imply that c (µ)  rc .
+
+We now show that µ is stable. Consider an arbitrary s  S and c = µ(s). By definition of A¯r,
+there is no c  C such that c Ps c and sc < rc . Since c (µ)  rc , there is no c  C such that
+c Ps c and sc < c (µ). Hence, by Proposition 2, µ is stable, i.e., µ  A .
+
+
+A.2    Proof of Lemma 2
+
+First, suppose f is feasible and integral. By constraint 1,
+
+                                    f (s, c) = b(s) = 1 for any student s  S.
+                          cCr (s)
+
+Thus, µf is indeed an assignment, and µf (s)  Cs (r) for any s  S . This establishes the first
+condition in the definition of A¯                     +
+                                r . Also, for any c  C (r ),
+
+                               |µ- 1
+                                 f (c)| = -         f (s, c) = b(c) = -c ,
+                                               sS
+
+where the second equality follows from constraint 1. This establishes the second condition in the
+definition of A¯
+               r.
+
+Now suppose µ  A¯   r . Integrality of fµ , as well as equation 2 are immediate from the construction
+of fµ . We now verify feasibility constraint 1. We check feasibility for each vertex type one by one.
+
+                                                    25
+   · Let v  S . By definition, each student is assigned to exactly one school. Therefore,
+
+                                                       fµ (v, c) = 1 = b(v ).
+                                                  cC
+
+
+   · Let v  C - (r). Then,
+
+                                     fµ (s, v ) - fµ (v, t) = |µ(v )| - |µ(v )| = 0 = b(v ).
+                              sS
+
+
+   · Let v  C + (r). Then,
+                                       -        fµ (s, v ) = -|µ(v )| = -c = b(v ),
+                                           sS
+
+      where second equality follows from v  C + (r).
+
+   · Finally, let v = t. Then,
+
+                     -              f (c, v ) = -              |µ(c)| = -         |µ(c)| +              |µ(c)|
+                         cC - (r)                   cC - (r)                 cC              cC + (r)
+
+
+                                                = -|S | +                 c = b(v ).
+                                                               cC + (r)
+
+
+This completes the proof of Lemma 2.
+
+
+A.3    Proof of Proposition 5
+
+We first show that if a student s is rejected from school c during DR, then there is no stable
+assignment µ ¯ such that µ ¯(s) = c. By contradiction, suppose our claim does not hold. That is,
+there exists a stable assignment µ¯, a student s and a school c such that c rejects s during DR and
+µ
+¯(s) = c. Without loss of generality, we assume s is the first such student who is rejected from her
+assignment under µ  ¯ during DR, i.e., if s is rejected by c before s is rejected by c during DR, then
+µ
+¯(s ) = c . Let c rejects s in some Round m. We consider the following possible cases.
+
+Case 1: c rejects s in Stage 1 of Round m. Suppose that s is rejected by c in Step t. Then, s  Ac
+and by our supposition c Rs µ  ¯(s ) for all s  Ac . Since s is rejected by c in Step t of Stage 1, we
+have |{s  Ac : s c < sc }|  c . Stability of µ ¯ implies that any student s  {s  Ac : s c < sc }
+                       ¯. Then, |µ
+is assigned to c under µ            - 1
+                                  ¯ (c)|  c + 1, which contradicts the feasibility of µ   ¯.
+
+Case 2: c rejects s in Step 0 of Stage 2 of Round m. Let µ be the outcome achieved at the end
+of Stage 1 in Round m. Since c reject s in Step 0, then sc > r       ¯c (µ). Then, either |µ(c)|  c
+and r¯c (µ) = maxs µ(c) s c or Dc =  and r     ¯c (µ) = mins Dc s c . If the former case holds, our
+supposition and stability of µ
+                             ¯ imply that all students in µ(c) and s are assigned to c. This requires
+at least c students to be assigned to c, violation of feasibility. Suppose the latter case holds.
+Our supposition implies that any student in Dc who has been rejected by c before s cannot be
+assigned to a school weakly better than c. Since r  ¯c (µ) = mins Dc s c < sc , µ
+                                                                                ¯ cannot be stable, a
+contradiction.
+
+
+                                                            26
+Case 3: c rejects s in some Step t  1 of Stage 2 of Round m. Then, there exists at least c
+students in µ(c)  D  ~ c who have strictly better priority than s. By our supposition at least c
+students having better priority than sc cannot be assigned to schools weakly better than c under
+µ
+¯. Stability of µ
+                ¯ requires more than c students to be assigned to c, a contraction.
+
+Hence, if a school c has rejected student s during DR, student s cannot be assigned to school c
+in any stable matching. Thus, no student s with s c > r ¯c (µ) can be assigned to c in any stable
+assignment. This concludes the proof.
+
+
+A.4    Proof of Proposition 6
+
+In order to prove this statement, we show that if a student s rejects a school c during DP, then
+there does not exist a stable matching µ
+                                       ¯ such that c Rs µ
+                                                        ¯(s).
+
+By contradiction, suppose a student s who rejects school c during this procedure is assigned to a
+school weakly worse than c under µ¯. Without loss of generality, let s be the first such a student who
+has rejected some school c and is assigned to a worse school under µ ¯ when we apply DP algorithm.
+We consider the following possible cases.
+
+Case 1: s rejects c in Stage 1 of Round m. Suppose s rejects c in Step t. Then, by definition
+s  Ac and she has received an offer from c such that c Ps c in Step t and the number of students
+with better priority than s for c and who has not rejected c yet is strictly less than c . By our
+supposition, any student who has rejected c earlier cannot be assigned to c under µ     ¯. Therefore,
+stability implies that s cannot be assigned to a school worse than c under µ
+                                                                           ¯. This is a contradiction.
+
+Case 2: s rejects c in Stage 2 of Round m. By definition of the procedure, there exists at least
+two schools c1 and c2 such that the number of students with better priority than s either for c1
+or c2 who has not rejected them yet is strictly less than the total capacity of c1 and c2 . By our
+supposition, any student who has rejected either school before cannot be assigned to these schools.
+Therefore, by our supposition, s and either c1 or c2 would form a blocking pair at assignment µ  ¯
+which contradicts stability of µ
+                               ¯.
+
+Then, our claim implies that if a student s  µ(c), then at most c - 1 students with weakly better
+priority than s can be assigned to c in stable matching µ
+                                                        ¯. Therefore, µ
+                                                                      ¯(s)Rs µ(s). This completes
+the proof.
+
+
+
+B     Omitted Examples
+
+Example 1. Let C = {c1 , c2 }, S = {s1 , s2 , s3 } and  = (2, 2). Preferences of students are:
+
+
+                                             s1   s2   s3
+                                             c1   c1   c2
+                                             c2   c2   c1
+
+
+There are 2 priority classes and school priorities are:
+
+
+                                                  27
+                                                      June 2020
+
+
+
+
+  1     Partial Solution for Large School Districts
+
+                                     Priority
+  For very large school districts, the        Points may
+                                       QMS algorithm   c1 not be
+                                                               c2 tractable, even after the reductions
+                                            1          s1    s1 , s3
+  of Section 5. For those problem, we propose a partial solution that maximizes match quality in a
+                                            2        s2 , s3   s2
+  subset of stable matchings.
+Match qualities are:
+  Locally Quality Maximizing Stable Matching Algorithm (L-QMS)
+                      q (s1 , c1 ) = 3 q (s2 , c1 ) = 5 q (s3 , c1 ) = 2
+                          q (s1 , c2 ) = 4and R
+       Set µ as the empty matching               ¯  s2 ,the
+                                                 q (as   c2 ) empty
+                                                              = 2 set. q (s3 , c2 ) = 5
+Consider the vector r = (2, 3). Then,
+       Run student proposing DA with some tie-breaking rule, and let r denote the resulting marginal
+                                      Cs1 (r) = {c1 }
+      priority.                                                C + (r) = {c1 }
+                                  Cs2 (r) = {c1 , c2 }                          .
+                                     ¯                         C - (r) = {c2 }
+         ­ (a) Add r to the set R     C. s3 (r) = {c2 }
+         ­ (b) Find
+The corresponding   a quality maximizing
+                  minimum-cost           stable
+                                flow graph      matching
+                                            is depicted inµFigure
+                                                           r in the set M
+                                                                   1.    ¯r and denote r := (µr ).
+
+
+                              1
+                              s1                -3
+                                                                         -2
+
+                                                -5                       c1
+                              1
+                              s2                -2
+                                                                         0               -1
+                                                                                     0
+                                                -5                       c2              t
+                              1
+                              s3
+
+
+                                    Figure
+                                     Figure2:
+                                            1: Minimum-cost
+                                               Minimum-cost flow
+                                                            flow graph
+
+In Figure 2, numbers above the vertices denote their values (supply/demand), numbers above the
+edges denote their costs.
+                                                   1
+In this example, there is a unique feasible flow function f , given by
+
+                                                      0        if e = (s2 , c1 )
+                                         f (e) =                                 .
+                                                      1        otherwise
+Therefore, f is the desired solution.
+
+Example 2. Let C = {c1 , c2 , c3 , c4 , c5 }, S = {s1 , s2 , s3 , s4 , s5 , s6 } and  = (1, 1, 1, 1, 2). Preferences
+of students are:
+
+                                           s1    s2       s3        s4   s5   s6
+                                           c1    c1       c2        c2   c1   c2
+                                           c2    c2       c3        c1   c3   c3
+                                           c4    c3       c5        c3   c2   c1
+                                           c3    c5       c1        c4   c4   c4
+                                           c5    c4       c4        c5   c5   c5
+
+                                                               28
+There are 4 priority classes and school priorities are:
+
+                   Priority Points           c1            c2          c3             c4                  c5
+                          1                  s4            s1        s5 , s6     s1 , s5 , s6             s2
+                          2               s1 , s2          s2        s4 , s1       s2 , s3           s3 , s4 , s5
+                          3             s3 , s5 , s6     s3 , s4       s3             s4               s1 , s6
+                          4                              s5 , s6       s2
+
+We first apply DR to this problem.
+
+Round 1.
+
+Stage 1.
+
+We illustrate the steps of the first stage below. In each step, tentatively held students are given in
+bold.
+
+                                             c1               c2               c3          c4      c5
+                            Step 1:     s1 , s2 , s5     s3 , s4 , s6
+                            Step 2:      s1 , s2          s3 , s 4           s5 , s6
+
+When Stage 1 terminates school c1 holds s1 and s2 , c2 holds s3 and s4 , and c3 holds s5 and s6 . We
+denote this outcome with µ.
+
+Stage 2.
+
+Step 0: We first determine c (µ) for all c  C : c1 (µ) = 2, c2 (µ) = 3, c3 (µ) = 1, c4 (µ) =
+c5 (µ) = 5. Then, in addition to the students rejected in Stage 1, c1 rejects s3 and s6 , c2 rejects s5
+                                                                          1 as follows:
+and c3 rejects s4 , s1 , s3 and s2 . For each school c we construct Mc , gc
+
+                                            c1           c2          c3         c4        c5
+                                   M      s1 , s2      s3 , s4     s5 , s6                
+                                   g1       0            0           0          0         0
+
+
+Step 1: Given M and g 1 , we have D   ~ c2 = {s2 } = D~ c2 and D
+                                                               ~ c4 = {s5 } = D~ c4 . For all c / {c2 , c4 }
+                                        c1                       c3
+         ~ c
+we have D = . Then, we calculate        ^c2 = 2 and  ^c4 = 1. Since  ^c2 < c2 (µ), c2 rejects s3 and s4 .
+Since ^c4 < c4 (µ), c4 rejects s2 , s3 and s4 . We go Round 2.
+
+Round 2.
+
+Stage 1. We illustrate the steps of the first stage below. In each step, tentatively held students
+are given in bold.
+
+                                             c1            c2          c3            c4          c5
+                            Step 1:     s1 , s2 , s4                 s5 , s 6                   s3
+                            Step 2:          s4          s1 , s2     s5 , s 6                   s3
+                            Step 3:          s4           s1         s5 , s 6                  s2 , s3
+
+
+                                                           29
+When Stage 1 terminates school c1 holds s4 , c2 holds s1 , c3 holds s5 and s6 , and c5 holds s2 and
+s3 . We denote this outcome with µ.
+
+Stage 2.
+
+Step 0: We determine c (µ) for all c  C : c1 (µ) = 1, c2 (µ) = 1, c3 (µ) = 1, c4 (µ) = 1, and
+                                                                              1 as follows:
+c5 (µ) = 2. Then, c5 rejects s1 and s6 . For each school c we construct Mc , gc
+
+                                           c1    c2      c3            c4    c5
+                                    M      s4    s1    s5 , s6               s3
+                                    g1     0     0       0             0     1
+
+Step 1: Given M and g 1 , we have D  ~c
+                                      c4 = {s } = D
+                                              5
+                                                    ~ c4 . For all c = c4 we have D
+                                                                                  ~ c = . Then, we
+                                        3
+calculate ^c4 = 1. Since                   2     1
+                         ^c4 = c4 (µ) and gc4 = gc4 , the algorithm terminates here.
+
+Final outcome of DR is
+
+                                     c1    c2      c3            c4      c5
+                                     s4    s1    s5 , s6               s2 , s3
+
+
+Next, we apply DP to the problem.
+
+Round 1.
+
+Stage 1. We illustrate the steps of the first stage below. In each step, tentatively held colleges are
+given in bold.
+
+                                            s1    s2        s3        s4    s5    s6
+                                 Step 1:    c2    c5                  c1
+
+Stage 1 terminates and the outcome is µ(s1 ) = c2 , µ(s2 ) = c5 , µ(s4 ) = c1 , and µ(s3 ) = µ(s5 ) =
+µ(s6 ) = .
+
+Stage 2.
+
+We first construct Ds for each s  S : Ds1 = {c1 }, Ds2 = {c1 , c2 , c3 }, Ds4 = {c2 }, and Ds3 = Ds5 =
+Ds6 = C . We update Ac for each c  C : Ac1 = Ac2 = S , Ac3 = {s2 , s3 , s5 , s6 }, Ac4 = {s3 , s5 , s6 }
+and Ac5 = {s2 , s3 , s5 , s6 }.
+
+Once we follow the steps of Stage 2, we can see that both s5 and s6 are guaranteed to be assigned
+to a school not worse than both c3 and c4 . Then, we remove them from Ac5 and set it to be
+Ac5 = {s2 , s3 }. We continue with Round 2 with updated Ac for all c  C .
+
+Round 2.
+
+Stage 1. We illustrate the steps of the first stage below. In each step, tentatively held colleges
+are given in bold.
+
+                                            s1    s2        s3        s4    s5    s6
+                                 Step 1:    c2    c5        c5        c1
+
+                                                       30
+Stage 1 terminates and the outcome is µ(s1 ) = c2 , µ(s2 ) = µ(s3 ) = c5 , µ(s4 ) = c1 , and µ(s5 ) =
+µ(s6 ) = .
+
+Stage 2.
+
+We first construct Ds for each s  S : Ds1 = {c1 }, Ds2 = {c1 , c2 , c3 }, Ds3 = {c2 , c3 }, Ds4 = {c2 },
+and Ds5 = Ds6 = C . We update Ac for each c  C : Ac1 = {s1 , s2 , s4 , s5 , s6 }, Ac2 = S , Ac3 =
+{s2 , s3 , s5 , s6 }, Ac4 = {s5 , s6 } and Ac5 = {s2 , s3 }.
+
+Once we follow the steps of Stage 2, we can see that both s5 and s6 are guaranteed to be assigned to
+a school not worse than both c3 and c4 . We continue with Round 3 with updated Ac for all c  C .
+
+Round 3.
+
+Stage 1.
+
+We illustrate the steps of the first stage below. In each step, tentatively held colleges are given in
+bold.
+
+                                           s1   s2        s3   s4   s5   s6
+                                 Step 1:   c2   c5        c5   c1
+
+Stage 1 terminates and the outcome is µ(s1 ) = c2 , µ(s2 ) = µ(s3 ) = c5 , µ(s4 ) = c1 , and µ(s5 ) =
+µ(s6 ) = .
+
+Stage 2.
+
+We first construct Ds for each s  S : Ds1 = {c1 }, Ds2 = {c1 , c2 , c3 }, Ds3 = {c2 , c3 }, Ds4 = {c2 },
+and Ds5 = Ds6 = C . We do not update Ac for any c  C .
+
+Once we follow the steps of Stage 2, we can see that both s5 and s6 are guaranteed to be assigned
+to a school not worse than both c3 and c4 . Algorithm terminates since Ac stays the same for all
+c  C.
+
+
+
+
+                                                     31
+C    Omitted Simulation Results
+
+
+
+                                 = .                     = .                  = . 
+
+                                    (1)                    (2)                  (3)
+
+
+
+               0.00                     0                   0                    0
+               0.25                     0                   0                    0
+    0.00       0.50                     0                   0                    0
+               0.75                     0                   0                   0.03
+               1.00                     0                   0                   0.06
+
+                0.00                   0                   0.24                 2.15
+                0.25                   0                   0.53                 2.69
+    0.25        0.50                  0.02                 0.85                 3.21
+                0.75                  0.01                 0.81                 3.13
+                1.00                   0                   0.5                  2.36
+
+                0.00                  0.82                 6.23                 9.23
+                0.25                  1.71                 8.61                10.42
+    0.50        0.50                  1.57                 8.37                10.60
+                0.75                  0.68                 5.87                 9.55
+                1.00                  0.61                 5.32                 8.81
+
+                0.00                  5.41                 9.04                 9.89
+                0.25                  6.89                 9.63                10.49
+    0.75        0.50                  5.46                 9.51                10.62
+                0.75                  4.26                 8.85                10.17
+                1.00                  4.03                 8.65                 9.90
+
+                0.00                  8.76                 9.41                10.41
+                0.25                  8.86                 9.92                10.44
+    1.00        0.50                  8.40                 9.91                10.67
+                0.75                  7.86                 9.38                10.34
+                1.00                  7.68                 9.15                10.07
+
+
+
+     Table 3: Average number of schools with a unique stable assignment cutoff, 30 schools
+
+
+                                              32
+                                                                       DA with quality-based
+                                MQO                   L-MQO
+                                                                           tie-breaking
+                                 (1)                    (2)                     (3)
+
+
+
+          0.00                 57.926                 57.926                  12.410
+          0.25                 51.122                 51.122                  11.860
+0.00      0.50                 45.384                 45.384                  11.736
+          0.75                 39.984                 39.984                  14.370
+          1.00                 36.878                 36.878                  15.042
+
+           0.00                52.692                 52.692                  29796
+           0.25                45.276                 45.276                  25.504
+0.25       0.50                36.202                 36.202                  18.918
+           0.75                33.404                 33.404                  16.960
+           1.00                33.194                 33.148                  18.240
+
+           0.00                45.538                 45.188                  24.816
+           0.25                38.786                 38.518                  23.152
+0.50       0.50                32.826                 32.546                  19.608
+           0.75                31.070                 31.012                  19.102
+           1.00                30.936                 30.890                  19.066
+
+           0.00                45.318                 45.256                  27.758
+           0.25                39.732                 39.732                  23.736
+0.75       0.50                34.844                 34.782                  22.592
+           0.75                31.734                 30.904                  20.946
+           1.00                31.634                 30.734                  20.860
+
+           0.00                44.856                 44.328                  32.248
+           0.25                40.710                 40.096                  28.804
+1.00       0.50                36.002                 35.412                  25.664
+           0.75                33.062                 32.490                  23.984
+           1.00                30.900                 30.014                  22.410
+
+
+
+Average gains                  39.200                 38.956                  21.183
+
+
+
+
+       Table 4: Percentage gains compared to DA with random tie-breaking,  = 0.00
+
+
+
+
+                                          33
+                                                                      DA with quality-based
+                                MQO                   L-MQO
+                                                                          tie-breaking
+                                 (1)                    (2)                     (3)
+
+
+
+          0.00                 35.238                 33.976                  16.880
+          0.25                 32.504                 31.060                  14.956
+0.00      0.50                 28.522                 27.598                  17.588
+          0.75                 24.882                 23.722                  14.750
+          1.00                 24.696                 21.486                  13.616
+
+           0.00                32.108                 30.370                  15.544
+           0.25                29.002                 26.422                  14.390
+0.25       0.50                26.744                 25.194                  14.062
+           0.75                23.928                 20.978                  11.300
+           1.00                23.606                 21.776                  11.488
+
+           0.00                37.644                 36.980                  22.916
+           0.25                33.362                 33.144                  21.376
+0.50       0.50                29.482                 29.482                  18.628
+           0.75                25.174                 25.174                  15.724
+           1.00                24.350                 24.344                  14.944
+
+           0.00                41.004                 41.004                  25.688
+           0.25                37.382                 36.956                  23.976
+0.75       0.50                32.752                 32.350                  21.202
+           0.75                28.030                 28.030                  18.088
+           1.00                26.096                 25.666                  17.134
+
+           0.00                43.196                 42.678                  29.000
+           0.25                39.286                 39.286                  27.132
+1.00       0.50                35.948                 35.932                  25.262
+           0.75                31.874                 31.874                  22.236
+           1.00                28.224                 27.442                  19.248
+
+
+
+    Average gain               31.001                 30.117                  18.685
+
+
+
+
+       Table 5: Percentage gains compared to DA with random tie-breaking,  = 0.50
+
+
+
+
+                                          34
+

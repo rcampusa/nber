@@ -1,0 +1,1966 @@
+                              NBER WORKING PAPER SERIES
+
+
+
+
+                    INSTRUMENTAL VARIABLE IDENTIFICATION OF
+                       DYNAMIC VARIANCE DECOMPOSITIONS
+
+                                    Mikkel Plagborg-Møller
+                                      Christian K. Wolf
+
+                                      Working Paper 29044
+                              http://www.nber.org/papers/w29044
+
+
+                     NATIONAL BUREAU OF ECONOMIC RESEARCH
+                              1050 Massachusetts Avenue
+                                Cambridge, MA 02138
+                                     July 2021
+
+
+
+
+We received helpful comments from the editor Harald Uhlig, three anonymous referees, Isaiah
+Andrews, Tim Armstrong, Dario Caldara, Thorsten Drautzburg, Domenico Giannone, Yuriy
+Gorodnichenko, Ed Herbst, Marek Jarociski, Peter Karadi, Lutz Kilian, Michal Kolesár,
+Byoungchan Lee, Sophocles Mavroeidis, Pepe Montiel Olea, Ulrich Müller, Emi Nakamura,
+Giorgio Primiceri, Eric Renault, Giovanni Ricco, Luca Sala, Jón Steinsson, Jim Stock, Mark
+Watson, and seminar participants at several venues. The first draft of this paper was written while
+Wolf was visiting the Bundesbank, whose hospitality is gratefully acknowledged. Wolf also
+acknowledges support from the Alfred P. Sloan Foundation and the Macro Financial Modeling
+Project. Plagborg-Møller acknowledges that this material is based upon work supported by the
+NSF under Grant #1851665. Any opinions, findings, and conclusions or recommendations
+expressed in this material are those of the authors and do not necessarily reflect the views of the
+NSF. The views expressed herein are those of the authors and do not necessarily reflect the views
+of the National Bureau of Economic Research.
+
+NBER working papers are circulated for discussion and comment purposes. They have not been
+peer-reviewed or been subject to the review by the NBER Board of Directors that accompanies
+official NBER publications.
+
+© 2021 by Mikkel Plagborg-Møller and Christian K. Wolf. All rights reserved. Short sections of
+text, not to exceed two paragraphs, may be quoted without explicit permission provided that full
+credit, including © notice, is given to the source.
+Instrumental Variable Identification of Dynamic Variance Decompositions
+Mikkel Plagborg-Møller and Christian K. Wolf
+NBER Working Paper No. 29044
+July 2021
+JEL No. C32,C36
+
+                                          ABSTRACT
+
+Macroeconomists increasingly use external sources of exogenous variation for causal inference.
+However, unless such external instruments (proxies) capture the underlying shock without
+measurement error, existing methods are silent on the importance of that shock for
+macroeconomic fluctuations. We show that, in a general moving average model with external
+instruments, variance decompositions for the instrumented shock are interval-identified, with
+informative bounds. Various additional restrictions guarantee point identification of both variance
+and historical decompositions. Unlike SVAR analysis, our methods do not require invertibility.
+Applied to U.S. data, they give a tight upper bound on the importance of monetary shocks for
+inflation dynamics.
+
+
+Mikkel Plagborg-Møller
+Princeton University
+Department of Economics
+Julis Romo Rabinowitz Building
+Princeton, NJ 08544
+mikkelpm@princeton.edu
+
+Christian K. Wolf
+MIT Department of Economics
+The Morris and Sophie Chang Building
+50 Memorial Drive
+Cambridge, MA 02139
+and NBER
+ckwolf@mit.edu
+
+
+
+
+A full replication code is available at https://github.com/mikkelpm/svma_iv
+An online appendix is available at http://www.nber.org/data-appendix/w29044
+1    Introduction
+In recent years, and in parallel to popular microeconometric identification strategies, empiri-
+cal practice in applied macroeconometrics has turned towards "external" sources of plausibly
+exogenous variation. Such external instrumental variables (IVs, or proxy variables) are now
+routinely used to estimate causal effects through a simple Two-Stage Least Squares version
+of Local Projections (Jord` a, 2005; Ramey, 2016). Appealingly, this approach is valid even
+without the assumption of invertibility ­ the ability to recover structural shocks from current
+and past (but not future) values of the observed macro variables (Nakamura & Steinsson,
+2018b; Stock & Watson, 2018).
+    However, applied researchers are often not just interested in dynamic causal effects, but
+also want to learn about a particular shock's contribution to macroeconomic fluctuations
+(Christiano et al., 1999; Beaudry & Portier, 2006; Smets & Wouters, 2007). If the IV is a
+perfect measure of the underlying structural macro shock, then the desired variance decom-
+positions are readily computed from standard Local Projection regression output (Gorod-
+nichenko & Lee, 2020). In many applications, though, it is likely that external shock measures
+are contaminated by substantial measurement error, causing attenuation bias. For example,
+Gertler & Karadi (2015) use high-frequency changes in asset prices around monetary policy
+announcements as credible instruments for monetary shocks; since these instruments at best
+capture a subset of all monetary shocks, simple direct regressions on the IV are likely to sub-
+stantially understate the importance of monetary disturbances. Up to this point, the only
+possible alternative approach was to combine the IV with conventional Structural Vector
+Autoregressive (SVAR) methods (Stock, 2008; Mertens & Ravn, 2013), thus automatically
+imposing the otherwise unnecessary and empirically dubious invertibility assumption.
+    In this paper, we show precisely to what extent external instruments are informative
+about shock importance. Throughout, we consider an unrestricted linear moving average
+model, disciplined only by IVs. This model nests conventional, invertible SVARs, as well
+as essentially all linearized macro models. We prove three main results. First, without
+further restrictions, the variance decomposition of the instrumented shock's contribution to
+macroeconomic fluctuations is interval-identified, with informative lower and upper bounds.
+Second, if the researcher is willing to impose the assumption of recoverability ­ i.e., that
+the shock is spanned by current, past and future values of the observed macro variables ­
+then both variance decompositions and historical decompositions (the shock's contribution
+to realized fluctuations) are point-identified. Third, we derive a simple Granger causality
+
+
+                                              2
+pre-test for invertibility that we show exploits the strongest possible testable implication.
+We complement this set of theoretical results with an extensive code suite that implements
+all our inference procedures.
+    We adopt the exact same structural vector moving average (SVMA) model with external
+IVs as in Stock & Watson (2018), but focus on variance decompositions, rather than im-
+pulse responses. The key identifying assumption of this model is the availability of external
+instruments that correlate with the shock of interest, but are otherwise dynamically uncor-
+related with all other macro shocks. Importantly, the IVs may be contaminated by classical
+measurement error. Stock & Watson (2018) show that, in this SVMA-IV model, relative
+impulse responses (which normalize the impact effect) are point-identified, cf. also Mertens
+(2015). While such relative impulse responses do not require identification of the scale of the
+underlying shock, scale inevitably matters for variance and historical decompositions, and
+so lies at the heart of the identification challenge we face in this paper.
+    We bound the importance of the instrumented structural shock from above and from
+below by viewing the model as a dynamic measurement error model. Our question is: Given
+the second moments (autocovariances) of the macro variables and the IVs, what can be said
+about (forecast or unconditional) variance decompositions? The identification challenge is
+that we do not know the signal-to-noise ratio of the IV a priori ; however, we prove that it
+is possible to bound this ratio using the moments of the data. At one extreme, our lower
+bound corresponds to the previously discussed approach of treating the IV as the shock (zero
+measurement error). If ­ as seems likely in practice ­ the IV is actually not perfect, then this
+lower bound may substantially understate the true importance of the shock. At the other
+extreme, given that we observe a certain degree of co-movement between the IV and the
+macro observables at various leads and lags, we know that measurement error also cannot be
+too pervasive. We translate this intuition into formal bounds and prove that these bounds
+are sharp, i.e., they exhaust all the information about variance decompositions contained in
+the second moments of the data.
+    We also characterize the set of additional assumptions that researchers could impose to
+point -identify both variance and historical decompositions. Here our main result is that point
+identification obtains if the instrumented shock is assumed to be recoverable, i.e., spanned
+by all lags and leads of the endogenous macro variables. Appealingly, recoverability obtains
+in any macro model with as many observables as shocks; in particular, it holds even in many
+models with news and noise shocks, unlike the strictly stronger (and, as we show, testable)
+invertibility assumption made in SVAR analysis (Leeper et al., 2013).
+
+
+                                               3
+    We provide the applied researcher with an easy-to-use code suite that constructs confi-
+dence intervals for all parameters of interest. In a first step, we use a reduced-form VAR in
+macro variables and IVs as a convenient tool for approximating the second moments of the
+data. The second step then constructs sample analogues of our identification bounds and
+inserts these into the confidence procedure of Imbens & Manski (2004); alternatively, we
+also provide confidence intervals valid under the additional point-identifying restriction of
+recoverability. We prove that our confidence intervals have asymptotically valid frequentist
+coverage under weak nonparametric conditions on the data generating process.
+    To demonstrate the feasibility and applicability of our procedures, we bound the impor-
+tance of monetary shocks for inflation dynamics in the U.S. We employ the high-frequency
+IV proposed by Gertler & Karadi (2015), mentioned above. As discussed in Ramey (2016),
+the rising importance of forward guidance since the early 1990s is likely to invalidate the
+invertibility assumption and so threatens consistency of the standard SVAR-IV estimator
+used by Gertler & Karadi. Indeed, we find that the data are consistent with substantial
+non-invertibility. Applying our robust methodology, we find that monetary shocks are al-
+most irrelevant for aggregate inflation in our post-1990 sample: The 90% confidence intervals
+for the forecast variance contribution of monetary shocks rules out values above 8% at all
+horizons. Thus, to the extent that inflation is a monetary phenomenon, it is so because of
+the systematic part of U.S. monetary policy, not because of its erratic conduct.
+    Finally, we use a series of analytical and quantitative examples to give intuition for why,
+in spite of its weak identifying assumptions, our method will often manage to give very tight
+upper bounds on shock importance, consistent with our findings in the monetary application.
+
+Literature. Plagborg-Møller & Wolf (2021) prove that the invertibility-robust Local Pro-
+jection IV impulse response estimator has the same estimand as a recursive SVAR that in-
+cludes the IV and orders it first. This paper complements our other work by analyzing the
+identification of variance and historical decompositions, which requires completely different
+mathematical arguments.
+    Non-invertibility and its effects on SVAR identification have received substantial atten-
+tion in recent years (see the references in Plagborg-Møller, 2019, sec. 2.3). Previous work has
+emphasized that, in the empirically relevant case of foresight about economic fundamentals
+or policy ("news"), conventional SVAR analysis invariably fails: Rational expectations equi-
+libria create non-invertible SVMA representations, and so SVARs cannot correctly recover
+the structural shocks (Leeper et al., 2013; Wolf, 2020). In contrast, non-invertibility poses
+
+
+                                              4
+no challenge to the methods developed in this paper. We also show that, in the SVMA-IV
+model, the degree of invertibility is set-identified. Our proposed test of invertibility is related
+to the Granger causality tests developed in SVAR settings by Giannone & Reichlin (2006)
+and Forni & Gambetti (2014). Finally, the weaker notion of "recoverability" studied here has
+independently been proposed by Chahrour & Jurado (2021) outside the context of external
+IV identification.1
+
+Outline. Section 2 defines the SVMA-IV model and the parameters of interest, and states
+the identification problem. Section 3 derives our identification results. Section 4 gives a prac-
+tical overview of our procedures and their implementation. Section 5 applies the procedures
+to bound the importance of monetary shocks. Section 6 illustrates the usefulness and inter-
+pretation of the upper bound on shock importance through analytical examples. Section 7
+compares the finite-sample performance of our procedures to the SVAR-IV approach through
+simulations. Section 8 concludes. Proofs of our main results are relegated to Appendix A.
+The Matlab code suite and a supplemental appendix are available online.2
+
+
+2     Econometric framework
+We begin by defining the econometric model and the parameters of interest. Then we state
+the identification problem.
+
+
+2.1     Model
+Following Stock & Watson (2018), we assume a SVMA-IV model. This model allows for
+an unrestricted linear shock transmission mechanism and, unlike standard SVAR analysis,
+does not require shocks to be invertible. We also assume the availability of valid external
+IVs (proxy variables) ­ variables that correlate with the shock of interest, but not with the
+other shocks. For notational clarity, we assume throughout that all time series below have
+zero mean and are strictly non-deterministic.
+    First, we define the SVMA model, which places no restrictions on the linear transmission
+of the vector of shocks t to the vector of observed endogenous variables yt .
+
+   1
+     Recoverability is formally equivalent to the assumption that the structural shock is spanned by current
+and future reduced-form VAR forecast errors. Such dynamic rotations of ut have been exploited in non-IV
+settings by Lippi & Reichlin (1994), Mertens & Ravn (2010), and Forni et al. (2017a,b).
+   2
+     https://github.com/mikkelpm/svma_iv
+
+
+                                                     5
+Assumption 1. The ny -dimensional vector yt = (y1,t , . . . , yny ,t ) of observed macro variables
+is driven by an unobserved n -dimensional vector t = (1,t , . . . , n ,t ) of exogenous economic
+shocks,
+                                                              
+                                 yt = (L)t ,       (L)             L,                            (1)
+                                                              =0
+
+where L is the lag operator. The matrices  are each ny × n and absolutely summable
+across . (x) is assumed to have full row rank for all complex scalars x on the unit circle.
+The shocks are mutually orthogonal white noise processes:
+
+                                           t  WN (0, In ),
+
+where In denotes the n-dimensional identity matrix.
+
+    The (i, j ) element i,j, of the moving average coefficient matrix  is the impulse response
+of variable i to shock j at horizon . The j -th column of  is denoted by ·,j, and the i-th
+row by i,·, . The full-rank assumption guarantees a nonsingular stochastic process. This
+condition requires n  ny , but ­ crucially ­ we do not assume that the number of shocks n
+is known. The mutual orthogonality of the shocks is the standard assumption in empirical
+macroeconomics. The model is semiparametric in that we place no a priori restrictions on
+the coefficients of the infinite moving average, except to ensure a valid stochastic process. In
+particular, the infinite-order SVMA model (1) is consistent with all discrete-time Dynamic
+Stochastic General Equilibrium (DSGE) models and all stable SVAR models for yt .
+    Second, we assume the availability of one or more external IVs for the shock of in-
+terest, with the shock of interest specified to be the first one, 1,t . Each of the nz IVs
+zt = (z1,t , . . . , znz ,t ) are assumed to correlate with the first shock but not the other shocks,
+after controlling for lagged variables: For all i = 1, . . . , nz ,
+
+                      E (~
+                         zi,t 1,t ) = 0,   E (~
+                                              zi,t j, ) = 0 for all (j,  ) = (i, t),             (2)
+
+where z ~i,t is the population residual from projecting zi,t on all lags of {zt , yt }. The key
+exclusion restriction is that the shock of interest 1,t is the only contemporaneous shock to
+correlate with the IVs zt . Thus, z~t is a proxy for 1,t (up to scale) that is contaminated by
+classical measurement error. This is a strong assumption that must be carefully defended
+in applications. Ramey (2016) and Stock & Watson (2018) survey the extensive applied
+literature that has constructed plausibly valid external IVs for various shocks.
+    Using linear projection notation, we can equivalently express the IV exclusion restrictions
+
+                                                    6
+(2) as the assumption that the IVs zt are proportional to the shock of interest 1,t plus classical
+measurement error vt (and possibly lagged observed variables).
+
+Assumption 2. The IVs zt = (z1,t , . . . , znz ,t ) satisfy
+                                     
+                              zt =        ( zt- +  yt- ) + 1,t + 1 /2
+                                                                 v vt ,                                  (3)
+                                     =1
+
+
+where  is nz × nz ,  is nz × ny ,  is an nz -dimensional vector normalized to unit Euclidean
+length and with its first nonzero element being positive,   0 is a scalar, and v is a
+symmetric positive semidefinite nz × nz matrix. The elements of  and  are absolutely
+summable across , and the polynomial x  det(Inz -           =1  x ) has all its roots outside the
+unit circle. The disturbance vector vt is a white noise process that is dynamically uncorrelated
+with the structural shocks t :
+
+                         vt  WN (0, Inz ),      Cov(t , v ) = 0n ×nz for all t, .
+
+    The interpretation of external IVs as noisy measures of true shocks is discussed in Mertens
+& Ravn (2013) and Stock & Watson (2018). In our notation (3), the scale parameter 
+(along with the residual variance-covariance matrix v ) measures the overall strength of
+the IVs, while the unit-length vector  determines which IVs are stronger than others.
+The assumptions on the coefficients  and  ensure stationarity. We emphasize that the
+linearity of equation (3) is not a structural assumption; it arises from a linear projection
+(as in the "first stage" of cross-sectional IV). In particular, Assumption 2 is consistent with
+the IV being a binary or censored series, since such a variable can still satisfy the moment
+conditions (2) that are equivalent with equation (3).
+    Since we restrict attention to identification from second moments, we may without loss
+of generality simplify notation by assuming that all disturbances are Gaussian.
+
+Assumption 3. (t , vt ) is i.i.d. jointly Gaussian.
+
+    The Gaussianity assumption is strictly for notational convenience. We could instead have
+maintained the above white noise assumptions (which allow for conditional heteroskedastic-
+ity) and phrased all our results using linear projection notation. The sole meaningful restric-
+tion is that we only exploit second moments of the data for identification, as is standard in
+the applied macro literature, and without loss of generality for Gaussian data.3 We drop the
+
+  3
+      If we were to take the assumption of i.i.d. shocks seriously, and the shocks were not Gaussian, higher-
+
+                                                      7
+Gaussianity assumption when developing inference procedures in Section 4.
+   Finally note also that Assumptions 1 to 3 together imply that the (ny + nz )-dimensional
+data vector (yt , zt ) is strictly stationary.
+
+
+2.2     Parameters of interest
+We are interested in the propagation of the first structural shock 1,t to the macroeconomic
+aggregates yt . This section lists the parameters of interest to the applied macroeconomist.
+
+Impulse responses. As discussed above, the (i, 1) element i,1, of the moving average
+coefficient matrix  is the impulse response of variable i to shock 1 at horizon . We
+distinguish such absolute impulse responses from relative impulse responses i,1, /1,1,0 ,
+which give the response of yi,t+ to a shock to 1,t that increases y1,t by one unit on impact.
+
+Invertibility and recoverability. The shock 1,t is said to be invertible if it is
+spanned by past and current (but not future) values of the endogenous variables yt : 1,t =
+E (1,t | {y }-< t ). This condition may or may not hold in a given moving average model
+(1), depending on the impulse response parameters  . Conventional SVAR analysis invari-
+ably imposes invertibility, since the SVAR model obtains from the additional assumptions
+that n = ny and that (L) has a one-sided inverse, so the shocks t = (L)-1 yt are spanned
+by current and past data. However, in many structural macro models, at least some of the
+shocks cannot be recovered from only lagged macro observables, i.e., the moving average
+representation is noninvertible. For example, this is often the case in models with news (an-
+ticipated) shocks or noise (signal extraction) shocks (Blanchard et al., 2013; Leeper et al.,
+2013). Furthermore, if n > ny , it is impossible for all shocks to be invertible.
+    A continuous measure of the degree of invertibility is the R2 value in a population regres-
+sion of the shock on past and current observed variables (Sims & Zha, 2006, pp. 243­245;
+Forni et al., 2019). More generally, we define
+
+                                   R2  Var(E (1,t | {y }-< t+ )),                                             (4)
+
+the population R-squared value in a projection of the shock of interest on data up to time t +
+(recall that Var(1,t ) = 1). If the shock is invertible in the sense of the previous paragraph,
+
+order moments of the data would be informative about the parameters. However, we agree with most of the
+literature that the assumption of i.i.d. shocks is too strong due to the likely presence of stochastic volatility.
+
+
+                                                        8
+        2                  2
+then R0   = 1. Hence, if R0  < 1, then no SVAR model can generate the impulse responses
+                                                                           2
+(L), although the model is nearly consistent with SVAR structure if R0        1 (Wolf, 2020).
+    A weaker condition than invertibility is that the shock of interest is recoverable from
+all leads and lags of the endogenous variables ­ that is, if E (1,t | {y }-< < ) = 1,t , or
+                 2
+equivalently if R  = 1. A sufficient condition is that n = ny , since then (L) automatically
+has a two-sided inverse (Brockwell & Davis, 1991, Thm. 3.1.3), and thus the shocks t =
+(L)-1 yt are spanned by current, past, and future data. This is the case in many DSGE
+models with news (i.e., anticipated) shocks (e.g., Leeper et al., 2013).
+
+Variance decompositions. Variance decompositions are the key parameters of interest
+in this paper. We focus in the main text on the forecast variance ratio (FVR), where the
+FVR for the shock of interest for variable i at horizon is defined as
+                                                                -1   2
+                  Var(yi,t+ | {y }-< t , {1, }t< < )            m=0 i,1,m
+      FVR i,   1-                                    =                        .
+                        Var(yi,t+ | {y }-< t )         Var(yi,t+ | {y }-< t )
+
+The FVR measures the reduction in the econometrician's forecast variance that would arise
+from being told the entire path of future realizations of the first shock. The larger this
+measure is, the more important is the first shock for forecasting variable i at horizon . The
+FVR is always between 0 and 1.
+    Appendix B.1 defines and provides identification analysis for two additional variance
+decomposition concepts. First, the forecast variance decomposition (FVD) is like the FVR
+but instead conditions on the history of all past shocks { }-< t , rather than the history
+of observables {y }-< t . Under invertibility, the FVR and FVD are identical (since then
+the information set {y }-< t equals the information set { }-< t ), explaining why the
+previous SVAR literature has not distinguished between the two. Second, we consider the
+unconditional frequency-specific variance decomposition (VD) of Forni et al. (2019, sec. 3.4).
+
+Historical decomposition. The historical decomposition of variable yi,t at time t at-
+tributable to the shock of interest is defined as E (yi,t | {1, }-< t ) = =0 i,1, 1,t- .
+
+
+
+2.3    Identification problem
+Our goal for the remainder of the paper is to answer the question: Given Assumptions 1 to 3,
+what do the second moments (autocovariances) of the data (yt , zt ) say about the parameters
+of interest defined above? In particular, can we test whether the shock 1,t is invertible?
+
+                                              9
+   Stock & Watson (2018) showed that relative impulse responses are point-identified in the
+SVMA-IV model. To see this transparently, consider the case with a single IV, so  = 1.
+Since
+                         Cov(yi,t , zt | {y , z }-< <t ) = i,1, ,                       (5)
+
+the absolute impulse responses i,1, for all variables i and all horizons are identified up
+to the single scale parameter . Thus, the relative impulse responses i,1, /1,1,0 are point-
+identified, as  drops out from the fraction.
+    The main challenge addressed in this paper is that (partial) identification of variance and
+historical contributions requires (partial) identification of the absolute impulse responses, and
+thus of the scale parameter .
+
+
+3       Identification results
+This section contains our main theoretical identification results. Readers who are primarily
+interested in practical implementation are encouraged to skip ahead to Section 4. For expo-
+sition, we start in Section 3.1 by deriving results for a simple static version of our SVMA-IV
+model. We then turn to the general dynamic model in Sections 3.2 to 3.4, applying the static
+results to the frequency domain representation of the data. We initially focus on the case
+with a single IV, but we discuss the straight-forward extension to multiple IVs in Section 3.5.
+
+
+3.1     Static model
+To build intuition, consider a static version of the SVMA-IV model with a single instrument:
+
+                                        yt = ·,1,0 1,t + t ,
+                                        zt = 1,t + v vt ,
+                                           i.i.d.          I2     02×ny
+                             (1,t , vt , t )  N     0,                      .
+                                                         0ny ×2    
+
+                                      n
+Here , v  0 are scalars, t            j =2 ·,j,0 j,t is an ny -dimensional random vector that
+captures all the structural shocks other than the one of interest, and   Var(t ).4
+
+    4
+   While the static model is primarily intended to provide intuition about the analysis of the SVMA-IV
+model, the results in this subsection are directly relevant for identification in the more restrictive SVAR
+model with an external IV. In that framework, yt would denote the ny reduced-form VAR residuals, which
+
+
+                                                    10
+    Our main parameter of interest is the Forecast Variance Ratio
+
+                                            Var(yi,t | 1,t )    2 i,1,0
+                               FVRi,1   =1-                  =            .
+                                              Var(yi,t )       Var(yi,t )
+
+This is just the population R-squared value in the (infeasible) regression of yi,t on 1,t . Since
+Cov(yi,t , zt ) = i,1,0 , it is easy to see that the FVR is identified up to a factor 1/2 :
+
+                                                  1   Cov(yi,t , zt )2
+                                     FVRi,1 =       ×                  .                                   (6)
+                                                  2    Var(yi,t )
+
+Thus, we ask: What does the variance-covariance matrix of the data (yt , zt ) say about the
+scale parameter 2 ?
+    Our key insight is that the static model is nothing but a multivariate classical measure-
+ment error model: Whereas we would like to measure the R-squared value from a regression
+of yt on 1,t , we only observe the noisy proxy zt for the "regressor". Intuitively, the con-
+tribution of 1,t to yt is not point-identified because the signal-to-noise ratio 2 /v 2
+                                                                                        of the
+proxy zt is not known a priori. For example, upon observing a small correlation between
+the IV and macro observables, we do not know whether this correlation is small because of
+measurement error or because the shock is unimportant. Nevertheless, the moments of the
+data are informative about the signal-to-noise ratio. At one extreme, the IV can never be
+more than perfect ­ at best, there is no measurement error (infinite signal-to-noise ratio).
+At the other extreme, the signal-to-noise ratio cannot be zero, since then the IV would not
+correlate at all with macro observables. We now formalize this intuition.5
+
+Lower bound on shock importance. We begin with a lower bound on the importance
+of the shock (and so on the amount of measurement error), or equivalently an upper bound
+on 2 . To derive this bound, simply observe that
+
+                                          2   2 + v
+                                                  2
+                                                    = Var(zt ).
+
+This inequality binds when there is no measurement error in the IV, i.e., when v = 0.
+
+are linear functions of the vector t of n contemporaneous structural shocks.
+   5
+     Our bounds do not follow from existing results in the literature on measurement error in linear regression
+(e.g., Klepper & Leamer, 1984), since our parameters of interest are not regression coefficients.
+
+
+
+
+                                                      11
+   Mapping this upper bound on 2 into a lower bound on the FVR via (6), we get
+
+                                      Cov(yi,t , zt )2
+                          FVR i,1                        = Corr(yi,t , zt )2 .                  (7)
+                                     Var(zt ) Var(yi,t )
+
+The lower bound corresponds to the population R-squared value in a regression of yi,t on
+zt , that is, a regression which treats the IV as if it were a perfect measure of the shock 1,t
+(up to scale). The attenuation bias imparted by the measurement error vt implies that this
+regression yields a lower bound on the true FVR.
+
+Upper bound on shock importance. To derive the upper bound on the importance
+of the shock (and on the amount of measurement error), or equivalently the lower bound on
+                
+, define first zt  E (zt | yt ) and 1,t  E (1,t | yt ). Then, by standard linear projection
+algebra, we must have
+
+                               
+                          Var(zt ) = 2 Var(       2            2
+                                           1,t )   Var(1,t ) =  .
+
+
+Intuitively, 2 = Var(E (zt | 1,t )) is the explained sum of squares from a projection of zt on
+                                                                                 
+the shock 1,t . This must weakly exceed the explained sum of squares Var(zt       ) = Var(E (zt |
+yt )) from a projection of zt on yt , simply because the variables in yt are effectively noisy
+measures of the shock 1,t contaminated by other structural shocks t , and uncorrelated with
+vt . In other words, the explanatory power of the variables yt for the IV zt puts a lower bound
+on the possible signal-to-noise ratio 2 /v  2
+                                              = 2 /(Var(zt ) - 2 ). The inequality above binds
+when the shock is invertible (   1,t  E (1,t | yt ) = 1,t ), i.e., when the macro observables yt
+explain as much of the variation in the IV as the shock 1,t itself does.
+     Mapping the lower bound on 2 into an upper bound on the FVR via (6), we get
+
+                                                                   2
+                            Cov(yi,t , zt )2          Cov(yi,t , zt )                     2
+               FVR i,1         
+                                                =        
+                                                                          = Corr(yi,t , zt ).   (8)
+                          Var(zt ) Var(yi,t )       Var(zt ) Var(yi,t )
+
+                                                              
+The upper bound corresponds to treating the projection zt       =   1,t of the IV on the macro
+observables as a perfect measure of the shock (up to scale). This is correct if indeed the
+shock were invertible (   1,t = 1,t ), but otherwise overstates the importance of the shock.
+Intuitively, unless the shock is in fact invertible, the upper bound mistakenly attributes too
+much of the lack of co-movement between yt and zt to measurement error (rather than the
+actual limited importance of 1,t ).
+
+
+                                                    12
+    Whereas the lower bound (7) on the FVR for variable i does not depend on the entire
+set of observed macro aggregates yt , the upper bound (8) decreases monotonically as we add
+more variables to the vector yt . In particular, the upper bound equals the trivial bound of 1
+if there is only one observable (ny = 1), since in this case we cannot rule out that the scalar
+time series yt is driven entirely by the first shock, with the imperfect correlation between
+yt and zt purely caused by measurement error.6 However, when ny  2, the upper bound
+is generally below 1. We present an analytical example in Section 6.1 that shows how the
+addition of extra observables helps sharpen identification, and clarifies the conditions under
+which we can expect the upper bound to be close to the true FVR.
+
+                                          
+Identified set. The bounds 2  [Var(zt      ), Var(zt )] are sharp, i.e., exploit all information
+contained in the second moments of the data, in the following sense. Suppose we are given
+any non-singular variance-covariance matrix for the data (yt , zt ) , as well as any value of 2
+in our interval. We can then choose appropriate values of the remaining parameters such
+that the model matches the given variance-covariance matrix of the data.7
+    Under what conditions are the bounds on 2 ­ and thus on the FVR ­ likely to be tight
+(i.e., close to the true FVR)? We can express the identified set for 1/2 in terms of the
+underlying model parameters as follows:
+
+                        1     2     1          1            1
+                         2
+                            2   2
+                                  × 2 ,                   × 2 .
+                             + v        Var(E (1,t | yt )) 
+
+The lower bound is closer to the true value 1/2 when the actual signal-to-noise ratio 2 /v      2
+
+is larger, i.e., when the IV is stronger. The upper bound is closer to the true FVR when
+                             2
+the degree of invertibility R0 = Var(  1,t ) = Var(E (1,t | yt )) is larger, i.e., when the macro
+variables yt are more informative about the hidden shock 1,t . Finally, the identified set is
+never empty, and it collapses to a point only in case of a perfect IV and invertibility.
+
+Point identification. Point identification obtains if the researcher assumes either that
+the IV is perfect (v = 0), in which case the lower bound for the FVR binds, or that the
+shock of interest is invertible (1,t = 1,t ), in which case the upper bound binds.
+
+
+  6                                                                                   
+     Mathematically, when yt is a scalar, then zt  = E (zt | yt )  yt , so Corr(yt , zt ) = ±1.
+   7                                               1
+     This is achieved by the choices ·,1,0 =  Cov(yt , zt ), v = Var(zt ) - 2 , and  = Var(yt ) -
+                                                                    2
+ 1                                             2                                          2
+2 Cov(yt , zt ) Cov(yt , zt ) . This choice of v is nonnegative since Var(zt )   , and Lemma 1 in Ap-
+                                                                                                 
+pendix A.2.1 implies that the choice of  is a positive semidefinite matrix since 2  Var(zt        ) =
+Cov(zt , yt ) Var(yt )-1 Cov(yt , zt ).
+
+
+                                                 13
+3.2    Dynamic model: shock scale
+We now analyze identification in the general dynamic model of Section 2.1. The key idea in
+our proofs is to apply the logic of the static model frequency-by-frequency to the frequency
+domain representation of the data.
+    As in the static case, we begin in this section by characterizing the identified set for the
+scale parameter . While not economically interesting in itself, this scale parameter is ulti-
+mately key to identification of our actual parameters of interest. We maintain Assumptions 1
+to 3 throughout, but for the moment consider the case of a single IV (nz = 1), leaving the
+generalization to Section 3.5. That is, zt is a scalar and  = 1 in equation (3). We write
+  1/2
+v = v  0, a scalar.
+
+Preliminaries. It will prove convenient to define the IV projection residual that removes
+any dependence on lagged observed variables:
+
+                        ~t  zt - E (zt | {y , z }-< <t ) = 1,t + v vt .
+                        z                                                                     (9)
+
+Note that z~t is serially uncorrelated by construction.
+    Next, we need to define our notation for spectral density matrices. For any two jointly
+stationary vector time series at and bt of dimensions na and nb , respectively, define the na × nb
+cross-spectral density matrix function (Brockwell & Davis, 1991, ch. 4 and 11)
+                                     
+                                1
+                      sab ( )            e-i Cov(at , bt- ),     [0, 2 ].
+                               2    =-
+
+
+For any vector time series at , we denote its spectrum by sa ( )  saa ( ).
+
+Lower bound on shock importance. We again begin with a lower bound on shock
+importance (or the amount of measurement error), which corresponds to an upper bound on
+the scale parameter . As in the static model, we find
+
+                                 2   2 + v
+                                         2             2
+                                                 zt )  U
+                                           = Var(~       B.                                  (10)
+
+Thus, once we look at the residualized IV in (9), the bound construction works as in the
+static case, with the boundary  = U B corresponding to a perfect IV.
+
+
+
+                                               14
+Upper bound on shock importance. For the upper bound on shock importance (or
+the lower bound on 2 ), we apply a version of the argument from the static case to the joint
+spectrum of the data at every frequency. First, as in the static case, we define the projections
+of z
+   ~t and 1,t , respectively, just now onto all leads and lags of the endogenous variables yt :
+
+                                       
+                                     z
+                                     ~t  E (~
+                                            zt | {y }-< < ),                                         (11)
+                                    1,t  E (1,t | {y }-< < ).
+
+
+            
+Note that z
+          ~t =   1,t , since the measurement error vt is dynamically uncorrelated with yt .
+Applying the same logic as in the static case at an arbitrary frequency   [0, 2 ], we have
+
+                                      2       2         2                 1
+                              ~ ( ) =  s ( )   s1 ( ) =  ×
+                             sz                                          2
+                                                                            .                        (12)
+                                             1
+
+
+
+The last equality uses that the shock 1,t is white noise with variance 1. Similar to the
+static case, the inequality above arises because the "explained sum of squares" s ( ) from a
+                                                                                  1
+frequency-specific projection of the shock 1,t on all leads and lags of the macro observables
+yt must be less than the "total sum of squares" s1 ( ).8 Exploiting the inequality (12) at all
+frequencies, we obtain the lower bound
+
+                                  2  2 sup[0,] sz      2
+                                                ~ ( )  LB .                                          (13)
+
+The bound binds if at some frequency   [0,  ] the observed macro aggregates are perfectly
+informative about the hidden shock 1,t . This is the natural dynamic, frequency-domain
+analogue of the condition in the static case, where we required the static yt to be perfectly
+informative about 1,t . If the macro aggregates are in fact not perfectly informative about
+the shock at any frequency, then the lower bound attributes too much of the (frequency-by-
+frequency) lack of co-movement between yt and zt to measurement error.
+
+The identified set. The main theoretical result of this paper is that the above bounds
+ 2   2
+LB , U B are sharp.
+
+
+Proposition 1. Let there be given a joint spectral density for wt = (yt , z
+                                                                          ~t ) , continuous and
+                                           ~t unpredictable from {w }-< <t . Choose any
+positive definite at every frequency, with z
+
+   8                                                                                 -1
+    Brockwell & Davis (1991, Remark 3, p. 439) show that sz    ~ ( ) = sy z
+                                                                          ~( ) sy ( )   syz
+                                                                                          ~( ) and s ( ) =
+                                                                                                    1
+              -1
+sy1 ( ) sy ( ) sy1 ( ). Since the joint spectrum is positive semidefinite, s1 ( )  s ( ) for all  .
+                                                                                    1
+
+
+
+
+                                                   15
+  (LB , U B ]. Then there exists an SVMA-IV model as in Assumptions 1 and 2 with the
+given  such that the model-implied spectral density of wt matches the given spectral density.
+
+    Recall that the previous discussion has already shown that any value of 2         2
+                                                                                  / [LB  , U  2
+                                                                                                B]
+is impossible. The proposition strengthens this result to say that, given the second moments
+of the data, we cannot rule out any values of 2 in the interval [LB 2    2
+                                                                       , U B ].
+                                                                               9
+
+    To interpret the identified set, we proceed as in the static model and express the interval
+                                                                                          1
+in terms of the underlying model parameters. We focus on the identified set for            2 , as
+
+this transformation is again the most relevant one for identifying the FVR and degree of
+invertibility/recoverability, as shown below. We can write the identified set for 1/2 as
+
+                 1             2                   1                    1                        1
+                                               ×     ,                                       ×     .     (14)
+                 2            2 + v
+                                  2                2     1 - 2 inf [0,] s1 - ( )                 2
+                                                                                    1
+                         instrument strength             informativeness of data for shock
+
+                                                                          1
+As in the static case, the lower bound is larger (and closer to the true   2 ) when the instrument
+                                                               2   2
+is stronger in the sense of a higher signal-to-noise ratio  /v . The upper bound is again
+                                   1
+smaller (and closer to the true     2 ) when the data are more informative about the shock of
+
+interest. The relevant notion of informativeness, however, is now more complicated than in
+the static case, for two reasons: First, we now exploit the explanatory power of all leads
+and lags of the macro aggregates when forming the projection          1,t  E (1,t | {y }-< < );
+and second, we consider all frequencies of the data separately. The upper bound is close to
+the truth as long as the leads and lags of yt are highly informative about the frequency-
+fluctuations of the shock at some frequency  (e.g., in the long run   0), in the sense that
+the spectral density of the projection residual 1,t -   1,t vanishes at this frequency. This does
+not require the macro variables to be informative about the shock at all frequencies (e.g., in
+the short run    ). We illustrate this point in Section 6.2.
+                                                         1
+    Similar to the static case, the identified set for    2 does not collapse to a point unless
+
+the instrument is perfect and there exists a frequency  for which the data are perfectly
+informative about the frequency- cyclical component of the shock.
+
+Practical upper bound on shock importance. In practice, we do not recommend
+exploiting the sharp lower bound on  for estimation and inference. The reason is that LB
+in equation (13) equals the supremum of a function, which depends on the spectral density
+
+  9
+      The proposition does not cover the knife-edge case  = LB due to economically inessential technicalities.
+
+
+                                                         16
+matrix of the data. Nonparametric estimation of the supremum of an unknown function
+is highly challenging given the moderate sample sizes available to applied macroeconomists
+(Gafarov et al., 2018). For this reason, our implementation in Section 4 instead uses the
+weaker bound
+                                              2
+                             
+                     2  Var(~
+                            zt )=                  ~ ( ) d  2 sup sz
+                                                  sz                       2
+                                                                   ~ ( ) = LB .                          (15)
+                                          0                      [0, ]
+
+
+Since 2 is given by an integral of the spectrum as opposed to a supremum, its point estimator
+defined in Section 4 is consistent and asymptotically normal, as shown in Appendix B.8.10
+                
+    Since Var(~zt ) = 2 Var(          2     2                                 2
+                              1,t ) =  × R , the weaker lower bound on  will nevertheless
+                                                                                2
+be close to the truth if the shock of interest is close to being recoverable (R    1), and thus
+                                                             2
+in particular if the shock is close to being invertible (R0  1). In Section 6.3 we show by
+example that the bound 2 binds in a model with news shocks, which cannot be analyzed
+using conventional SVAR-IV methods that assume invertibility.
+
+
+3.3     Dynamic model: parameters of interest
+                             1
+Given the identified set for  2 , it is now straight-forward to derive identified sets for variance
+
+decompositions as well as the degree of invertibility and recoverability.
+
+Variance decompositions. The FVR satisfies
+                                    -1                      -1
+                                    m=0  2i,1,m      1                    ~t-m )2
+                                                           m=0 Cov(yi,t , z
+              FVR i, =                             = 2×                           .                      (16)
+                          Var(yi,t+   | {y }-< t )      Var(yi,t+ | {y }-< t )
+
+                                                                                             1
+Hence, as in the static case, the identified set for FVR i, equals the identified set for     2,
+
+scaled by the (point-identified) second fraction on the far right-hand side above. As discussed
+previously, and as in the static case, the lower bound for the FVR depends on the strength
+of the IV, and the upper bound on the FVR depends on the informativeness of the macro
+variables for the shock of interest. Adding more variables to the vector yt of endogenous
+observables always leads to a weakly narrower identified set (in percentage terms, since the
+
+  10
+    Methods from the moment inequality literature could be applied to develop confidence intervals that
+                                2
+exploit our sharp lower bound LB    (Andrews & Shi, 2013, 2017; Chernozhukov et al., 2013). We leave this
+more complicated option to future work. Alternatively, if researchers have a strong a priori reason to believe
+that the shock is likely to be particularly important at certain frequencies, then they may fix frequency
+bounds [1 , 2 ] and compute the integral in (15) by integrating over this interval only.
+
+
+
+                                                      17
+parameter FVR i, itself also changes when we change the vector yt ). Unlike in the static
+case, the upper bound in the dynamic case is generally below 1 even if we only observe a
+single macro time series (ny = 1), as shown by example in Section 6.2.
+    Appendix B.1 derives bounds on the other variance decomposition concepts (VD and
+FVD) introduced in Section 2.2. Bounding the FVD in particular requires more work.
+
+Degree of invertibility & recoverability. The definition (4) of R2 implies
+
+                                          1
+                                   R2 =     × Var(E (~
+                                                     zt | {y }-< t+ )).                                 (17)
+                                          2
+
+Since the variance on the right-hand side above is point-identified, the identified sets for the
+degree of invertibility ( = 0) and the degree of recoverability ( = ) follow immediately
+                            1
+from the identified set for  2.
+                                2       2
+   From the sharp bounds on R0    and R   , we can also derive testable conditions under which
+the distribution of the observable data is consistent with invertibility or recoverability.
+                            2                                   2
+Proposition 2. Assume LB        > 0. The identified set for R0    contains 1 if and only if the
+instrument residual z~t does not Granger cause the macro observables yt . The identified set
+      2                                            
+for R   contains 1 if and only if the projection z
+                                                 ~t is serially uncorrelated.
+
+    According to Proposition 2, 1,t is certain to be noninvertible if and only if z     ~t Granger
+causes yt (which is equivalent with the condition that zt Granger causes yt ). This result will
+be the basis for the pre-test of invertibility in Section 4. Note, however, that a finding of
+                                                   2                              2
+Granger non-causality need not imply that R0         = 1; the identified set for R0 always includes
+values below 1. Proposition 2 additionally implies that 1,t is certain to be non-recoverable
+                 
+if and only if z
+               ~t , defined in (11), is serially correlated at some lag.11
+
+Absolute impulse responses. For completeness, we note that the identified set for the
+                                                                             1
+absolute impulse response i,1, is obtained by scaling the identified set for   , cf. equation
+(5). This extends existing results on the point-identification of relative impulse responses
+(Stock & Watson, 2018), as discussed at the end of Section 2.
+
+  11
+       We leave the development of a practical statistical test of recoverability to future research.
+
+
+
+
+                                                        18
+3.4    Dynamic model: point identification
+As we have seen, without further restrictions, our various parameters of interest are only
+interval-identified, albeit with informative bounds. In this section we complement those
+results by stating a menu of sufficient conditions, each of which guarantees point identification
+of the FVR and historical decompositions.
+
+Informative instruments. Point identification obtains if the researcher is willing to
+assume that the instrument is perfect, i.e., v = 0. In this case the lower bounds on the
+FVR and degree of invertibility/recoverability bind. Indeed, since the instrument equals the
+shock up to scale, z~t = 1,t , the FVR and historical decompositions are easily computed
+through regressions (Jord` a, 2005; Gorodnichenko & Lee, 2020). Note that the assumption
+that the IV is perfect is not testable.
+
+Informative macro aggregates. The second set of sufficient conditions relates to the
+informativeness of the macro aggregates yt for the hidden shock 1,t . In this category, our
+weakest condition for point identification is that the data yt is perfectly informative about
+1,t at some frequency, i.e., the spectral density of the projection residual 1,t -    1,t vanishes
+at some frequency  . Then  = LB , so the FVR and degree of invertibility/recoverability
+are identified. This assumption is not testable.
+    A stronger but more easily interpretable assumption is recoverability, i.e.,    1,t  E (1,t |
+{y }-< < ) = 1,t . This assumption is testable, cf. Proposition 2. As explained in
+Section 2.2, recoverability is restrictive, but it is a meaningfully weaker requirement than
+invertibility in many economic applications, such as in the news shock model in Section 6.3
+below. In particular, it is satisfied whenever there are as many shocks as variables, n =
+                                                                         1 
+ny . Under recoverability, the shock itself can be identified as 1,t =     z
+                                                                           ~t , so the historical
+                                                     
+decomposition E (yi,t | {1, }-< t ) = E (yi,t | {z ~  }-< t ) is also identified.
+
+
+3.5    Extension: multiple instruments
+To conclude, we briefly extend the analysis to a model with multiple IVs for the shock of
+interest (nz  2). This extended multiple-IV model is testable, unlike the single-IV model.
+As in the single-IV case, define the projection residual
+
+                      ~t  zt - E (zt | {y , z }-< <t ) = 1,t + 1
+                      z                                          /2
+                                                               v vt .                        (18)
+
+
+                                               19
+Appendix B.2 shows that the testable implication of the multiple-IV model is that the cross-
+spectrum syz ~( ) has a rank-1 factor structure. The validity of the multiple-IV model can be
+
+rejected if and only if this factor structure fails.
+    When the multiple-IV model is consistent with the distribution of the data, then the
+identification analysis can be reduced to the single-IV case in Sections 3.2 to 3.4. Specifically,
+Appendix B.2 shows that (i)  is point-identified, and (ii) the identified sets for , variance
+decompositions, and the degree of invertibility are the same as the identified sets that exploit
+only the scalar instrument
+
+                                         1
+                               t 
+                               z                       zt )-1 z
+                                                   Var(~      ~t .                           (19)
+                                          zt )-1 
+                                      Var(~
+
+             t  E (1,t | z
+Intuitively, z            ~t ). Because z
+                                        t is a linear combination of all nz instruments, the
+identified sets are narrower than if we had used any one instrument zk,t in isolation.
+   In Appendix B.3 we also derive sharp bounds in the more general case of multiple instru-
+ments being correlated with multiple structural shocks, as in Mertens & Ravn (2013).
+
+
+4     Practical implementation
+We now describe the practical implementation of our inference procedures for variance de-
+compositions and our test of invertibility of the shock of interest. To keep the exposition
+self-contained, we review some of the conclusions from Section 3. For ease of notation we fo-
+cus on the case with a single IV zt in this section. The generalization to multiple instruments
+is straight-forward, cf. Section 3.5.
+    The key Proposition 1 in Section 3 showed that, without further assumptions, variance
+decompositions and the degree of invertibility are only partially identified. That is, even
+if the sample size were infinite so we knew the autocovariance function of the observed
+data Wt  (yt , zt ) perfectly, we would not be able to exactly pinpoint the true values of
+these parameters. However, we were able to derive informative bounds on the parameters of
+interest. The remainder of this section gives an overview of how to compute those bounds in
+practice, how to do inference on the identified set, and how the additional a priori assumption
+of recoverability allows for consistent point estimation of all economic parameters of interest.
+    As mentioned in the introduction, a Matlab code suite that implements all steps below
+is available online.
+
+
+
+
+                                               20
+4.1     Preliminaries: approximating the autocovariance function
+Our bounds are simple functions of the autocovariances of the data Wt  (yt , zt ) . The
+first step of our procedure is thus to estimate this autocovariance function. Though vari-
+ous estimators could in principle be used in conjunction with our identification results, we
+choose here to approximate the distribution of the observed data with a finite-order VAR
+(we discuss nonparametric consistency below). Note that this is an approximation of the
+reduced-form dynamics of the data; we do not need to assume a structural VAR model and
+the restrictive invertibility assumption that goes with it. Since our analysis in Section 3
+assumes stationarity, the data should be appropriately transformed and detrended prior to
+the analysis.12
+    As a first step, we select the VAR lag length p by a standard information criterion, such
+as the Akaike Information Criterion (AIC). We then estimate a VAR(p) model for the data
+Wt = (yt , zt ) by OLS. Finally, we compute the VAR-implied estimates of the autocovariances
+and cross-covariances of yt and the projection residual z     ~t  zt - E (zt | {y , z }-< t-1 ).
+Denote these estimates by Var(~    zt ), Cov(~
+                                             zt , yt+h ), and Cov(yt , yt-h ) for h = 0, 1, . . . ; see
+Appendix A.1 for explicit formulas.
+
+
+4.2     Pre-test for invertibility
+Though our identification bounds below are valid irrespective of the invertibility of the
+shocks, some researchers may wish to have available a convenient pre-test of the null hy-
+pothesis of invertibility. Proposition 2 showed that the distribution of the data is consistent
+with the shock of interest 1,t being invertible if and only if the IV zt does not Granger cause
+the vector yt of macro observables. Intuitively, if the shock is invertible, then lags of the
+macro observables yt capture all the forecasting power of lags of the shock 1,t ; hence, lags
+of the IV zt (a noisy measure of 1,t ) do not contribute anything to forecasting. We can test
+the null hypothesis of no Granger causality in the following standard way:
+
+    · Reject the null hypothesis of invertibility of 1,t at the chosen significance level if
+      the ny × p VAR coefficients on all lags of zt in all the yt equations are jointly statistically
+      significant (for example using a Wald test, cf. Kilian & L¨    utkepohl, 2017, ch. 2.5).
+
+  12
+    Because our analysis relies heavily on the spectral density matrix of the data, it is not straight-forward to
+extend our procedures to work directly with non-stationary data (without prior transformation/detrending).
+We leave this important topic to future research.
+
+
+
+                                                       21
+Non-rejection should not be interpreted as strong evidence in favor of invertibility: Any valid
+test of invertibility necessarily has trivial power against some non-invertible alternatives,
+since it is possible for zt not to Granger cause yt even if the shock 1,t is non-invertible.13
+
+
+4.3     Estimating the identification bounds
+We now describe how to estimate our identification bounds for the Forecast Variance Ratio
+(FVR) and the degrees of invertibility and recoverability. Bounds on Variance Decomposi-
+tions (VDs) and Forecast Variance Decompositions (FVDs) are provided in Appendix B.1.
+    The bounds all depend on the two scalar quantities
+
+                           ^ 2  Var(E (~
+                                       zt | {y }-< < )),            ^ 2  Var(~
+                                                                    ¯        zt ),
+
+which are lower and upper bounds for 2 , cf. Proposition 1 and the discussion surrounding
+(15). An explicit formula for the somewhat non-standard projection variance ^ 2 ­ as well as
+other, similar projection variances mentioned below ­ is given in Appendix A.1.
+
+    · The estimated bounds for the Forecast Variance Ratio FVR i, of variable yi,t at
+      horizon are given by
+
+                             -1                              -1
+                     1                     ~t-m )2
+                            m=0 Cov(yi,t , z         1                     ~t-m )2
+                                                            m=0 Cov(yi,t , z
+                        ×                          ,    ×                          ,                       (20)
+                     ^
+                     ¯ 2 Var(yi,t+ | {y }-< t ) 
+                                                     ^ 2 Var(yi,t+ | {y }-< t )
+
+       cf. equation (16). The interval is always non-empty and never collapses to a point.
+       The true FVR is contained in this interval with high probability asymptotically, but
+       the analysis does not allow us to say where in the interval the parameter lies without
+       making further assumptions. The lower bound ­ which upon inspection corresponds
+       to pretending that the residualized IV z
+                                              ~t is a perfect measure of 1,t ­ is closer to the
+       true FVR when the IV is stronger (i.e., there is less measurement error), cf. equation
+       (14). The upper bound instead does not depend on the amount of measurement error,
+       and is closer to the true FVR when the macro variables yt are more informative about
+                                                                             2
+       the hidden shock 1,t (in the sense that the degree of recoverability R   is larger).
+
+  13
+     Stock & Watson (2018) develop an invertibility test which directs power against alternatives with impulse
+response functions that differ substantially from the invertible null. It is not immediately clear whether their
+test has power against all falsifiable non-invertible alternatives, as our proposed test does.
+
+
+
+
+                                                      22
+                                                           2
+   · The estimated bounds for the degree of invertibility R0 are given by
+
+                  1                                  1
+                     × Var( E  z
+                              (~t | { y }- <  t )) ,    × Var(E (~
+                                                                 zt | {y }-< t )) ,
+                  ^
+                  ¯2
+                                                     ^2
+                                                     
+
+      cf. equation (17). The data are consistent with substantial non-invertibility of the
+      shock 1,t if the above interval contains values substantially below 1. By the definition
+      of ^ 2 , this is the case if future values of the macro observables help to predict the
+      residualized IV z  ~t .
+                                                            2
+   · The estimated bounds for the degree of recoverability R  are given by
+
+                                               ^2
+                                               
+                                                  , 1 ,
+                                               ^
+                                               ¯2
+                                               
+
+      cf. (17). The data are consistent with substantial non-recoverability of the shock of
+      interest 1,t if the interval contains values substantially below 1. The reason why the
+      upper bound above equals the trivial bound of 1 is that we do not exploit the sharp
+      upper bound, which is difficult to estimate in realistic sample sizes, as discussed at the
+      end of Section 3.2. The theoretical sharp upper bound was derived in Proposition 1.
+
+Point identification/estimation under recoverability. Finally, our analysis in
+Section 3.4 showed that it is possible to point-identify many of the parameters of interest
+if the researcher is willing to impose additional a priori assumptions. In particular, if we
+                                                              2
+are willing to assume that the shock is recoverable ­ i.e., R   = 1 ­ then the upper bound
+for FVR i, in (20) is a consistent estimator of the true FVR, as argued in Section 3.4. As
+discussed in Sections 2.2 and 6, recoverability is a mathematically and economically weaker
+assumption than the invertibility assumption required by conventional SVAR-IV analysis.
+
+
+4.4    Confidence intervals
+In Appendix B.8 we prove that the above-mentioned bounds are jointly asymptotically nor-
+mal under weak nonparametric regularity conditions on the data generating process (DGP).
+We assume neither that the true DGP is a finite-order VAR, nor that the shocks are Gaus-
+sian. This argument requires the VAR lag length p = pT used for estimation to diverge with
+the sample size T at an appropriate rate.
+    Since the bounds are asymptotically normal, we can use standard arguments to construct
+
+
+                                              23
+confidence sets (Imbens & Manski, 2004). Consider any one of the partially identified pa-
+rameters discussed above and denote the estimates of its bounds by the generic notation
+[^,  ^
+     ¯]. We then use a conventional bootstrap for VAR models (Kilian & L¨         utkepohl, 2017, ch.
+12.2) to generate bootstrap samples of the bound estimates ^        and   ^
+                                                                          ¯, and let ^
+                                                                                     q  and q^
+                                                                                             ¯ denote
+the bootstrap  -quantiles of the lower and upper bounds, respectively. Then the interval
+[^       ^
+         ¯1-/2 ] is a valid 1 -  confidence interval for the identified set of the parameter in
+  q /2 , q
+question.14 That is, the probability that the confidence interval contains the entire identi-
+fied set is greater than or equal to 1 -  asymptotically; in particular, this confidence interval
+is therefore also a valid confidence set for the parameter itself.15 Under the additional point-
+identifying assumption that the shock is recoverable, the FVR is consistently estimated by
+the upper bound        ^
+                       ¯, so we can construct a 1 -  confidence interval as [q   ^     ^
+                                                                                 ¯/2 , q
+                                                                                       ¯1-/2 ].
+     Because VAR inference is subject to well-known small-sample biases (Kilian & L¨         utkepohl,
+                                                                                             ^
+2017), we recommend that the following alternative formulas be used. Let  and        ^       ¯ denote
+the average bootstrap draws of ^       and   ^
+                                             ¯. Then we report the bias-corrected point estimate
+            ^    ^                                                                                  ^
+[2^  -^  , 2¯-   ¯ ] of the bounds, as well as Hall's percentile confidence interval [2^ -^
+                                                                                          q 1-/2 , 2¯-
+^
+q
+¯/2 ]. Similar corrections can be applied in the case of point identification via recoverability.
+
+
+5     Application to monetary policy shocks
+To illustrate our method, we revisit an old question: the importance of monetary shocks for
+U.S. macro fluctuations. Our main result is that monetary shocks are of limited importance
+for post-1990 aggregate dynamics, especially for inflation. The application illustrates that
+our upper bound on variance decompositions can yield surprisingly sharp inference, despite
+the weakness of our identifying assumptions.
+
+Background. Gertler & Karadi (2015) construct an external instrument for monetary
+shocks from high-frequency changes in asset prices in very short time windows around FOMC
+announcements, following earlier work by Kuttner (2001), Cochrane & Piazzesi (2002), and
+G¨urkaynak et al. (2005). While Gertler & Karadi (2015) focus on estimation of relative
+
+  14
+     The validity requires that the VAR bootstrap procedure is consistent. For example, the bootstrap must
+take into account the conditional heteroskedasticity of the data. See Kilian & L¨
+                                                                                utkepohl (2017, ch. 12.2) for
+a menu of procedures, formal results, and regularity conditions.
+  15
+     In principle one could construct narrower confidence intervals that only guarantee coverage of the pa-
+rameter itself (not the identified set), as in Imbens & Manski (2004) and Stoye (2009), and we do this in our
+Matlab code suite. However, the decrease in length appears to be minimal in realistic applications.
+
+
+                                                     24
+IRFs, we will seek to quantify shock importance, taking the validity of their instrument as
+given.16 This setting is ideal for illustrating the appeal of our method, for two reasons.
+    First, measurement error is likely to be substantial. Intuitively, while short time windows
+around FOMC meetings may be a clean way of isolating some monetary shocks, all shocks
+occurring outside of that window are necessarily missed. Moreover, financial data are subject
+to noise due to market microstructure effects and uninformed traders. Treating the IV as the
+shock ­ as in the method of Gorodnichenko & Lee (2020), which is equivalent to our lower
+bound ­ will then understate the importance of monetary shocks due to attenuation bias.17
+Second, non-invertibility is a threat to SVAR-IV analysis. For example, Ramey (2016),
+citing the increasing prevalence of forward guidance in the conduct of U.S. monetary policy,
+cautions against the conventional SVAR-IV approach. In contrast, our partial identification
+approach does not require the shock to be invertible (or even recoverable).
+
+Model. Our specification largely follows Gertler & Karadi (2015), except that we do not
+impose a SVAR structure. We consider four endogenous macro variables yt : output growth
+(log growth rate of industrial production), inflation (log growth rate of CPI inflation), the
+Federal Funds Rate (FFR), and the Excess Bond Premium of Gilchrist & Zakraj       sek (2012)
+as a measure of the non-default-related corporate bond spread. For robustness, we also
+try replacing the FFR with the 1-year Treasury rate, as in Gertler & Karadi (2015). The
+external IV zt is constructed from changes in 3-month-ahead futures prices written on the
+FFR, where the changes are measured over short time windows around Federal Open Market
+Committee monetary policy announcement times.18 Data are monthly from January 1990
+to June 2012. The AIC selects p = 6 lags in the reduced-form VAR. We use 1,000 bootstrap
+draws from a homoskedastic recursive residual VAR bootstrap.
+
+  16
+     Caldara & Herbst (2019) compute FVDs for a similar specification, assuming an SVAR model. Their
+estimates of the importance of monetary shocks for inflation are somewhat larger than our upper bounds.
+  17
+     Formally, let the total monetary shock consist of two independent components, 1,t             ¯1,t +~  1,t , where   ¯1,t
+captures those shocks that occur inside FOMC announcement windows. Assume {               ¯1,t , ~1,t } are independent
+of {2,t , . . . , n ,t }. If zt = ¯1,t + v                    ¯t is independent of {
+                                         ¯t , where the noise v                      ¯1,t , ~1,t , 2,t , . . . , n ,t }, then
+the IV moment conditions (2) are satisfied. For the case v        ¯t = 0, our results in Section 3 imply that the
+Gorodnichenko & Lee (2020) FVR estimator will be biased downward by a factor of Var(¯                1,t )  [0, 1].
+  18
+     See Gertler & Karadi (2015) for details on the construction of the IV and a discussion of the exclusion
+restriction. Nakamura & Steinsson (2018a) argue that the monetary shock identified using this IV partially
+captures revelation of the Federal Reserve's superior information about economic fundamentals. This is
+related to the idea in Campbell et al. (2012) that monetary policy communication can be both "Delphic"
+and "Odyssean". Appendix B.3 shows that our FVR bounds can generally be interpreted as bounding the
+importance of the particular linear combination of shocks that tend to hit during FOMC announcements,
+e.g., a weighted sum of "Delphic" and "Odyssean" shocks.
+
+
+                                                             25
+Results. The data are consistent with substantial non-invertibility. Table 1 shows point
+estimates and 90% confidence intervals for the identified sets of the degree of invertibility
+and the degree of recoverability, either using the FFR or the 1-year rate as the interest
+rate variable. When we use the FFR, we can reject invertibility at the 10% level, since the
+confidence set for the degree of invertibility excludes 1. When we use the 1-year rate, we
+cannot outright reject invertibility, but the confidence set is still consistent with very low
+degrees of invertibility.19 Since the data cannot rule out a low degree of invertibility in either
+case, we proceed with our invertibility-robust SVMA-IV analysis. The data are similarly
+consistent with a wide range of values for the degree of recoverability.
+    Figure 1 shows partial identification robust confidence intervals for the forecast variance
+ratio of the four endogenous macro variables with respect to the monetary shock. We report
+point estimates and confidence intervals for the identified sets at each horizon separately. We
+focus here on the specification with the FFR instead of the 1-year rate, since our quantitative
+conclusions are if anything even starker with the latter observable. At all forecast horizons,
+the 90% confidence intervals rule out FVRs above 31% for output growth and 8% for inflation.
+At forecast horizons up to 6 months, we can rule out that the monetary shock accounts
+for more than 19% of the forecast variance of the Excess Bond Premium. However, we
+cannot rule out that the monetary shock is an important contributor to medium- or long-
+run forecasts of the bond premium. On the other hand, we cannot rule out that the monetary
+shock is completely unimportant either.
+    Our analysis reveals that the weak assumptions of the SVMA-IV model suffice to ob-
+tain tight upper bounds on the forecast variance contribution of monetary shocks for several
+variables, especially inflation. This is despite the finding by Stock & Watson (2018) that
+standard errors for impulse response functions are large in this application. Many commen-
+tators have documented a recent divorce between inflation and output dynamics (Hall, 2011);
+our results document a similar divorce in dynamics conditional on monetary policy shocks
+in post-1990 data. Although this finding echoes previous SVAR work (Christiano et al.,
+1999; Ramey, 2016), our identifying assumptions are weaker ­ we merely impose validity of
+the IV.20 We conclude that, if inflation is a monetary phenomenon, it is so because of the
+systematic component of monetary policy, not because of erratic policy shocks.
+
+  19
+     The p-values for the Granger causality pre-test of invertibility in Section 4 are 0.0001 (FFR) and 0.390 (1-
+year rate). Note that Stock & Watson (2018) fail to reject invertibility in a somewhat different specification.
+  20
+     Appendix B.6 reports variance decompositions obtained from a conventional SVAR-IV procedure. These
+results confirm the limited importance of the monetary shock, though under stronger identifying assumptions.
+
+
+
+                                                       26
+        Empirical application: Degree of invertibility/recoverability
+
+                                                              FFR        1-year rate
+                     2
+                    R0        Bound estimates       [0.196, 0.684]      [0.118, 0.922]
+                              90% conf. interval    [0.097, 0.877]      [0.029, 1.000]
+                     2
+                    R         Bound estimates       [0.282, 1.000]      [0.119, 1.000]
+                              90% conf. interval    [0.190, 1.000]      [0.028, 1.000]
+
+Table 1: Bounds on the degree of invertibility R0  2 and the degree of recoverability R2 . Interest
+                                                                                        
+rate variable is either Federal Funds Rate (left) or 1-year Treasury rate (right). All numbers are
+bootstrap bias corrected.
+
+
+
+                  Empirical application: Forecast variance ratios
+
+   1                                                     1
+
+ 0.8                                                    0.8
+
+ 0.6                                                    0.6
+
+ 0.4                                                    0.4
+
+ 0.2                                                    0.2
+
+   0                                                     0
+        3    6     9     12      15   18   21      24          3    6     9    12      15   18   21   24
+
+
+
+   1                                                     1
+
+ 0.8                                                    0.8
+
+ 0.6                                                    0.6
+
+ 0.4                                                    0.4
+
+ 0.2                                                    0.2
+
+   0                                                     0
+        3    6     9     12      15   18   21      24          3    6     9    12      15   18   21   24
+
+
+Figure 1: Point estimates and 90% confidence intervals for the identified sets of forecast variance
+ratios, across different variables and forecast horizons. For visual clarity, we force bias-corrected
+estimates/bounds to lie in [0, 1]. The interest rate variable is the Federal Funds Rate.
+
+
+
+                                                    27
+Other application: Oil news shocks. In Appendix B.7 we show that our method
+also yields highly informative upper bounds on the importance of international oil supply
+news shocks for the U.S. and global business cycles. We use an IV constructed by K¨ anzig
+(2021) from OPEC announcements.21 We find the oil news shock to be highly non-invertible,
+causing conventional SVAR-IV analysis to reach several spurious conclusions.
+
+
+6      Analytical illustrations
+In this section we consider three simple analytical examples that illustrate how our identifica-
+tion bounds depend on the characteristics of the data. Section 3.2 argued that the tightness
+of our lower bound on variance decompositions depends solely on the strength of the IV.
+We here show that, under stylized but empirically motivated assumptions, the upper bound
+can be expected to be highly informative, in the sense that it at worst mildly overstates the
+instrumented shock's contribution to macroeconomic fluctuations.
+    Throughout this section we assume the availability of a single IV zt = 1,t + v vt ,
+and then consider different illustrative toy models for the yt variables, as specified below.
+In Appendix B.5 we extend the analytical intuition below to the much richer quantitative
+DSGE model developed by Smets & Wouters (2007).
+
+
+6.1     Information content of several observables
+As our first example, consider the static model
+
+                                               yt = 0 t
+
+with ny = 2 observables: inflation (y1,t ) and the monetary policy interest rate (y2,t ). We
+think of 1,t as a conventional monetary policy shock. If we only observed inflation y1,t in
+addition to an IV, we would not be able to rule out that the monetary shock drives all the
+variation in this single variable, as explained in Section 3.1. How can adding the interest
+rate to the data set help tighten the identified set for the FVR of inflation?
+   To gain economic intuition, let the reduced-form moments of the data be given by
+
+                                      1                                   1
+                         Var(yt ) =    1   ,    and    Cov(yt , zt ) =   -    ,
+
+  21
+    Our empirical specification otherwise differs somewhat from his because we work with stationarity-
+transformed variables and restrict the sample to the period where the IV is available.
+
+
+                                                  28
+where   0. We see that, even with the amount of measurement error unknown, the IV
+zt reveals the signs and the relative magnitudes of the co-movement in observables induced
+by monetary shocks: The shock 1,t moves inflation and interest rates in opposite directions
+(Uhlig, 2005), while the unconditional correlation of interest rates and inflation is .
+    We consider three instructive special cases. For the first two, we set  = 1; applying our
+identification analysis, we then get the bounds
+
+                                        1
+                                FVR i,0  (1 - ),          i = 1, 2.
+                                        2
+
+Now suppose first that  = -1; that is, interest rates and inflation are not just perfectly
+negatively correlated conditional on monetary shocks, but also unconditionally. In that case
+the upper bound for the FVR of both variables equals 1: The data cannot rule out that
+the correlation of the IV with macro observables is imperfect purely because of measurement
+error. Second, suppose that  = 1; that is, interest rates and inflation are perfectly positively
+correlated in the data. Then our upper bound for the FVR suddenly equals zero: The
+monetary shock induces co-movement patterns that we never see in the data, so it cannot
+possibly explain any observed macro fluctuations. Third, if instead  = 0, then our upper
+bounds are, for any   0,
+
+                                         1                         2
+                            FVR 1,0          ,        FVR 2,0          .
+                                       1 + 2                     1 + 2
+
+Suppose that nominal rates respond much more to the monetary shock than inflation does,
+i.e.,     1. Then the upper bound on the inflation variance decomposition FVR 1,0 is very
+small; intuitively, since the IV reveals that the monetary shock moves interest rates by much
+more than inflation, but both have the same unconditional variance, the monetary shock
+cannot possibly be an important driver of inflation. This third example rationalizes the
+findings in our application to monetary shocks in Section 5: The IV zt correlates much more
+with interest rates than with prices, yet prices are not commensurately less volatile than
+interest rates, so monetary shocks cannot account for much of the volatility in prices.
+     This example shows that our upper bound on the FVR is close to the true value if
+either the shock is very prominent (so that the bound of one is not far from the truth) or if
+the shock induces somehow atypical co-movements of the various observed macro aggregates.
+This second condition is equivalent to the shock being prominent for some linear combination
+of the macro observables yt , which is equivalent to the shock being nearly invertible in this
+static model. Thus, the preceding arguments agree with the analysis in Section 3.1.
+
+                                                 29
+6.2     Dynamic information content
+Whereas the previous example illustrated how the availability of several macro time series
+sharpens identification in a static context, we now show how the dynamics of individual time
+series can do the same. Consider the univariate but dynamic model
+                                                 n      
+                                          yt =               j j,t-
+                                                 j =1   =0
+
+
+with ny = 1. That is, we observe a single variable yt driven by n independent AR(1)
+processes. To fix ideas, we think of 1,t as a technology shock and yt as aggregate output.
+    Now assume that long-run fluctuations in output yt are exclusively driven by the tech-
+nology shock 1,t ; that is, consider the limit 1  1, while fixing |j | < 1 for all j  2. In
+this case, the sharp lower bound on 2 converges to the truth:22
+
+                           2                                     2
+                       lim LB = lim 2 sup sz
+                                           ~ ( ) = lim 2sz
+                                                         ~ (0) =  .
+                       1 1          1 1       [0, ]              1 1
+
+
+Intuitively, at spectral frequency zero, all fluctuations in yt are driven by the technology
+shock. Loosely speaking, applying a low-pass filter to yt therefore isolates the fluctuations
+caused by the technology shock. Leads and lags of this low-pass filtered series are thus highly
+correlated with the IV, putting a lower bound on the signal-to-noise ratio in the IV. This is
+why the sharp upper bound for the FVR converges to the true value.
+    The example reveals that cross-restrictions over time can be highly informative even if
+the shock of interest is neither invertible nor recoverable. Intuitively, for the sharp upper
+bound on the FVR to bind, our method only needs the shock to dominate at some frequency;
+the across-frequency restrictions then do the rest, exactly like the cross-variable restrictions
+in the static example above.23
+
+  22                                               1                   1 n                 2   1 n     1   2
+                                 =0 1 = 2 × 1-1 and sy (0) = 2 (
+                                                                                                   
+      Note that syz
+                  ~(0) = 2                                                   j =1  =0 j ) = 2 (  j =1 1-j ) .
+                                            2                           2                    2
+Footnote 8 then implies 2sz             ~(0) /sy (0) = ((1 - 1 )sy z
+                             ~ (0) = sy z                          ~(0)) /((1 - 1 )sy (0))   as 1  1.
+   23
+      As mentioned in Section 3.2, for finite-sample statistical reasons, we recommend the use of a weaker
+lower bound 2 on 2 in place of the sharp bound LB        2
+                                                            . This weaker lower bound does not converge to
+  2
+ as 1  1, unless 1,t is recoverable. However, as discussed in Footnote 10, researchers may leverage
+a strong prior belief about the low-frequency importance of shocks by computing the integral in (15) for a
+pre-specified range of (low) frequencies.
+
+
+
+
+                                                        30
+6.3    Non-invertibility and news shocks
+In the third example, we show how our method deals with non-invertible news shocks. First
+discussed in Pigou (1927), news shocks have recently received much attention as drivers
+of macroeconomic fluctuations (Beaudry & Portier, 2006, 2014; Jaimovich & Rebelo, 2009;
+Schmitt-Groh´  e & Uribe, 2012). Unfortunately, foresight of economic agents complicates con-
+ventional SVAR-based analysis since it induces equilibria with non-invertible MA represen-
+tations (Leeper et al., 2013). In contrast, our methods are valid irrespective of invertibility.
+    To illustrate, consider a moving average model of order 1 with ny = n = 2:
+
+                                      yt = (1 + L)0 t ,
+
+where  > 1. As is well known, this assumption implies that the moving average represen-
+tation is non-invertible. We think of 1,t as a monetary forward guidance shock: The shock
+moves inflation and nominal interest rates by more tomorrow (when the shock directly hits
+the monetary policy rule) than today (when the news is revealed).
+    The conventional SVAR-IV approach mis-measures the FVR because of non-invertibility.
+By standard arguments (e.g., Leeper et al., 2013) the reduced-form VAR residuals equal
+                                                                   
+            ut  yt - E (yt | {y }-< <t ) = 0 t + (1 -        2
+                                                          1/R0 )        (- )- 0 t- ,       (21)
+                                                                   =1
+
+
+where the degree of invertibility equals
+
+                                            2
+                                           R0 =  -2 .
+
+Since SVAR procedures assume that the structural shocks t can be obtained as linear
+functions of the reduced-form residuals ut , equation (21) shows that any SVAR analysis will
+conflate the explanatory power of the shock 1,t with that of its lags. As a consequence,
+Appendix B.4 shows that the SVAR-IV estimand of the FVR overstates the contribution of
+the shock to one-step-ahead forecasts:
+
+                                   -IV      1
+                          FVR SVAR
+                              1,0      =     2
+                                               × FVR 1,0 > FVR 1,0 .
+                                            R0
+
+Clearly, the population bias of the SVAR-IV estimand worsens as the degree of invertibil-
+     2
+ity R0  decreases to 0 (see also Forni et al., 2019). In the oil news shock application in
+
+
+                                              31
+Appendix B.7 we demonstrate that the SVAR-IV bias can be large in practice.
+     In contrast, our identification bounds are valid irrespective of invertibility, since we do not
+assume that 1,t can be recovered as a function of only the contemporaneous VAR residuals
+ut . In fact, in this model with as many observables as shocks, both shocks t = (1,t , 2,t )
+are recoverable.24 Hence, if we exploit this knowledge, we can even point-identify the shock
+            
+as 1,t  zt    = E (zt | {y }-< < ). The key is that our method can use the future values
+of nominal rates and inflation, y ,   t, to recover the forward guidance shock 1,t at time
+t. In so doing, it effectively realigns the information sets of the economic agents and of the
+econometrician, sidestepping the invertibility problem.
+
+
+7        Simulation study
+We finish by showing that our inference procedures have good finite-sample performance
+in simulations. Our methods continue to work well in non-invertible models, unlike the
+conventional SVAR-IV procedure.
+
+DGP. We adopt a variant of the DGP in Kilian & Kim (2011) and assume that the macro
+aggregates yt follow a structural VARMA(p,1) model:
+
+                                         p
+                                 yt =     =1    yt- + 0 (t + t-1 ).
+
+We consider ny = 2 macro variables, p = 1 autoregressive lag (with one exception discussed
+                           y 0
+below), and set 1 = 0       .5 0.5
+                                   . For the MA part, we consider n = 2 shocks (which are
+thus both recoverable) and set 0 = chol ( 01    0.8
+                                              .8 1 ) , where "chol" denotes the lower triangular
+Cholesky decomposition. As in Section 6.3,  is a scalar parameter that governs the degree
+of invertibility, with  > 1 implying non-invertibility. We add an external instrument zt for
+the shock of interest 1,t :
+
+                           zt = z zt-1 + zy (y1,t-1 + y2,t-1 ) + 1,t + v vt .
+
+Notice that we have normalized  = 1. Finally, the measurement error and structural shocks
+are i.i.d. Gaussian and orthogonal as in Assumption 3.
+    We run Monte Carlo experiments for nine different parameterizations of the above DGP.
+
+                            2 -1                          -
+  24
+       In particular, t = -R0             2
+                              0 ut - 1 - R0     =1   (- )     - 1
+                                                              0 ut+ .
+
+
+
+
+                                                     32
+Specifically, we consider various deviations from a baseline parametrization. In our bench-
+mark, we set y = 0.5, z = zy = 0,  = 0, v = 1, and sample size T = 250. We then
+consider variations with more autoregressive persistence (either y = 0.9, or z = 0.8 and
+zy = 0.3), an invertible MA component ( = 0.5), a non-invertible MA component ( = 2),
+a weaker instrument (v = 2), and different sample sizes (T = 100, T = 500). Finally, we
+allow for richer dynamics, with p = 4 and j = j12 1 for j = 2, 3, 4.
+
+                                                                            2
+Results. Our parameters of interest are the degree of invertibility R0        and the FVR for
+variable y2,t at horizons 1 and 4. We conduct 5, 000 Monte Carlo repetitions per DGP, and
+construct confidence intervals at the 90% level using 1, 000 bootstrap draws per simulation.
+We use a homoskedastic recursive residual bootstrap. The reduced-form VAR lag length is
+selected using AIC, and we use Hall's percentile bootstrap confidence interval, cf. Section 4.
+    Table 2 shows that the partial identification robust SVMA-IV confidence sets defined in
+Section 4 achieve coverage rates close to or exceeding the desired level of 90% throughout.
+We report coverage rates for both the population identified sets (columns "Set") and for the
+underlying parameters (columns "Param"). The coverage rate for the parameter is never
+below 86.8% in any case. The coverage rate for the identified set is mostly close to 90% and at
+worst 82.9% in our experiments. We also report the coverage rates of conventional SVAR-IV
+bootstrap confidence intervals for the FVR (columns "SVAR"). The coverage distortions of
+our SVMA-IV procedures are almost always smaller than those of the SVAR-IV procedure.
+Most notably, our procedures have acceptable coverage even in the non-invertible case ( =
+2), whereas the SVAR-IV procedure under-covers severely in this case.25
+    We make the following additional remarks. First, coverage deteriorates slightly with
+noisier/weaker instruments (v = 2), as expected. Our inference methods are not robust to
+arbitrarily weak instruments (v  ); we leave this issue to future work. Second, we face
+                                                                                   2
+some well-known parameter-at-the-boundary issues. For most experiments, R0            = 1. This
+explains the over-coverage of confidence intervals for this parameter and, less so, for the
+overall identified set. Similar problems would arise if the true FVR were close to 0. Third,
+for more persistent DGPs, the AIC tends to select an insufficient number of lags, resulting
+in moderate under-coverage, in particular for the FVRs at horizon 4. For example, in the
+experiment with p = 4 autoregressive lags, the AIC selects an average lag length of 2.2.
+
+  25
+    We acknowledge, however, that in DGPs with only mild non-invertibility, SVAR-IV procedures may
+be preferable to our more robust SVMA-IV procedure, since the former procedure has fewer parameters to
+estimate and will be only mildly biased (cf. Appendix B.4).
+
+
+
+                                                 33
+                             Monte Carlo study: Coverage rates of confidence intervals
+
+                                   True parameter                   2
+                                                          Coverage R0          Coverage FVR 2,1             Coverage FVR 2,4
+           Experiment          2
+                              R0     FVR 2,1   FVR 2,4    Set    Param       Set     Param     SVAR       Set     Param    SVAR
+             Baseline          1       0.64    0.819     0.935    0.999     0.898    0.955     0.867     0.880    0.948     0.838
+             y = 0.9           1       0.64    0.862     0.929    1.000     0.896    0.953     0.876     0.889    0.952     0.824
+        z = 0.8, zy = 0.3      1       0.64    0.819     0.933    1.000     0.904    0.960     0.873     0.891    0.959     0.850
+               = 0.5           1       0.64    0.839     0.937    0.998     0.892    0.944     0.870     0.853    0.928     0.828
+               =2            0.25      0.16    0.806     0.879    0.910     0.857    0.881     0.137     0.861    0.938     0.674
+
+
+
+
+34
+              v = 2            1       0.64    0.819     0.949    0.997     0.889    0.924     0.824     0.865    0.903     0.770
+             T = 100           1       0.64    0.819     0.907    0.998     0.871    0.943     0.835     0.840    0.929     0.797
+             T = 500           1       0.64    0.819     0.931    1.000     0.900    0.954     0.881     0.884    0.947     0.869
+               p=4             1       0.64    0.855     0.937    0.999     0.897    0.945     0.868     0.829    0.868     0.846
+
+     Table 2: True parameter values and coverage rates of 90% confidence intervals, constructed as in Section 4, using 1,000 bootstrap
+     iterations for each Monte Carlo experiment, and 5,000 Monte Carlo experiments per DGP. The DGPs (along rows) are described
+     in the text. "Set": probability that SVMA-IV confidence interval covers entire identified set. "Param": probability that SVMA-IV
+     confidence interval covers parameter. "SVAR": probability that conventional SVAR-IV confidence interval covers parameter.
+8    Conclusion
+Applied macroeconomists have recently turned to external sources of exogenous variation to
+identify dynamic causal effects. Though such external instruments or proxies are frequently
+used to estimate impulse responses, existing methods did not allow researchers to quantify
+the contribution of individual shocks to business-cycle fluctuations ­ a question of first-order
+interest in traditional business-cycle analysis. We fill this gap by providing identification
+results and inference techniques for variance decompositions, historical decompositions, and
+the degree of invertibility. Our methods require neither the absence of measurement error in
+the external instrument, nor the often dubious assumption that the instrumented shock is
+invertible (as assumed in conventional SVAR analysis). We prove that the importance of the
+instrumented shock is generally interval-identified. Point identification can be achieved if the
+shock is known to be recoverable ­ a substantively weaker assumption than invertibility. We
+provide a software package that implements all steps of our inference procedures. Applying
+our method to U.S. data, we are able to establish a tight upper bound on the importance of
+monetary shocks for recent inflation dynamics, despite our weak identifying assumptions.
+
+
+
+
+                                              35
+A        Appendix
+
+A.1        Formulas for estimation and inference
+Here we provide the remaining formulas needed for the inference procedures in Section 4.
+   Let A^1 , . . . , A
+                     ^p denote the (ny + 1) × (ny + 1) coefficient matrix estimates for the VAR in
+Wt = (yt , zt ) . Let   ^ denote the residual sample variance-covariance matrix. Let     ^ 1/2 denote
+any square matrix such that       ^ 1/2 ^ 1/2 = ,
+                                                ^ e.g., the Cholesky factor. Compute the moving
+                          ^ (L)  (Iny +1 -    p   ^    -1 ^ 1/2
+average coefficients B                         =1 A L )         using the familiar recursion
+
+                             ^0 = ^ 1/2 ,    ^h =      min{h,p}   ^B^h- , h  1.
+                             B               B         =1         A
+
+                          ^h by B
+Denote the top ny rows of B     ^y,h and the bottom row by B
+                                                           ^z,h . Then
+                                                              
+                                                              B^z,0 B
+                                                                    ^           if h  0,
+                              ^z,0 B
+                                   ^z,0 ,                             y,h
+                        zt )  B
+                    Var(~                        zt , yt+h ) 
+                                             Cov(~
+                                                              0                 otherwise,
+                                                                     1×ny
+
+
+                                                         ^y, B
+                                                             ^
+                              Cov(yt , yt-h )       =0   B     y, +h for h  0.
+
+In practice, we truncate the infinite sum above at a large value of .
+   Define now the projection variances26
+
+              zt | {y }-< < ))  
+       Var(E (~                 ^z          ^ -1     ^ ~,y,(M,M ) ,
+                                 ~,y,(M,M ) y,(M,M ) z
+
+        Var(yi,t+ | {y }-< t )  Var(yi,t ) - (Cov(yi,t+ , yt ), . . . , Cov(yi,t+ , yt-M ))- 1
+                                                                                           y,(M,0)
+
+                                               × (Cov(yi,t+ , yt ), . . . , Cov(yi,t+ , yt-M )) ,
+               zt | {y }-< t ))  (Cov(~
+        Var(E (~                      zt , yt ), 01×ny M )^ -1
+                                                            y,(M,0) (Cov(~  zt , yt ), 01×ny M ) ,
+
+where   ^z
+         ~,y,(M,M ) is the estimated covariance vector of z       ~t and (yt+M , . . . , yt , . . . , yt-M ) ob-
+tained by stacking the estimates Cov(~    zt , yt+h ) defined above,      ^ y,(M,M ) is similarly the esti-
+mated variance-covariance matrix of (yt+M , . . . , yt , . . . , yt-M ) , and   ^ y,(M,0) is the estimated
+variance-covariance matrix of (yt , yt-1 , . . . , yt-M ) .
+    In these formulas, the integer M is a numerical truncation parameter. For example, we
+estimate Var(E (~  zt | {y }-< < )) using an estimate of the truncated conditional variance
+
+  26
+    These could alternatively be computed using the Kalman filter, but there appears to be little difference
+in numerical accuracy or speed relative to the formulas stated here.
+
+
+                                                      36
+       zt | {y }t-M  t+M )). M should exceed at least 50 to yield an accurate approxima-
+Var(E (~
+tion. We recommend checking that the numerical results do not change much when M is
+increased, since the effects of truncation will depend on the persistence of the data.
+
+
+A.2     Proofs of main results
+A.2.1    Auxiliary lemma
+
+Lemma 1. Let B be an n × n Hermitian positive definite complex-valued matrix and b
+an n-dimensional complex-valued column vector. Let x be a nonnegative real scalar. Then
+B - x-1 bb is positive (semi)definite if and only if x > () b B -1 b.
+
+Please find the proof in Appendix B.9.1.
+
+A.2.2    Proof of Proposition 1
+
+Let  and the spectrum sw ( ) be given. Define the ny -dimensional vectors
+
+                                ·,1, = -1 Cov(yt , z
+                                                   ~t- ),           0,
+
+and the corresponding vector lag polynomial
+                                                   
+                                      ·,1 (L) =         ·,1, L .
+                                                   =0
+
+
+Since 2  U
+         2
+           B , we may define  v =              zt ) - 2 . Since 2 > LB
+                                           Var(~                    2
+                                                                       , Lemma 1 implies that
+
+                            2                             1
+                 sy ( ) -    2
+                               sy z      ~( ) = sy ( ) -
+                                  ~( )sy z                  ·,1 (e-i )·,1 (e-i )
+                                                         2
+
+is positive definite for every   [0, 2 ]. Hence, the Wold decomposition theorem (Hannan,
+                                                                                  ~ L) =
+1970, Thm. 2 , p. 158) implies that there exists an ny × ny matrix lag polynomial (
+    ~                  27
+    =0  L such that
+
+                        1                         1 ~ -i ~ -i 
+            sy ( ) -      ·,1 (e-i )·,1 (e-i ) =    (e )(e ) ,               [0, 2 ].
+                       2                         2
+
+  27
+    We can rule out a deterministic term in the Wold decomposition because a continuous and positive
+definite spectral density satisfies the full-rank condition of Hannan (1970, p. 162).
+
+
+
+
+                                                  37
+Thus, the following model for wt = (yt , z
+                                         ~t ) generates the desired spectrum sw ( ):
+
+                                                            ~ L)~
+                                          yt = ·,1 (L)1,t + (   t ,
+                                          z
+                                          ~t = 1,t +  v v t ,
+                                             i.i.d.
+                               (1,t , ~t , v t )  N (0, Iny +2 ).
+
+Note that the construction requires only n = ny + 1 shocks, 1,t  R and ~t  Rny .
+
+A.2.3    Proof of Proposition 2
+                             2
+Identified set for R0          . If the identified set contains 1, then there must exist an  
+[LB , U B ] and i.i.d., independent standard Gaussian processes 1,t and v t such that (i)
+~t =  × 1,t + v t , (ii) v t is uncorrelated with yt at all leads and lags, and (iii) 1,t lies in the
+z
+closed linear span of {y }-< t . This immediately implies the "only if" statement.
+    For the "if" part, assume z    ~t does not Granger cause yt . By the equivalence of Sims and
+                       
+Granger causality, z  ~t = E (~  zt | {y }-< < ) = E (~   zt | {y }-< t ). Note that the latter
+best linear predictor is white noise since, for any  1,
+
+           zt | {y }-< t ), yt-
+    Cov E (~                                 zt , yt- ) - Cov z
+                                       = Cov(~                ~t - E (~
+                                                                      zt | {y }-< t ), yt-
+                                       = 0 - 0,
+
+                                                                                            
+using the fact that z
+                    ~t is a projection residual. In conclusion, the best linear predictor z
+                                                                                          ~t of
+~t given {y }-< < depends only on {y }-< t and it has a constant spectrum. From
+z
+                    2                  2
+the expression for LB  , we get that LB             zt | {y }-< t )). Hence, expression (17)
+                                           = Var(E (~
+                                                          2
+implies that the upper bound of the identified set for R0   equals 1.
+
+                          2                                               2
+Identified set for R        . The upper bound of the identified set for R   equals 1 if and
+only if 2 sup[0,] sz                zt | {y }-< < )). The right-hand side of this equation
+                     ~ ( ) = Var(E (~
+                    2                                     1  2
+equals Var(~zt ) = 0 sz~ ( ) d . But sup [0, ] sz~ ( ) = 2 0 sz~ ( ) d if and only if sz
+                                                                                       ~ ( )
+                                           
+is constant in  almost everywhere, i.e., z~t is white noise.
+
+
+
+
+                                                      38
+References
+Andrews, D. W. & Shi, X. (2013). Inference Based on Conditional Moment Inequalities.
+ Econometrica, 81 (2), 609­666.
+
+Andrews, D. W. & Shi, X. (2017). Inference based on many conditional moment inequalities.
+ Journal of Econometrics, 196 (2), 275­287.
+
+Beaudry, P. & Portier, F. (2006). Stock Prices, News, and Economic Fluctuations. American
+  Economic Review, 96 (4), 1293­1307.
+
+Beaudry, P. & Portier, F. (2014). News-Driven Business Cycles: Insights and Challenges.
+  Journal of Economic Literature, 52 (4), 993­1074.
+
+Blanchard, O. J., L'Huillier, J. P., & Lorenzoni, G. (2013). News, Noise, and Fluctuations:
+  An Empirical Exploration. American Economic Review, 103 (7), 3045­3070.
+
+Brockwell, P. J. & Davis, R. A. (1991). Time Series: Theory and Methods (2nd ed.). Springer
+  Series in Statistics. Springer.
+
+Caldara, D. & Herbst, E. (2019). Monetary policy, real activity, and credit spreads: Evidence
+  from bayesian proxy svars. American Economic Journal: Macroeconomics, 11 (1), 157­92.
+
+Campbell, J. R., Evans, C. L., Fisher, J. D. M., & Justiniano, A. (2012). Macroeconomic
+  Effects of Federal Reserve Forward Guidance. Brookings Papers on Economic Activity,
+  2012 (Spring), 1­80.
+
+Chahrour, R. & Jurado, K. (2021). Recoverability and Expectations-Driven Fluctuations.
+ Review of Economic Studies. Forthcoming.
+
+Chernozhukov, V., Lee, S., & Rosen, A. M. (2013). Intersection Bounds: Estimation and
+ Inference. Econometrica, 81 (2), 667­737.
+
+Christiano, L., Eichenbaum, M., & Evans, C. (1999). Monetary Policy Shocks: What Have
+ We Learned and to What End? In J. B. Taylor & M. Woodford (Eds.), Handbook of
+ Macroeconomics, Volume 1A chapter 2, (pp. 65­148). Elsevier.
+
+Cochrane, J. H. & Piazzesi, M. (2002). The Fed and Interest Rates--A High-Frequency
+  Identification. American Economic Review, 92 (2), 90­95.
+
+
+                                             39
+Forni, M. & Gambetti, L. (2014). Sufficient information in structural VARs. Journal of
+  Monetary Economics, 66 (Supplement C), 124­136.
+
+Forni, M., Gambetti, L., Lippi, M., & Sala, L. (2017a). Noise Bubbles. Economic Journal,
+  127 (604), 1940­1976.
+
+Forni, M., Gambetti, L., Lippi, M., & Sala, L. (2017b). Noisy News in Business Cycles.
+  American Economic Journal: Macroeconomics, 9 (4), 122­152.
+
+Forni, M., Gambetti, L., & Sala, L. (2019). Structural VARs and noninvertible macroeco-
+  nomic models. Journal of Applied Econometrics, 34 (2), 221­246.
+
+Gafarov, B., Meier, M., & Montiel Olea, J. L. (2018). Delta-Method Inference for a Class of
+ Set-Identified SVARs. Journal of Econometrics, 203 (2), 316­327.
+
+Gertler, M. & Karadi, P. (2015). Monetary Policy Surprises, Credit Costs, and Economic
+ Activity. American Economic Journal: Macroeconomics, 7 (1), 44­76.
+
+Giannone, D. & Reichlin, L. (2006). Does Information Help Recovering Structural Shocks
+  from Past Observations? Journal of the European Economic Association, 4 (2/3), 455­465.
+
+Gilchrist, S. & Zakrajsek, E. (2012). Credit Spreads and Business Cycle Fluctuations. Amer-
+  ican Economic Review, 102 (4), 1692­1720.
+
+Gorodnichenko, Y. & Lee, B. (2020). Forecast Error Variance Decompositions with Local
+ Projections. Journal of Business & Economic Statistics, 38 (4), 921­933.
+
+G¨
+ urkaynak, R. S., Sack, B. P., & Swanson, E. T. (2005). Do Actions Speak Louder Than
+ Words? The Response of Asset Prices to Monetary Policy Actions and Statements. The
+ International Journal of Central Banking, 1 (1), 55­93.
+
+Hall, R. E. (2011). The Long Slump. American Economic Review, 101 (2), 431­469.
+
+Hannan, E. (1970). Multiple Time Series. Wiley Series in Probability and Statistics. John
+  Wiley & Sons.
+
+Imbens, G. W. & Manski, C. F. (2004). Confidence Intervals for Partially Identified Param-
+  eters. Econometrica, 72 (6), 1845­1857.
+
+Jaimovich, N. & Rebelo, S. (2009). Can News about the Future Drive the Business Cycle?
+  American Economic Review, 99 (4), 1097­1118.
+
+                                            40
+Jord`  ` (2005). Estimation and Inference of Impulse Responses by Local Projections.
+    a, O.
+  American Economic Review, 95 (1), 161­182.
+
+K¨
+ anzig, D. R. (2021). The Macroeconomic Effects of Oil Supply News: Evidence from OPEC
+ Announcements. American Economic Review, 111 (4), 1092­1125.
+
+Kilian, L. & Kim, Y. J. (2011). How Reliable Are Local Projection Estimators of Impulse
+  Responses? Review of Economics and Statistics, 93 (4), 1460­1466.
+
+Kilian, L. & L¨
+              utkepohl, H. (2017). Structural Vector Autoregressive Analysis. Cambridge
+  University Press.
+
+Klepper, S. & Leamer, E. E. (1984). Consistent Sets of Estimates for Regressions with Errors
+  in All Variables. Econometrica, 52 (1), 163­183.
+
+Kuttner, K. (2001). Monetary Policy Surprises and Interest Rates: Evidence from the Fed
+ Funds Futures Market. Journal of Monetary Economics, 47 (3), 523­544.
+
+Leeper, E. M., Walker, T. B., & Yang, S.-C. S. (2013). Fiscal Foresight and Information
+  Flows. Econometrica, 81 (3), 1115­1145.
+
+Lippi, M. & Reichlin, L. (1994). VAR analysis, nonfundamental representations, Blaschke
+  matrices. Journal of Econometrics, 63 (1), 307­325.
+
+Mertens, K. (2015). Advances in Empirical Macroeconomics, Lecture 2. Lecture slides, Bonn
+ Summer School.
+
+Mertens, K. & Ravn, M. O. (2010). Measuring the Impact of Fiscal Policy in the Face of
+ Anticipation: A Structural VAR Approach. Economic Journal, 120 (544), 393­413.
+
+Mertens, K. & Ravn, M. O. (2013). The Dynamic Effects of Personal and Corporate Income
+ Tax Changes in the United States. American Economic Review, 103 (4), 1212­1247.
+
+Nakamura, E. & Steinsson, J. (2018a). High Frequency Identification of Monetary Non-
+  Neutrality: The Information Effect. Quarterly Journal of Economics, 133 (3), 1283­1330.
+
+Nakamura, E. & Steinsson, J. (2018b). Identification in Macroeconomics. Journal of Eco-
+  nomic Perspectives, 32 (3), 59­86.
+
+Pigou, A. C. (1927). Industrial Fluctuations (2 ed.). London: Macmillan.
+
+
+                                            41
+Plagborg-Møller, M. (2019). Bayesian inference on structural impulse response functions.
+  Quantitative Economics, 10 (1), 145­184.
+
+Plagborg-Møller, M. & Wolf, C. K. (2021). Local Projections and VARs Estimate the Same
+  Impulse Responses. Econometrica, 89 (2), 955­980.
+
+Ramey, V. A. (2016). Macroeconomic Shocks and Their Propagation. In J. B. Taylor &
+  H. Uhlig (Eds.), Handbook of Macroeconomics, volume 2 chapter 2, (pp. 71­162). Elsevier.
+
+Schmitt-Groh´ e, S. & Uribe, M. (2012). What's News in Business Cycles. Econometrica,
+  80 (6), 2733­2764.
+
+Sims, C. A. & Zha, T. (2006). Does Monetary Policy Generate Recessions? Macroeconomic
+  Dynamics, 10 (02), 231­272.
+
+Smets, F. & Wouters, R. (2007). Shocks and Frictions in US Business Cycles: A Bayesian
+  DSGE Approach. American Economic Review, 97 (3), 586­606.
+
+Stock, J. H. (2008). What's New in Econometrics: Time Series, Lecture 7. Lecture slides,
+  NBER Summer Institute.
+
+Stock, J. H. & Watson, M. W. (2018). Identification and Estimation of Dynamic Causal
+  Effects in Macroeconomics Using External Instruments. Economic Journal, 28 (610), 917­
+  948.
+
+Stoye, J. (2009). More on Confidence Intervals for Partially Identified Parameters. Econo-
+  metrica, 77 (4), 1299­1315.
+
+Uhlig, H. (2005). What are the effects of monetary policy on output? Results from an
+ agnostic identification procedure. Journal of Monetary Economics, 52 (2), 381­419.
+
+Wolf, C. K. (2020). SVAR (Mis)identification and the Real Effects of Monetary Policy
+ Shocks. American Economic Journal: Macroeconomics, 12 (4), 1­32.
+
+
+
+
+                                           42
+

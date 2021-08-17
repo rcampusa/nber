@@ -1,0 +1,1963 @@
+                              NBER WORKING PAPER SERIES
+
+
+
+
+                           DOES SAVING CAUSE BORROWING?
+
+                                       Paolina C. Medina
+                                        Michaela Pagel
+
+                                      Working Paper 28956
+                              http://www.nber.org/papers/w28956
+
+
+                     NATIONAL BUREAU OF ECONOMIC RESEARCH
+                              1050 Massachusetts Avenue
+                                Cambridge, MA 02138
+                                     June 2021
+
+
+
+
+We thank seminar and conference participants at the CFPB Research Conference, FIRS, MFA,
+CEPR HF seminar, Australian National University (ANU), Shanghai Advanced Institute of
+Finance, SJTU (SAIF), and Lone Star Conference. We also thank Erkki Vihriälä (discussant),
+Taha Choukhmane (discussant), Antonio Gargano, Nhan Le, James Choi, and Han Xia for
+providing valuable comments. We thank Jose Antonio Murillo for providing support and access
+to the data, Isidoro Garcia for helping with preliminary analysis, and Sofía Terrazas for
+outstanding research assistance. Portions of this research were conducted with the advanced
+computing resources provided by Texas A&M High Performance Research Computing. The
+experiment was pre-registered under RCT number AEARCTR-0003047. IRB ID:IRB2018-0597.
+At the time of the experiment, Paolina Medina was a full-time employee of Banorte. The views
+expressed herein are those of the authors and do not necessarily reflect the views of the National
+Bureau of Economic Research.
+
+NBER working papers are circulated for discussion and comment purposes. They have not been
+peer-reviewed or been subject to the review by the NBER Board of Directors that accompanies
+official NBER publications.
+
+© 2021 by Paolina C. Medina and Michaela Pagel. All rights reserved. Short sections of text, not
+to exceed two paragraphs, may be quoted without explicit permission provided that full credit,
+including © notice, is given to the source.
+Does Saving Cause Borrowing?
+Paolina C. Medina and Michaela Pagel
+NBER Working Paper No. 28956
+June 2021
+JEL No. D14,G5
+
+                                         ABSTRACT
+
+We study whether savings nudges have the unintended consequence of additional borrowing in
+high-interest credit. We use data from a pre-registered experiment that encouraged 3.1 million
+bank customers to save via SMS messages and train a machine learning algorithm to predict
+individual-level treatment effects. We then focus on individuals who are predicted to save most in
+response to the intervention and hold credit card debt. We find that these individuals save 5.7%
+more (61.84 USD per month) but do not change their borrowing: for every additional dollar
+saved, we can rule out increases of more than two cents in interest expenses.
+
+
+Paolina C. Medina
+Texas A&M University
+210 Olsen Blvd.
+College Station, TX 77843
+pmedina@tamu.edu
+
+Michaela Pagel
+Columbia Business School
+3022 Broadway
+Uris Hall
+New York, NY 10027
+and NBER
+mpagel@columbia.edu
+1    Introduction
+
+A vast number of policies aimed at increasing savings are currently in place, especially via so-
+called nudges (Benartzi et al., 2017). When policymakers or researchers evaluate these interven-
+tions, they often focus on the immediate savings outcome and do not consider other margins of
+adjustment (Beshears and Kosowsky, 2020). However, we may be interested in the effects of sav-
+ings nudges on short-term unsecured debt. After all, if individuals were to borrow more at high
+interest to finance the additional savings, they would be worse off. To date, however, limited evi-
+dence exists on whether or not individuals respond with increased borrowing when they are nudged
+to save. Clearly, this question is of central importance for policymakers and researchers alike in
+order to evaluate whether savings nudges or even more forceful policies should be implemented.
+    We empirically evaluate and quantify whether or not savings nudges that are followed by actual
+increases in savings also increase high-interest unsecured borrowing in general and specifically for
+individuals who were already rolling over credit card debt. To do so, we use a large-scale field
+experiment paired with comprehensive and very accurate panel data of individual credit cards and
+checking accounts. We obtain this data from one of the largest banks in Mexico, Banorte. The
+bank ran a randomized experiment with 3,054,438 customers, out of which 374,893 were selected
+as the control group. Clients in the treatment group received ATM and SMS messages suggesting
+that they save. The intervention lasted 7 weeks, from September 13 to October 27, 2019.
+    To meaningfully test if saving causes borrowing, we focus the analysis on individuals whose
+observable pre-treatment characteristics predict a strong response to the savings nudge. To do so,
+we study the behavior of individuals with the largest treatment effects as predicted by machine
+learning techniques. Specifically, we estimate a causal forest model as discussed in Athey and
+Imbens (2015) and Athey et al. (2019). Using a rich set of pre-treatment covariates, the algorithm
+recursively estimates heterogeneous treatment effects for different sub-populations and then pre-
+dicts for each individual an estimated average treatment effect. In turn, we focus on the subsample
+of customers in the top quartile of the predicted treatment effect distribution who have a credit
+card. For this group of individuals, we ask whether the increased savings were accompanied by an
+
+                                                 2
+increase in borrowing.
+   It is important to note that this approach does not suffer from overfitting problems, which
+would lead us to incorrectly infer large treatment effects for arbitrary sub-populations. Searching
+over many possible partitions and estimating treatment effects for each of them in the same sample
+would be problematic; any one sample observation sharing certain covariates could exhibit a larger
+treatment effect by pure chance or due to other idiosyncratic shocks. In contrast, the predicted
+treatment score from the random forest is calculated using 2,000 repeated sample splits to figure
+out which pre-treatment covariates predict a large response to the savings treatment (holding all
+pre-treatment observable characteristics constant across treatment and control through explicit or-
+thogonalization). This procedure eliminates the possibility that pre-treatment covariates predict a
+large treatment effect by pure chance or as a result of idiosyncratic shocks that could also affect
+other outcomes.
+   We first focus on individuals who are in the top quartile of the predicted treatment effects and
+have a credit card. For them, we estimate that the treatment is associated with an increase in
+savings of 6.01% on a baseline savings of 31,681 MXN in the control group (1,489 USD), that is,
+an increase of 1,904 MXN (89 USD). On average, this group decreased their interest payments by
+1.71% from a basis of 230 MXN with a standard error of 3.34%. We can thus rule out an increase
+in borrowing costs of more than 11 MXN with 95% statistical confidence. We can compare this to
+the increase in savings and conclude that, for every 1 MXN in savings, we can rule out an 11/1,904
+or 0.006% increase in borrowing costs.
+   We then focus on individuals with a credit card who roll over debt as measured by their interest
+payments in the 6 months previous to the intervention. For them, we see an increase in savings of
+5.67% on a baseline value of 23,080 MXN, that is, 1,316 MXN (62 USD). In turn, we can rule
+out a 6.64% increase in credit card borrowing with 95% confidence (an increase of 26.68 MXN in
+borrowing costs). To conclude, for every 1 MXN in savings, we can thus rule out a 27/1,409 or
+larger than 1.9 cent increase in credit card borrowing costs.
+   To further illustrate the pitfalls of overfitting and how the causal forest overcomes it, we com-
+
+
+                                                 3
+pare our results with the estimates for saving and borrowing for sub-populations with the largest
+ex-post observed treatment effects. We identify individuals who belong to the experimental blocks
+with the largest observed average treatment effects. Individuals in this group could have increased
+their savings due to idiosyncratic shocks that also affect their borrowing. Indeed, for them, we
+find treatment effects on borrowing that are large and negative. This suggests that individuals who
+responded a lot to the treatment were actually cleaning up their finances and thus also reduced their
+borrowing.
+   Individuals in the top quartile of the predicted treatment effects who were carrying credit card
+interest at the time of the intervention exhibited a large response to the savings nudge. While this
+response did not come at the expense of increases in credit card debt, we find no evidence that these
+savings were used to pay off credit card debt in the billing cycles following the savings nudges,
+thus exacerbating the simultaneous co-holding of low-interest savings and high-interest debt.
+   Households in Mexico and in the US tend to co-hold liquid savings and credit card debt. In
+our sample, the average credit card interest rate is 35.2% and checking accounts pay 0% interest.
+Despite the large price differences, we find that 26% of individuals who pay credit card interest
+keep average daily balances higher than 50% of their income in their checking accounts (over the
+6 months previous to the intervention). Similarly, in the 2001 US Survey of Consumer Finances
+(SCF), 27% of households reported revolving an average of 5,766 USD in credit card debt with an
+APR of 14% and simultaneously holding an average of 7,338 USD in liquid assets with a return
+of around 1%. A household in the SCF puzzle group loses, on average, 734 USD per year from
+the costs of revolving debt, which amounts to 1.5% of its total annual after-tax income (Telyukova,
+2013).
+   The literature proposes different explanations for why households that accumulate credit card
+debt may not use their liquid savings to pay it off. Telyukova (2013) argues that this occurs because
+households anticipate needing that money in situations where credit cards cannot be used, such as
+making mortgage or rent payments or unexpected home and auto repairs. Haliassos and Reiter
+(2005) argue that individuals who accumulate credit card debt do not pay it off with their savings
+
+
+                                                 4
+because they want to constrain their impatience or spendthriftness of their spouses. If the debt
+were to be repaid, the impatient party would simply accumulate credit card debt again, effectively
+spending the household's savings.
+   A key distinction between transaction-convenience models and preference-based explanations
+for the co-holding puzzle is the following: in a transaction-convenience model, increases in sav-
+ings would cause increases in debt, whereas that is not true in a model of co-holding based on
+self-control. In the transaction-convenience model, individuals set aside money for transaction
+purposes, knowing that it will be available in the future; thus, if they are nudged to save more, to
+maintain their consumption, they borrow against those savings. In contrast, in preference-based
+models, individuals keep two separate mental accounts, one for savings and one for borrowing. By
+keeping savings on a separate mental account, individuals effectively remove a certain amount of
+money (labeled as savings) from their consumption-borrowing problem and simply split whatever
+resources are left to smooth consumption. In turn, setting more money aside as savings should
+reduce consumption rather than increase borrowing. By testing whether saving causes borrowing,
+we thus test a key prediction to distinguish between these two theories. We argue that our findings
+are consistent with individuals choosing to hold credit card debt and savings simultaneously in
+order to cope with self-control problems, as in Haliassos and Reiter (2005).
+   To provide further evidence for a preference-based explanation behind the co-holding puzzle,
+we show that those individuals who co-hold, defined as holding more than 50% of their income
+in their checking accounts and paying credit card interest, overlap most strongly with the highest
+quartile of the predicted savings score: that is, the co-holding individuals are also most responsive
+to the savings nudge without increasing their credit card borrowing in response. Additionally, the
+message that talks about "the safest money box" carries a large treatment effect.
+
+
+
+
+                                                 5
+2    Literature Review
+
+Our paper is related to a large literature on the savings effects of automatic (as opposed to opt-in)
+enrollment into 401(k) savings plans. This literature generally finds that a 1% increase in default
+savings rates increases total savings by 0.5% to 0.8% (see, e.g., Choi et al., 2004; Chetty et al.,
+2014). Implicitly, this research assumes that individuals do not offset the increased savings with
+additional borrowing. To the best of our knowledge, the only research paper evaluating whether
+nudges to save increase borrowing is Beshears et al. (2019). The authors look at a natural exper-
+iment in which the US army started to automatically enroll all newly hired employees into their
+retirement savings plan. In response, employees saved more and borrowed about 1% of their in-
+come more in secured credit such as auto loans and first-time mortgages. In this paper, credit
+card borrowing is measured via biannual snapshots of balances from a credit bureau. However, a
+biannual snapshot of credit card balances does not reveal how much high-interest unsecured debt
+is actually rolled over. In our study, we instead look at the high-frequency responses in credit card
+borrowing using bank account transactions and balances. Additionally, we see whether individuals
+roll over debt in the first place. We observe credit limits to ensure that individuals would have the
+ability to borrow.
+    Similarly, the literature on savings nudges via SMS or Fintech apps (Karlan et al., 2016;
+Gargano and Rossi, 2020; Akba¸
+                             s et al., 2016; Rodríguez and Saavedra, 2015) has documented
+effects of varying magnitude but has not in general studied potential increases in borrowing.
+    We also contribute to a growing literature looking at unintended effects of nudges in different
+domains, ranging from financial accounts (Beshears et al., 2015; Goldin et al., 2017; Keys and
+Wang, 2019; Medina, 2020; Medina and Negrin, 2021) to health outcomes (Wisdom et al., 2010)
+to energy conservation (Costa and Kahn, 2013; Allcott and Kessler, 2019).
+    Our paper relates to the literature on credit card borrowing. Laibson et al. (2003) argue that
+credit card debt constitutes "a puzzle" for standard life-cycle models in which fully rational agents
+would rather forgo the benefits of consumption smoothing than borrow at prevailing credit card
+interest rates. Laibson et al. (2012) examine the coexistence in household portfolios of credit card
+
+                                                 6
+debt and retirement assets. The authors explain this behavior with time-inconsistent decision mak-
+ing by households, which makes them patient in the long run but impatient in the short run. Thus,
+households want to lock away their wealth in retirement assets to keep from consuming it. Kaplan
+and Violante (2014) explain the same phenomenon in a fully rational model in which households
+save at a higher return in their illiquid assets and then borrow in response to income fluctuations.
+Retirement assets in these models are illiquid because they involve a significant penalty for early
+withdrawal, which is not the case for savings accounts. Analyzing whether liquid savings result in
+borrowing may provide us with a lower bound for the borrowing response to illiquid savings.
+   Households may hold not only credit card debt and illiquid retirement assets simultaneously but
+also perfectly liquid assets. Previous literature on the credit card debt or co-holding puzzle began
+with Gross and Souleles (2002), who documented the phenomenon and note that the transaction
+demand for liquidity may contribute to it. Maki (2002) studied whether households may run up
+credit card debt strategically in preparation for a bankruptcy filing, to be discharged during the
+filing while keeping assets in liquid form in order to convert them to exemptible assets. However,
+Telyukova (2013) indicates that most puzzle households are unlikely to file for bankruptcy. Beyond
+the models in Telyukova (2013) and Haliassos and Reiter (2005), proposed explanations for the
+co-holding puzzle include financial literacy (Gathergood and Weber, 2014), mental accounting
+(Gathergood and Olafsson, 2020), or the variability of credit limits (Fulford, 2015) .
+   A number of authors from different fields such as marketing or consumer psychology have ar-
+gued in favor of spending or self-control considerations in borrowing behavior. Hoch and Loewen-
+stein (1991) argue that self-control problems occur when the benefits of consumption are experi-
+enced earlier and are dissociated from the costs. The findings of Shefrin and Thaler (1988), Prelec
+and Simester (2001), and Wertenbroch (2001) suggest that liquidity enhances both the probability
+of making a purchase and the amount one is willing to pay for a given item being purchased over
+and above any effects due to the relaxation of liquidity constraints. Soman and Cheema (2002)
+present experimental and survey evidence that consumers interpret available credit lines as indica-
+tions of future earning potential when deciding consumption expenditures.
+
+
+                                                 7
+3        Background on the Mexican Credit Card Market
+
+The Mexican credit card market has expanded rapidly. As of June 2017, there were 17.9 million
+general-purpose credit card accounts in good standing holding a positive balance in a population
+of 124 million, whereas only 13 million cards were in circulation in 2009. In spite of this trend,
+credit card penetration in Mexico has remained low relative to other countries. In 2014, only 18%
+of adults had credit card accounts, while the equivalent figures in Brazil, Argentina, and the US
+were 32%, 27%, and 60%, respectively. Furthermore, the number of credit cards per individual
+cardholder remains relatively low compared to the US. According to a nationally representative
+survey, the average credit cardholder has 1.27 cards. Among individuals reporting to have at least
+one credit card, 79% have only one credit card, 15% have 2, and the rest have more than 2 cards.1
+Interest rates are high compared with those in the US. By the end of 2017, the average credit card
+interest rate in Mexico had a spread of 26.4% above the federal short-term interest rate, which was
+7.17%. Banorte's average credit card interest is 35.2%.
+        The credit card market in Mexico is not too competitive, similar to the US (Herkenhoff and
+Raveendranathan, 2020). There are 16 banks participating in the credit card market, offering 140
+products. The five largest banks hold 85% of the market, the two largest products hold more than
+25% of the market, and the six largest products cover just above 50%. Credit cards represent 22%
+of the consumer credit portfolio measured by balance, inclusive of mortgage debt at the end of
+2015.2
+
+
+
+4        Experimental Design and Data Description
+
+4.1        Experiment
+
+We analyze the results of a large-scale experiment to promote savings with the Mexican bank
+Banorte. The experimental pool consists of 3,054,438 customers, out of which 374,893 were
+    1
+        INEGI, Encuesta Nacional de Inclusion Financiera, 2018.
+    2
+        Refer to Banco de Mexico, multiple reports.
+
+
+                                                          8
+selected randomly to be in a control group. Clients in the control group received no messages.
+Clients in the treatment group were randomly assigned to receive 1 of 7 messages that proved to be
+effective in previous experiments nudging individuals to save. Half of the treated customers were
+cross-randomized to receive the messages on a weekly basis, while the other half were assigned a
+bi-weekly frequency.3 The intervention lasted 7 weeks, from September 13 to October 27, 2019.
+       The treatment messages were as follows:
+
+
+         Message 1: "Congratulations. Your average balance over the last 12 months has been
+         great! Continue to increase your balance and strengthen your savings."
+
+
+         Message 2: "Increase the balance in your Banorte Account and get ready today for
+         year-end expenses!"
+
+
+         Message 3: "Join customers your age who already save 10% or more of their income.
+         Commit and increase the balance in your Banorte Account by $XXX this month."4
+
+
+         Message 4: "In Banorte, you have the safest money box! Increase your account bal-
+         ance by $XXX this payday and reach your goals."
+
+
+         Message 5: "Increase your balance this month by $XXX and reach your dreams.
+         Commit to it. You can do it by saving only 10% of your income."
+
+
+         Message 6: "The holidays are coming. Commit to saving $XXX in your Banorte
+         Account and avoid money shortfalls at year-end!"
+
+
+         Message 7: "Be prepared for an emergency! Commit to leaving 10% more in your
+         account. Don't withdraw all your money on payday."
+   3
+      Users in the treatment group were further cross-randomized across two additional dimensions. First, half of them
+would stop receiving the messages for 2 weeks after 2 months of receiving them, and then the messages would resume.
+Second, half of the consumers in the treatment group would receive the same message throughout the duration of the
+intervention, and the other half would receive alternating messages every 4 weeks. Due to logistical considerations,
+these last two treatment variations were not implemented.
+    4
+      XXX was a personalized amount representing 10% of the balance in the last 3 months.
+
+
+                                                          9
+       For each customer in the experimental pool, we observe all information routinely collected by
+the bank, including transactions and balances on checking accounts and credit cards, information
+from the credit bureau, income, and other demographic characteristics.
+
+
+4.2       Descriptive Statistics
+
+Table 1 shows descriptive statistics for treatment and control groups with and without credit cards.
+We can see that the average age is 45 years, the average monthly after-tax income is approximately
+13,500 MXN (635 USD), and the clients have banked with the bank for 7 years on average.5
+Additionally, their average checking account balance is approximately 19,384 MXN and about
+30% of credit cardholders pay credit card interest.
+       Beyond showing these descriptive statistics for all individuals, we also show them separately
+for the ones who have a credit card with Banorte. These individuals have about 30% more income
+and 60% higher checking account balances than the average client. Their average credit card
+balance is 21,914 MXN (1,030 USD). The average individual with a credit card pays 169 MXN (8
+USD) in interest costs per month (this average includes individuals who do not pay any interest).
+Individuals also have substantial borrowing capacity on their cards, 102,278 MXN on average.
+
+
+4.2.1     Randomization checks
+
+The experiment was stratified along a number of dimensions: income quartiles, age quartiles, me-
+dian of tenure with the bank, quartiles of baseline savings, dummy for clients for whom Banorte
+is the main bank, dummy for clients considered predominantly digital (30% or less of debit card
+charges made through cash withdrawals), median of ATM transactions, terciles of debit card trans-
+actions, and a dummy variable indicating if an individual had a credit card. The baseline refers
+to the 6 months previous to the intervention. Table 2 shows that there is covariate balance across
+a number of variables of interest. More specifically, Table 2 shows the same descriptive statistics
+   5
+   As mentioned, over our sample period, 1 MXN corresponded to 0.047 USD on average. A rough estimate for the
+USD value can thus be obtained by subtracting one decimal point and dividing by 2.
+
+
+
+                                                     10
+separately for the treatment and control groups and also shows the results of the randomization
+check. The randomization appears successful, as none of the differences between the two groups
+are statistically significant except for age: the treatment group is 1 month younger than the control
+group, a difference we argue is due to chance and not economically meaningful.
+
+
+4.2.2   Descriptive Statistics of Simultaneous Credit Card Debt and Liquid Savings
+
+In terms of the credit card debt puzzle, Table 3 shows the fraction of individuals who pay credit
+card interest and their balances on checking accounts, credit cards, and interest payments by deciles
+of savings over income. Here, we restrict the sample to only individuals who have a credit card.
+We can see that, even among those individuals in the higher deciles of checking account balances,
+20% to 30% pay credit card interest. We are concerned about the individuals with both savings
+and credit card debt. The 30% of individuals with the highest checking account balances could
+repay their entire credit card debt and save around 1,300 MXN per month (60 USD). After all, as
+mentioned, Banorte's average credit card interest is 35.2% and the return on checking accounts is
+0%.
+   We now look at all individuals rolling over credit card debt and define the savings and credit
+card debt puzzle group as individuals holding more than 50% of their income in their checking
+accounts and paying credit card interest (hereafter referred to as the puzzle group). About 26% of
+individuals who pay credit card interest are in the puzzle group. This corresponds to about 8% of
+all individuals who have a credit card. In turn, Table 4 compares individuals in the puzzle group
+to the rest of those who pay credit card interest. The puzzle group is slightly older but has similar
+monthly income and tenure with the bank. They mostly differ in their checking account and credit
+card balances and seem to roll over more debt.
+   Note that, individuals appear to hold debt persistently: there is a correlation of 80% between
+rolling over debt in any given month and doing so in the previous month.
+   While having credit cards in the first place and co-holding are not as common in the overall
+population of Mexico relative to the US, the size of our experiment will provide sufficient statistical
+
+
+                                                  11
+power to analyze this sub-population.
+
+
+
+5       Methodology
+
+For every customer, we observe the daily balances in their checking accounts at the end of each
+day. We calculate the average of daily checking account balances over the 7-week treatment period
+as our main dependent variable. Note that, we also observe savings account balances but they are
+rarely used and most individuals do not have one. We then analyze the effects of the experiment
+using two approaches. First, we evaluate the effects of the savings nudges on checking account
+balances for the entire population. For this, we use standard ordinary least squares (OLS) specifi-
+cations comparing treatment to control outcomes, as this is standard to measure treatment effects
+in field experiments.
+    Then, we use machine learning techniques to predict individual treatment effects. Specifically,
+we estimate a causal forest, as discussed in Athey and Imbens (2016) and Athey et al. (2019).
+In turn, we look at the frequency distribution of the individual treatment effects and identify the
+sub-population with the largest predicted treatment effects on savings. For them, we will study the
+borrowing consequences of saving by looking at average treatment effects on savings and credit
+card outcomes.
+
+
+5.1     Estimating Heterogeneous Treatment Effects
+
+5.1.1    Overfitting and Heterogeneous Treatment Effects in High-Dimensional Settings
+
+The typical way to estimate heterogeneous treatment effects in low-dimension settings is by inter-
+acting a variable that captures a heterogeneity of interest (for example, a dummy variable for ob-
+servations above or below the median age) with the treatment indicator. The interaction coefficient
+then identifies the incremental effect of the treatment on individuals above or below the median
+age. If there are several potential explanatory variables, the dimensionality of the model grows
+significantly, since one would need to interact all variables of interest with each other and with the
+
+                                                 12
+treatment variable. Researchers then run the risk of overfitting or capturing spurious heterogeneous
+treatment effects, that is, an interaction shows up as significant by pure chance. The causal forest
+algorithm allows us to identify heterogeneity in treatment effects without concern about invalidat-
+ing inference due to overfitting or multiple hypothesis testing problems. This method is tailored
+to efficiently predict the causal effects of a treatment for a rich set of different sub-populations
+through three distinctive features: sample splitting, orthogonalization, and optimization designed
+to capture treatment effect heterogeneity.
+
+
+5.1.2   Causal Forests
+
+Causal forests are based on causal trees, and their relation is analogous to the relation between
+widely known random forests and regression trees. Regression trees predict an individual outcome
+Yi using the mean Y of observations that share similar covariates, X . To define what counts as
+similar, regression trees partition the covariate space into disjoint groups of observations called
+`leaves.' Within each leaf, all observations share values (or belong to the same value interval) of
+certain X s. A tree starts with a training sample, that is treated first as a single group and then
+recursively partitioned. For each value Xj = x, the algorithm forms candidate splits, placing all
+observations with Xj  x in a left leaf and all observations with Xj > x in a right leaf. The split is
+                                                                                       n
+implemented if it minimizes a certain loss criterion, such as mean squared error (     i=1 (y
+                                                                                            ^i   - yi )2 ).
+This criterion is evaluated in the sample, that is, the same observations used to define where to split
+are also used to calculate the mean value of the outcome in each leaf. The algorithm then repeats
+the process for each of the two new leaves and so on until it reaches a stopping rule. Using the final
+set of leaves, the tree provides out-of-sample predictions by figuring out in which terminal leaf a
+certain observation falls based on its covariate values and assigning a predicted value equal to the
+average value of all observations in that leaf in the training sample.
+   Random forests are an ensemble of n trees in which n random subsamples of the data are taken
+and each subsample is used to train a causal tree. Predictions for each observation in a test sample
+(which could be the full original dataset) are defined as the average across n predictions, obtained
+
+
+                                                  13
+by pushing that one observation down each of the n trees.
+   In contrast to regular random forests that predict individual outcomes Yi , causal forests want to
+predict conditional average treatment effects (E [Y1 - Y0 |X = x] in a potential outcomes frame-
+work), to measure how causal effects vary for different sub-populations. Standard loss criteria
+such as goodness-of-fit measures are not available because we do not observe the treatment effect
+Y1 - Y0 for any one individual. Athey and Imbens (2016) show that maximizing the expected
+mean squared error of predicted treatment effects instead of the infeasible mean squared error it-
+self is basically equivalent to maximizing the variance of treatment effects across leaves. Thus,
+this defines a new criterion for sample splitting that is specifically designed to identify treatment
+effect heterogeneity. They also show that, to reduce overfitting bias, the training sample should
+be further split into a splitting and an estimation sample so that the observations used to choose
+where to create new leaves are not the same ones used to calculate treatment effects within each
+leaf. In addition, Athey et al. (2019) argue for the importance of orthogonalization: in other words,
+the treatment effect estimation in the next sample (the estimation sample) has to balance covariates
+between the treatment and control groups.
+   Thus, causal forests are different from off-the-shelf machine learning methods in three ways:
+1) they estimate treatment effects with a repeated split sample method by which one sample is used
+to identify splitting rules and a different sample is used to estimate treatment effects (this is referred
+to as "honest estimation" (Athey and Imbens, 2016)), 2) the splitting rule for the trees is defined
+to find sub-populations with different treatment effects instead of predicting levels of the outcome
+of interest in the treatment and control groups separately, and 3) orthogonalization methods are
+used to ensure covariate balance across multiple sub-populations. A.1 provides additional details
+on the intuition behind causal forests as well as the specific implementation of causal forests in
+conjunction with the generalized random forest algorithm developed by Athey et al. (2019).
+   We will further discuss the rationale and findings of applying a causal forest in our setting in
+Subsection 6.2.
+
+
+
+
+                                                   14
+6     Results
+
+6.1    Aggregate Effects of the Intervention
+
+We study the treatment effect of the intervention on saving for the entire experimental pool as well
+as the treatment effect on saving and borrowing for individuals who have a credit card. To do so,
+we estimate Equation (1).
+
+
+                                   Yi = s +   treatmenti +          i                            (1)
+
+    where s represents fixed effects for randomization blocks and  identifies the treatment effect
+of the intervention as the difference in outcomes between the treatment and control groups. Note
+that these average treatment effects are intention-to-treat (ITT) effects because individuals may
+or may not have seen the messages; if they do see the messages, they then choose how much to
+respond. The fact that we find a positive and significant effect in a randomized setting implies that
+at least some individuals saw the messages and that their behavior was affected by them.
+    Table 5 shows the average treatment effects across all treatments by treatment message and
+treatment frequency. Column 1 shows that, on average, there is a significant 0.6% increase in
+savings from a basis of 21,867 MXN. Column 2 displays the effects by treatment message, showing
+that only Message 2, individually, has a positive treatment effect. Column 3 shows that only the
+treatment with weekly messages has a positive treatment effect on its own. That said, even though
+not all treatments lead to significant effects on their own, all treatment messages and frequencies
+have similar coefficients that are not statistically significantly different from each other.
+    Columns 4 and 5 show the average treatment effect for individuals who have a credit card. In
+this column, we again pool all treatments into one single dummy variable that takes the value of
+one if a given individual was assigned to any of the treatments. Here, we find a significant 1.4%
+increase in savings from a basis of 24,331 MXN, which represents an increase in savings of 340
+MXN. We then explore if there is any increase in credit card interest payments but do not find a
+significant effect. This null effect is tightly estimated: We can rule out an increase in credit card
+
+                                                  15
+interest of more than 0.3% with 95% statistical confidence on a basis of 213.84 MXN, that is,
+we can rule out an increase of more than 0.64 MXN in borrowing costs. Thus, in this aggregate
+specification, for every 1% increase in savings, individuals with credit cards incurred less than a
+0.64/340 or 0.19% increase in borrowing costs.
+   Consistent with the previous literature on savings nudges via SMS, the documented impact is
+relatively small (Karlan et al., 2016). The fact that there was a stronger effect on savings among
+credit cardholders suggests that there may be some sub-populations with a stronger response than
+others. We thus study heterogeneity of treatment effects in the following section looking at both
+saving and borrowing.
+
+
+6.2    Heterogeneous Effects and Sub-Population Analysis
+
+We pay special attention to heterogeneous treatment effects for two reasons. First, previous work
+has found moderate effects of nudging interventions via SMS on savings. We argue that this oc-
+curs because the average effect masks heterogeneities, with some individuals responding strongly
+while others remain unaffected. Our setting allows us to characterize sub-populations who indeed
+respond to savings nudges and provide insights on how to perform targeted interventions. Second,
+any meaningful test of the effect of savings nudges on borrowing requires nudges to first have
+a strong effect on savings. Testing the impact of savings nudges on borrowing where there is a
+small effect on savings would be of limited use. In contrast, testing the effect of savings nudges on
+borrowing for individuals who indeed responded to the savings nudge and experienced meaningful
+increases of savings is relevant for both policy and testing theoretical explanations of the credit
+card debt puzzle.
+   Our heterogeneity analysis allows us to study the borrowing response of individuals who indeed
+increased their savings significantly as a result of a savings nudge. To identify individuals with the
+highest response to the treatment, we use a causal forest.
+
+
+
+
+                                                 16
+6.2.1   Characterizing Individuals with the Largest Predicted Responses to Savings Nudges
+
+As described, the causal forest produces individual predictions of treatment effects for each obser-
+vation in the sample (both treatment and control groups). Following Athey and Wager (2019), we
+first train a pilot causal forest with 2,000 trees using all 161 pre-treatment variables available for
+the analysis. These variables include past financial behavior (for example, for checking and credit
+card balances and interest, we include 6 monthly lags), demographic variables, and a number of
+geographic dummies. We then train a second forest only on the 52 variables with higher impor-
+tance, that is those which saw the largest number of splits in the first estimation. For this second
+causal forest estimation, Figure 2 shows the 27 variables with the highest variable importance, and
+Figure 1 shows the distribution of the predicted treatment effects at the individual level, listing the
+52 final pre-treatment variables in the caption. This will be the basis for our subsequent analysis.
+   Figure 1 shows the distribution of predicted treatment effects. We use individual predictions
+as a "score" value that ranks observations according to their predicted treatment effects (Cher-
+nozhukov et al., 2018), and we split the sample of users into quartiles according to each individual's
+score value. Figures 2 and 3 show how the treatment effects on savings are larger for individuals
+with larger scores, suggesting that the predicted treatment effects are a valid measure of the actual
+treatment effects. We can see that the top 5% of individuals in the sample have a treatment effect of
+5.33% (1,162.5 MXN). A.1.1 provides a formal test for the validity of individual treatment effects
+as a measure for the actual treatment effects (Chernozhukov et al., 2018) in Table A1.
+   Table A2 compares the baseline characteristics of individuals in the top and bottom quartiles
+of the distribution of the predicted treatment effects. By design, these groups of individuals are
+not the same. Compared to individuals in the bottom quartile of the distribution of the predicted
+treatment effects, individuals with the highest predicted response are about one year older and have
+a higher income, longer tenure with the bank, larger checking account balances, and larger credit
+card balances and credit card limits.
+
+
+
+
+                                                  17
+6.2.2   Addressing Overfitting Concerns
+
+We now focus on individuals in the top quartile of the predicted treatment effects who have a
+credit card. For them, we calculate the treatment effect on savings and then borrowing. We note
+that the individual predictions produced by the causal forest are based on pre-treatment covariates
+and result from a procedure based on sample splitting and orthogonalization. We do not search for
+large treatment effects over multiple partitions of the entire dataset, since, in that case, our analysis
+would suffer from a type of "reverse endogeneity" overfitting (that is, we would pick a group of
+individuals who displayed large savings in response to the treatment, but something else might
+have been happening with this subsample). Instead, our predictions are based on 2,000 causal
+trees, each trained with a different sample, which is further split into a splitting sample and an
+estimation sample. Heuristically, individuals in the top quartile of the predicted treatment effects
+are those who consistently showed high treatment effects across the multiple training samples.
+
+
+6.2.3   Ensuring Covariate Balance
+
+Furthermore, since the top quartile of the predicted treatment effects is an arbitrary sample cut from
+the perspective of the experimental design, covariate balance between the treatment and control
+groups is not ensured. Therefore, instead of calculating average treatment effects with a simple
+regression of treatment status on the outcome, we adjust our treatment effect estimates by treatment
+propensity or covariate imbalance using a variation of the Adjusted Inverse Probability Weighted
+(AIPW) estimator of Robins et al. (1994), as implemented by Athey et al. (2019) in the grf package
+of R. AIPW estimators are based on calculating the propensity to be in the treatment group given
+observable characteristics (Glynn and Quinn, 2010). Under perfect covariate balance, treatment
+propensity is constant across all observable characteristics. But while successful randomization
+guarantees that this is true on average, perfect covariate balance is not necessarily present across
+all partitions of the sample. AIPW effectively controls for these imbalances, thus improving the
+precision of our estimates.
+
+
+
+                                                   18
+6.3     Results for the Top Quartile of Predicted Treatment Effect Individuals
+
+6.3.1   Effects on Saving and Borrowing
+
+Table 6 shows the average treatment effects on saving and borrowing for individuals in the top
+quartile of the predicted treatment effects who have credit cards. Panel A considers all individuals
+who have a credit card, while Panel B focuses on the subset of individuals paying credit card
+interest.
+    We first discuss the results in Panel A. In Column (1), we can see the savings results for the
+top quartile of predicted treatment effect individuals who have a credit card. Here, the estimated
+increase in savings is 6.01% on a baseline savings of 31,681 MXN, that is, 1,904 MXN. On aver-
+age, this group of individuals decreased their credit card balances by 1.55% from a basis of 17,097
+MXN and a standard error of 1.16%, as can be seen in Column (2). We can thus rule out an in-
+crease in borrowing of more than 124 MXN with 95% statistical confidence. Similarly, in Column
+(4), we can see that interest payments decreased by 1.71% from a basis of 230 MXN. Column (3)
+shows a standard error of 3.34%. We can thus rule out an increase in borrowing costs of more than
+11 MXN with 95% statistical confidence.
+    We can compare this to the increase in savings and conclude that, for every 1 MXN in savings,
+we can rule out a 124/1,904 or 11/1,904 increase in borrowing or borrowing costs, respectively.
+In other words, we can rule out a 0.06% increase in borrowing or a 0.01% increase in borrowing
+costs in response to a 1% increase in savings.
+    In Column (3), we can see the effect of credit card balances from the credit card bureau, which
+also includes non-Banorte credit cards. The coefficient estimate and standard errors paint a similar
+picture. For each 1% increase in savings, we can rule out a very small increase in borrowing with
+statistical confidence. Note that the credit bureau reports the credit card balances at the end of
+the month, whereas we use the average daily balances for Banorte credit cards. Nevertheless, the
+fact that we tightly estimate small effects reassures us that individuals do not borrow using other
+cards instead of their Banorte credit cards. Furthermore, comparing our Banorte results for credit
+
+
+
+                                                 19
+balances versus actual rolled-over debt as measured by interest payments, we conclude that the
+balances are indicative of the actual rolled-over debt.
+   In Column (5), we can see the estimated effect for the likelihood of paying interest in a given
+month. Here, we can rule out an increase of 0.68% on a baseline probability of 42%. Thus,
+for every 1 MXN in savings, the increase in the likelihood to borrow is only 0.0068/1,904, or
+0.0000036%.
+   Finally, in Column (6), we report results for credit card payments, that is, individuals repaying
+their outstanding credit card balances or rolled-over credit card debt. Here, we also document a
+very small and tightly estimated treatment effect. Individuals save more but do not repay more of
+their outstanding credit card balances or debt.
+   We now turn to the results in Panel B of Table 6, which corresponds to individuals that pay
+credit card interest at baseline, that is, we observe average positive interest payments in the 6
+months previous to the intervention, and are in the top quartile of the predicted treatment effects.
+For this group, we have an increase in savings of 5.67% (1,315 MXN) on a baseline of 23,194
+MXN. In turn, we can rule out an increase of 133.97 MXN in credit card borrowing or 26.68 MXN
+in borrowing costs. To conclude, for every 1 MXN in savings, we can thus rule out increases larger
+than 10 cents (134/1,315) or 2 cents (27/1,315) in credit card borrowing and borrowing costs,
+respectively.
+   Table A3 shows the increases in saving and borrowing for five quintiles of the treatment effect
+score for the group of individuals who have a credit card. To be clear, the table conditions are
+based on the top quartile of the predicted treatment effect for savings and then further splits the
+sample into quintiles. Additionally, the table shows the respective increases in borrowing costs and
+the likelihood to borrow. We can see that, for all of the predicted treatment effect quintiles, the
+increases in borrowing are very small. Table A4 shows the same for individuals with a credit card
+who pay interest at baseline.
+   Figure A6 shows in a graph the treatment effect on interest charges for consumers with credit
+cards and separately for those consumers who pay credit card interest at baseline. We can see
+
+
+                                                  20
+that the negative effect is concentrated in the first quintile of the predicted savings effect, but all
+quintiles' estimates are insignificant and small.
+
+
+6.3.2   Effects on Spending and Income
+
+We want to know whether individuals increased their savings without increasing their borrowing
+by decreasing their spending or increasing their income. Table 7 shows the treatment effects on
+deposits, ATM withdrawals, and spending for the top quartile of the predicted treatment scores.
+We can see that the treatment effect appears to work through a 6.0% decrease in monthly ATM
+withdrawals and a slightly smaller but still significant 4.2% decrease in debit card spending. This
+is true for all individuals with a credit card and also for the subset of those paying credit card
+interest. We thus conclude that a decrease in spending, and in particular discretionary spending
+that may be financed by cash, was responsible for the increase in savings.
+
+
+6.3.3   Customers with Banorte as their Main Bank
+
+Finally, we also replicate the analysis for individuals for whom Banorte is likely to be their main
+bank. After all, it could be that individuals who have other bank accounts offset their additional
+savings using those other accounts. We say that Banorte is likely to be the main bank of a given
+individual when the following three conditions are satisfied: she receives her payroll on a Banorte
+payroll account (identified as such by the Mexican transaction system), she has a credit card with
+Banorte, and she has no credit (of any type) outside of Banorte, according to the credit bureau
+records. Table 8 shows the saving and borrowing results for this group. Panel A shows the results
+for all clients in the top quartile of the predicted treatment effects and for whom Banorte is likely
+to be their main bank (who therefore have a credit card). We can rule out increases of more than
+10 cents in credit card balances or 1 cent in borrowing cost for every additional MXN saved as
+a result of the savings nudge. Panel B shows the results for the subset of individuals who also
+incurred credit card interest at baseline. For them, we can rule out increases of 11 cents in credit
+card balances or 2 cents in borrowing cost for every additional 1 MXN saved.
+
+
+                                                    21
+6.3.4   Effects by Treatment Message
+
+We now want to understand whether the effects on saving and borrowing differ across treatment
+messages. To explore the relationships between saving and borrowing across each of the seven
+messages included in the experiment, we focus on the 126,458 individuals in the top quartile of
+the predicted treatment effects who had a credit card. For them, we calculate the average treatment
+effect of receiving each specific message on their saving and borrowing.
+   Table A5 shows that the savings effect was concentrated for Messages 2, 3, 4, and 5 (the
+messages are displayed in Subsection 4.1). The borrowing effect is small and tightly estimated
+for all messages. This finding is important for the interpretation of our results. The effect does
+not seem to be constrained to messages alluding to short-term savings motives. Message 2, "[...]
+get ready for year-end expenses," is the only significant one that alludes to saving for the short
+term, whereas the other significant messages do not. Additionally, Message 6 "[...] avoid money
+shortfalls at year-end." and Message 8 "[...] emergency [...]" did not have significant effects, even
+though they refer to specific short-term savings goals.
+   Because we do not find differences between messages alluding to short-term versus long-term
+savings, we may be in a position to extrapolate our specific savings nudge experiment to other
+savings nudges or more forceful measures aimed to increase savings for the longer term.
+   Finally, Message 4 "[...] you have the safest money box [...] reach your goals" carried a large
+average treatment effect and alluded to the safeness of the savings and reaching general goals.
+This message and its effect are in line with the behavioral hypothesis of mental accounting and
+constraining oneself to save more.
+
+
+6.4     Analysis of Methods to Identify Sub-Populations with Large Treatment
+
+        Effects Subject to Overfitting Problems
+
+We study heterogeneous treatment effects using a causal forest (Athey et al., 2019). This method
+allows us to derive valid inferences for the treatment effects of the intervention across different sub-
+
+
+                                                  22
+populations and to identify the sub-population with the largest treatment effect without concerns
+of overfitting. We now contrast this method with methods of identifying heterogeneous treatment
+effects based on randomization strata or ex-post observed treatment effects. Both methods are
+subject to overfitting concerns.
+
+
+6.4.1   Heterogeneity by Experimental Strata
+
+A standard way to study heterogeneous treatment effects is to split the sample based on strata
+from the experimental design. Table 9 shows the average treatment effects on savings across
+the experimental strata. We find limited heterogeneity across the sub-populations that were pre-
+selected for heterogeneity analysis before the experiment was run. Individuals with pre-treatment
+checking account balances in the top quartile are the ones with the largest treatment effects. For
+them, we find a 1.8% increase in savings (-0.006 + 0.024).
+   Looking at experimental strata is a useful approach to estimate how a treatment affects a sub-
+population of interest that is specified before the experiment takes place. However, this method
+is inappropriate when trying to identify the sub-population with large treatment effects. We thus
+replicate our base saving and borrowing analysis focusing on individuals in the top quartile of
+pre-treatment checking account balances who have a credit card. After all, pre-treatment checking
+account balances had high variable importance, as seen in Figure 4. For them, Table A6 shows
+that there is no treatment effect on savings or borrowing. Pre-treatment checking account balances
+are a coarse predictor of treatment effects, and they could be bundling together individuals with
+large and small responses to the treatment. We thus conclude that, on average, individuals in the
+top quartile of pre-treatment checking account balances have a large and significant response to the
+savings nudge, but individuals with a credit card who had pre-treatment checking account balances
+in the top quartile did not show a statistically significant increase in savings.
+   Comparing treatment effects across experimental strata thus appears inefficient when searching
+for the group with the largest effects because it is based on very coarse partitions of the covariate
+space. Instead, one could split the sample based on the ex-post observed treatment effects. For
+
+
+                                                  23
+example, one could further split the sample of individuals in the top quartile of pre-treatment
+checking account balances by overlaying strata dimensions and ultimately calculating the treatment
+effects for each strata block.6 However, we now show that such attempts to perform more granular
+partitions without adjusting for overfitting (as the causal forest does) leads to substantial bias.
+
+
+6.4.2     Heterogeneity by Observed Treatment Effects at the Strata-Block Level
+
+Specifically, we split the sample into 6,104 non-empty mutually exclusive groups defined by the
+interaction of all experimental strata. For each group, we calculate average treatment effects, and
+we assign to each observation in the group the average treatment effect of its group. We then split
+the sample into quartiles based on the average treatment effect assigned to each observation. The
+top quartile corresponds to the 25% of observations which belong to strata blocks with the highest
+observed average treatment effect. For them, we calculate treatment effects on checking account
+balances, credit card interest, and credit card balances regressing the corresponding outcome vari-
+able on a treatment indicator.
+       The results are presented in Table 10. Column 1 shows the number of observations included
+in this section of the analysis. Columns 2 to 4 show the treatment effects for individuals in strata
+blocks with the largest observed average treatment effects. We see that the increases in savings
+are very large. When considering all individuals, we find a 24% increase in savings. When con-
+sidering only individuals with a credit card, we find a 44% increase in savings. When considering
+only individuals who have a credit card and who paid interest at baseline, we find a 52% increase.
+Additionally, these individuals show large decreases in borrowing, measured both in terms of in-
+terest (Column 3) and balances (Column 4). In contrast, Columns 5 to 8 show the results obtained
+from the causal forest. Column 5 shows the number of observations included in this part of the
+analysis. Column 6 shows that, as described before, the increases in savings are in the order of 2
+to 6%. Columns 7 and 8 show the corresponding treatment effects on borrowing and borrowing
+   6
+     We note that this is not the standard way in which people calculate heterogeneous treatment effects (and we are
+not aware of any study that has done so), but we use this as a limiting case of what would happen when trying to find
+heterogeneous treatment effects with a rich set of explanatory variables without adjusting for the risk of overfitting.
+
+
+
+                                                         24
+cost. These estimates, which are free of overfitting bias, are significantly smaller than the ones in
+Columns 2 to 4. The large overestimation we find is consistent with the discussion of Abadie et al.
+(2018), who also found that sample splitting reduces bias in the context of endogenous stratifica-
+tion.
+    In Table A7, we compare the overlap between the observations assigned to quartiles of pre-
+dicted individual treatment effects calculated with the causal forest and the observations assigned
+to quartiles of the observed average treatment effects, calculated for each strata block. We conclude
+that there is little overlap.
+    We conclude that causal forests, or more generally double machine learning algorithms, are the
+appropriate method to identify sub-populations with the largest treatment effects. And we use this
+as our preferred method for identifying responsive sub-populations.
+
+
+
+7       Explanations for the Credit Card Debt Puzzle
+
+One important empirical finding is that some individuals who are paying credit card interest re-
+spond to savings nudges with substantial increases in savings. These savings are not used to pay
+off credit card debt over the two billing cycles subsequent to receiving the nudge (as documented
+in Table 6), thus exacerbating the co-holding of low-interest savings and high-interest debt. As we
+discussed, the literature proposes different explanations for this behavior.
+    In A.5, we outline a toy model to demonstrate that a null effect on credit card borrowing after an
+increase in savings is inconsistent with the predictions of rational models explaining the credit card
+debt puzzle, e.g., Telyukova (2013). In this model, the agent has an optimal plan for consumption
+and savings; if she needs to save more because of transaction purposes in the future, her optimal
+present consumption is not affected, and she will simply borrow more to maintain the same level
+of optimal present consumption.
+    Instead, in a second toy model, we propose mental accounting and rules of thumb as a potential
+explanation, following Haliassos and Reiter (2005). The theoretical idea is the following: an
+
+
+
+                                                 25
+individual has a spending account (that is, her credit card) as well as an account for savings. On her
+credit card, she will spend up to some personal limit. Once she gets close to that personal limit, she
+feels constrained and can restrict her overspending more successfully. If this individual would take
+her savings and repay her credit card debt, she would feel unconstrained and rack up more credit
+card debt. Individuals thus prefer to hold liquid savings while simultaneously holding consumer
+debt instead of paying off their credit card debt. They separate these two accounts mentally to
+cope with their overspending and self-control problems. In the model, when the agent is nudged to
+save more, this money is placed in a different mental account. She then effectively allocates fewer
+resources between the present and future and adjusts her present consumption downwards instead
+of borrowing more.
+   The first toy model thus predicts that savings nudges should increase borrowing whereas that
+is not true in the second toy model. In our setting, we find that individuals do not respond with
+borrowing when nudged to save. We thus interpret this as evidence against transaction-convenience
+explanations of the credit card debt puzzle and in favor of preference-based explanations for it.
+   Additionally, we have two more pieces of evidence in favor of a preference-based explanation
+of the credit card debt puzzle:
+   First, in Figure 5, we plot the fraction of the co-holding puzzle population, defined as the
+fraction of individuals paying credit card debt interest and holding more than 50% of their income
+in their checking accounts, for each quartile of the savings score distribution. We can see that most
+co-holding individuals are in the highest quartile of the savings score distribution (approximately
+40%). By focusing the analysis on the top quartile of the predicted treatment effects, we are
+capturing a relevant fraction of the puzzle population. This also speaks to the idea that co-holding
+is a psychological mechanism to exercise self-control, as it also makes individuals more susceptible
+to savings nudges.
+   Second, as mentioned, Message 4 "[...] you have the safest money box [...] reach your goals"
+carries a large average treatment effect and alludes to the safeness of the savings and reaching
+general goals. This message and its effect are in line with the behavioral hypothesis of mental
+
+
+                                                 26
+accounting and constraining oneself to save more.
+
+
+
+8    Conclusion
+
+We estimate whether or not nudging individuals to save more has the unintended consequence
+of generating additional borrowing in high-interest unsecured consumer credit. We analyze the
+effects of a large-scale experiment in which 3.1 million bank customers were nudged to save more
+via bi-weekly SMS and ATM messages over 7 weeks. We uncover strong heterogeneities in the
+magnitude of the treatment effects. Compared to the control group, the subset of customers in
+the top quartile of the predicted treatment effect distribution increased their savings considerably.
+However, this increase in savings was not accompanied by an increase in rolled over high-interest
+unsecured consumer debt. We thus conclude that saving does not cause borrowing.
+    Our results are important to evaluate policy proposals to increase savings via nudges or more
+forceful measures. A vast number of policies are currently in place aimed at increasing savings
+(Benartzi et al., 2017). When policymakers or researchers evaluate these interventions, they of-
+ten focus on the immediate savings outcome and do not consider other margins of adjustment
+(Beshears and Kosowsky, 2020).
+    Our results can also help us to understand the mechanism behind the so-called credit card debt
+puzzle, that is, when individuals hold credit card debt and savings simultaneously. We find that
+the individuals who paid credit card interest at baseline also responded to the savings nudges with
+significant increases in their liquid savings. But these increases in savings were not accompanied
+by increases in credit card debt or credit card debt repayment. A null increase in savings is in-
+consistent with the predictions of rational explanations of the credit card debt puzzle based on
+transaction purposes. We argue that this result is consistent with the idea that individuals hold sav-
+ings and credit card debt simultaneously to deal with self-control problems via mental accounting,
+that is, they can maintain a rule of not touching their savings (that are parked in a separate mental
+account) but are simultaneously indebted due to overspending.
+
+
+
+                                                 27
+References
+Abadie, A., M. M. Chingos, and M. R. West (2018). Endogenous stratification in randomized
+  experiments. Review of Economics and Statistics 100(4), 567­580.
+
+Akba¸
+    s, M., D. Ariely, D. A. Robalino, and M. Weber (2016). How to help the poor to save a bit:
+  Evidence from a field experiment in kenya.
+
+Allcott, H. and J. B. Kessler (2019). The welfare effects of nudges: A case study of energy use
+  social comparisons. American Economic Journal: Applied Economics 11(1), 236­76.
+
+Athey, S. and G. W. Imbens (2015). Machine learning methods for estimating heterogeneous
+  causal effects. stat 1050(5), 1­26.
+
+Athey, S. and G. W. Imbens (2016). Recursive partitioning for heterogeneous causal effects. Pro-
+  ceedings of the National Academy of Sciences 113, 7353­7360.
+
+Athey, S., J. Tibshirani, S. Wager, et al. (2019). Generalized random forests. The Annals of
+  Statistics 47 (2), 1148­1178.
+
+Athey, S. and S. Wager (2019). Estimating treatment effects with causal forests: An application.
+  arXiv preprint arXiv:1902.07409.
+
+Benartzi, S., J. Beshears, K. L. Milkman, C. R. Sunstein, R. H. Thaler, M. Shankar, W. Tucker-Ray,
+  W. J. Congdon, and S. Galing (2017). Should governments invest more in nudging? Psycholog-
+  ical science 28(8), 1041­1055.
+
+Bertaut, C., M. Haliassos, and M. Reiter (2009). Credit Card Debt Puzzles and Debt Revolvers for
+  Self Control. Review of Finance 13(4), 657­692.
+
+Beshears, J., J. J. Choi, D. Laibson, B. C. Madrian, and K. L. Milkman (2015). The effect of
+  providing peer information on retirement savings decisions. The Journal of finance 70(3), 1161­
+  1201.
+
+Beshears, J., J. J. Choi, D. Laibson, B. C. Madrian, and W. L. Skimmyhorn (2019). Borrowing
+  to save? the impact of automatic enrollment on debt. Technical report, National Bureau of
+  Economic Research.
+
+Beshears, J. and H. Kosowsky (2020). Nudging: Progress to date and future directions. Organiza-
+  tional Behavior and Human Decision Processes 161, 3­19.
+
+Chernozhukov, V., M. Demirer, E. Duflo, and I. Fernandez-Val (2018). Generic machine learn-
+  ing inference on heterogenous treatment effects in randomized experiments. Technical report,
+  National Bureau of Economic Research.
+
+Chetty, R., J. N. Friedman, S. Leth-Petersen, T. H. Nielsen, and T. Olsen (2014). Active vs. passive
+  decisions and crowd-out in retirement savings accounts: Evidence from denmark. The Quarterly
+  Journal of Economics 129(3), 1141­1219.
+
+
+                                                28
+Choi, J. J., D. Laibson, B. C. Madrian, and A. Metrick (2004). For better or for worse: Default
+  effects and 401 (k) savings behavior. In Perspectives on the Economics of Aging, pp. 81­126.
+  University of Chicago Press.
+
+Costa, D. L. and M. E. Kahn (2013). Energy conservation "nudges" and environmentalist ideology:
+  Evidence from a randomized residential electricity field experiment. Journal of the European
+  Economic Association 11(3), 680­702.
+
+Fulford, S. L. (2015). How important is variability in consumer credit limits? Journal of Monetary
+  Economics 72, 42­63.
+
+Gargano, A. and A. G. Rossi (2020). There's an app for that: Goal-setting and saving in the fintech
+  era. Available at SSRN .
+
+Gathergood, J. and A. Olafsson (2020). The co-holding puzzle: New evidence from transaction-
+  level data.
+
+Gathergood, J. and J. Weber (2014). Self-control, financial literacy & the co-holding puzzle. Jour-
+  nal of Economic Behavior & Organization 107, 455­469.
+
+Glynn, A. N. and K. M. Quinn (2010). An introduction to the augmented inverse propensity
+  weighted estimator. Political analysis 18(1), 36­56.
+
+Goldin, J., T. Homonoff, and W. Tucker-Ray (2017). Retirement contribution rate nudges and plan
+  participation: Evidence from a field experiment. American Economic Review 107 (5), 456­61.
+
+Gross, D. B. and N. S. Souleles (2002). Do Liquidity Constraints and Interest Rates Matter for Con-
+  sumer Behavior? Evidence from Credit Card Data. The Quarterly Journal of Economics 117 (1),
+  149­185.
+
+Haliassos, M. and M. Reiter (2005). Credit card debt puzzles. Technical report, CFS Working
+  Paper.
+
+Herkenhoff, K. F. and G. Raveendranathan (2020). Who bears the welfare costs of monopoly? the
+  case of the credit card industry. Technical report, National Bureau of Economic Research.
+
+Hoch, S. J. and G. F. Loewenstein (1991). Time-inconsistent preferences and consumer self-
+  control. Journal of consumer research 17 (4), 492­507.
+
+Kaplan, G. and G. Violante (2014). A Model of the Consumption Response to Fiscal Stimulus
+  Payments. Econometrica 82, 1199­1239.
+
+Karlan, D., M. McConnell, S. Mullainathan, and J. Zinman (2016). Getting to the top of mind:
+  How reminders increase saving. Management Science 62(12), 3393­3411.
+
+Keys, B. J. and J. Wang (2019). Minimum Payments and Debt Paydown in Consumer Credit Cards.
+
+Laibson, D., A. Repetto, and J. Tobacman (2003). A Debt Puzzle. in Philippe Aghion, Roman Fry-
+  dman, Joseph Stiglitz, and Michael Woodford, eds., Knowledge, Information, and Expectations
+  in Modern Economics: In Honor of Edmund S. Phelps, Princeton: Princeton University Press.
+
+                                                29
+Laibson, D., A. Repetto, and J. Tobacman (2007). Estimating Discount Functions with Consump-
+  tion Choices over the Lifecycle.
+
+Laibson, D., A. Repetto, and J. Tobacman (2012). Estimating Discount Functions with Consump-
+  tion Choices over the Lifecycle. Working Paper.
+
+Maki, D. M. (2002). The growth of consumer credit and the household debt service burden. In
+ The impact of public policy on consumer credit, pp. 43­68. Springer.
+
+Medina, P. (2020). Side-Effects of Nudges: Evidence from a Randomized Intervention in the
+ Credit Card Market. Review of Financial Studies.
+
+Medina, P. C. and J. L. Negrin (2021). The hidden role of contract terms: Evidence from credit
+ card minimum payments in mexico. Management Science, forthcoming.
+
+Prelec, D. and D. Simester (2001). Always leave home without it: A further investigation of the
+  credit-card effect on willingness to pay. Marketing letters 12(1), 5­12.
+
+Robins, J. M., A. Rotnitzky, and L. P. Zhao (1994). Estimation of regression coefficients
+  when some regressors are not always observed. Journal of the American statistical Associa-
+  tion 89(427), 846­866.
+
+Rodríguez, C. and J. Saavedra (2015). Nudging youth to develop savings habits: Experimental
+  evidence using sms messages. CESR-Schaeffer Working Paper (2015-018).
+
+Shefrin, H. M. and R. H. Thaler (1988). The Behavioral Life-Cycle Hypothesis. Economic In-
+  quiry 26(4), 609­643.
+
+Soman, D. and A. Cheema (2002). The effect of credit on spending decisions: The role of the
+  credit limit and credibility. Marketing Science 21(1), 32­53.
+
+Telyukova, I. A. (2013). Household need for liquidity and the credit card debt puzzle. Review of
+  Economic Studies 80(3), 1148­1177.
+
+Wertenbroch, K. (2001). Self-rationing: Self-control in consumer choice.
+
+Wisdom, J., J. S. Downs, and G. Loewenstein (2010). Promoting healthy choices: Information
+ versus convenience. American Economic Journal: Applied Economics 2(2), 164­78.
+
+
+
+
+                                              30
+Figures and Tables
+
+                                   Table 1: Descriptive Statistics
+
+ All Individuals (N= 3,054,503)
+                                      Mean         Std dev           P25      P50          P75
+ Age (years)                          44.72        16.35         31.00       43.00        56.00
+ Monthly Income ($)                13,499.86     13,711.68     6,116.67    9,866.88     15,005.78
+ Tenure (months)                      81.67        73.16         22.00       59.33       125.37
+ Checking Account Balance ($)      19,384.03     52,565.83      729.00     2,295.69     10,402.39
+ Fraction with Credit Card            0.12         0.32          0.00        0.00         0.00
+ Credit Card Interest ($)             20.04       120.24          0.00        0.00         0.00
+ Credit Card Balance ($)            3,879.84     16,602.93       0.00        0.00          0.00
+ Credit Card Limit ($)             17,168.81     67,247.74       0.00        0.00          0.00
+ Individuals with Credit Cards (N=362,223)
+                                      Mean         Std dev           P25      P50          P75
+ Age (years)                          43.15         13.04       33.00     42.00           53.00
+ Monthly Income                    19,744.77     18,653.78    9,071.32 13,912.75       22,718.28
+ Tenure (months)                     103.65         73.12       43.27     86.43          148.53
+ Balance Checking Account          32,191.10     70,646.63    1,581.29 5,157.02        23,069.07
+ Credit Card Interest                168.91        311.01        0.00     0.00           170.01
+ Credit Card Balance               21,914.28     34,666.06      85.17   6,055.66       25,297.75
+ Credit Card Limit                 102,277.57    137,313.20   14,000.00 40,000.00      123,999.00
+
+
+This table presents summary statistics for all individuals in the experiment, and for the subset of
+individuals who have a credit card. For each individual, we consider information from the 6
+months previous to the intervention. Monthly income, balances, and interest payments are in
+Mexican Pesos (MXN). 1 MXN = 0.047 USD.
+
+
+
+
+                                                 31
+                                    Table 2: Covariate Balance
+
+               Variable                         Control    Treatment    Difference
+               Age (Years)                       44.73       44.72         -0.01
+                                                                           (0.01)
+               Monthly Income ($)             13,506.49    13,498.98       -7.51
+                                                                          (19.71)
+               Tenure (months)                   81.75        81.66        -0.08
+                                                                            (0.1)
+               Checking Acct. Balance ($)     19,322.25    19,392.22       69.98
+                                                                          (76.91)
+               Credit Card Balance ($)         3,858.71     3,882.64       23.94
+                                                                          (25.76)
+               Credit Card Limit ($)          17,203.11    17,164.27      -38.84
+                                                                         (101.91)
+
+This table presents a covariate balance test in which we estimate Equation 1 with different
+dependent variables (as specified in Column 1). Columns 2 and 3 present the average value of
+each dependent variable for Treatment and Control groups. Column 4 shows the coefficient of
+regressing the corresponding outcome on the treatment indicator with strata fixed effects. The
+p-value of an F-test from regressing the treatment indicator on all of the covariates with strata
+fixed effects is 0.1519. Monthly income and balances are in Mexican Pesos (MXN). 1 MXN =
+0.047 USD.
+
+
+
+
+                                                32
+     Table 3: Checking and Credit Card Account Balances for Individuals Who Have a Credit Card, By Deciles of Average Daily Balance on
+     Checking Accounts Over Income
+
+
+                                  All Clients with Credit Card                             Clients Paying Credit Card Interest
+
+                               Checking         Fraction Of
+                                                                  Fraction Of                Checking
+                                Account           Clients                                                  Credit Card     Credit Card
+                                                                    Clients                   Account
+         Decile       N       Balance over     with non-zero                        N                        Balances        Interest
+                                                                 Paying Credit                Balances
+                                Income          Credit Card                                                 (Average)       (Average)
+                                                                 Card Interest               (Average)
+                               (Average)          Balance
+         All       362223          1.81             0.61             0.31         111999      27,818.18     32,929.68       1,120.90
+         1         36223           0.01             0.62             0.42          15141       340.20       29,917.08       1,018.99
+         2         36222           0.05             0.56             0.37          13445      1,086.67      24,165.70        854.02
+         3         36222           0.08             0.59             0.37          13351      2,054.23      26,525.30        956.52
+         4         36223           0.13             0.61             0.36          13115      3,204.63      27,805.94       1,001.48
+33
+
+
+
+
+         5         36222           0.20             0.64             0.35          12546      5,293.93      31,556.76       1,107.03
+         6         36222           0.33             0.64             0.32          11475      8,467.78      35,507.68       1,215.31
+         7         36223           0.58             0.63             0.28          10054      15,266.06     38,101.32       1,280.91
+         8         36222           1.16             0.62             0.24          8757       29,971.89     42,637.44       1,366.57
+         9         36222           2.81             0.59             0.21          7529       66,548.62     43,713.88       1,381.63
+         10        36222          12.73             0.58             0.18           6586     295,446.99     45,925.31       1,463.94
+
+     This table presents statistics about credit card borrowing and checking account balances for individuals who have a credit card and pay
+     interest, holding different levels of checking account balances over income. Individuals are split into deciles of checking account
+     balances over income. For observations in each decile group, we first present the average of checking account balances over income as
+     well as the fraction of individuals with a non-zero credit card balance and the fraction of individuals paying credit card interest. We
+     then focus on individuals who are paying credit card interest. For them, we present average checking account balances, average credit
+     card balances, and average monthly interest charges. Monthly balances and interest charges are in Mexican Pesos (MXN). 1 MXN =
+     0.047 USD.
+Table 4: Individuals Paying Credit Card Interest With Checking Account Balances Over or Below
+50% of Their Income
+
+                                                No-Puzzle             Puzzle
+  Variable                                                                            Difference
+                                             (Less than 50% )      (50% or more)
+  Age (Years)                                     42.72                48.03              5.32
+                                                                                         (0.08)
+  Monthly Income ($)                             19,602.03            21,339.81         1737.78
+                                                                                       (112.84)
+  Tenure (months)                                  100.89              134.53            33.64
+                                                                                         (0.44)
+  Checking Acct. Balance ($)                     29,243.58            65,127.67         35884.1
+                                                                                       (423.32)
+  Credit Card Balance ($)                        19,855.37            44,921.26        25065.89
+                                                                                        (205.6)
+  Credit Card Limit ($)                          96,785.91           163,643.28        66857.37
+                                                                                       (823.46)
+  P (Interestt > 0|Interestt-1 > 0)                   0.82               0.86             0.03
+                                                                                       (0.0014)
+
+
+This table presents simple means of each variable for individuals that fall or not into our credit
+card debt puzzle definition. We say that an individual falls into the credit card debt puzzle
+definition if she is paying credit card interest while holding average daily balances in her
+checking account that are higher than 50% of her income. Monthly income and balances are in
+Mexican Pesos (MXN). 1 MXN = 0.047 USD.
+
+
+
+
+                                                 34
+                      Table 5: Overall Treatment Effects of the Intervention
+
+                                    All Individuals                      Individuals with a Credit Card
+                          (1)             (2)                (3)               (4)              (5)
+                        Log of          Log of             Log of            Log of           Log of
+                     Checking Acct. Checking Acct.      Checking Acct.   Checking Acct. Credit Card
+                      Balance +1     Balance +1          Balance +1        Balance +1       Interest +1
+  Any treatment          0.006                                              0.014             -0.005
+                         (0.004)                                            (0.007)          (0.004)
+  Msg1                                    0.007
+                                         (0.005)
+  Msg2                                   0.008
+                                         (0.005)
+  Msg3                                    0.006
+                                         (0.005)
+  Msg4                                    0.006
+                                         (0.005)
+  Msg5                                    0.002
+                                         (0.005)
+  Msg6                                    0.007
+                                         (0.005)
+  Msg7                                    0.006
+                                         (0.005)
+  Bi-weekly                                                 0.006
+                                                           (0.004)
+  Weekly                                                   0.007
+                                                           (0.004)
+  Observations       3054503         3054503            3054503          362223           362223
+  Mean of Dep. Var
+                     17393.63        17393.63           17393.63         24331.63         213.84
+  in Control Group
+
+This table presents the results of estimating Equation (1) with different outcomes and with
+different treatment definitions. Observations are at the user level. Robust standard errors in
+parentheses. * p < 0.10, ** p < 0.05, *** p < 0.01.
+
+
+
+
+                                                   35
+                       Figure 1: Distribution of Predicted Treatment Effects
+
+
+
+
+This graph shows the distribution of predicted treatment effects. We estimate a causal forest that
+predicts for each individual in treatment and control groups an individual treatment effect. We first
+estimate the causal forest using 161 pre-treatment variables and then restrict to the 52 most impor-
+tant ones in the second estimation (results shown here). The 52 variables are: ADB Checking t-1,
+Payroll Deposits (amount) t-2, ADB Checking t-2, ATM Withdrawal (Amount) t-2, ADB Checking
+t-3, Payroll Deposits (amount) t-5, Tenure in Job (months), Debit Card Spending t-5, Payroll De-
+posits (amount) t-3, ATM Withdrawal (Amount) t-4, Direct Profit to the Bank, Tenure with Bank
+(months), ATM Withdrawal (Amount) t-3, Debit Card Spending t-3, ATM Withdrawal (Amount)
+t-6, ADB Checking t-2, ATM Withdrawal (Amount), Payroll Deposits (amount), ADB Checking
+t-1, Debit Card Spending t-2, ATM Withdrawal (Amount) t-1, ADB Checking t-3, Payroll De-
+posits (amount) t-4, Percentage of CC Limit used t-5, Mthly Income, Payroll Deposits (amount)
+t-1, Tenure with CC (months), Percentage of CC Limit used t-3, CC Spending, Percentage of CC
+Limit used t-6, ATM Withdrawal (Amount) t-5, Percentage of CC Limit used t-4, Percentage of
+CC Limit used, Payroll Deposits (amount) t-6, Debit Card Spending t-6, CC Spending in Others,
+CC Spending in Services, CC Spending in Food, Debit Card Spending t-4, Total Balance of in-
+ternal and external Credits, Percentage of CC Limit used t-2, Percentage of CC Limit used t-1,
+Debit Card Spending, Debit Card Spending t-1, CC Spending in Personal Items, Non-Banorte CC
+Balance t-2, Debit and CC Spending in Luxury Items, Non-Banorte CC Balance t-4, CC Spending
+in Transportation, Non-Banorte CC Balance, Non-Banorte CC Balance t-6, and CC Spending in
+Entertainment. ADB refers to average daily balances, all variables are monthly.
+             (a) average treatment effect (% Change)        (b) average treatment effect (MXN)
+
+Figure 2: Treatment effects on checking account balances, as a function of predicted individual
+treatment effects by the causal forest. Individuals are split in to quartiles of treatment effects on
+savings, based on the score generated by the causal forest.
+
+
+
+
+                (a) Treatment Effect (% Change)                (b) Treatment Effect (MXN)
+
+Figure 3: Treatment effectd on checking account balances, as a function of predicted individual
+treatment effects by the causal forest for individuals in the top quartile of the predicted treatment
+effect distribution. Individuals in the top quartile of the predicted treatment effect distribution are
+split in to quintiles of predicted treatment effects, based on the score generated by the causal forest.
+
+
+
+
+                                                       37
+                          Figure 4: Variable Importance: Causal Forest
+
+
+
+
+This graph shows the variable importance of the 27 most important variables used in the estimation
+of the causal forest. Variable importance indicates how often the given variable was used to select
+splits in the multiple trees of the causal forest. We first estimate the causal forest using 161 pre-
+treatment variables and then restrict to the 52 most important ones in the second estimation (of
+which the 27 most important ones are shown here). The 52 variables are listed in the caption of
+Figure 1. ADB refers to average daily balances, all variables are monthly.
+
+
+
+
+                                                 38
+                                        Table 6: Treatment Effects on Saving and Credit Card Borrowing
+
+                                              (1)                   (2)                     (3)                     (4)              (5)                (6)
+                                         Ln Checking          Ln Credit Card         Ln Credit Card         Ln Credit Card                         Ln Credit Card
+ Dep.Var.                                                                                                                    Paid Interest {0,1}
+                                        Account Balance      Balance (Banorte)   Balance (Credit Bureau)       Interest                              Payments
+                                                              Panel A: All Clients with Credit Cards
+ ATE                                      0.0601***               -0.0155                 -0.0077                  -0.0171         -0.0037            -0.0159
+                                           (0.0177)              (0.0116)                (0.0062)                 (0.0334)        (0.0054)            (0.0150)
+ Mean of Dep. Var
+                                           31681.46              17097.99                43136.75                 230.39            0.42              9500.24
+ in Control Group (MXN)
+ Increase in Savings (MXN)                 1904.37
+ Upper Confidence Interval (MXN)1                                 123.54                  195.50                   11.12           0.0068             127.79
+ Upper Confidence Interval (MXN)1
+                                                                    0.06                   0.10                    0.01          0.0000036             0.07
+ divided by increase in Savings (MXN)
+ N= 126458
+                                                    Panel B: Clients who Paid Credit Card Interests at Baseline
+ ATE                                       0.0567**               -0.0102                 -0.0091                  -0.0242         -0.004             -0.0133
+                                           (0.0251)              (0.0082)                (0.0072)                 (0.0453)        (0.007)             (0.0202)
+ Mean of Dep. Var
+                                           23194.21              23080.11                51491.24                 413.31            0.71              8012.99
+ in Control Group (MXN)
+ Increase in Savings (MXN)                 1315.58
+ Upper Confidence Interval (MXN)1                                 133.97                  262.18                   26.68           0.0097             210.99
+ Upper Confidence Interval (MXN)1
+                                                                    0.10                   0.20                    0.02          0.0000074             0.16
+ divided by increase in Savings (MXN)
+ N= 58485
+
+
+This table shows average treatment effects on a selection of variables related to saving and borrowing behavior. Column 1 shows the treatment effect
+on ln(Checking Account Balances +1). Columns 2 and 3 show the treatment effect on ln(Credit Card Balances) considering only credit cards held at
+Banorte and all credit cards reported to the credit bureau respectively. Columns 4 and 5 show the treatment effect on ln(Credit Card Interest +1) and
+a binary variable indicating if an individual is paying interest on her credit card, respectively. Column 6 shows the treatment effect on ln(Credit Card
+payments). In all cases we consider individuals in the top quartile of the predicted treatment effect distribution stemming from the causal forest.
+Panel A considers all individuals who have a credit card. Panel B considers only individuals who have a credit card and incurred interest at baseline
+(in the 6 months previous to the intervention). Average treatment effects are calculated with the AIPW method. The increase in savings, expressed in
+MXN, is calculated by multiplying the ATE and the Mean of Checking Account Balances in the Control Group. Upper confidence intervals,
+expressed in MXN, are calculated as (point estimate + 1.96*Standard Error)*Mean of Dep. Var in Control Group. 1 The upper confidence interval
+for the probability of incurring credit card interest during the treatment period is expressed in percentage points and not in MXN (point estimate +
+1.96*Standard Error). Robust standard errors in parentheses.  p<0.1;  p<0.05;  p<0.01.
+            Table 7: Treatment Effects On Deposits, ATM Withdrawals, and Spending
+
+
+                                        (1)            (2)              (3)
+                                                                 Ln Spending with
+                                                   Ln ATM
+              Dep.Var.             Ln Deposits                    Credit or Debit
+                                                  Withrawals
+                                                                      Card
+
+                               Panel A: Clients With Credit Card
+              ATE                    -0.0083     -0.0602***      -0.0422***
+                                     (0.0091)      (0.0090)        (0.0077)
+
+              Mean of Dep. Var      28271.71       12733.68          15788.43
+               Panel B: Clients With Credit Card Who Paid Interest At Baseline
+              ATE                   -0.0071     -0.0737***      -0.0346***
+                                    (0.0097)      (0.0094)        (0.0073)
+
+              Mean of Dep. Var      23271.71       13997.47          20984.16
+
+
+This table considers all individuals with credit cards in the top quartile of the distribution of the
+predicted treatment effect distribution stemming from the causal forest. Deposits, withdrawals,
+credit card spending, and debit card spending are all monthly. Spending with Credit or Debit Card
+is defined as the sum of debit or credit card store or online purchases. Interest payments are in
+Mexican Pesos (MXN). 1 MXN = 0.047 USD. Robust standard errors in parentheses.  p<0.1;
+
+  p<0.05;  p<0.01.
+
+
+
+
+                                                 40
+       Table 8: Treatment Effects on Saving and Credit Card Borrowing for Individuals with Banorte as their Main Bank
+
+                                              (1)                 (2)                  (3)                (4)                (5)
+                                         Ln Checking       Ln Credit Card      Ln Credit Card                           Ln Credit Card
+ Dep.Var.                                                                                         Paid Interest {0,1}
+                                        Account Balance   Balance (Banorte)       Interest                                Payments
+                                              Panel A: All Clients with Credit Cards
+ ATE                                      0.0568***             -0.0106            -0.0029              -0.0021            -0.0108
+                                           (0.0181)            (0.0128)           (0.0371)             (0.0059)            (0.0170)
+ Mean Dep. Var
+                                           34391.41           12889.39            213.8667            0.3539553           10312.63
+ in Control Group (MXN)
+ Increase in Savings (MXN)                 1953.43
+ Upper Confidence Interval (MXN)1                               186.74             14.93                0.0095             232.24
+ Upper Confidence Interval (MXN)1
+                                                                 0.10               0.01              0.0000048             0.12
+ divided by increase in Savings (MXN)
+ N=89904
+                                    Panel B: Clients who Paid Credit Card Interests at Baseline
+ ATE                                       0.0531**             -0.0091            -0.0197              -0.0015            -0.0093
+                                           (0.0226)            (0.0090)           (0.0498)             (0.0077)            (0.0228)
+ Mean Dep. Var
+                                           28281.41           19264.42             434.08                0.68              8897.35
+ in Control Group (MXN)
+ Increase in Savings (MXN)                 1501.74
+ Upper Confidence Interval (MXN)1                               164.13             33.82                 0.01              314.77
+ Upper Confidence Interval (MXN)1
+                                                                 0.11               0.02              0.0000061             0.21
+ divided by increase in Savings (MXN)
+ N=41226
+
+
+This table shows average treatment effects on a selection of variables related to saving and borrowing behavior. Column 1 shows the
+treatment effect on ln(Checking Account Balances +1). Columns 2 and 3 show the treatment effect on ln(Credit Card Balances) considering
+only credit cards held at Banorte and all credit cards reported to the credit bureau respectively. Columns 4 and 5 show the treatment effect
+on ln(Credit Card Interest +1) and a binary variable indicating if an individual is paying interest on her credit card respectively. Column 6
+shows the treatment effect on ln(Credit Card payments). In all cases we consider individuals in the top quartile of the predicted savings
+effect distribution stemming from the causal forest and for whom Banorte is their main bank. We say that Banorte is the main bank for
+individuals who receive their payroll at Banorte and who do not have credits with other banks according to credit bureau records. Panel A
+considers all individuals who have a credit card. Panel B considers only individuals who have a credit card and incurred interest at baseline
+(in the 6 months previous to the intervention). Average treatment effects are calculated with the AIPW method. The increase in savings,
+expressed in MXN, is calculated by multiplying the ATE and the Mean of Checking Account Balances in the Control Group. Upper
+confidence intervals, expressed in MXN, are calculated as (point estimate + 1.96*Standard Error)*Mean of Dep. Var in Control Group.
+1 The upper confidence interval for the probability of incurring credit card interests during the treatment period is expressed in percentage
+
+points and not in MXN (point estimate + 1.96*Standard Error). Robust standard errors in parentheses.  p<0.1;  p<0.05;  p<0.01.
+                                          Table 9: Heterogeneous Treatment Effects by Experimental Strata
+
+
+                                                                      Dep. Var: Ln (Checking Account Balances + 1)
+                                      (1)            (2)          (3)          (4)          (5)          (6)         (7)               (8)           (9)
+      Any Treatment                 -0.006          0.009       0.013*       0.006         0.002       0.008*       0.006            0.007*         0.005
+                                   (0.007)         (0.007)      (0.007)     (0.005)       (0.005)      (0.005)     (0.004)           (0.004)       (0.004)
+      Any Treatment*Group1         Omitted         Omitted      Omitted     Omitted      Omitted      Omitted      Omitted           Omitted       Omitted
+
+      Any Treatment*Group2          0.012           0.001        -0.013         0.001        0.002        -0.010         0.000         -0.003        0.009
+                                    (0.01)          (0.01)       (0.01)        (0.007)      (0.007)       (0.009)       (0.010)       (0.010)       (0.007)
+      Any Treatment*Group3          0.010           0.014        -0.002                                   -0.001
+                                    (0.01)          (0.01)       (0.01)                                   (0.009)
+      Any Treatment*Group4         0.024**          0.002        -0.013
+                                    (0.01)          (0.01)       (0.01)
+                                 Quartiles of                                 Median of    Median of   Median of
+                                                 Quartiles of Quartiles of                                                                           Has
+      Group Definition          Checking Acct.                               Tenure with     ATM       Debit Card     Is Digital?   Main Bank?
+                                                  Income         Age                                                                             Credit Card?
+                                   Balance                                     Banorte     Withrawals Transactions
+     This table presents heterogeneous treatment effects by experimental strata. Treatment effects are estimated in each column with the following OLS
+     regression: yi = s + T reatmenti + Groupij + T reatment  Groupij where alphas represents strata fixed effects and Groupij is a dummy variable
+     that takes the value of 1 when individual i belongs to Group j . In each column the groups are defined over a different variable which in turn defines the
+     experimental strata. In all cases we consider all 3.1 million observations at the user level. Robust standard errors in parenthesis.  p<0.1;  p<0.05;
+     
+        p<0.01.
+42
+Table 10: Average Treatment Effects for Users in Groups with the Highest Observed Average Treatment Effect and for Users with the
+Highest Individual Treatment Effects Predicted by the Causal Forest
+
+                                                      Top Quartile of Individuals                                         Top Quartile of Individuals
+                                                  Observed Average Treatment Effects                        Individual Treatment Effects Predicted by Causal Forest
+                                       (1)           (2)              (3)                (4)            (5)             (6)               (7)                (8)
+                                                Ln Checking      Ln Credit Card    Ln Credit Card                 Ln Checking       Ln Credit Card     Ln Credit Card
+ Dep.Var.                              N                                                                N
+                                               Account Balance      Interest      Balance (Banorte)              Account Balance       Interest       Balance (Banorte)
+ Panel A: All Clientes               763,511
+ ATE                                             0.2401***        -0.0197***         -0.0142***       763,625       0.0220***          -0.0023            -0.0019
+                                                  (0.0072)          (0.0037)           (0.0048)                      (0.0072)          (0.0048)           (0.0041)
+
+ Mean of Dep. Var (MXN)                           18283.47         66.66463            4161.451                      21872.15
+
+ Panel B: Clients with Credit Card   126,468                                                          126,458
+ ATE                                             0.4403***        -0.0991***         -0.1089***                     0.0601***          -0.0171            -0.0155
+                                                  (0.0148)          (0.0095)           (0.0083)                      (0.0177)          (0.0334)           (0.0116)
+ Mean of Dep. Var (MXN)
+                                                  21623.82          241.41             15077.12                      31681.46           230.39            17097.99
+
+ Panel C: Clients with Credit Card
+                                     61,204                                                           58,485
+ Who Paid Interest at Baseline
+ ATE                                             0.5167***        -0.1109***         -0.1946***                      0.0567**          -0.0242            -0.0102
+                                                  (0.0114)          (0.0094)           (0.0092)                      (0.0251)          (0.0453)           (0.0082)
+
+ Mean of Dep. Var (MXN)                           14994.75         410.8639            19585.27                      23194.21           413.31            23080.11
+
+
+This table shows average treatment effects on a selection of variables related to saving and borrowing behavior, for clients in groups with the highest
+ex-post observed average treatment effects or for clients with the highest individual treatment effects predicted by the causal forest. For columns 1 to
+4, we split the sample into 6,104 mutually exclusive groups defined by the interaction of all experimental strata. For each group we calculate average
+treatment effects. We then assign to each observation in the group the average treatment effect of its group. We then split the sample into quartiles
+based on the average treatment effect assigned to each observation. The top quartile corresponds to the 25% of observations, which belong to strata
+blocks with the highest observed average treatment effect. For them, we calculate treatment effects on checking account balances, credit card
+interest, and credit card balances regressing the corresponding outcome variable on a treatment indicator and strata-block fixed effects. We do the
+same in columns 5 to 8 but for the top quartile of individuals with the highest individual treatment effects as predicted by the causal forest. Robust
+standard errors in parenthesis.  p<0.1;  p<0.05;  p<0.01.
+     Figure 5: Distribution of the Puzzle Group by Quartiles of Predicted Treatment Effects
+
+
+
+
+This graph presents the distribution of individuals in the puzzle group, across quartiles of predicted
+treatment effects. The puzzle group is defined as the set of individuals who carry checking account
+balances of at least 50% of their income, and also pay credit card interest. Predicted treatment
+effects are calculated with the causal forest.
+
+
+
+
+                                                 44
+A         Appendix
+
+A.1        Causal Forests and The Generalized Random Forest Algorithm
+
+This appendix elaborates on the details of the algorithm for causal forests, which are different from
+off-the-shelf machine learning methods in three ways:
+        First, in addition to dividing data in training and test samples, causal forests divide the training
+data further in two sub-samples: a splitting sample and an estimation sample. The splitting sample
+is used to grow trees (2,000 in our case) and the estimation sample is used to estimate the treatment
+effects. This honesty is crucial for causal forests to attain consistent estimation of treatment effects,
+and similar strategies are implemented in other recently developed methods for causal inference
+with machine learning (Chernozhukov et al., 2018).
+        Second, causal forests use a splitting rule that tackles treatment effect heterogeneity directly.
+This is, each tree splits into two children nodes where heterogeneity in treatment effects is maxi-
+mized. Thus, causal forests are tailored to find sub-populations with different treatment effects.
+        Finally, causal forests calculate treatment effects ensuring that the treatment indicator is or-
+thogonal to all covariates for all observations. The algorithm computes estimates of propensity
+scores and outcomes for treatment and control group by training separate regression forests. Then
+the algorithm performs sample splits to identify heterogeneous treatment effects on residual treat-
+ments and outcomes. To calculate the average treatment effect on a sub-population of interest, the
+algorithm plugs the individual predictions of the causal forest into an Augmented Inverse Proba-
+bility Weighting Estimate (AIPW) that combines models of outcome regressions with models of
+treatment propensity to estimate causal effects.7
+        We use the generalized random forest package in R, to estimate our causal forests. This package
+allows for estimation of causal forests, but also allows for estimation of other forest-based methods
+for causal inference. To do so efficiently, this package involves an approximate gradient based loss
+criterion (instead of the exact loss criterion described above to build intuition), aggregates the
+    7
+   This estimator is locally efficient and is known as a "doubly robust estimator" since it is consistent whenever the
+model of treatment propensity or the model of expected outcomes are correctly specified.
+
+
+                                                         45
+results of the n trees with one single weighted estimation of treatment effect, instead of averaging
+n estimations of treatment effects. The mechanics of the algorithm is as follows:
+
+
+   1. The first step is to compute estimates of propensity scores for the treatment and marginal
+       outcomes conditional on covariates, by training separate regression forests and performing
+       predictions (fitted values) for each observation. These predictions are used to calculate resid-
+       uals, which will be referred to as orthogonalized outcomes and orthogonalized treatment
+       status.
+
+   2. For each tree, a random subsample with 50% of the database is drawn (training sample).
+
+   3. The trainning sample is further split into a splitting subsample and an estimation subsample
+       (50-50 by default).
+
+   4. A single initial root node is created for the splitting sample, and child nodes are split recur-
+       sively to form a tree. Each node is split using the following algorithm:
+
+                                                                                              8
+        (a) A random subset of variables are selected as candidates to split on.
+
+        (b) For each of these variables, we look at all of its possible values and consider splitting
+             into two child nodes based on a measure of goodness of split, determined to maximize
+             the heterogeneity in treatment effect estimates across nodes.
+
+        (c) All observations with values for the split variable that are less than or equal to the split
+             value are placed in a new left child, and all examples with values greater than the split
+             value are placed in a right child node.
+
+   5. The estimation sample is used to populate the leaf nodes of the tree. Each observation is
+       `pushed down' the tree, and assigned to the leaf in which it falls.
+
+   6. Steps 2 to 5 are repeated 2,000 times, that is we estimate 2,000 trees.
+   8
+    By default min{sqrt(p) + 20, p} variables are sampled, where p is the total number of variables in the dataset.
+In our analysis, p = 161 the first time we run the algorithm, and p = 52 the second time we run the algorithm, and we
+use 32 or 27 candidate variables in each split.
+
+
+                                                         46
+   7. Treatment effects are predicted for each observation on a test dataset (potentially the full
+        dataset) as follows:
+
+         (a) Each test observation is pushed down each tree to determine what leaf it falls in. Given
+             this information, a list with neighboring observation in each tree leaf is created (the
+             neighbors come from the estimation sample of each tree). Each neighbor observation
+             is weighted by how many times it fell in the same leaf as the test observation.
+
+         (b) Treatment effects are calculated using orthogonalized outcomes and treatment status of
+             the neighbor observations.
+
+   8. In addition to personalized treatment effects, the package allows for estimation of average
+        treatment effects across all observations in a dataset, or arbitrary subsamples of it. This is
+        done with an AIPW estimator, that ensures balance across all covariates in the group, using
+        the treatment propensities estimated in step 1.
+
+
+A.1.1     Calibration Test
+
+We formally test for whether heterogeneity in individual predictions is associated with heterogene-
+ity in treatment effects using the "calibration test" described in Athey and Wager (2019). This
+test seeks to fit conditional average treatment effects as a linear function of the causal estimates
+of the causal forest and computes the best linear fit of the treatment effects using the forest pre-
+diction as well as the mean forest prediction as the sole two regressors. A coefficient of 1 for
+`mean.forest.prediction' suggests that the mean forest prediction is correct, The p-value of the
+`differential.forest.prediction' coefficient acts as an omnibus test for the presence of heterogeneity:
+If the coefficient is significantly greater than 0, then we can reject the null of no heterogeneity.
+Table A1 shows the results of the calibration test. We find that the coefficient measuring the ability
+of the forest to predict heterogeneities in treatment effects is positive and significant. We conclude
+that the individual level treatment effect predictions are a valid linear predictor for heterogenous
+treatment effects: larger predicted treatment effects (score value) indeed result in larger treatment
+
+
+                                                  47
+effects.
+
+           Table A1: Calibration Test for Evaluation Of The Quality Of The Causal Forest
+
+                                 estimate                   std.error     t-statistic    p.value
+  mean.forest.prediction          1.0286                     0.3732         2.7564       0.0029
+  differential.forest.prediction 0.3470                      0.1280         2.7132       0.0033
+
+This test computes the best linear fit of the target estimand using the forest prediction as well as
+the mean forest prediction as the sole two regressors. A coefficient of 1 for
+`mean.forest.prediction' suggests that the mean forest prediction is correct. The p-value of the
+`differential.forest.prediction' coefficient also acts as an omnibus test for the presence of
+heterogeneity: If the coefficient is significantly greater than 0, then we can reject the null of no
+heterogeneity.
+
+
+
+A.1.2      Comparison Between Top and Bottom Quartiles of the Distribution of Predicted
+           Treatment Effects
+
+Table A2: Differences Between Top and Bottom Quartiles of the Distribution of Predicted Treat-
+ment Effects
+
+                Variable                      Bottom 25%       Top 25%  Difference
+                Age (Years)                      43.92          45.28       1.37
+                                                                           (0.03)
+                Monthly Income ($)              12,924.95     14,655.87  1730.93
+                                                                          (23.45)
+                Tenure (months)                   73.95         87.14      13.19
+                                                                           (0.12)
+                Checking Acct. Balance ($)      15,791.01     21,340.95  5549.94
+                                                                          (84.40)
+                Credit Card Balance ($)         2,688.76       6,391.2   3702.43
+                                                                          (29.36)
+                Credit Card Limit ($)           10,402.82     28,641.07 18238.25
+                                                                         (117.17)
+
+This table presents simple means for individuals in the top and bottom 25% of the distribution of
+predicted topment effects on the log of checking account balances. We test the significance of the
+differences with a t-test. Income and balances, are in Mexican Pesos (MXN). 1 MXN = 0.047
+USD.
+
+
+
+
+                                                 48
+49
+A.2    Heterogeneous Treatment Effects: Additional Tables and Figures
+
+Table A3: Treatment Effects by Quintiles of Predicted Treatment Effects for Individuals with
+Credit Cards in the Top Quartile of the Predicted Treatment Effect Distribution
+
+                                      Q1             Q2          Q3            Q4          Q5
+                 Panel A: Treatment Effect on Checking Account Balances
+  ATE Ln Checking Account
+                                0.09***     0.09***     0.05*        0.02                 0.06*
+           Balance
+                                (0.0379)    (0.039)    (0.0357)    (0.0346)             (0.0478)
+       Mean Checking
+       Account Balance           30112       28471      32456       36392                 30001
+   in Control Group (MXN)
+
+                    Panel B: Treatment Effect on Credit Card Balances
+   ATE Ln Credit Card Debt
+                                -0.0179 -0.00834 -0.1053***          0.0072              0.0032
+           Balance
+                                (0.0159) (0.0081)       (0.0350)    (0.0081)            (0.0036)
+       Mean Checking
+       Account Balance         50169.96 38223.04 43398.37 34334.49                      55121.73
+   in Control Group (MXN)
+
+                     Panel C: Treatment Effect on Credit Card Interest
+      ATE Ln Credit Card
+                                  -0.16      -0.01         0.08        -0.03              -0.01
+           interest)
+                                (0.0839) (0.0771)       (0.0709)     (0.0692)           (0.0743)
+   Mean Credit Card Interest
+                                  200.6      214.5        222.7        233.2              272.9
+   in Control Group (MXN)
+
+         Panel D: Treatment Effect on Probability of Incurring Credit Card Interest
+ ATE Probability of Incurring
+ Credit Card Interest           -0.0213     0.0032        0.0081      -0.0099     -0.0008
+                               (0.0139) (0.0127)         (0.0115)     (0.0109) (0.0115)
+      Fraction Incurring
+     Credit Card Interest        0.3826     0.3970        0.3963       0.4060       0.4882
+      in Control Group
+
+
+Interest payments are in Mexican Pesos (MXN). 1 MXN = 0.047 USD. This table considers
+individuals in the top quartile of the distribution of the predicted treatment effect stemming from
+the causal forest who have a credit card. We further split them into quintiles and report the
+average treatment effects on savings, interest payments, and probability of paying interests for
+individuals. Average treatment effects are calculated with the AIPW method. Robust standard
+errors in parenthesis.  p<0.1;  p<0.05;  p<0.01.
+                                                50
+Table A4: Treatment Effects by Quintile of Predicted Treatment Effects for Individuals with Credit
+Cards who Paid Credit Card Interest at Baseline
+
+                                      Q1             Q2         Q3            Q4           Q5
+                 Panel A: Treatment Effect on Checking Account Balances
+  ATE Ln Checking Account
+                                 0.1**      0.14***      0.02       -0.01                  0.06
+           Balance
+                                (0.052)     (0.0568)   (0.051)    (0.0493)              (0.0658)
+       Mean Checking
+       Account Balance           22934       22375      25050      26323                  19473
+   in Control Group (MXN)
+                      Panel B: Treatment Effect on Credit Card Balances
+   ATE Ln Credit Card Debt
+                                    -0.0116      -0.0142      0.0003     -0.0606***      -0.0161
+          Balance
+                                   (0.0105)     (0.0114)     (0.0084)      (0.0268)     (0.0122)
+       Mean Checking
+       Account Balance             63517.78     48032.82    41684.96       52989.8      63553.46
+   in Control Group (MXN)
+                       Panel C: Treatment Effect on Credit Card Interest
+      ATE Ln Credit Card
+                                     -0.32        -0.03        0.08          0.05          0.00
+           interest
+                                   (0.1167)     (0.1076)     (0.0991)      (0.0945)     (0.0934)
+   Mean Credit Card Interest
+                                     387.8        396.4       411.1         418.7         440.0
+   in Control Group (MXN)
+          Panel D: Treatment Effect on Probability of Incurring Credit Card Interest
+ ATE Probability of Incurring
+ Credit Card Interest              -0.0388       0.007        0.0066        -0.0013     -0.0025
+                                   (0.0186)     (0.0169)     (0.0155)      (0.0145)     (0.0138)
+      Fraction Incurring
+      Credit Card Interest          0.6845       0.6886       0.6909       0.6977        0.7581
+       in Control Group
+
+
+Interest payments are in Mexican Pesos (MXN). 1 MXN = 0.047 USD. This table considers
+individuals in the top quartile of the distribution of the predicted treatment effect stemming from
+the causal forest who have a credit card and pay credit card interest at baseline (in the 6 months
+previous to the intervention). We further split them into quintiles and report average treatment
+effects on savings, interest payments and probability of paying interests for individuals. Average
+treatment effects are calculated with the AIPW method. Robust standard errors in parenthesis.
+
+ p<0.1;  p<0.05;  p<0.01.
+
+
+
+                                                51
+             (a) Individuals without Interest Charges        (b) Individuals with Interest Charges
+
+Figure A6: Treatment effects on credit card interest charges for individuals in the top quartile of the
+predicted treatment effect stemming from the causal forest who do or do not pay interest at baseline
+(in the 6 months previous to the intervention) split into quintiles, based on the score generated by
+the causal forest.
+
+
+
+
+                                                        52
+A.3    Saving and Borrowing by Treatment Message
+
+To explore the relation between borrowing and savings across each of the seven messages included
+in the experiment, we focus on the 126,458 individuals in the top quartile of predicted treatment
+effects who had a credit card. For them, we calculate the average treatment effect on saving and
+borrowing of receiving each specific treatment message.
+
+
+
+
+                                               53
+Table A5: Treatment Effects on Saving and Credit Card Borrowing: Individuals in the Top Quartile of Predicted Treatment
+Effects who Have a Credit Card
+
+                      (1)                    (2)                   (3)                      (4)                           (5)               (6)
+
+                                                                                                               Upper Confidence Interval
+                 Ln Checking                                  Ln Credit Card     Upper Confidence Interval       for Interest Charges
+ Dep.Var                          Increase in Savings (MXN)                                                                                  N
+                Account Balance                                  Interest      of Credit Card Interest (MXN)     Divided by Increase
+                                                                                                                      in Savings
+
+ All messages      0.0601***              1904.37                 -0.0171                 11.12                         0.006              126458
+                    (0.0177)                                     (0.0336)
+
+ Msg 1               0.0265                839.56                 -0.0055                 13.90                         0.017              38802
+                    (0.0228)                                     (0.0336)
+
+ Msg 2             0.1170***              3705.46                 -0.0183                 10.96                         0.003              38775
+                    (0.0228)                                     (0.0336)
+
+ Msg 3              0.0413*               1306.86                 -0.0142                 11.90                         0.009              38822
+                    (0.0228)                                     (0.0336)
+
+ Msg 4             0.0979***              3102.57                 -0.0256                  9.41                         0.003              38700
+                    (0.0229)                                     (0.0339)
+
+ Msg 5             0.0623***              1974.71                 -0.0348                  7.79                         0.004              38803
+                    (0.0237)                                     (0.0350)
+
+ Msg 6               0.0338               1069.25                 -0.0291                 10.20                         0.010              38752
+                    (0.0253)                                     (0.0374)
+
+ Msg 7               0.042                1330.94                 0.008                   21.72                         0.016              38590
+                    (0.0298)                                     (0.0440)
+
+
+This table shows average treatment effects on a selection of variables related to saving and borrowing behavior. Column 1 shows the
+treatment effect on ln(Checking Account Balances +1). Column 2 shows the treatment effect on ln(Credit Card Interest +1). In all cases we
+consider individuals in the top quartile of the predicted treatment effect distribution stemming from the causal forest who had a credit card.
+Average treatment effects are calculated with the AIPW method. The increase in savings, expressed in MXN, is calculated by multiplying
+the ATE and the Mean of Checking Account Balances in the Control Group (31,681.46 MXN). Upper confidence intervals, expressed in
+MXN, are calculated as (point estimate + 1.96*Standard Error)*Mean of Dep. Var in Control Group. The Mean of Dep. Var in Control
+Group for credit card interest is 213.39 MXN. Robust standard errors in parenthesis.  p<0.1;  p<0.05;  p<0.01.
+A.4     Comparison of Sorting Methods for Heterogeneous Treatment Effects
+
+We first estimate the average treatment effect on saving and borrowing outcomes for individuals in
+the top quartile of pre-treatment checking account balances who have a credit card.
+
+Table A6: Treatment Effects on Saving and Borrowing for Individuals in the Top Quartile of Pre-
+Treatment Checking Account Balances Who Have a Credit Card
+
+                                                      (1)                                (2)
+                                       Ln (Checking Account Balance +1)     Ln (Credit Card Interest +1)
+ Any Treatment                                       0.014                             -0.012
+                                                    (0.009)                           (0.008)
+ N                                                 118,706                           118,706
+ Mean of dependent variable (MXN)                 67791.11                            184.23
+
+
+Treatment effects are estimated with equation 1. We consider observations in the top quartile of
+pre-treatment checking account balances, who have a credit card.  p<0.1;  p<0.05;  p<0.01.
+
+
+   Next, we compare the overlap between observations assigned to quartiles of predicted indi-
+vidual treatment effects calculated with the causal forest, and observations assigned to quartiles
+of the observed average treatment effects, calculated for each strata block. In Table A7, the rows
+represent quartiles based on observed average treatment effect for each strata block. The columns
+represent quartiles of individual treatment effects predicted by the causal forest. A perfect overlap
+would have all observations across the diagonal. We can see that is not the case: out of the 763,625
+observations assigned by the causal forest to the top quartile of predicted treatment effects, only
+201,992 are in strata blocks on the top quartile of observed average treatment effects.
+
+
+
+
+                                                   55
+Table A7: Distribution of Observations According to the Average Treatment Effect of Strata Blocks
+and Predicted Treatment Effects at the Individual Level
+
+                     Rows: Sorting Based on Observed average treatment effects
+                 Columns: Sorting Based on Predicted Individual Treatment Effects
+
+                                1           2           3          4          Total
+                    1        186,989     188,445     192,417    198,695      766,546
+                    2        202,611     191,334     185,986    181,425      761,356
+                    3        191,371     197,792     192,344    181,583      763,090
+                    4        182,655     186,055     192,879    201,922      763,511
+                    Total    763,626     763,626     763,626    763,625     3,054,503
+
+This table shows the distribution of observations according to the observed average treatment effect of their
+strata blocks, and their individual predicted treatment effect, as returned by the causal forest. The rows
+represent quartiles based on observed average treatment effect for each strata block. For them we split the
+sample into 6,104 mutually exclusive groups defined by the interaction of all experimental strata. For each
+group we calculate average treatment effects, and we assign to each observation in the group the average
+treatment effect of its group. We then split the sample into quartiles based on the average treatment effect
+assigned to each observation. The columns represent quartiles of individual treatment effects as predicted
+by the causal forest. For each observation, the causal forest returns a predicted treatment effect, which we
+split into quartiles. The across rows and columns adds up to the 3,054,503 observations included in the
+analysis. We can see that there is poor overlap with these two sorting methods. For example, the
+predictions of the top quartile according to the causal forest are split across strata groups in all four
+quartiles of observed average treatment effects, and viceversa.
+
+
+
+
+                                                     56
+A.5     Two Toy Models Illustrating the Predictions of Rational versus Behav-
+
+        ioral Theories of the Co-Holding Puzzle
+
+We now outline two toy models to rationalize the co-holding puzzle. The first is based on Telyukova
+(2013) and Kaplan and Violante (2014) and rationalizes co-holding with transaction convenience
+constraints. The second model rationalizes co-holding with behavioral preferences and self-control
+problems and is based on the theories in Laibson et al. (2007), Haliassos and Reiter (2005), and
+Bertaut et al. (2009).
+
+
+Transaction-convenience model:
+
+We assume a simple model with two periods, one consumption good, and log utility. Individuals
+receive an endowment x1 in period 1 and consume c1,2 in periods 1 and 2. In addition, they must
+hold a certain amount of cash x for transaction purposes x1 - c1 > x, and they may borrow b1
+in period 1 for additional consumption. Additionally, we assume that the agent discounts future
+utility by a factor  .
+
+
+                         max{log (c1 + b1 ) + log (x1 - c1 - (1 + r)b1 )}
+
+subject to x1 - c1 > x and b1 < b.
+
+
+    Suppose r = 0 and b = , then the optimal solution for c1 is:
+
+
+
+                                     1
+                             c1 =       x1 and b1 = 0 if x1 - c1     x
+                                     +1
+
+                                                   1
+                    and if x1 - c            
+                                 1 < x then c1 =      x1 and b1 = c1 + x - x1 .
+                                                   +1
+
+    It is clear that if we increase the amount of cash x held for transaction-convenience reasons,
+that is, , by encouraging individuals to save, we increase borrowing b1 in the rational model.
+    We note that the assumption of r=0 is only for simplicity, but is not required to lead to the
+
+                                                   57
+result that savings increases borrowing. The intuition carries forward with r>0, and the results are
+available from the authors upon request.
+
+
+Self-control model:
+
+We start from the same setting as in the transaction-convenience model but instead of having a
+transaction-convenience constraint, we assume that when individuals hold a certain amount of cash
+dedicated for savings, x. Cash x is in a separate mental account that is not considered at the time of
+consumption decisions. Therefore, x gets subtracted from the original endowment x1 available for
+consumption, and does not enter the consumption decision of the agent more than as an exogenous
+constraint in the available resources. As an alternative interpretation, we can think of an amount
+of money, x, that one spouses hides from the other, or that the planner-self is successfully able to
+remove from spender-self decision problem. In addition, we assume that the agent is impatient:
+that is, discounts future utility by an additional factor  .
+
+
+                       max{log (c1 + b1 ) + log (x1 - x - c1 - (1 + r)b1 )}
+
+subject to b1 < b. Suppose r = 0 and b = , then the optimal solution for c1 is:
+
+
+
+                               1
+                        c1 =        (x1 - x) and b1 = 0 (independent of x).
+                                + 1
+
+   In conclusion, if we increase the amount of money that the saver self/spouse hides from the
+spender self/spouse, x, we decrease c1 but nothing happens to borrowing b1 .
+   As before, we note that the assumption of r=0 is only for simplicity, but is not required to
+lead to the result that savings increases borrowing. The intuition carries forward with r>0, and the
+results are available from the authors upon request.
+
+
+
+
+                                                   58
+

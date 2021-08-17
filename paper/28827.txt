@@ -1,0 +1,2817 @@
+                              NBER WORKING PAPER SERIES
+
+
+
+
+     STOCK MARKET SPILLOVERS VIA THE GLOBAL PRODUCTION NETWORK:
+                TRANSMISSION OF U.S. MONETARY POLICY
+
+                                       Julian di Giovanni
+                                          Galina Hale
+
+                                      Working Paper 28827
+                              http://www.nber.org/papers/w28827
+
+
+                     NATIONAL BUREAU OF ECONOMIC RESEARCH
+                              1050 Massachusetts Avenue
+                                Cambridge, MA 02138
+                                     May 2021
+
+
+
+
+We are grateful to Ruth Cesar Heymann, Margaret Chen, Ted Liu and Youel Rojas for expert
+research assistance. We thank the authors of Aquaro et al. (2019) for sharing their Matlab code
+and Gianluca Benigno, Vasco Carvalho, Mick Devereux, Manuel Garcia-Santana, Rob Johnson,
+Andrei Levchenko, Isabelle Mejean, Damian Romero, Michael Weber, Shang-Jin Wei, and
+participants at the 2020 NBER Summer Institute's ITM program, 2020 Pacific Basin Conference
+at FRBSF, and seminars at the FRBNY, Norges Bank, and USC for helpful comments. Di
+Giovanni gratefully acknowledges the European Research Council (ERC) under the European
+Union's Horizon 2020 research and innovation programme (grant agreement No. 726168) and the
+Spanish Ministry of Economy and Competitiveness, through the Severo Ochoa Programme for
+Centres of Excellence in R&D (SEV-2015-0563) for financial support. The views expressed
+herein are those of the authors and not necessarily those of the Federal Reserve Bank of New
+York or any other person affiliated with the Federal Reserve System. The views expressed herein
+are those of the authors and do not necessarily reflect the views of the National Bureau of
+Economic Research.
+
+NBER working papers are circulated for discussion and comment purposes. They have not been
+peer-reviewed or been subject to the review by the NBER Board of Directors that accompanies
+official NBER publications.
+
+© 2021 by Julian di Giovanni and Galina Hale. All rights reserved. Short sections of text, not to
+exceed two paragraphs, may be quoted without explicit permission provided that full credit,
+including © notice, is given to the source.
+Stock Market Spillovers via the Global Production Network: Transmission of U.S. Monetary
+Policy
+Julian di Giovanni and Galina Hale
+NBER Working Paper No. 28827
+May 2021
+JEL No. F10,F36,G15
+
+                                          ABSTRACT
+
+We quantify the role of global production linkages in explaining spillovers of U.S. monetary
+policy shocks to stock returns across countries and sectors using a newly constructed dataset. Our
+estimation strategy is based on a standard open-economy production network model that delivers
+a spillover pattern consistent with a spatial autoregression (SAR) process. We use the SAR
+model to decompose the overall impact of U.S. monetary policy on global stock returns into a
+direct and a network effect. We find that nearly 70% of the total impact of U.S. monetary policy
+shocks on country-sector stock returns are due to the network effect of global production
+linkages. Our results are robust to changes in the definitions of stock returns and monetary policy
+shocks, to controlling for correlates of the global financial cycle, foreign monetary policy shocks,
+and to alternative empirical specifications.
+
+
+Julian di Giovanni
+Research and Statistics Group
+Federal Reserve Bank of New York
+33 Liberty Street
+New York, NY 10045
+United States
+juliandigiovanni@gmail.com
+
+Galina Hale
+Department of Economics
+University of California, Santa Cruz
+Engineering 2, 1156 High Street
+Santa Cruz, CA 95064
+and NBER
+gbhale@ucsc.edu
+1    Introduction
+
+The recent era of globalization witnessed (i) stock market returns becoming more correlated across
+countries (Dutt and Mihov, 2013; Jach, 2017), and (ii) greater cross-country trade integration as
+firms' production chains have spread across the world (Johnson and Noguera, 2017). While research
+has predominantly focused on how financial integration impacts the propagation of shocks across
+international financial markets and the resulting impact on asset prices (e.g., via a global financial
+cycle, Rey, 2013), real integration also influences these cross-border spillovers. In this paper, we
+analyze how the global production network impacts the transmission of U.S. monetary policy shocks
+to world stock markets.
+    To guide our empirical work, we present a conceptual framework that lays out necessary con-
+ditions for monetary policy shocks to transmit across countries via the global production network.
+In our setting, demand shocks induced by changes in monetary policy propagate upstream from
+customers to suppliers. For example, an easing in U.S. monetary policy will lead consumers to
+increase their demand of both domestic and foreign goods, which, in turn, will increase demand for
+intermediate goods, having direct and indirect effects on all producers' outputs and profits due to
+trade in both final and intermediate goods.
+    The conceptual framework delivers an empirical specification where the international shock
+transmission pattern follows a spatial autoregression (SAR) process. To conduct this analysis, we
+construct a novel dataset that combines production linkages information from the World Input-
+Output Database (WIOD, Timmer et al., 2015) with firm-level stock returns worldwide, which we
+aggregate to the country-sector level. We first exploit these data to document an unconditional
+positive correlation between the intensity of production linkages and stock market returns at the
+country-sector level. We then merge these data with U.S. monetary policy shocks and use a panel
+SAR to quantify the importance of the global production network in amplifying the transmission
+of U.S. monetary policy shocks to both domestic and foreign stock markets.
+    Our baseline SAR estimation shows that the bulk of the response of global stock returns to U.S.
+monetary policy shocks is due to global production linkages. Specifically, the average country-sector
+annualized U.S. dollar monthly stock return increases by 2.7 percentage points in response to a one
+percentage point expansionary surprise in the U.S. monetary policy rate, with approximately 70%
+of this stock return increase due to spillovers via global production linkages. This finding is robust
+to conditioning on other variables that may drive a common financial cycle across markets, such
+as the VIX, 2-year U.S. Treasury rate, and the broad U.S. dollar index. Our main result is also
+robust to different time periods, different definitions of stock returns and monetary policy shocks,
+and to controlling for monetary policy shocks in the U.K. and the euro area.
+    We build our conceptual framework based on a minimal assumptions. The framework can also
+
+
+
+                                                  1
+be derived using a static multi-country multi-sector production model that follows the standard
+closed-economy setup (e.g., Acemoglu et al., 2012; Herskovic, 2018; Richmond, 2019). Unlike many
+canonical macro-network models, our framework allows for firm profits, which in turn drive stock
+returns.1 To generate monetary non-neutrality, we assume pre-set wages and allow for the possi-
+bility of money to be introduced in different ways, for instance, via cash-in-advance constraints, as
+in many recent macro-network models (La'O and Tahbaz-Salehi, 2020; Ozdagli and Weber, 2020;
+Rubbo, 2020).2
+       This framework delivers the result that firms in all countries will be affected by a monetary
+shock in a given country. The relative magnitude of the shock's impact is proportional to a firm's
+production linkages with the rest of the world, which captures the importance of intermediate
+products in the firm's production function. Standard models with technological shocks generally
+have shocks propagating downstream from supplier to customer via changes in marginal costs.
+Our framework differs in that it focuses on how shocks to monetary policy propagate upstream
+from customer to supplier given changes in customers' demand induced by the monetary policy
+shock. This change in demand impacts firms profits and thus equity returns. We take the global
+input-output (IO) matrix as given, both in the model and in our empirical analysis. We view this
+assumption as realistic given that we are studying a short-run impact of a demand-side shock and
+the level of aggregation (country-sector) that we use in our empirical analysis. Robustness tests
+show that our empirical results are consistent with this assumption.
+       To conduct our regression analysis, we make use of the 2016 version of WIOD for input-output
+data and Thompson Reuters Eikon for stock market information. WIOD provides domestic and
+global input-output linkages for 56 sectors across 43 countries and the "rest of the world" aggregate
+annually for 2000­14. From Eikon we obtain firm-level stock prices, market capitalization, and
+firms' sector classification. Using the market capitalization as a weight, we construct our own
+country-sector stock market indexes by aggregating firm-level information to the same industrial
+sector level as WIOD for 26 of the countries available in WIOD. The final merged dataset contains
+monthly country-sector stock returns and annual input-output matrices. Our baseline analysis uses
+the 30-minute window U.S. monetary policy shock measure calculated from Federal Funds futures
+data by Jaroci´
+              nski and Karadi (2020). Because of the global trade collapse in 2008­09 followed by
+the period of unconventional monetary policy, we limit our baseline analysis to 2000­07. However,
+our results are robust to other periods.
+       Before turning to examining the impact of U.S. monetary policy shocks, we use the raw stock
+   1
+     For the purpose of our empirical work, we do not need to take a stand on the precise changes in the canonical
+model in order to generate profits. In particular, recent work in the literature has motivated firm profits by assuming
+constant returns to scale technology in a monopolistic competition setting (e.g., Bigio and La'O, 2020), or with
+decreasing returns to scale technology in a competitive market setting (e.g., Ozdagli and Weber, 2020).
+   2
+     In this framework without dynamics or investments we are abstracting from other channels of monetary policy
+transmission summarized in Ozdagli and Velikov (2020).
+
+
+
+                                                          2
+market and input-output data to show that country-sector cells that are more closely connected in
+the global production network also have more correlated stock returns. This observation remains
+true even if we exclude same-country cross-sector correlations from the analysis. This empirical
+regularity suggests that international input-output linkages may provide an important channel of
+shock transmission across global stock markets.
+    The theoretical framework delivers a SAR structure for our empirical analysis (LeSage and
+Pace, 2009), where spatial distance is represented by the coefficients in the global IO matrix. The
+SAR specification we use is different from a standard one in two ways. First, in addition to a
+spatial dimension (country-sector in our case), we have a time dimension.3 Thus, we have a panel
+spatial autoregression. Second, we estimate country-sector specific coefficients, which is possible
+thanks to the time dimension in our panel setting. We estimate this heterogeneous-coefficient panel
+SAR model using the maximum likelihood methodology in Aquaro et al. (2019), and approximate
+standard errors using a wild bootstrap procedure.
+    We find that production networks play a crucial role in transmitting U.S. monetary policy
+shocks across global stock returns. This finding is consistent with the Acemoglu et al. (2016) study
+that shows that the network-based shock propagation can be larger than a direct effect, as well
+as being similar to what Ozdagli and Weber (2020) find for the response of U.S. stock returns to
+U.S. monetary policy shocks. Both of these studies focus only on the U.S. in a closed-economy
+setting, while ours incorporates global production linkages. By separating the estimates for U.S.
+sectors from those of foreign sectors, we show that foreign stock returns respond to U.S. monetary
+policy shocks primarily through the network of customer-supplier linkages. Similar to the finding
+of Ozdagli and Weber (2020), the network impact of U.S monetary policy shock on U.S. returns
+plays a greater role than the direct impact.
+    Our results are robust. They are not sensitive to the choice of a specific time period or the
+year in which the IO matrix is sampled. This result suggests very limited, if any, endogenous
+response of global supply chains to U.S. monetary policy shocks and thus justifies the assumption
+of an exogenous trade structure in our theoretical framework. We further show that our results are
+robust to replacing nominal U.S. dollar stock returns with excess returns, stock returns expressed
+in local currency, and with real stock returns. Our results are also robust to using other definitions
+of monetary policy shocks, and to controlling for monetary policy shocks in the U.K. and the euro
+area. We find that there are no individual countries or sectors in which the spillover effects are
+concentrated. Finally, our results are robust to conditioning stock returns on global financial cycle
+correlates: (i) VIX, (ii) 2-year U.S. Treasury rate, and (iii) broad U.S. dollar index.
+   3
+     Because input-output coefficients do not change much over time, we use a static, beginning-of-period IO matrix.
+We are implicitly assuming that market participants react on the intensive margin of production networks, rather
+than to the expected changes in production linkages. This assumption is arguably more justifiable at the sector than
+the firm level. However, trade patterns have changed over time, so we also experiment by varying the weighting
+matrix for different time periods in our empirical analysis and find that results are not sensitive to these changes.
+
+
+                                                         3
+   Our finding of the quantitative importance of the global production network in international
+transmission of U.S. monetary policy shocks to global stock returns at the sector level contributes
+to several strands of the literature. First, our paper contributes to a strand of international fi-
+nance literature that focuses on the relative importance of country and sector characteristics in
+international asset pricing (see, for instance, Griffin and Stulz, 2001; Bekaert et al., 2009; Lewis,
+2011). Our results highlight that the size and location of country-sector production linkages are
+key characteristics to consider for better understanding the cross-sectional response of global asset
+prices to monetary policy shocks.
+   We also contribute to the growing literature on the international transmission of shocks through
+production linkages. For example, Burstein et al. (2008), Bems et al. (2010), Johnson (2014), and
+Eaton et al. (2016), Auer et al. (2019), among others, model and quantify international shock
+transmission through input trade. Baqaee and Farhi (2019b) and Huo et al. (2020) develop theo-
+retical and quantitative treatments of the international input network model. Boehm et al. (2019)
+and Carvalho et al. (2021) use a case study of the T¯
+                                                    ohoku earthquake to provide evidence of real
+shock transmission through global and domestic supply chains, while di Giovanni et al. (2018) show
+the importance of firms' international trade linkages in driving cross-country GDP comovement.
+None of these studies focus on the transmission of monetary policy shocks, nor stock markets'
+comovement.
+   Our paper also contributes to broader literature on international spillovers of U.S. monetary
+policy by documenting and quantifying the importance of real linkages. Wongswan (2006); Ehrmann
+and Fratzscher (2009); Ammer et al. (2010); Miranda-Agrippino and Rey (2020), among many
+others, provide evidence which shows that U.S. monetary policy shocks induce comovements in
+international asset returns. Most analysis of the spillover channels focuses on bank lending and,
+more generally, global bank activity ­ see, among others, Cetorelli and Goldberg (2012); Bruno and
+Shin (2015b); Buch et al. (2019) and a survey by Claessens (2017). Another large group of papers
+study the impact of U.S monetary policy on international capital flows ­ see, among others, Forbes
+and Warnock (2012); Bruno and Shin (2015a); Avdjiev and Hale (2019).
+   Much less attention has been devoted to cross-border monetary policy spillovers through real
+channels, such as input-output linkages. Br¨
+                                           auning and Sheremirov (2019) study the transmission of
+U.S. monetary policy shocks on countries' output via financial and trade linkages, and Chang et al.
+(2020) study how the transmission of shocks via countries trade linkages impacts asset prices using
+information from the sovereign CDS market. The latter two papers differ from our work in that
+they focus on total bilateral trade linkages, and thus cannot measure transmission via international
+
+
+
+
+                                                 4
+production linkages.4,5
+    There is also a growing literature that shows how real linkages across sectors play an important
+role in domestic shock transmission (see, among others, Foerster et al., 2011; Acemoglu et al., 2012;
+Atalay, 2017; Grassi, 2017; Baqaee and Farhi, 2019a). Pasten et al. (2019) study the transmision
+of monetary policy in a production economy, while recent theoretical work on optimal monetary
+policy has examined the impact of input-output linkages in setting policy in a closed economy
+(La'O and Tahbaz-Salehi, 2020; Rubbo, 2020), as well as a small open-economy setting (Wei and
+Xie, 2020). Ozdagli and Weber (2020), to which our paper is most closely related, shows that input-
+output linkages are quantitatively important for monetary policy transmission to stock returns in
+the United States,6 while Herskovic (2018) and Richmond (2019) nest input-output structures into
+standard asset pricing models.
+    We bridge these different strands of the literature by showing the importance of real linkages in
+the international transmission of monetary policy shocks across asset markets. Our main contribu-
+tion is to show, on a global scale, the importance of the intermediate trade channel in transmitting
+U.S. monetary policy shocks across asset markets, and providing a quantitative estimate of its
+contribution as well as transmission pattern on asset prices. That is, we show how U.S. monetary
+policy directly impacts domestic stock returns and spills over to the rest of the world via the global
+production network.
+    We present a stylized conceptual framework of global production model cross-country monetary
+policy shock transmission in Section 2, which motivates the empirical model outlined in Section 3.
+We then describe our data in Section 4, before presenting our empirical results in Section 5. Sec-
+tion 6 concludes.
+
+
+2     Conceptual Framework
+
+This section provides a conceptual framework to motivate our estimation strategy for studying
+the transmission of U.S. monetary policy shocks to stock returns internationally via production
+linkages. There are three main ingredients required to produce such shock transmission: first,
+to have predictions for stock returns, a firm's production technology or the economy's market
+structure must allow for positive profits in equilibrium; second, shocks in one country can be
+transmitted to firms (and their profits) in other countries; third, monetary shocks must have real
+   4
+     In particular, these trade flows include trade in both final consumption and intermediate goods, and are measured
+in gross output and not value added, which implies potential overstating trade linkages. Further, gross output trade
+need not be strongly correlated with intermediates trade. These are well-known problems, and are discussed in
+Johnson and Noguera (2017), among others.
+   5
+     Other papers that study how trade globalization affects asset prices include Brooks and Del Negro (2006) and
+Barrot et al. (2019).
+   6
+     Moreover, Alfaro et al. (2020) and Bigio and La'O (2020) show the importance of production linkages in trans-
+mitting sectoral shocks to the aggregate economy.
+
+
+
+                                                          5
+effects. A wide variety of theoretical frameworks can deliver each of these ingredients and they
+can be readily combined into a simple static multi-country multi-sector input-output model, which
+allows for monetary policy to have an impact on the real economy. Appendix A presents a simple
+multi-country multi-sector production model, which embeds cash-in-advance constraints and sticky
+wages.
+
+
+Technology and Market Structure
+
+To model international dependence at the sector level, we introduce international trade in inter-
+mediate goods. To fix notation, assume that the world economy is comprised of N countries and
+J sectors. Countries are denoted by m and n, and sectors by i and j . The notation follows the
+convention that for trade between any two country-sectors, the first two subscripts always denote
+exporting (source) country-sector, and the second subscript the importing (destination) country-
+sector ­ i.e., xmi,nj denotes goods produced in country m sector i that are used as intermediate
+inputs by sector j in country n.
+   A firm in a given sector produces using labor and a set of intermediates goods, which are
+potentially sourced from all countries and sectors, including its own. Output for a firm in country-
+sector nj , ynj , can then be written as
+
+                                      ynj = znj Fnj (lnj, , {xmi,nj }) ,                              (1)
+
+where lnj is labor used by firms in sector nj , {xmi,nj } is the set representing quantities of intermedi-
+ate goods used, znj is a Hicks-neutral technology parameter. Fnj (·) may allow for constant returns
+to scale (CRS) or decreasing returns to scale (DRS) production. Note that we have assumed a
+representative firm in each country-sector and thus have dropped any firm-specific notation.
+
+
+Market Clearing
+
+We can express the goods market clearing conditions for every country-sector mi in terms of ex-
+penditures, Rmi = pmi ymi , as
+                                                                J   N
+                              Rmi =         Cmi            +              mi,nj Rnj ,                 (2)
+                                         Final goods           j =1 n=1
+                                      expenditure on mi
+                                      across N countries        Intermediate input
+                                                                    expenditure
+
+where pmi is the price received by producers of good mi per unit of output. This condition is
+standard and will hold regardless of the underlying economic model. The first term of (2) captures
+expenditures on goods produced by country-sector mi that are used for final consumption both
+domestically and abroad. This term can be expressed as a function of underlying parameters of
+a model, such as households' preferences and their share of income. However, since we ultimately
+
+                                                      6
+link movements in final goods' expenditure to exogenous changes in monetary policy, we omit
+these details to avoid introducing unneeded notation.7 The second term of the equation captures
+expenditure on intermediate inputs, where mi,nj is the input-output coefficient for country-sector
+nj purchases of the intermediate good from country-sector mi needed to produce a unit of output
+of good nj :
+                                                         pmi,n xmi,nj
+                                             mi,nj =                  ,
+                                                           pnj ynj
+and we assume that the law of one price holds across goods in a given sector i, such that pmi,n =
+pmi .8 Further, as we are working with a cross-country expenditure system, all prices should be
+expressed in a common currency. We set the currency to be the U.S. dollar, and take this currency
+choice into account by transforming all countries stock returns to U.S. dollar returns in our empirical
+work below.
+    Stacking (2) over country-sector cells, we can express the global expenditure system in matrix
+form:
+                                                  R = C + R,                                                     (3)
+
+where R is the N J × 1 vector of country-sector sales, C captures the N J × 1 vector of final goods'
+expenditures, and  is the N J × N J global input-output matrix. Note that this expenditure
+system holds regardless of the underlying economic model, and is measured in the data by national
+accounting and world input-output data.
+
+
+Deviations from Steady-State and Stock Returns
+
+We are ultimately interested in studying how monetary policy shocks impact stock returns given
+the world input-output network, and study deviations from a steady-state. First, re-arranging (3),
+we express revenues as a function of final goods expenditures:
+
+                                                R = (I - )-1 C ,                                                 (4)
+
+where (I -)-1 is the N J ×N J Leontief inverse of the input-output matrix. Second, for any variable
+x, define the log deviation from steady-state x = log(x) - log(¯              ¯ exp(x)  x
+                                                               x) so that x = x         ¯(1 + x),
+      ¯ is the steady-state value of x. Then, holding  fixed,9 we can express (4) in terms of
+where x
+deviations from steady-state as
+                                             R = (I - )-1 R  C ,                                                 (5)
+   7
+     Appendix A provides a model that yields a structure akin to (2), and demonstrates how changes in modeling
+assumptions will impact the derivation of the expenditure system.
+   8
+     Note that breaking the law of one price by adding iceberg trade costs will do nothing to change the main results
+below, so we omit these to keep notation to a minimum.
+   9
+     Holding  fixed implicitly assumes Cobb-Douglas production. However, given the static nature of the model
+and how our empirical estimation strategy, this assumption is not strong and the same results will follow for a more
+general CES production structure.
+
+
+
+                                                         7
+where  represents the Hadamard product, and R is the N J × 1 vector containing the steady-state
+                                                                       ¯11
+                                                                       C                ¯N J
+                                                                                        C
+consumption-to-revenue ratio in each country-sector: R =               ¯ 11 , . . . ,
+                                                                       R                ¯N J
+                                                                                        R
+                                                                                               .
+       We need to either deviate from perfect competition or from firm CRS production technology
+in order to generate positive profits in equilibrium. One standard setup in the macro-networks
+literature allows for CRS technology under monopolistic competition, where firms produce unique
+varieties and set prices with a constant mark-ups (e.g., Bigio and La'O, 2020). Alternatively, one
+can assume that firms produce with DRS in a competitive market structure as in Ozdagli and
+Weber (2020).
+       To a first-order, changes in firm profits are proportional to changes in firm revenues around
+the steady-state: nj  Rnj . In particular, in a monopolistic competitive market where firms
+have CRS technology, or in a competitive equilibrium where firms have DRS technology, profits
+will be a constant multiple of revenues, where the constant is a function of underlying model
+parameters. To ease notation, we assume that firm profits change one-for-one with firm revenues,
+so that Equation (5) yields
+                                            = (I - )-1   C ,                                                 (6)
+
+where  is a N J × 1 vector of nj profits, and  is the N J × 1 vector containing the steady-state
+                                                                    ¯11
+                                                                    C             ¯N J
+                                                                                  C
+consumption-to-profit ratio in each country-sector:  =              ¯11 , . . . , 
+                                                                                  ¯N J     .
+       In the above framework, domestic households are assumed to fully own domestic firms and
+thus have claim to all profits. If we explicitly account for equity ownership, and abstract from
+any uncertainty or financial market frictions, innovations to firms' profits pass one-for-one into
+domestic stock returns. Specifically, denoting the stock price for a firm in country-sector nj as qnj ,
+then the stock return around steady-state is qnj , which is identical to the change in profits around
+the steady state: qnj = nj , or in vector-form across all country-sector cells: q =  , where q is the
+N J × 1 vector (q11 , . . . , qN J ) . Therefore, following Equation (6), demand shocks will propagate
+across country-sectors' stock returns via the global production network:
+
+                                            q = (I - )-1   C .                                               (7)
+
+
+Monetary Policy Shocks
+
+The real effect of monetary policy has been subject to extensive analysis (see, for example Woodford,
+2004; Gali, 2015, for textbook treatments). To generate a real effect, some form of price rigidity
+is built into the model.10 In the case of a multi-country framework, assuming wage rigidity across
+countries helps simplify the model solution. Money can then be introduced into the model via
+different channels, such as cash-in-advance constraints, money in the utility function, or interest
+  10
+    Gorodnichenko and Weber (2016) show that price rigidities are an important determinant of the extent to which
+stock returns respond to monetary policy shocks.
+
+
+
+                                                       8
+rate rules. Such models will predict that deviations in expenditures on final consumption C in
+country n around its steady-state are proportional to the monetary policy shock in country n, Mn :
+
+                                                Cn = n Mn ,                                                 (8)
+
+where n  0 depends on steady-state values and the elasticity of consumption growth with respect
+to changes in monetary policy.11 Or, if we allow for heterogeneity in sector-level consumption, Cnj ,
+responses, we can write (8) at the country-sector level as
+
+                                               Cnj = nj Mn ,                                                (9)
+
+where nj  0 differs from n given households' consumption preferences for country-sector goods.
+    Writing (9) for N J country-sector cells in vector form, and combining it with (7), we express
+stock returns as a function of monetary policy shocks:
+
+                                            q = (I - )-1  M,                                               (10)
+
+where  is a N J × N matrix that combines the elements of the vector  and the elements of the
+N J × 1 vector of elements {nj }, and M is N × 1 vector of countries' monetary policy shocks.
+    Considering only shocks to U.S. monetary policy, the element MU S , Equation (10) gives
+
+                                         q = (I - )-1  U S MU S ,                                          (11)
+
+where  U S is a N J × 1 sub-matrix of  containing U.S.-specific elements. We present a simple
+model in Appendix A, which embeds cash-in-advance constraints in an open-economy input-output
+model to arrive at equations (10) and (11).
+
+
+Risk and Asset Pricing
+
+The above framework does not account for uncertainty. In particular, we have not taken a stand on
+households' risk aversion nor their intertemporal consumption decisions. Doing so opens the door
+to other potential impacts of monetary policy shocks on country-sectors' equity returns, besides the
+transmission of demand shocks via global production linkages. A key channel of monetary policy
+effect to consider is its impact on the stochastic discount factor (SDF) and risk-taking behavior;
+thus the pricing of firms' payouts (profits in our framework) by investors.
+    In the international context, movements in investors' risk-taking behavior lie at the heart of
+the impact of U.S. monetary policy on cross-country asset returns via the global financial cycle
+(Bruno and Shin, 2015a; Miranda-Agrippino and Rey, 2020). While it is beyond the scope of
+  11
+     In the cash-in-advance model presented in Appendix A, changes in the money supply map one-to-one to changes
+in consumption, so that n = 1.
+
+
+
+                                                       9
+this paper to formally introduce portfolio decisions into our conceptual framework,12 our empirical
+setup must still control for other variables that are correlated with U.S. monetary policy shocks and
+that may impact the pricing of firms' profits via changes in the SDF. In particular, changes in the
+variables that affect the SDF, such as changes in global risk aversion, may impact equity returns
+regardless of the production linkages. To obtain an unbiased estimate of the "demand channel"
+impact of monetary policy shocks on equity returns highlighted in our conceptual framework, we
+must therefore control for movements in SDF covariates that may be correlated with monetary
+policy shocks.
+
+
+3         Regression Framework
+
+The previous section's framework predicts that a monetary policy shock affects all stock returns in
+the amount proportional to their input-output distance from the source of the shock. The empirical
+counterpart to this propagation pattern is a spatial autoregression (LeSage and Pace, 2009).
+         Specifically, holding the parameters of the model ( and ) fixed, the empirical counterpart of
+Equation (11) for a given country-sector observation is
+
+                                       q t = (I - diag() W)-1  MU S,t ,                                          (12)
+
+where q t is a N J × 1 vector of stock returns qmi,t for each t.13 The subscript t represents the
+year-month in which a U.S. monetary policy shock occurs,14 I is a N J × N J identity matrix, W is
+the N J × N J empirical global input-output matrix, and MU S,t is the U.S. monetary policy shock at
+time t. This shock measure does not vary across sectors and only emanates from one country, and
+thus the regression we run differs from the literature that analyses the propagation of idiosyncratic
+shocks across production networks.
+         In writing Equation (12) we make two important modifications to the model prediction (Equa-
+tion (11)). First, instead of a constant parameter  , we allow the shock impact to vary by country
+and sector, thus replacing it with a N J × 1 vector  . Second, we add a set of country-sector specific
+"resistance" coefficients to the network transmission mechanism, a N J × 1 vector  ­ diag() indi-
+cates a N J × N J diagonal matrix containing the vector  on the diagonal and zeros off diagonal.
+The heterogeneous panel SAR setting allows for estimation of country-sector specific estimates of
+the coefficients mi and mi of the vectors  and , thanks to the time dimension of our data.15
+    12
+      For papers that embed a basic production network framework into asset pricing models, see for example, Herskovic
+(2018) in a closed-economy setting, and Richmond (2019) for a multi-country setting.
+   13
+      To see how the SAR setting is analogous to a traditional autoregression, it helps to rewrite Equation (12) as
+q t =  MU S,t + diag() Wq t .
+   14
+      FOMC announcements do not occur every month, and at times multiple times within a month. We only include
+in our sample months with FOMC announcements, but the results are robust to including all months. For months
+with multiple announcements, we aggregate all announcement by adding up measures of monetary policy shock.
+   15
+      For completeness we also report estimates where coefficients  and  are constrained to be the same across all
+country-sector pairs in Appendix C.
+
+
+                                                         10
+       We allow for country-sector heterogeneity in our estimated coefficients on theoretical and em-
+pirical grounds. Theoretically, mi is determined from the parameters of a specific model, such as
+the one outlined Section 2 and Appendix A, where households' preferences for different goods or
+different competitive structures in different sectors, for example, lead to heterogeneous responses
+to U.S. monetary policy shocks across countries and sectors. In practice, these  's cannot be mea-
+sured directly and are therefore estimated. Equation (11) assumes that the spatial pass-through of
+monetary policy shocks to stock returns is perfect (mi = 1  m, i). This need not be the case in
+practice due to factors outside our conceptual framework, such as asset market frictions, which may
+add resistance to the shock transmission through the production network (i.e., through W).16 For
+this reason we let the data determine the empirical estimate of , again allowing for heterogeneity
+in this potential resistance across country-sector cells.17
+       Our static model abstracts from any steady-state differences across countries and sectors. While
+most of them would not affect our analysis of a temporary monetary policy shock effect on stock
+returns, there is one important exception. If countries or sectors differ in their steady-state growth
+rates of stock prices, we might erroneously assign these differences to the heterogeneous impact of
+the monetary policy shock. Thus, we absorb any country- or sector-level heterogeneity in baseline
+stock returns by adding a N J × 1 vector  of country-sector specific intercepts (fixed effects) to
+Equation (12). We also add an error term to arrive at the following estimation equation
+
+                                 q t =  + (I - diag() W)-1  MU S,t + t ,                                        (13)
+
+where  t the N J × 1 vector of errors t = (I - diag() W)-1 ut , where the elements of ut are
+assumed to be independently identically distributed. Because of the complex structure of our
+model, instead of computing analytical standard errors, suggested for the heterogeneous panel
+SAR by Aquaro et al. (2019), we use a wild bootstrap to construct standard errors that are robust
+to heteroschedasticity introduced by the structure of heterogeneous SAR in Equation (13). We
+describe the bootstrap procedure in detail later in this section.
+
+
+Measuring Network Effects
+
+The spatial autoregressive model allows us to decompose the total marginal effect of U.S. monetary
+policy on equity returns into a direct and network (indirect ) effect. In particular, in contrast with
+linear regression models, the coefficient vector  is not equal to the total marginal effect of the U.S.
+monetary shock MU S,t on stock returns qmi,t . Instead, applying Equation (12), the N J × 1 vector
+  16
+     For example, it is well established that momentum plays an important role in pricing stocks globally but is not
+generally correlated with macroeconomic shocks (Griffin et al., 2003; Fama and French, 2012).
+  17
+     Heterogeneity of mi may also be due to financial frictions, such as the liquidity premium, which may vary across
+countries and sectors (Amihud et al., 2015).
+
+
+
+
+                                                         11
+of total marginal effects is given by
+
+                                        Total  (I - diag()W)-1  ,                                             (14)
+
+where  and  are the estimated vectors of parameters. Specifically, for each country-sector cell,
+the total marginal effect of U.S. monetary policy shock includes a direct impact as well as the
+sum of all indirect effects resulting from linkages expressed in the input-output matrix W. The
+-weighted Leontief inverse matrix, (I - diag()W)-1 , is an infinite sum of all immediate and
+indirect production linkages of all lengths. For example, consider an easing in U.S. monetary policy
+that raises consumption demand for all goods in the U.S., including Apple's iPhone. Conditional on
+U.S. consumers' preferences, Apple's revenues, profits and stock price will rise. Further, to meet the
+increased U.S. demand for iPhones, there will be increased demand for firms assembling iPhones in
+China, as well for firms in Germany and Korea supplying components to assembly firms in China,
+as the initial demand shock propagates up Apple's global production chain. As a result, we would
+also expect to see stock prices rising for the Chinese, German, and Korean suppliers that are part
+of this production chain, and the size of these increases will be proportional to the importance of
+the firms' goods in the production of the iPhone. The Total effect of the U.S. monetary policy
+shock accounts for all of such spillovers, as well as the initial impact on Apple.
+       There are a number of ways to decompose the Total effect in order to extract the contribution
+of the global production network in transmitting U.S. monetary policy across equity markets.
+       Our baseline approach follows Acemoglu et al. (2016) and performs the following decomposition:
+
+                                      DirectAAK   ,                                                           (15)
+                                   NetworkAAK  Total - DirectAAK ,                                            (16)
+
+where the direct measures are simply equal to the estimated vector of coefficients  , reflecting only
+the immediate impact of U.S. monetary policy shocks on stock returns of each country-sector cell.18
+All effects intermediated by production linkages included in the network effect.19
+       Alternatively, we may follow the textbook approach of LeSage and Pace (2009), where the Total
+effect for each mi can be decomposed into a direct and network effects as
+
+                                   DirectLP  diag (I - diag()W)-1  ,                                          (17)
+                                NetworkLP  Total - DirectLP ,                                                 (18)
+
+where DirectLP and NetworkLP are N J × 1 vectors. The key aspect of this decomposition is that
+in addition to the immediate impact of the shock on the country-sector cell, DirectLP includes
+  18
+    This corresponds to the pure final demand effect of the U.S. monetary policy shock as derived in the model.
+  19
+    Given that we are working at the sector level, the DirectAAK will include spillover effects across firms within
+the same sector in the same country.
+
+
+                                                        12
+round-trip (indirect) transmission of the shock to each country-sectors' returns back to themselves,
+and will thus be larger than DirectAAK . We find that this measure is less appropriate for the
+analysis of the network effects at the sector level, because round-trip transmission to the same
+country-sector cell likely reflects a different step in the production chain and therefore would not
+be attributed to a direct effect in a more disaggregated network.
+       Our primary object of interest is not the absolute size but the share of the Network effect in the
+Total effect. We calculate this share for each country-sector when we estimate the heterogeneous
+SAR model, and present the mean value across country-sector estimates along with corresponding
+standard errors.
+
+
+Reporting and Standard Errors
+
+We present our results by reporting simple average values of  , , Direct and Network effects
+across all country-sectors. We also examine the cross-country transmission of U.S. monetary policy
+shocks by splitting the effects into domestic and international components. Specifically, we compute
+international direct and network effects as simple averages of the elements of Direct and Network
+across all the non-U.S. country-sectors. We take simple averages of the elements of Direct and
+Network over only U.S. sectors in order to compute the U.S.-only direct and network effects.
+       Because the time dimension of our panel is short (66 time periods in the benchmark) relative
+to the spatial dimension (an unbalanced panel of 26 countries and 54 sectors with the total of 671
+country-sector cells), and our shocks only vary over time, we are concerned that the analytical
+standard errors proposed by Aquaro et al. (2019) are unreliable in our setting. Thus, we turn
+to a bootstrap approach to compute standard errors. In a standard bootstrap approach one uses
+random subsamples of the data to re-estimated a model. This, however, is not an option for our
+set-up, because estimates of  and  in the panel SAR strongly depend on the ordering of W and
+because MU S,t does not vary across country-sector cells. Thus, for our model the best approach is a
+wild bootstrap, in which random perturbations are added to the dependent variable by multiplying
+residuals by a random variable drawn from a specific distribution.20
+       We compute standard errors using the wild bootstrap procedure with continuous distribu-
+tion proposed by Mammen (1993) for each element of  , , Direct, Network, and the share of
+Network in Total, as well as for their overall, international, and U.S. average values. To do so,
+for each iteration z of the 500 repetitions we replace our dependent variable with a synthetic one
+that is equal to the fitted values from the main estimation plus a random perturbation mi,t of the
+residuals:
+                                                      -1
+                              qz
+                               t = a + (I - diag(r) W)
+                                                                    z
+                                                         b MU S,t + t  et ,
+  20
+    In contrast with the standard residual bootstrap, a wild bootstrap allows for heteroschedasticity (Davidson and
+Flachaire, 2008) and is frequently used in heteroschedastic models as well as models with multiple equations.
+
+
+
+                                                        13
+where N J × 1 vectors a, b, and r are estimates of ,  , and , respectively, and et is a N J × 1
+vector of estimated residuals for each t.
+         We use a continuous distribution from which we draw z perturbations for each element mi,t of
+each vector t
+                                      z
+                                     mi,t
+                               z            1    z
+                              mi,t =  +        (vmi,t )2 - 1 ,
+                                        2   2
+where  and v are drawn from independent standard normal distributions. We then estimate our
+regression model replacing true dependent variable with synthetic one and retain estimation results.
+Standard deviations of each estimated parameter across 500 repetitions are reported as standard
+errors.
+
+
+4         Data
+
+We source data from two main datasets: the global production network data are from the World
+Input-Output Database (WIOD), and the stock market information is from the Thompson-Reuters
+Eikon database (TREI). The WIOD provides annual data for input-output linkages across 56 sectors
+and 43 countries and a rest of the world aggregate for 1996­2014. For our analysis, we limit the
+data to 26 countries with active stock markets and 54 sectors that are connected to each others.21
+         From TREI, we obtain end-of-period monthly stock prices, stock market capitalization, and
+industrial classification for individual companies. We then construct our own stock return indexes
+for the same sector definitions as used in WIOD, using stock market capitalization of the firm as
+a weight. This is not straightforward, given that the TREI sector classification uses Thomson-
+Reuters Business Classification (TRBC), while the World Input-Output Tables are constructed
+under International Standard Industrial Classification (ISIC) Revision 4. Fortunately, in addition
+to TRBC, TREI also reports North American Industry Classification System (NAICS) 2007 sector
+codes for each firm, which we use to create a crosswalk to ISIC Rev. 4. This then allows us to
+aggregate firms' stock market indices into WIOD-based sectors.22 For each of the resulting country-
+sector cells we construct monthly stock returns as a log change in weighted average of stock prices of
+all firms in that country-sector cell. We then multiply these returns by month-on-month exchange
+rate changes vis-`
+                 a-vis the U.S. dollar, and annualize the monthly U.S. dollar returns for all our
+analysis.23
+         Table A1 presents cross-country sector coverage of monthly returns for the months where there
+are monetary surprise shocks over 2000­16. Given cross-country differences in size, sectoral spe-
+    21
+     The remaining two sectors, household production ("T" in WIOD codes) and extraterritorial organization ("U")
+are not sufficiently connected to the rest of the network.
+  22
+     Even with these data, there is not always a 1-to-1 correspondence between the TREI and WIOD codes, and we
+rectify such instances in a variety of ways as described in Appendix B.
+  23
+     We confirm that our results are robust to using domestic currency returns as well as real returns. We do not
+explicitly study the effects of exchange rate changes. For the recent discussion of complex relationship between
+exchange rates and stock prices, see Karolyi and Wu (2020).
+
+
+                                                       14
+cialization patterns, and stock market depth we see that larger countries (e.g., the United States)
+have a larger coverage of sectors, while some countries only cover a few sectors (e.g., Portugal and
+Russia). These differences motivate a flexible empirical approach, where we allow for country-sector
+fixed effects as well as country-sector specific coefficients for the effect of the monetary policy shock
+variable.
+
+4.1      Input-Output Coefficient Construction
+
+The construction of the global input-output matrix using WIOD data is standard and follows
+from the literature. We denote countries as m, n  [1; N ] and sectors as i, j  [1; J ]. WIOD
+provides information of output produced in a given country-sector and where it flows to; both
+geographical and what sector of the economy (including government and households). We first use
+this information to build a matrix W, which is N J × N J , where each element wmi,nj represents
+the use of inputs from country m sector i as a share of total output of sector j in country n:24
+                                                        Salesminj
+                                             wmi,nj =             .
+                                                         Salesnj
+
+In network terminology, W is the adjacency matrix that gives us direct linkages between each pair
+of country-sector cells. Because by construction wmi,nj  [0; 1] and wmi,nj = wnj,mi , the network is
+weighted and directed. Note that we use all countries and sectors when constructing the adjacency
+matrix, but only exploit the sub-matrix where we have stock returns in the estimation below. This
+requires a re-normalization of the matrix for estimation purposes, but all preliminary statistics are
+based on manipulating the adjacency matrix without this re-normalization.
+      The top row of Figure 1 presents the empirical counter cumulative distribution function (CCDF)
+of the weighted outdegree of W for WIOD data, where we use the average input-output coefficients
+over the sample period 2000­14. The weighted outdegree for a given country-sector pair mi is
+defined as
+                                                        N     J
+                                             outmi =              wmi,nj ,
+                                                       n=1 j =1
+
+and measures how important a given country-sector's inputs are for production use across all
+possible country-sector pairs. It is informative to look at this distribution, since a skewed one
+implies the potential for shocks to propagate and amplify across the production network (Acemoglu
+et al., 2012). Panel (a) plots the distribution using all possible input-output linkages in the world
+including both domestic and international linkages in computing the weighted outdegree, while
+panel (b) exploits only the international linkages. As it can be seen in both figures, the distributions
+are very skewed. The curves were fitted using a Pareto distribution and as can be seen the slopes
+of the tail are steep, implying that the distributions are fat-tailed. This finding is along the lines
+ 24
+      Note that it is analogous to mi,nj in conceptual framework.
+
+
+                                                         15
+of what Carvalho (2014) shows for the U.S. economy using detailed input-output tables from the
+Bureau of Economic Analysis. In comparing panels (a) and (b), it is worth noting that the x-axis
+of the two figures are on two different scales. In particular, the international weighted-outdegree
+measures tend to be smaller on average than those using the full world input-output table (which
+includes domestic linkages) as several country-sector cells are not used as intermediate inputs (or
+in very tiny amounts) abroad.
+       Next, panels (c) and (d) examine how the outdegree distributions have changed over time.
+Specifically, we calculate the correlation of the outmi measures for each year with those of 2000. As
+can be seen, both for world linkages in panel (c) and international linkages in (d), the correlation
+has been falling over time, indicating a "re-shuffling" of the global production network. However,
+the change in correlation has been relatively small, indicating that the cross-country cross-sector
+distribution of the importance of key suppliers has not changed dramatically over our sample period.
+
+4.2      Returns Data
+
+We next explore our data and show that there is a relationship between stock return correlations
+and input-output linkages. As described previously, a unit of observation in our data is monthly
+stock returns in country m and sector i. We express all returns in U.S. dollars to remain consistent
+with our conceptual framework, and we also annualize the returns. Because not all sectors are
+present in all countries, we have stock indexes for 671 out of possible 1404 country-sector cells for
+each month from January 2000 through December 2016.25 Figure 2 presents the distribution of
+pairwise correlations between each possible pair of the 671 time series of stock returns. We can see
+that most correlations are positive and that the mass of the distribution is between 0 and 0.5.26
+
+Returns and the Input-Output Network
+
+Our main goal is to explore whether stock market correlations are associated with production
+linkages. To do so, we first compute a measure of distance between each pair of country-sector
+cells. The concept of distance is better defined for binary networks. Thus, for illustrative purposes,
+we replace wmi,nj < 0.05 with 0, and the rest of the cells with 1, converting our network into a
+binary one. In such a network, the distance between two cells is defined as the length of the shortest
+path (geodesic) between them.
+       We use this concept of distance for each pair of country-sector cells and compare it to the
+correlation of stock returns for this pair of country-sector cells. Figure 3 plots this relationship,
+where we compute the average directional distance between any two country-sector cells (i.e., the
+  25
+     Recall that we have potentially a maximum of 54 sectors and 26 countries. The number of possible country-
+sectors is further restricted to insure that W is full rank for estimation purposes, even if stock returns data may exist
+for some of these country-sectors.
+  26
+     We obtain a similar distribution for local-currency returns.
+
+
+
+                                                           16
+                                              Figure 1. Distribution of Weighted Outdegree for WIOD
+
+The first row of this figure plots the counter cumulative distribution function of the weighted outdegree using the
+average of the WIOD annual database over 2000­14. The second row of the figure plots changes in the distribution
+of country-sector weighted outdegrees, where the change is measured as the correlation of the vector of each year's
+country-sector outdegree measures with the vector of these measures for the year 2000. The panels with World
+Linkages are based on the full WIOD table, while the International Linkages panels use only internationally connected
+country-sector cells (i.e., we omit the domestic-only linkages across sectors) in constructing the weighted outdegree
+measure.
+
+                           1                                                                                          1
+
+
+
+
+                      0.1                                                                                        0.1
+   Empirical CCDF
+
+
+
+
+                                                                                              Empirical CCDF
+                     0.01                                                                                       0.01
+
+
+
+
+                    0.001                                                                                      0.001
+
+                       0.001          0.01              0.1                 1            10                           1e-08           1e-06         0.0001          0.01           1
+                                              Weighted Outdegree                                                                                Weighted Outdegree
+                                        (a) World Linkages                                                                           (b) International Linkages
+
+
+                      1                                                                                          1
+
+
+
+
+                    0.98                                                                                       0.98
+
+
+
+
+                    0.96                                                                                       0.96
+
+
+
+
+                    0.94                                                                                       0.94
+
+
+
+
+                    0.92                                                                                       0.92
+
+
+
+
+                     0.9                                                                                        0.9
+
+
+
+
+                    0.88                                                                                       0.88
+                       2000    2002    2004      2006         2008   2010       2012   2014                       2000        2002       2004     2006       2008    2010   2012       2014
+
+                                       (c) World Linkages                                                                            (d) International Linkages
+
+
+
+
+average of mi  nj and nj  mi path lengths). Even though the diameter, the longest distance,
+of the input-output network averaged over time is 23, we only plot distances up to 8 because for
+any distances longer than that the decline in stock price correlation levels off. The figure's vertical
+axis shows the average stock price correlation for all country-sector cell pairs that are at a given
+
+
+
+                                                                                         17
+                    Figure 2. Correlation of Stock Returns over the Entire Sample
+
+This figure plots the distribution of pairwise correlations of annualized U.S. dollar monthly stock returns over 2000­16
+across 26 countries and 54 sectors.
+
+
+
+
+distance from each other in the network, shown on the horizontal axis.
+    In panel (a), which uses the full set of country-sector cells, we can see that pairs most closely
+connected through input-output linkages exhibit the highest correlation of stock returns (correlation
+coefficient of 0.39). The larger is the distance, the lower is the correlation. We can see that it tapers
+out just below 0.17 for any distance over 4. Panel (b) shows that a similar pattern holds when we
+exclude all domestic sector pairs from the analysis, with highest average correlation of 0.23. This
+finding alleviates a concern that our results are driven entirely by domestic input-output linkages
+and stock return correlations. We can see that even excluding domestic linkages, the country-
+sector cells that are most highly connected exhibit a stronger correlation of stock returns than
+those country-sector cells at a greater distance from each other in the global production network.
+    These two figures provide prima facie evidence that two sectors that rely more heavily on
+each other for the supply of inputs in productions also have more highly correlated stock returns.
+However, these bilateral correlations may be driven by numerous transmission channels or shocks,
+and are silent on how shocks are transmitted via the overall network.
+
+4.3    Monetary Policy Shocks and Global Financial Cycle Correlates
+
+Our baseline measure of U.S. monetary policy shocks is sourced from Jaroci´
+                                                                          nski and Karadi (2020).
+They construct a measure of an interest rate surprise as the change in the 3-month Federal Funds
+future rate, which they interpret as the expected federal funds rate following the next policy meet-
+
+
+                                                          18
+        Figure 3. WIOD Network Distance of Supply Linkages and the Correlation of Stock Returns
+
+This figure plots correlations of U.S. dollar annualized monthly stock returns over 2000­16 across 26 countries and 54
+sectors on the y-axis, across network distance bins based on the direct bilateral supply linkage using the average of
+the WIOD annual database over 2000­14. The elements of the IO matrix are defined as country-sector mi's usage of
+country-sector nj 's good as an intermediate divided by mi's gross output. The panel with World Linkages is based
+on the full WIOD table, while the International Linkages panel extracts the correlation and distance variable for only
+internationally connected country-sector cells (i.e., we omit the domestic-only linkages across sectors).
+
+                                          0.4                                                                                            0.23
+
+
+
+                                                                                                                                         0.22
+ Correlation of Sectoral Stock Returns
+
+
+
+
+                                                                                                 Correlation of Sectoral Stock Returns
+                                         0.35
+                                                                                                                                         0.21
+
+
+
+                                                                                                                                          0.2
+                                          0.3
+
+
+                                                                                                                                         0.19
+
+
+                                         0.25
+                                                                                                                                         0.18
+
+
+
+                                                                                                                                         0.17
+                                          0.2
+
+                                                                                                                                         0.16
+
+
+
+                                         0.15                                                                                            0.15
+                                                1   2    3      4       5       6   7   8                                                       1   2       3      4       5       6   7   8
+                                                             Network Distance                                                                                   Network Distance
+                                                        (a) World Linkages                                                                              (b) International Linkages
+
+
+
+ing. The change in the futures rate is calculated in the 30-minute window around the time of the
+Federal Open Market Committee (FOMC) press release, which is 2 p.m. East Coast time on the
+day of a regular FOMC meeting.27
+                                         We explore the robustness of our regression results to conditioning on other correlates of the
+global financial cycle, namely the VIX, 2-year U.S. Treasury rate, and broad U.S. dollar index. The
+VIX is obtained from Federal Reserve Economic Data (FRED). The 2-year U.S. Treasury rate and
+broad U.S. dollar index are obtained from the Board of Governors of the Federal Reserve (series
+H.15 and H.10, respectively). We take the monthly log difference of the VIX and broad U.S. dollar
+index and the monthly first difference of the 2-year U.S. Treasury rate before including them in
+the regressions below. The VIX and dollar index are common variables used to capture the global
+financial cycle (e.g., Bruno and Shin, 2015a; Miranda-Agrippino and Rey, 2020), while changes in
+the 2-year U.S. Treasury rate captures the overall change in U.S. monetary policy stance as well as
+the cost of funding.28
+  27
+     This measure of monetary surprise shocks is common in the literature, and follows the work of Gertler and
+Karadi (2015). Note that we aggregate shocks within months for the (infrequent) months where there are multiple
+announcements.
+  28
+     The 2-year U.S. Treasury rate is a more convenient measure than the Federal Funds rate because it never reached
+the zero lower bound and because it is highly correlated with the "shadow" Federal Funds Rate, such as the one
+proposed by Wu and Xia (2016), while at the same time being a more transparent measure.
+
+
+
+                                                                                            19
+         Given potential contemporaneous monetary policy shocks across countries, we check the robust-
+ness of our results by including ECB and Bank of England monetary policy shocks constructed by
+Cieslak and Schrimpf (2019). To best match the definition we use for the U.S. monetary policy
+shock, we use the series that are not decomposed into monetary and non-monetary news. We in-
+clude these shocks along with the U.S. monetary policy shock vector in order to control for potential
+foreign monetary responses to U.S. monetary policy, and which would be picked up in the network
+contribution if omitted. Finally, we also exploit U.S. monetary policy shocks from Nakamura and
+Steinsson (2018), Bu et al. (2019), and Ozdagli and Weber (2020) for further robustness checks.
+
+
+5         Empirical Results
+
+We present our results starting with the baseline least-squares regression to give an idea of the
+overall effect of U.S. monetary policy shocks on global stock returns. We proceed with a spatial
+autoregression (SAR) to identify the portion of the effect that is due to production network linkages,
+and to provide ample evidence of the robustness of our benchmark SAR specification. In particular,
+we condition stock returns on the drivers of the global financial cycle and show that our benchmark
+results are only minimally affected by this change in specification. Finally, we show that our baseline
+direct and network effects are not driven by specific countries or sectors.
+
+5.1        Linear Regression Results
+
+To establish a baseline, we estimate a simple linear regression that ignores any spatial network
+effects:
+                                          qmi,t =  +  LS MU S,t + mi,t ,                                           (19)
+
+where  represents either a constant or different sets of fixed effects. Effectively, this estimation
+strategy imposes the restriction of spatially uncorrelated country-sector cells in the SAR framework
+of (13); i.e., setting  = 0. As a result, the network and direct effects are captured in the estimate
+ LS .
+         The results of the estimation use the Jaroci´
+                                                     nski and Karadi (2020) monetary policy shock series
+for 2000­07 sample period are reported in Table 1.29 The simple OLS estimate in column (1)
+implies that a one percentage point surprise in monetary policy easing results in a 2.7 percentage
+points rise in the average country-sector monthly stock return.30 The standard errors increase
+substantially when we cluster them at the monthly (t) level, as reported in column (2), which
+    29
+      The results for other monetary shock measures and other time periods are nearly identical and can be obtained
+from the authors upon request. The exception is including 2008, which lowers the magnitude of the effect. Further-
+more, because the dependent variable is the stock return, including a lagged dependent variable in these regression
+does not alter the results.
+   30
+      Unless stated otherwise, all our results are in terms of annualized U.S. dollar monthly returns, as discussed above
+in Section 4.
+
+
+
+                                                           20
+should be expected given that the monetary policy shock is being repeated for each country-sector
+return in a given time period of the panel. The magnitude of the effect does not change much
+whether we control for country, sector, or country-sector fixed effects (column (3)). We use the
+(most restrictive) country-sector fixed effect specification as our baseline for the linear regression.
+    Keeping in mind that our conceptual framework allows for U.S. monetary policy shocks to
+have heterogeneous effects across country-sector pairs, we allow for heterogeneous values of  for
+each mi in our estimation procedure. This estimation strategy is possible because of the time
+dimension of our data. First, we estimate a random coefficients model with  's varying across
+country-sector panels. We find that the avearge coefficient estimate declines slightly, as shown
+in column (4). Second, we use a Mean Group estimator (Pesaran and Smith, 1995) with groups
+defined as country-sector pairs in column (5). In this case, the average  is somewhat larger than
+the random-coefficient estimate (in absolute value), but still smaller (in absolute value) than the
+least-squares estimates.
+    Finally, to compare our findings with existing country-level analysis, we aggregate the individual
+firm stock returns to the country level and estimate a country fixed effects linear regression, which
+is reported in column (6). We find that the coefficient for this country-time panel specification is
+slightly larger (in absolute value) than the estimated coefficient based on country-sector level data,
+but with larger standard errors. Further, the point estimate is in line with other estimates from
+the literature (e.g., Ehrmann and Fratzscher, 2009).31 The use of monthly returns is justified by
+findings that most of the equity premium resulting from changes in the U.S. monetary policy is
+reflected in the first four weeks following the announcement (Bernanke and Kuttber, 2005; Cieslak
+et al., 2019) and with at least 3-4 days delay even for U.S. firms (Chava and Hsu, 2019).32
+    Table 2 reports least-squares regression results where we split the sample into all foreign coun-
+tries (Panel A) and only the United States (Panel B). The overall point estimates for the interna-
+tional sample in Panel A are somewhat smaller than the baseline estimates using the whole sample
+of Table 1 for the country-setor returns in columns (1)-(5), with the impact of a one percentage
+point innovation in U.S. monetary policy moving foreign country-sector returns by approximately
+2.5 percentage points. Turning to the country-level returns in column (6), the point estimate is
+also similar to the estimate reported in Table 1. Turning to Panel B and the results for the United
+States, we see that the point estimates are larger (in absolute value) than the pooled sample's esti-
+mates across all specifications, with an estimated impact of a one percentage point change in U.S.
+  31
+     Ammer et al. (2010), using hourly returns, find the effect that is about twice as large as ours, for both domestic
+and foreign stock returns. Miranda-Agrippino and Rey (2020) find, in a much longer sample, an impulse response
+that is also about twice as large as ours for the effect of the increase in the federal funds rate on the U.S., U.K., and
+German stock indexes.
+  32
+     Moreover, at least for the cases when monetary policy shocks do not fall on the first day of the month, using
+monthly returns side steps the 24 hour pre-announcement drift in the response of U.S. stock returns to FOMC
+scheduled announcements documented by Lucca and Moench (2015).
+
+
+
+                                                           21
+                      Table 1. Least-Squares Regression Estimation: Full Sample
+
+This table reports coefficients from linear regressions where the dependent variable qmi,t is the annualized U.S. dollar
+country-sector monthly stock return in columns (1)-(5) and the country market return in column (6), over 2000­07
+in months with FOMC announcements, and the independent variable MU S,t is the measure of the U.S. monetary
+policy shock taken from Jaroci´  nski and Karadi (2020). There are 49,667 observations in columns (1)-(5), and 1,716
+observations in column (6). Standard errors are in parentheses. All coefficients are significant at (at least) the 5%
+confidence level.
+
+
+   qmi,t =  +  LS MU S,t + mi,t
+
+                        (1)         (2)         (3)              (4)                 (5)                  (6)
+
+   MP shock            -2.669      -2.669     -2.74             -2.454              -2.533              -3.110
+                      (0.208)     (1.303)    (1.311)           (0.320)             (0.266)             (1.046)
+   Constant             0.993       0.993     0.992             0.893                1.013              0.526
+                      (0.013)     (0.090)    (0.091)           (0.029)             (0.026)             (0.086)
+
+   Estimator          OLS          OLS       LS          Random coeffs        Mean Group            LS - country
+   Fixed effects      None         None      mi            Random                  mi                    m
+   St. errors        Regular       Clustered on t        Conventional         Group-specific       Clustered on t
+
+
+
+monetary policy impacting the average sector return by approximately four percentage points across
+columns (1)-(5), and three percentage points in looking at the overall market return in column (6).
+This magnitude of the effect is consistent with the literature (e.g., Ehrmann and Fratzscher, 2004;
+Bernanke and Kuttber, 2005; Ozdagli and Weber, 2020).
+       The linear regressions do not allow to condition on the network structure and therefore  LS
+combines both direct and network effects. We therefore next turn to the spatial autoregression
+setup to be able to measure these two effects separately.
+
+5.2      Heterogeneous SAR Results
+
+We now allow for network effects by estimating a spatial autoregression model. We first present
+results of the heterogeneous coefficients SAR model in Table 3, where we allow for country-sector
+fixed effects following Elhorst (2014).33 We estimate the regression with maximum likelihood
+following Aquaro et al. (2019), and bootstrap standard errors for all parameters as well as for
+the decompositions, using a wild panel bootstrap with 500 repetitions. Our baseline estimation
+table presents both the LeSage and Pace (2009) and Acemoglu et al. (2016) direct and network
+decompositions. We then present only the Acemoglu et al. (2016) decomposition for additional
+results in order to save space, and because this methodology omits the own-sector round-trip effect
+  33
+    See Table A3 for results using a homogeneous SAR model. Results in this estimation generally match up with
+our baseline heterogeneous estimates.
+
+
+                                                          22
+  Table 2. Least-Squares Regression Estimation: International and United States Sub-Samples
+
+This table reports coefficients from linear regressions where the dependent variable qmi,t is the annualized U.S. dollar
+country-sector monthly stock return in columns (1)-(5) and the country market return in column (6), over 2000­07
+in months with FOMC announcements, and the independent variable MU S,t is the measure of the U.S. monetary
+policy shock taken from Jaroci´  nski and Karadi (2020). Panel A includes all countries except the United States (25
+countries in total, 46,357 observations in columns (1)-(5), 1,650 observations in column (6)), and Panel B includes
+only the United States (3,310 observations in columns (1)-(5), 66 observations in column (6)). Standard errors are
+in parentheses. All coefficients are significant at (at least) the 10% confidence level.
+
+
+   qmi,t =  +  LS MU S,t + mi,t
+
+                           (1)         (2)        (3)            (4)                 (5)                 (6)
+
+                                               Panel A. Excluding the United States
+
+   MP shock               -2.553     -2.553      -2.625         -2.322              -2.405             -3.114
+                         (0.221)    (1.378)     (1.386)        (0.338)             (0.279)            (1.080)
+   Constant               1.035       1.035      1.034           0.932               1.054              0.542
+                         (0.014)    (0.094)     (0.094)        (0.030)             (0.027)            (0.088)
+
+                                                     Panel B. United States only
+
+   MP shock               -4.308     -4.308      -4.308         -4.068              -4.418             -2.990
+                         (0.407)    (0.702)     (0.709)        (0.811)             (0.726)            (0.594)
+   Constant               0.411       0.411      0.411           0.371               0.414              0.142
+                         (0.026)    (0.074)     (0.074)        (0.037)             (0.030)            (0.054)
+
+   Estimator              OLS         OLS       LS         Random coeffs       Mean Group          LS - country
+   Fixed effects          None        None      mi           Random                 mi                  mi
+   Standard errors       Regular      Clustered on t       Conventional        Group-specific     Clustered on t
+
+
+
+when calculating the direct effect of the transmission of U.S. monetary policy shocks to global stock
+markets.
+    Panel A of Table 3 shows the average values of  and . We report averages across all country-
+sectors, for country-sectors outside of the U.S., and for U.S. sectors only. The full distribution of
+these estimates are reported in Figure A1. The number of observations corresponds to the number
+of country-sector cells that contribute to each average. In Panel B, we report Direct, Network,
+and the share of Network in Total across country-sectors using the two approaches discussed
+previously. Because the decomposition is conducted at the country-sector level, we report the
+averages of Direct, Network, and the share of Network in Total for all country-sectors, for
+country-sectors outside of the U.S., and for U.S. sectors only. The full distribution of direct and
+network effects is reported in Figure 4.
+    The first point to note is that the sum of the estimated Direct and Network effects ­ i.e., the
+
+
+                                                          23
+Table 3. Heterogeneous Spatial Autoregression Panel Estimation: Baseline Specification and
+Decompositions
+
+This table reports results from heterogeneous coefficient spatial panel autoregressions (Equation (13)) where the
+dependent variable is the annualized U.S. dollar country-sector monthly stock return over 2000­07 over months with
+FOMC announcements, and the independent variable is the measure of the U.S. monetary policy shock taken from
+Jaroci´nski and Karadi (2020). There are 44,286 total observations comprised of 671 country-sectors over 66 months.
+LP09 and AAK16 refer to the decomposition methodologies in LeSage and Pace (2009) and Acemoglu et al. (2016),
+respectively. Standard errors (in parentheses) are obtained via wild bootstrap with 500 repetitions. All coefficients
+are significant at the 1% confidence level.
+
+
+                   q t =  + (I - diag() W)-1  MU S,t + t
+
+                                                Panel A. Coefficient Estimates
+
+                                       Average             Average             Observations
+
+                   Full sample            -0.907               0.632               44,286
+                                         (0.094)              (0.028)
+                   International          -0.828               0.635               40,986
+                                         (0.101)              (0.029)
+                   USA                    -1.871               0.585                3,300
+                                         (0.271)              (0.044)
+
+                                             Panel B. Total Effect Decomposition
+
+                                     Avg. Direct       Avg. Network          Network/Total
+
+                   Decomposition 1 (AAK16)
+
+                   Full Sample            -0.907               -1.808               0.666
+                                         (0.274)              (0.317)              (0.064)
+                   International          -0.828               -1.757               0.680
+                                         (0.101)              (0.322)              (0.068)
+                   USA                    -1.871               -2.430               0.565
+                                         (0.271)              (0.442)              (0.080)
+
+                   Decomposition 2 (LP09)
+
+                   Full Sample            -1.214               -1.501               0.553
+                                         (0.082)              (0.094)              (0.059)
+                   International          -1.151               -1.435               0.555
+                                         (0.087)              (0.275)              (0.063)
+                   USA                    -1.988               -2.313               0.538
+                                         (0.224)              (0.386)              (0.065)
+
+
+
+
+                                                         24
+Total effect ­ line up with the least-squares estimates of Table 1 as we would expect. Turning to
+our headline result, we find that for the full sample, nearly 70% of the average total effect of the
+U.S. monetary policy shock on global stock returns is due to the transmission through production
+network using our preferred decomposition method Acemoglu et al. (2016). In fact, we can see from
+Figure 4 that network effect is negative for a larger subset of country-sector cells than the direct
+effect. This results from the high estimated coefficient of shock propagation, , which is on average
+0.63. Interestingly, this average  is less than one, the value implied by our conceptual framework,
+due to unmodelled resistance to the transmission of shocks across international stock markets via
+the global production network. Further, the network effect also explains over half of the total effect
+if we use the LeSage and Pace (2009) decomposition, and shows the robust importance of global
+production networks in transmitting U.S. monetary policy shocks in our baseline estimation.
+       Computing averages for foreign country-sectors and for the U.S. sectors separately, we can see
+the pattern of transmission of U.S. monetary policy shocks to stock returns globally. We see a larger
+direct effect of U.S monetary policy shock on U.S. sectors that foreign sectors, which is expected.
+In terms of transmission via production networks, the share of the network effect for U.S. sectors
+is 57%,34 while for foreign country-sectors it is larger, at 68%. These results are very intuitive and
+show that production linkages are very important in transmitting demand shocks across sectors,
+and, even more so, across countries. In what follows we establish robustness of these findings.
+
+5.3      Robustness Checks
+
+We conduct a number of robustness check for our main result. First, we test for sensitivity of our
+findings to the sample time period and to the choice of timing at which the input-output matrix
+is sampled. We then return to the benchmark sample period and test for sensitivity of our result
+to definitions of stock returns and U.S. monetary policy shocks. We test for potential effects of
+monetary policy shocks emanating from other countries (namely, the U.K. and the euro area).
+Finally, we evaluate whether any specific sectors or countries are particularly influential for our
+results.
+
+
+Sensitivity to Time Period and Definition of W
+
+So far we have limited our analysis to the 2000­07 time period. Our baseline estimates are based on
+this period for three reasons: first, this period includes a full cycle of monetary policy actions but
+excludes the effective lower bound period; second, this period ends well prior to the Great Trade
+Collapse that occurred during the Global Financial Crisis in 2008:H2­2009:H1; third, this period
+does not include the dramatic decline in global stock prices that followed the collapse of Lehman
+  34
+    Ozdagli and Weber (2020) find a nearly identical magnitude for the network effect and a smaller magnitude for
+the direct effect using the same methodology (with a different measure of monetary policy shocks) in a longer sample
+with more disaggregated U.S. sectoral data.
+
+
+                                                        25
+            Figure 4. Distribution of Direct and Network Effects across Country-Sectors
+
+This figure plots the distribution of Direct and Network across mi from the estimation of equation Equation (13)
+for 2000­07, using Jaroci´nski and Karadi (2020) monetary policy shocks for MU S . The averages of these distributions
+are reported in Table 3.
+
+
+
+
+                   (a) Direct (AAK16)                                       (b) Network (AAK16)
+
+
+
+
+                     (c) Direct (LP09)                                       (d) Network (LP09)
+
+
+
+Brothers. In our baseline analysis, as in our model, we take the global production network as given,
+and therefore we use the input-output coefficients from 2000. It is possible, however, that a rapid
+increase in trade globalization and the lengthening of global supply chains in the early 2000s may
+affect our results. Therefore, we want to explore the evolution of our results as we vary the time
+period and the year from which we sample the matrix W.
+    Table 4 reports a variety of robustness checks based on different definitions of W and sample
+period coverage. For compactness, we just report the share of network effect across different
+variations of the sample for our baseline regression reported in Panel A of Table 3; the full set of
+
+
+
+                                                         26
+Table 4. Heterogeneous Spatial Autoregression Panel Estimation: Varying Sample Period and
+Weighting Matrix
+
+This table reports networks shares calculated from heterogeneous coefficient spatial panel autoregressions (Equa-
+tion (13)) where the dependent variable is the annualized U.S. dollar country-sector monthly stock return over time
+periods indicated in the first column over month with FOMC announcements, and the independent variable is the
+measure of the U.S. monetary policy shock taken from Jaroci´ nski and Karadi (2020). Standard errors (in parenthe-
+ses) are obtained via wild bootstrap with 500 repetitions. All network shares are significant at the 1% level. Full
+regression results are reported in Table A4.
+
+
+                  q t =  + (I - diag() W)-1  MU S,t + t
+
+                  Time period        Year for W              Share of network effect
+                                                      Full sample International      USA
+
+                  2000-07           Avg. 2000-07          0.668            0.679          0.588
+                                                         (0.056)          (0.060)        (0.068)
+                  2000-16                2000             0.748            0.758          0.661
+                                                         (0.056)          (0.059)        (0.034)
+                  2000-16           Avg. 2000-16          0.765            0.772          0.707
+                                                         (0.050)          (0.054)        (0.032)
+                  2000-07,09-16          2000             0.723            0.734          0.625
+                                                         (0.051)          (0.054)        (0.041)
+                  2000-07,09-16     Avg. 2000-16          0.747            0.756          0.670
+                                                         (0.052)          (0.055)        (0.043)
+                  2000-08,10-16          2000             0.743            0.748          0.693
+                                                         (0.044)          (0.046)        (0.059)
+                  2000-08,10-16     Avg. 2000-16          0.759            0.762          0.737
+                                                         (0.062)          (0.064)        (0.073)
+
+
+
+estimates is reported in Table A4. First, we can see that replacing W measured in 2000 with the
+average W for 2000­07 does not change the results. This is not surprising given that elements of
+W are driven by production technologies and a trade structure that does not change very quickly,
+as observed in Figure 1. Second, we extend our time period through 2016.35 We can see that the
+share of the network effect increases somewhat in this extended sample, not surprisingly given that
+increasing trend in cross-country trade integration and lengthening of global supply chains resumed
+following the Great Trade Collapse. However, even in this extended sample, using the average W
+instead of W for 2000 does not make much difference.
+       These results not only show the stability of our findings over time, but also support the as-
+sumption made in the model on the exogeneity of production linkages. At least in the studies
+  35
+    While WIOD is only available through 2014, we gather information on all other variables through the end of
+2016. To compute average W for 2000­16 we simply assume that the WIOD for 2015 and 2016 would be the same
+as the average 2000­14 WIOD matrix.
+
+
+
+                                                        27
+of temporary monetary shocks, it seems to be safe to assume that technological coefficients of
+input-output linkages as well as trade patterns do not respond rapidly and can be taken as given.
+
+
+Alternative Measures of Shocks and Returns
+
+We perform additional tests to check the robustness of our results to alternative measures of stock
+returns and U.S. monetary policy shocks. As a baseline for our robustness tests we take the set of
+SAR results reported in Panel A of Table 3. In the interest of space, we report only the share of
+the network effect in Table 5, with the full regression results reported in Table A5.
+   We begin by replacing stock returns, which are measured in terms of U.S. dollars, with excess
+returns measured as a difference between annualized monthly USD nominal stock returns and a
+change in the 2-year U.S. Treasury rate during the same month, which proxies for the global risk-free
+rate. We also replace nominal stock returns expressed in U.S. dollars with nominal stock returns
+expressed in domestic currency as well as with real stock returns. To compute real stock returns,
+we start with domestic-currency nominal returns and adjust them with domestic inflation rate. We
+use last quarter's inflation rate for each observation in our sample in order to avoid incorporating
+any response of inflation to U.S. monetary policy shocks into our returns data. We compute real
+                           DC )/(1 + inf l                                                      DC
+returns as rq mi,t = (1 + qmi,t           m,t-1 ) - 1, where rq mi,t is the real stock return, qmi,t is
+
+nominal return in domestic currency, and inf lm,t-1 is the inflation rate.
+   The results are reported in the top three rows of Table 5. We find that across all subsamples
+the share of the network effect increases substantially when we consider excess returns, indicating
+that changes in the risk-free rate contribute to the direct effect of U.S. monetary policy shocks
+to global stock returns, lowering our baseline measure of the share of the network effect. Using
+domestic currency returns, real or nominal, produces estimates of the network effect share that are
+similar to our baseline results.
+   Next, we consider three alternative measures of U.S. monetary policy shocks proposed by Bu
+et al. (2019); Nakamura and Steinsson (2018); Ozdagli and Weber (2020) (`BRW', `NS', and `OW',
+respectively). We find that the share of the network effect for the U.S. sectors is slightly smaller if
+we use `BRW' shocks, but qualitatively our results are very similar to the baseline. Furthermore,
+the 67% network share for the U.S. stock returns using the `OW' shock series is similar to the
+lower bound found in Ozdagli and Weber (2020), who use longer time series, a different frequency
+of stock returns, and a U.S. input-output table with a higher degree of sectoral disaggregation.
+
+
+Foreign Monetary Policy Shocks
+
+We next control for foreign monetary policy shocks in case they occur in reaction to or in concert
+with the U.S. monetary policy surprises. This coincidence of monetary policy actions could lead to
+an upward bias in the contribution of the network effect, which would capture the effect of a foreign
+
+                                                  28
+Table 5. Heterogeneous Spatial Autoregression Panel Estimation: Robustness to Returns and
+Shock Measures
+
+This table reports the network shares calculated from heterogeneous coefficient spatial panel autoregressions (Equa-
+tion (13)) where the dependent variable is the annualized U.S. dollar country-sector monthly stock return over 2000­07
+over months with FOMC announcements, and the independent variable is a measure of the U.S. monetary policy
+shock. The first row uses the nominal USD stock returns net of the 2-year U.S. Treasury rate. The second row uses
+nominal domestic currency stock returns. The third row uses real equity returns. All first three rows use the `JK'
+monetary policy shock from Jaroci´   nski and Karadi (2020). Rows three to six use USD nominal returns but use a
+different measure of the monetary policy shock taken from: `BRW' (Bu et al., 2019), `OW' (Ozdagli and Weber, 2020),
+and `NS' (Nakamura and Steinsson, 2018). There are 44,286 total observations comprised of 671 country-sectors over
+66 months. Standard errors (in parentheses) are obtained via wild bootstrap with 500 repetitions. All network shares
+are significant at the 1% level. Full regression results are reported in Table A5.
+
+
+                q t =  + (I - diag() W)-1  MU S,t + t
+
+                                                                Share of network effect
+                Specification                            Full sample International      USA
+
+                Excess returns                               0.799              0.813        0.693
+                                                            (0.107)            (0.119)      (0.046)
+                Domestic currency returns                    0.678              0.684        0.629
+                                                            (0.060)            (0.062)      (0.074)
+                Real domestic currency returns               0.665              0.675        0.594
+                                                            (0.084)            (0.087)      (0.082)
+                USD returns, OW shock                        0.663              0.668        0.606
+                                                            (0.050)            (0.052)      (0.103)
+                USD returns, NS shock                        0.672              0.678        0.612
+                                                            (0.060)            (0.063)      (0.074)
+                USD returns, BRW shock                       0.609              0.606        0.655
+                                                            (0.102)            (0.104)      (0.122)
+
+
+
+country's monetary policy change rather than the spillover from U.S. monetary policy. In particular,
+we are able to control for ECB and Bank of England (BOE) monetary policy shocks using measures
+constructed by Cieslak and Schrimpf (2019). Controlling for these shocks has implications for both
+euro countries and the UK, but also for countries that have deeper production linkages with these
+nations than with the U.S., thus potentially impacting our baseline measure of the international
+network effect of U.S. monetary policy shocks along several dimensions.
+    In particular, we operationalize Equation (10) in a panel SAR model. We do this by extending
+(13) to include foreign monetary policy shocks as additional controls:
+                                                                          K
+                      q t =  + (I - diag() W)-1             MU S,t +            k Mkt    + t ,                   (20)
+                                                                         k=1
+
+
+where each Mkt is a measure the monetary policy shocks of country k (like the U.S. monetary
+
+                                                         29
+Table 6. Heterogeneous Spatial Autoregression Panel Estimation: Summary Results for Foreign
+Monetary Policy Shocks
+
+This table reports direct and network effects of U.S. monetary policy shocks and total effects of foreign monetary
+policy shocks. These are calculated from heterogeneous coefficient spatial panel autoregressions (Equation (13))
+where the dependent variable is the annualized U.S. dollar country-sector monthly stock return over 2000­07 over
+months with FOMC announcements, and the independent variables are measures of the monetary policy shocks in
+the U.S. and other countries. There are 44,286 total observations comprised of 671 country-sectors over 66 months.
+Standard errors (in parentheses) are obtained via wild bootstrap with 500 repetitions. This table presents summary
+regression results. Full regression results are available upon request.
+
+
+       q t =  + (I - diag() W)-1  MU S,t +                K
+                                                          k=1  k   Mkt + t
+
+                                               Full Sample              International     United States
+                                          (1)       (2)       (3)             (4)               (5)
+       Direct effect of US MP           -0.877    -0.889    -0.883          -0.804            -1.848
+                                       (0.314) (0.317) (0.291)             (0.088)           (0.301)
+       Network effect of US MP          -1.974    -1.897    -1.912          -1.863            -2.501
+                                       (0.347) (0.357) (0.328)             (0.333)           (0.474)
+       Total effect of BOE MP           -0.599              -0.572          -0.644             0.302
+                                       (0.274)             (0.293)         (0.196)           (0.408)
+       Total effect of ECB MP                      0.014    -0.118          -0.114            -0.165
+                                                 (0.247) (0.243)           (0.190)           (0.381)
+
+
+
+policy shock term), and  k is a N J × 1 vector of coefficients. We further assume that the error
+term follows the same structure as in the baseline regression model (13). This specification assumes
+that the additional foreign monetary policy shock variables may impact stock returns both directly
+and indirectly via the global input-output matrix.
+    Table 6 presents these regression results, where we report total effects of foreign monetary
+policy shocks alongside the decomposition of U.S. monetary policy shocks. Looking at the direct
+and network effects of U.S. monetary policy in the first two rows, we see that our main results
+on the importance of the international network effect of U.S. monetary policy remain unchanged.
+In particular, when including all foreign monetary policy shocks the network is share in columns
+(3)-(5) is 0.684, 0.699, 0.575, for the full, foreign, and U.S. country-sectors respectively. Meanwhile,
+BOE monetary surprises have a significant effect on global stock prices, outside of the U.S., but
+the magnitude of this effect is about six times smaller than those of the U.S. monetary policy
+shocks. ECB monetary surprises do not appear to have an impact on global stock prices ­ the
+point estimates are small in magnitude and are not statistically significant.
+
+
+Heterogeneity of Estimates
+
+We next explore drivers of the observed heterogeneity in the importance of direct and network
+
+
+                                                       30
+                                             Figure 5. Distribution of Direct and Network Effects across Countries and Sectors
+
+This figure plots averages of Direct and Network across i, plotted for each m and averages across m plotted for
+each i from the estimation of Equation (13) for 2000­07, using Jaroci´   nski and Karadi (2020) U.S. monetary policy
+shocks for MU S , using Decomposition 1 (AAK16). The overall averages of these distributions are reported in Table 3.
+In panel (a), blue labels are for advanced economies, green labels are for emerging economies, and the red label is for
+the USA. In panel (b), financial and real estate industries are labeled in red.
+
+
+                                                                                                  Italy
+                                  5
+
+
+
+
+                                                                                                                                                           2
+                                                                                                                                                                                                                   A03
+                                                                                Russia                                                                                                             C21
+
+
+
+
+                                                                                                                          Country-average network effect
+  Sector-average network effect
+
+
+
+
+                                                                                                                                                                                         A01
+                                                                                                  China
+
+
+
+
+                                                                                                                                                           0
+                                                                                                      Austria                                                                        C10-C12C16      E37-E39
+                                                                                              FinlandIndonesia                                                                                            E36
+                                                                                          Mexico                                                                                                 C20
+                                  0
+
+
+
+
+                                                                                        Poland Spain                                                                                     H53      K65 I                  M74_M75
+                                                                                                                                                                                                  C24 G45
+                                                                                                                                                                                             C23 C17
+                                                                                           France                                                                         M69_M70                   F H49
+                                                                                    Denmark
+                                                                                    Germany Australia
+                                                                                             Korea                                                                    C13-C15 A02           C25
+                                                                                                                                                                                      C31_C32
+                                                                                                                                                                                           H51 H52     B
+                                                                                                                                                                                                Q R_S C22
+                                                                                                                                                                                                      G47
+                                                                            Canada                                                                                  C18     G46            C29               L68
+                                                                                    India Brazil
+                                                                                Greece         UK
+                                                                                               Japan                                                                              M71 C19 C28
+                                                                                                                                                                                  M71C19     K64
+                                                                                                                                                                                           P85
+                                                                                                                                                                                             K66
+                                                                                                                                                                                            D35
+
+
+
+
+                                                                                                                                                           -2
+                                                                            USA Taiwan Portugal                                                                              J59_J60                      N
+                                                                                                                                                                           H50J61        M72        C30
+                                                                    Netherlands
+                                                                 Sweden                                                                                           C26
+                                                                                                                                                            J62_J63                      J58
+                                  -5
+
+
+
+
+                                                                                                                                                                                            C27
+
+
+
+
+                                                                                                                                                           -4
+                                                                                                                                                                               M73
+
+
+                                               Turkey
+                                  -10
+
+
+
+
+                                                                                                                                                           -6
+                                        -6              -4                 -2                0                   2                                              -6        -4           -2           0              2           4
+                                                             Sector-average direct effect                                                                                       Country-average direct effect
+
+
+                          (a) Distribution across countries, sector averages                                                                         (b) Distribution across sectors, country averages
+
+
+
+effects across countries and sectors. Our approach is to analyze the country-sector cross section
+of the SAR estimated average direct and network effects. Figure 5 plots the average network
+effect against the average direct effect, where panel (a) computes the average across sectors within
+countries, and panel (b) computes averages across countries within sectors.
+                                  In panel (a), blue labels indicate advanced economies, green labels indicate emerging economies,
+and a red label is used for the U.S. We can see that the largest average direct and network effects are
+observed for Turkey, although the distance from the rest of the countries is not so large as to cause
+concern about undue influence of just one country on overall results. For the rest of the countries,
+we do not observe substantial differences between advanced and emerging economies. With the
+exception of Italy and Russia, we see a strong positive correlation between direct and network
+effects across countries. Finally, the U.S. does not stand out of the pack, with both direct and
+network effects tending to be larger than the average country-sector's, but within the distribution
+across other countries.
+                                  In panel (b) red labels indicate sectors that are related to finance and real estate and blue
+labels indicate all other sectors. We can see that there is a positive correlation between network
+and direct effects across sectors as well, but it is not as strong as across countries. There are no
+sectors that appear to be outliers.
+                                  Given the heterogeneity of direct and network effects observed across countries and sectors, a
+natural question to ask is what might be the explanations for such heterogenity. First, since the
+
+                                                                                                                     31
+shock we analyze initially hits final demand in the U.S., it is possible that the share of output
+each country-sector cell exports to the U.S. as a final good would be an important determinant
+of the size of both direct and network effects. Next, we consider several possibilities that might
+be of concern because they could indicate that our production network proxies for a different
+transmission channel. We consider two sector characteristics that might be important for the
+transmission of stock market shocks: financial dependence of a sector (based on the extension of
+Rajan and Zingales (1998) to non-manufacturing sectors and computed for 2002­06 by Cat~
+                                                                                      ao et
+al. (2009)) and trade credit dependence of a sector (Fisman and Love, 2003). We consider the
+three country characteristics that might affect the transmission of stock market shocks: country
+size (measured as log GDP expressed in U.S. dollars), financial openness (measured as a ratio of
+the sum of total external assets and liabilities to GDP, from Lane and Milesi-Ferretti (2007)), and
+the ratio of the current account to GDP.
+   We run regressions of the estimated network and direct effects on our list of covariates, where
+we estimate least-squared regressions with country or sector fixed effects and we double-cluster
+standard errors on country and sector to account for repeated values of country-specific and sector-
+specific explanatory variables. The results of this analysis are reported in Table A7. In interpreting
+coefficients it is important to keep in mind that in general both the direct and network effects are
+negative, thus a positive coefficient implies a smaller effect of an explanatory variable on spillovers.
+None of the estimated coefficient are significant at conventional levels and the explanatory power
+of the variables included is minimal, as seen from the low within-R2 s. Thus, the heterogeneity of
+the estimated direct and network effects is not driven by variables that might indicate alternative
+shock transmission channels.
+
+5.4   The Global Financial Cycle
+
+We next explore the robustness of the global production network demand channel of U.S. mone-
+tary policy shocks by controlling for global financial cycle variables, which if omitted may lead to
+estimation biases of our baseline direct and network effects. In particular, if these omitted shocks
+are correlated with U.S. monetary policy shocks and have a direct effect on global stock returns,
+our estimates of the impact of U.S. monetary policy shocks would spuriously attribute some of
+their effect to propagation through the production network. In terms of estimation, this would
+be reflected in the spacial autoregression coefficients vector  being upwardly biased (in absolute
+value).
+   There is clear evidence in the literature that global stock prices respond to a global financial
+cycle (Chen, 2018; Bruno and Shin, 2015b; Miranda-Agrippino and Rey, 2020). Some movements
+of the global financial cycle are due to changes in U.S. monetary policy, while others are market
+driven. Here we show the robustness of our results to controlling for such shocks. In our analysis
+
+
+                                                  32
+  Table 7. Least-Squares Panel Estimation: Controlling for Global Financial Cycle Covariates
+
+This table reports coefficients from linear regressions where the dependent variable q is the country-sector annualized
+U.S. dollar monthly stock return over 2000­07 in month with FOMC announcements. The independent variables
+include the measure of the U.S. monetary policy shock taken from Jaroci´     nski and Karadi (2020) (MP shock), the
+monthly changes in the VIX index (VIX); the 2-year U.S. Treasury rate (T2y), and the broad U.S. dollar index
+(USD). Robust clustered standard errors are in parentheses. All coefficients on MP shock are statistically significant
+at the 1% confidence levels.
+
+
+                         LS M                         LS
+            qmi,t = mi + M P  U S,t + Xt              X    + mi,t
+
+                                             Full Sample                       International   United States
+                                 (1)         (2)     (3)               (4)          (5)             (6)
+
+            MP shock            -3.320      -3.514     -3.184         -3.465      -3.339           -4.472
+                               (0.888)     (0.875)    (0.903)        (0.848)     (0.872)          (0.710)
+             lnVIX              -0.018                                -0.016      -0.016           -0.013
+                               (0.003)                               (0.004)     (0.004)          (0.003)
+            T2y                             0.551                      0.209      0.220             0.061
+                                           (0.383)                   (0.363)     (0.380)          (0.305)
+             lnUSD                                   -0.476           -0.438      -0.443           -0.357
+                                                    (0.574)          (0.542)     (0.560)          (0.448)
+            R2                  0.075       0.069    0.067             0.076       0.074            0.08
+            Observations                        49,667                           46,357             3,310
+            Cty-sec FE           Yes         Yes      Yes             Yes           Yes              Yes
+
+
+
+
+we focus on three variables that are not highly correlated with each other and are easily available:
+changes in the VIX, the 2-year U.S. Treasury rate, and the broad U.S. dollar Index. We conduct
+both least squares and SAR analysis and include these variables one at a time and then all together.
+
+
+Linear Regression Results
+
+Table 7 shows the results of the fixed effects least-square regressions for the full sample as well as
+for subsamples of foreign country-sectors and for the U.S. only. In the interest of space, for the
+subsamples we only present the results with all three additional control variables included ­ the
+results do not vary much if we include them individually.36
+       The VIX has been shown to be highly correlated with the global financial cycle and is therefore
+likely to affect global stock returns given changes in risk aversion and the behavior of financial
+intermediaries. To the extent that some movements in the VIX are correlated with U.S. monetary
+policy shocks, our baseline regressions may be attributing some of the effect of the VIX to the
+  36
+       The full set of regressions is available upon request.
+
+
+
+
+                                                                33
+demand-channel effect of the U.S. monetary policy shock that the input-output network captures.
+However, when we include the VIX in the regression, we find that the impact of the U.S. monetary
+policy shock is not statistically different from the baseline for the full sample as well as the subsam-
+ples. Consistent with the literature, increases in the VIX lower stock market returns worldwide, by
+about the same amount in the U.S. and in foreign countries.
+       Monetary policy can affect stock returns through surprises but it may also have an effect through
+the level of interest rates, which would not be necessarily reflected in monetary policy shocks. This
+second effect is likely to be reflected in capital flows (Avdjiev and Hale, 2019). According to the
+authors, an increase in the policy rate during the lending boom is likely to increase capital flows
+worldwide, which would imply increases in stock returns globally. Indeed, we find that an increase
+in the 2-year U.S. Treasury rate increases stock returns during our sample period of 2000­07 as
+seen in columns (2) and (4)-(6), which corresponds to a lending boom, however, the effect is not
+statistically significant. Controlling for the 2-year U.S. Treasury rate does not change much the
+impact of the U.S. monetary policy shock relative to the baseline.
+       In our baseline analysis we incorporated the effect of exchange rates into stock returns by
+expressing them in U.S. dollars. Given that the value of the dollar can be affected by U.S. monetary
+policy shocks (Inoue and Rossi, 2019), we want to separate the impact of U.S. monetary policy
+surprises that is orthogonal to exchange rate changes from the reaction to the change in the value
+of the dollar. To do so, we control for the broad U.S. dollar index in columns (3)-(6). We find that
+the value of the dollar does not have a statistically significant effect on global stock returns and
+that controlling for the dollar index does not change our baseline results.37 This is not surprising
+given our previous robustness tests in which we found the results to be very similar whether we use
+USD-based or domestic currency-based stock returns.
+       Combining the three additional control variables produces results that are similar to the re-
+gression with the VIX only, showing, consistent with the literature, that the VIX is the dominant
+correlate of the global financial cycle when it comes to explaining movements in global stock returns.
+
+
+Heterogeneous SAR Results
+
+In order to condition on the global financial cycle in SAR setting, we conduct a two-step procedure.
+The two-step procedure allows for isolating the effect of global financial cycle covariates without
+imposing transmission of these shocks through production network. In the first step, we regress
+annualized monthly stock returns expressed in U.S. dollars on annualized monthly log changes in
+the VIX and the broad U.S. dollar index (USD), and the change in the 2-year U.S. Treasury rate
+  37
+    The results are very similar if we instead control for each country's bilateral exchange rate vis-`
+                                                                                                      a-vis the U.S.
+dollar.
+
+
+
+
+                                                        34
+(T2y):
+                          q t =  + 1  ln VIXt + 2  ln USDt + 3 T2yt + t .                                          (21)
+
+The estimates for this regression using OLS, random coefficients, or Mean Group estimator (Pesaran
+and Smith, 1995) are reported in Table A8. For consistency with the rest of our analysis, we allow for
+the effects of global financial cycle covariates to vary by country and sector, thus, as a benchmark,
+we estimate regression Equation (21) using Mean Group estimator (Pesaran and Smith, 1995),
+which allows us to estimate a separate coefficient for each country-sector cell.38
+    Residuals from this regression represent the component of stock returns that is orthogonal to
+global financial cycle covariates:
+
+                        q X,t = q t - a - c1  ln VIXt - c2  ln USDt - c3 T2yt ,                                    (22)
+
+where a is the estimate for  and c1 - c3 are estimates for 1 - 3 .
+    We then use the component of stock returns that is orthogonal to global financial cycle covariates
+as our dependent variable in the SAR analysis as follows:
+
+                                q X,t =  + (I - diag() W)-1  MU S,t + t .                                          (23)
+
+The results are reported in Table 8.
+    Relative to our benchmark results in Table 3, Decomposition 1 (AAK16), we find that both the
+direct and network effects are now slightly larger for foreign stock returns and slightly smaller for
+the U.S. stock returns. The share of the network effect is unchanged for the U.S. stock returns, but
+is slightly lower for foreign stock returns. This finding is consistent with our concern that some of
+the global financial cycle effect was reflected in the network effect in our benchmark specification.
+The difference between the network share in the benchmark results and in the results in Table 8
+is negligible in magnitude and is not statistically significant. Combined with the findings from our
+least-square analysis that the total effect of U.S. monetary policy shock is robust to controlling for
+global financial cycle covariates, this SAR results confirm that any bias arising from not controlling
+for global financial cycle in our benchmark specification is minor.
+
+
+6     Conclusion
+
+In this paper we quantitatively evaluate the role of the global production network in the propagation
+of U.S. monetary policy shocks to stock returns at a sector level worldwide. Basing our analysis on
+a simple conceptual framework, which can be derived from a canonical multi-country multi-sector
+production network model, we estimate a spatial autoregression in a panel setting that allows for
+  38
+     The results are nearly identical if we use instead OLS or random coefficient estimators. These results are available
+upon request.
+
+
+
+                                                           35
+Table 8. Heterogeneous Spatial Autoregression Panel Estimation: Conditioning on the Global
+Financial Cycle
+
+This table reports direct and network effects from heterogeneous coefficient spatial panel autoregression (Equa-
+tion (23)) where the dependent variable is the annualized U.S. dollar country-sector monthly stock return over
+2000­07 over months with FOMC announcements, after conditioning for the changes in VIX, 2-year U.S. Treasury
+rate, and U.S. Broad dollar index. Conditioning is based on the mean-group estimator with first stage reported in
+Table A8. Independent variable is the measure of the U.S. monetary policy shock taken from Jaroci´     nski and Karadi
+(2020). There are 44,286 observations total comprised of 671 country-sectors over 66 months. Standard errors (in
+parentheses) are obtained via wild bootstrap with 500 repetitions. All coefficients are statistically significant at the
+1% confidence level.
+
+
+         q X,t =  + (I - diag() W)-1  MU S,t + t
+
+                            Avg.       Avg.       Avg. Direct       Avg. Network         Network/Total
+
+         Full sample         -1.001     0.589          -1.001             -1.880                0.653
+                            (0.106)    (0.035)        (0.269)            (0.310)               (0.063)
+         International       -0.936     0.589          -0.936             -1.848                0.664
+                            (0.108)    (0.035)        (0.108)            (0.315)               (0.066)
+         United States       -1.796     0.581          -1.796             -2.274                0.559
+                            (0.304)    (0.055)        (0.304)            (0.428)               (0.092)
+
+
+
+coefficients to vary across countries and sectors. The conceptual framework predicts that country-
+sectors which are more closely linked to the U.S. via supply linkages will be more affected by U.S.
+monetary policy shocks.
+    We find a very robust and quantitatively important role of the production network ­ nearly
+70% of the total estimated impact of U.S. monetary policy shocks on global stock returns is due
+to production linkages. This finding is not affected by conditioning on the financial channel of
+U.S. monetary policy shock transmission studied in the global financial cycle literature. Thus, in
+addition to providing a quantitative evidence of the importance of the global production network
+in transmitting asset market shocks, we contribute to the growing literature on the spillovers of the
+U.S. monetary policy internationally by documenting and quantifying the role of real linkages in
+the global transmission of such shocks.
+
+
+
+
+                                                          36
+References
+Acemoglu, Daron, Ufuk Akcigit, and William Kerr, "Networks and the Macroeconomy: An Em-
+  pirical Exploration," NBER Macroeconomics Annual 2015, 2016, 30, 276­335.
+  , Vasco M. Carvalho, Asuman Ozdaglar, and Alireza Tahbaz-Salehi, "The Network Origins of
+  Aggregate Fluctuations," Econometrica, September 2012, 80 (5), 1977­2016.
+Alfaro, Laura, Manuel Garc´ ia-Santana, and Enrique Moral-Benito, "On the Direct and Indirect
+  Real Effects of Credit Supply Shocks," January 2020. Forthcoming, Journal of Financial Eco-
+  nomics.
+Amihud, Yakov, Allaudeen Hameed, Wenjin Kang, and Huiping Zhang, "The illiquidity premium:
+ International evidence," Journal of Financial Economics, 2015, 117 (2), 350­368.
+Ammer, John, Clara Vega, and Jon Wongswan, "International Transmission of U.S. Monetary
+ Policy Shocks: Evidence from Stock Prices," Journal of Money, Credit and Banking, 2010, 42
+ (s1), 179­198.
+Antr`
+    as, Pol and C. Fritz Foley, "Poultry in Motion: A Study of International Trade Finance
+ Practices," Journal of Political Economy, 2015, 123 (4), 853­901.
+Aquaro, Michele, Natalia Bailey, and M. Hashem Pesaran, "Estimation and Inference for Spatial
+ Models with Heterogeneous Coefficients: An Application to U.S. House Prices," October 2019.
+ USC Dornsife Institute of New Economic Thinking Working Paper No. 19-07.
+Atalay, Enghin, "How Important Are Sectoral Shocks?," American Economic Journal: Macroeco-
+  nomics, October 2017, 9 (4), 254­280.
+Auer, Raphael A., Andrei A. Levchenko, and Philip Saur´  e, "International Inflation Spillovers
+ through Input Linkages," Review of Economics and Statistics, July 2019, 101 (3), 507­521.
+Avdjiev, Stefan and Galina Hale, "U.S. monetary policy and fluctuations of international bank
+ lending," Journal of International Money and Finance, 2019, 95, 251 ­ 268.
+Baqaee, David Rezza and Emmanuel Farhi, "The Macroeconomic Impact of Microeconomic Shocks:
+  Beyond Hulten's Theorem," Econometrica, July 2019, 87 (4), 1155­1203.
+  and    , "Networks, Barriers, and Trade," August 2019. mimeo, UCLA and Harvard.
+Barrot, Jean-No¨el, Erik Loualiche, and Julien Sauvagnat, "The Globalization Risk Premium,"
+  Journal of Finance, October 2019, 74 (5), 2391­2439.
+Bekaert, Geert, Robert J. Hodrick, and Xiaoyan Zhang, "International Stock Return Comove-
+  ments," The Journal of Finance, 2009, 64 (6), 2591­2626.
+Bems, Rudolfs, Robert C Johnson, and Kei-Mu Yi, "Demand Spillovers and the Collapse of Trade
+  in the Global Recession," IMF Economic Review, December 2010, 58 (2), 295­326.
+Bernanke, Ben S. and Kenneth N. Kuttber, "What Explains the Stock Market's Reaction to Federal
+  Reserve Policy?," The Journal of Finance, 2005, 60 (3), 1221­1257.
+Bigio, Saki and Jennifer La'O, "Distortions in Production Networks," Quarterly Journal of Eco-
+  nomics, August 2020, 135 (4), 2187­2253.
+Boehm, Christoph E., Aaron Flaaen, and Nitya Pandalai-Nayar, "Input Linkages and the Trans-
+  mission of Shocks: Firm-Level Evidence from the 2011 T¯
+                                                        ohoku Earthquake," The Review of
+  Economics and Statistics, 2019, 101 (1), 60­75.
+Br¨
+  auning, Falk and Viacheslav Sheremirov, "Output Spillovers from U.S. Monetary Policy: The
+  Role of International Trade and Financial Linkages," October 2019. Federal Reserve Bank of
+  Boston Working Paper No. 19­15.
+
+
+                                              37
+Brooks, Robin and Marco Del Negro, "Firm-Level Evidence on International Stock Market Co-
+  movement," Review of Finance, January 2006, 10 (1), 69­98.
+Bruno, Valentina and Huyn Song Shin, "Capital Flows and the Risk-Taking Channel of Monetary
+  Policy," Journal of Monetary Economics, 2015, 71, 119­132.
+   and , "Cross-Border Banking and Global Liquidity," Review of Economic Studies, 2015, 82,
+  525­564.
+Bu, Chunya, John Rogers, and Wenbin Wu, "A Unified Measure of Fed Monetary Policy Shocks,"
+  2019. Finance and Economics Discussion Series 2019-043.
+Buch, Claudia M., Matthieu Bussi`ere, Linda Goldberg, and Robert Hills, "The international trans-
+  mission of monetary policy," Journal of International Money and Finance, 2019, 91, 29 ­ 48.
+Burstein, Ariel, Christopher Kurz, and Linda L. Tesar, "Trade, Production Sharing, and the Inter-
+  national Transmission of Business Cycles," Journal of Monetary Economics, 2008, 55, 775­795.
+Caballero, Julian, Christopher Candelaria, and Galina Hale, "Bank linkages and international
+  trade," Journal of International Economics, 2018, 115, 30 ­ 47.
+Carvalho, Vasco M., "From Micro to Macro via Production Networks," Journal of Economic Per-
+  spectives, Fall 2014, 28 (4), 23­48.
+  , Makoto Nirei, Yukiko U. Saito, and Alireza Tahbaz-Salehi, "Supply Chain Disruptions: Evi-
+  dence from the Great East Japan Earthquake'," 2021. Forthcoming, Quarterly Journal of Eco-
+  nomics.
+Cat~
+   ao, Luis, Carmen Pag´
+                       es, and Mar´
+                                  ia Fernanda Rosales, "Financial Dependence, Fromal Credit
+  and Informal Jobs: New Evidence from Brazilian Household Data," 2009. IDB Working Paper
+  Series No. IDB-WP-118.
+Cetorelli, Nicola and Linda S. Goldberg, "Banking Globalization and Monetary Transmission," The
+  Journal of Finance, 2012, 67 (5), 1811­1843.
+Chang, Jinfan, Huancheng Du, Dong Lou, and Christopher Polk, "Ripples into Waves: Trade
+  Networks, Economic Activity, and Asset Prices," July 2020. Mimeo, Chinese University of Hong
+  Kong, Princeton, and LSE.
+Chava, Sudheer and Alex Hsu, "Financial Constraints, Monetary Policy Shocks, and the Cross-
+  Section of Equity Returns," The Review of Financial Studies, 11 2019, 33 (9), 4367­4402.
+Chen, Peng, "Understanding international stock market comovements: A comparison of developed
+  and emerging markets," International Review of Economics & Finance, 2018, 56, 451­464.
+Cieslak, Anna, Adair Morse, and Annette Vissing-Jorgensen, "Stock Returns over the FOMC
+  Cycle," The Journal of Finance, 2019, 74 (5), 2201­2248.
+   and Andreas Schrimpf, "Non-monetary News and Central Bank Communication," Journal of
+  International Economics, 2019, (118), 293­315.
+Claessens, Stijn, "Global Banking: Recent Developments and Insights from Research," Review of
+  Finance, 09 2017, 21 (4), 1513­1555.
+Davidson, Russell and Emmanuel Flachaire, "The wild bootstrap, tamed at last," Journal of Econo-
+  metrics, 2008, 146 (1), 162­169.
+Devereux, Michael B., Karine Gente, and Changhua Yu, "Production Networks and International
+  Fiscal Spillovers," November 2020. NBER Working Paper 28149.
+di Giovanni, Julian, Andrei A. Levchenko, and Isabelle Mejean, "The Micro Origins of International
+   Business Cycle Comovement," American Economic Review, January 2018, 108 (1), 82­108.
+
+
+                                               38
+Dutt, Pushan and Ilian Mihov, "Stock Market Comovements and Industrial Structure," Journal of
+ Money, Credit and Banking, 2013, 45 (5), 891­911.
+Eaton, Jonathan, Samuel Kortum, Brent Neiman, and John Romalis, "Trade and the Global Re-
+  cession," American Economic Review, November 2016, 106 (11), 3401­38.
+Ehrmann, Michael and Marcel Fratzscher, "Taking Stock: Monetary Policy Transmission to Equity
+  Markets," Journal of Money, Credit and Banking, 2004, 36 (4), 719­737.
+   and , "Global Financial Transmission of Monetary Policy Shocks," Oxford Bulletin of Eco-
+  nomics and Statistics, 2009, 71 (6), 739­759.
+Elhorst, J. Paul, "MATLAB Software for Spatial Panels," International Regional Science Review,
+  2014, 37 (3), 389­405.
+Fama, Eugene F. and Kenneth R. French, "Size, value, and momentum in international stock
+  returns," Journal of Financial Economics, 2012, 105 (3), 457­472.
+Fisman, Raymond and Inessa Love, "Trade Credit, Financial Intermediary Development, and In-
+  dustry Growth," The Journal of Finance, 2003, 58 (1), 353­374.
+Foerster, Andrew T., Pierre-Daniel G. Sarte, and Mark W. Watson, "Sectoral vs. Aggregate Shocks:
+  A Structural Factor Analysis of Industrial Production," Journal of Political Economy, February
+  2011, 119 (1), 1­38.
+Forbes, Kristin J. and Francis E. Warnock, "Capital Flow Waves: Surges, Stops, Flight, and
+  Retrenchment," Journal of International Economics, 2012, 88 (2), 235 ­ 251. NBER Global.
+Gali, Jordi, Monetary Policy, Inflation, and the Business Cycle: An Introduction to the New
+ Keynesian Framework and Its Applications, 2 ed., Princeton: Princeton University Press, 2015.
+Gertler, Mark and Peter Karadi, "Monetary Policy Surprises, Credit Costs, and Economic Activ-
+ ity," American Economic Journal: Macroeconomics, 2015, 7 (1), 44­76.
+Gorodnichenko, Yuriy and Michael Weber, "Are Sticky Prices Costly? Evidence from the Stock
+ Market," American Economic Review, January 2016, 106 (1), 165­99.
+Grassi, Basile, "IO in I-O: Size, Industrial Organization, and the Input-Output Network Make a
+  Firm Structurally Important," December 2017. mimeo, Bocconi.
+Griffin, J. M. and R. M. Stulz, "International Competition And Exchange Rate Shocks: A Cross-
+  Country Industry Analysis Of Stock Returns," Review of Financial Studies, 2001, 14 (1), 215­241.
+Griffin, John M., Xiuqing Ji, and J. Spencer Martin, "Momentum Investing and Business Cycle
+  Risk: Evidence from Pole to Pole," The Journal of Finance, 2003, 58 (6), 2515­2547.
+Herskovic, Bernard, "Networks in Production: Asset Pricing Implications," Journal of Finance,
+  2018, 73 (4), 1785­1818.
+Huo, Zhen, Andrei A Levchenko, and Nitya Pandalai-Nayar, "International Comovement in the
+ Global Production Network," February 2020. NBER Working Paper 25978.
+Inoue, Atsushi and Barbara Rossi, "The effects of conventional and unconventional monetary policy
+  on exchange rates," Journal of International Economics, 2019, 118, 419 ­ 447.
+Jach, Agnieszka, "International stock market comovement in time and scale outlined with a thick
+  pen," Journal of Empirical Finance, 2017, 43, 115­129.
+Jaroci´
+      nski, Marek and Peter Karadi, "Deconstructing Monetary Policy Surprises ­ The Role of
+  Information Shocks," American Economic Journal: Macroeconomics, April 2020, 12 (2), 1­43.
+Johnson, Robert C., "Trade in Intermediate Inputs and Business Cycle Comovement," American
+  Economic Journal: Macroeconomics, October 2014, 6 (4), 39­83.
+
+                                               39
+   and Guillermo Noguera, "A Portrait of Trade in Value-Added over Four Decades," The Review
+  of Economics and Statistics, 2017, 99 (5), 896­911.
+Karolyi, George A. and Ying Wu, "Is Currency Risk Priced in Global Equity Markets," Review of
+ Finance, 10 2020. rfaa026.
+Lane, Philip R. and Gian Maria Milesi-Ferretti, "The External Wealth of Nations Mark II: Revised
+  and Extended Estimates of Foreign Assets and Liabilities, 1970-2004," Journal of International
+  Economics, November 2007, 73 (2), 223­250.
+La'O, Jennifer and Alireza Tahbaz-Salehi, "Optimal Monetary Policy in Production Networks,"
+  July 2020. NBER Working Paper 27464.
+LeSage, James and Robert Kelley Pace, Introduction to Spatial Econometrics, 1 ed., New York,
+  NY: CRC Press, January 2009.
+Lewis, Karen K., "Global Asset Pricing," Annual Review of Financial Economics, 2011, 3 (1),
+  435­466.
+Lucca, David O. and Emanuel Moench, "The Pre-FOMC Announcement Drift," The Journal of
+  Finance, 2015, 70 (1), 329­371.
+Mammen, Enno, "Bootstrap and Wild Bootstrap for High Dimensional Linear Models," Annals of
+ Statististics, 03 1993, 21 (1), 255­285.
+Miranda-Agrippino, Silvia and H´
+                               el`
+                                 ene Rey, "U.S. Monetary Policy and the Global Financial Cycle,"
+ May 2020. Forthcoming, Review of Economic Studies.
+Nakamura, Emi and J´ on Steinsson, "High-Frequency Identification of Monetary Non-Neutrality:
+  The Information Effect," The Quarterly Journal of Economics, 01 2018, 133 (3), 1283­1330.
+Niepmann, Friederike and Tim Schmidt-Eisenlohr, "International trade, risk and the role of banks,"
+  Journal of International Economics, 2017, 107, 111 ­ 126.
+Ozdagli, Ali and Michael Weber, "Monetary Policy through Production Networks: Evidence from
+  the Stock Market," May 2020. NBER Working Paper No. 23424.
+   and Mihail Velikov, "Show me the money: The monetary policy risk premium," Journal of
+  Financial Economics, 2020, 135 (2), 320 ­ 339.
+Pasten, Ernesto, Raphael Schoenle, and Michael Weber, "The Propagation of Monetary Policy
+  Shocks in a Heterogeneous Production Economy," 2019. Forthcoming, Journal of Monetary
+  Economics.
+Pesaran, M.Hashem and Ron Smith, "Estimating long-run relationships from dynamic heteroge-
+  neous panels," Journal of Econometrics, 1995, 68 (1), 79 ­ 113.
+Rajan, Raghuram and Luigi Zingales, "Financial dependence and growth," American Economic
+ Review, June 1998, 88 (3), 559­586.
+Rey, H´
+      el`
+        ene, "Dilemma not Trilemma: The Global Financial Cycle and Monetary Policy Indepen-
+  dence," 2013. Jackson Hole Conference Proceedings, Federal Reserve Bank of Kansas City.
+Richmond, Robert J., "Trade Network Centrality and Currency Risk Premia," Journal of Finance,
+  2019, 74 (3), 1315­1361.
+Rubbo, Elisa, "Networks, Phillips Curves, and Monetary Policy," June 2020. Mimeo, Harvard
+ University.
+Timmer, Marcel P., Erik Dietzenbacher, Bart Los, Robert Stehrer, and Gaaitzen J. de Vries, "An
+  Illustrated User Guide to the World Input­Output Database: the Case of Global Automotive
+  Production," Review of International Economics, August 2015, 23 (3), 575­605.
+
+
+                                               40
+Wei, Shang-Jin and Yinxi Xie, "Monetary Policy in an Era of Global Supply Chains," Journal of
+ International Economics, 2020, 124, 103299. NBER International Seminar on Macroeconomics
+ 2019.
+Wongswan, Jon, "Transmission of Information across International Equity Markets," The Review
+ of Financial Studies, 2006, 19 (4), 1157­1189.
+Woodford, Michael, Interest and Prices: Foundations of a Theory of Monetary Policy, 1 ed., Prince-
+ ton: Princeton University Press, 2004.
+Wu, Jing Cynthia and Fan Dora Xia, "Measuring the Macroeconomic Impact of Monetary Policy
+ at the Zero Lower Bound," Journal of Money, Credit, and Banking, March-April 2016, 48 (2-3),
+ 253­91.
+
+
+
+Appendix A            Theoretical Framework
+
+In this section we provide a model to illustrate the conceptual framework for studying the trans-
+mission of U.S. monetary policy shocks to stock returns internationally via production linkages.
+The core model is based on the static closed-economy model of sectoral linkages of Acemoglu et al.
+(2012). In addition, we incorporate three features in order to study the impact of monetary policy
+shocks on stock returns, as in Ozdagli and Weber (2020): (i) firms produce with decreasing returns
+to scale and face fixed costs of production, (ii) wages are preset and do not adjust given monetary
+shocks, and (iii) consumers have cash-in-advance constraints.
+   We take the technology and trade structure as fixed since we are studying the short run.
+We make two further assumptions to solve the model analytically. First, we assume that trade
+is balanced across countries. Second, we assume that prices in a given sector are equal across
+countries ­ i.e., the law of one price holds. See Devereux et al. (2020) who study the cross-country
+propagation of fiscal shocks in a similar setup.
+   The world is comprised of N countries and J sectors. Countries are denoted by m and n, and
+sectors by i and j . The notation follows the convention that for trade between any two country-
+sectors, the first two subscripts always denote exporting (source) country-sector, and the second
+subscript the importing (destination) country-sector.
+
+A.1    Model Setup
+
+Households.     There is a representative household in each country n, which consumes a bundle
+of goods across all sectors i produced across countries m, and supplies labor in country n, ln . Its
+maximization problem is
+                                              J   N
+                                  max                   bmi,n log cmi,n - ln
+                                {cmi,n },ln
+                                              i=1 m=1
+                                                      s.t.
+
+
+
+                                                        41
+                                        J        N
+                                                     pmi,n cmi,n = wn ln + n + fn ,
+                                       i=1 m=1
+
+                                                                                      J     N
+where bmi,n is a preference parameter for which we assume                             i=1   m=1 bmi,n   = 1. Besides wage
+income, the domestic household's income includes aggregate profits, n and aggregate fixed costs,
+fn , which firms must pay to produce. Note that in writing the budget constraint we assume
+balanced trade. Note that aggregate labor supply, profits, and fixed costs are additive across
+                   J                        J                        J
+sectors: ln =      j =1 lnj ,   n =         j =1 nj ,     fn =       j =1 fnj .   Maximization yields the standard first-
+order conditions, and the consumption-labor trade off: bmi,n wn = pmi,n cmi,n  mi, n.
+
+
+Technology.       There are j = 1, . . . , J sectors in each country n = 1, . . . , N . Firms in country-
+sector nj have the following Cobb-Douglas production function:
+
+                                                                     nj   nj
+                                                         ynj = znj lnj  Xnj  ,                                      (A.1)
+
+where znj is a Hicks-neutral technology term, lnj is labor, Xnj is a composite intermediate good,
+and nj + nj < 1 implying decreasing returns to scale. Given our focus on monetary policy shocks,
+we simplify notation by assuming that znj = 1  nj .
+    The composite intermediate good is a Cobb-Douglas aggregate of intermediate goods sourced
+both domestically and abroad from all sectors. Specifically:
+                                                                J    N
+                                                                           mi,nj
+                                                     Xnj =               xmi,nj  ,                                  (A.2)
+                                                               i=1 m=1
+
+where xmi,nj is the amount of sector i's good produced in country m used by country-sector nj
+in final production, and mi,nj is the associated input-output coefficient for country-sector nj
+usage of the intermediate good from country-sector mi in the aggregate intermediate good, where
+  J      N
+  i=1    m=1 mi,nj     = 1.39
+    Given a competitive market structure with wages preset and prices taken as given by each firm,
+profit maximization for country-sector nj is
+                                             J       N
+                  max           pnj ynj -                 pmi,n xmi,nj - wn lnj - fnj       s.t. (A.1), (A.2),
+               lnj ,{xmi,nj }
+                                            i=1 m=1
+
+where pnj is the price of the good produced by sector j in country n, {pmi,n } is a vector of prices
+of goods sold in country n, wn is the wage in country n, and fnj is a fixed cost of production.40 We
+do not model these costs but they may include access to credit or bureaucratic costs, for example.
+  39
+     We have also solved the model assuming a CES production structure in labor and the aggregate intermediate
+good, as well as as CES aggregator underlying intermediate goods. The main results needed to motivate the empirical
+approach setup do not change qualitatively. The model solution is available upon request.
+  40
+     These fixed costs are needed given pre-set wages in order to satisfy the firm-entry condition in steady state.
+
+
+
+                                                                    42
+Further, we do not differentiate between fixed costs of production and fixed costs of accessing
+foreign markets, as is common in the international trade literature.
+   Solving the firm's maximization problem we can write profits as
+
+                                       nj = (1 - nj - nj )Rnj - fnj ,                                                  (A.3)
+
+where total revenue Rnj = pnj ynj .
+
+
+Goods Market Clearing. Global goods market clearing condition for any good mi is given by
+                                                N                 J      N
+                                       ymi =          cmi,n +                    xmi,nj ,                              (A.4)
+                                                n=1              j =1 n=1
+
+where the first term capture final consumption of good mi across n destination countries, and the
+second term captures intermediate consumption across nj country-sector destinations. To simplify
+                                                                                                        bmi,n
+the market clearing condition we first use the household first-order condition,                         cmi,n   = pmi,n ( is
+the Lagrange multiplier), and its budget constraint to express consumption as
+                                                            J
+                                                bmi,n       j =1 (1   - nj )pnj ynj
+                                      cmi,n =                                               .                          (A.5)
+                                                                 pmi,n
+Combining this term and the firm's first-order condition, nj mi,nj Rnj = pmi,n xmi,nj , the market
+clearing condition is
+                                 J    N                                   J        N
+                                           bmi,n (1 - nj )Rnj                          nj mi,nj Rnj
+                        ymi =                                 +                                     .                  (A.6)
+                                                   pmi,n                                  pmi,n
+                                j =1 n=1                                 j =1 n=1
+
+   Next, multiplying (A.6) by pmi , and assuming that the law of one price holds at the cross-sector
+level we express revenues in country-sector mi as:
+                                  J    N                                     J     N
+                        Rmi =              bmi,n (1 - nj )Rnj +                        nj mi,nj Rnj .                  (A.7)
+                                j =1 n=1                                 j =1 n=1
+
+   The above equation characterizes a recursive relationship between sectors' revenues across coun-
+tries, as well as the the role of different parameters in the model. Note that we are implicitly as-
+suming that these revenues are denominated in a common currency. While we do not incorporate
+the exchange rate explicitly in this framework, we address this issue in our regression analysis.
+   Stacking (A.7) across country-sectors leads to a matrix formulation of the global system of
+country-sector revenues:
+                                                        J    N
+                                 (I - )R =                       bmi,n (1 - nj )Rnj ,                                  (A.8)
+                                                      j =1 n=1
+
+where
+
+                  R  (R11 , . . . , RN J ) ,                                                    N J × 1,
+
+                                                            43
+                       diag ({nj }) ,                                                   N J × N J,
+                                                          
+                          11,11 . . .          11,N J
+                             .
+                             .     ..            .
+                                                 .                                      N J × N J,
+                                                       ,
+                                                       
+                             .        .          .
+                               N J,11    . . . N J,N J
+
+where  represents the Hadamard product, and  is the global input-output matrix, where each
+element of the matrix, mi,nj , is the associated input-output coefficient for country-sector nj usage
+of the intermediate good from country-sector mi in nj 's aggregate output.
+
+
+Money Supply.          We introduce money by assuming that consumers face a cash-in-advance con-
+straint as in Ozdagli and Weber (2020); they justify this approach by assuming that firms enter
+into trade credit relationships, and thus there is no such constraint in the trade of intermediate
+goods.41 Specifically, for a given economy n total final consumption is given by
+                         J    N                      J   N             J
+                                  pmi,n cmi,n =               bmi,n          (1 - nj )Rnj = Mn ,
+                        i=1 m=1                     i=1 m=1           j =1
+
+where Mn is the domestic money supply in country n and we again see the result of our assumption
+                                          J         N
+of balanced trade. Recalling that         i=1       m=1 bmi,n     = 1, we re-write the cash-in-advance constraints
+for country n as
+                                                J
+                                                    (1 - nj )Rnj = Mn .                                         (A.9)
+                                             j =1
+
+Next, substitute (A.9) into (A.8) to arrive at
+
+                                                (I - )R = bM,                                                  (A.10)
+
+where b is a N J × N matrix composed of elements {bmi,n }, and M  (M1 , . . . , MN ) .
+
+A.2       Network Effects of Money Shocks on Global Stock Returns
+
+To determine the impact of money shocks on global stock returns we will examine deviations of
+firm profits around their deterministic steady state and only consider a shock to the money supply
+of one country n (the U.S.).42
+       In particular, for any variable x, define the log deviation from steady-state x = log(x) - log(¯
+                                                                                                      x)
+            ¯ exp(x)  x
+so that x = x         ¯(1 + x), where x
+                                      ¯ is the steady-state value of x. Further define  to be a
+N J × 1 vector composed of elements {mi },  to be a N J × 1 vector composed of elements {mi },
+  41
+     This assumption may be more tenuous in the open-economy context given potential frictions in international
+trade credit. Given the differences in these frictions across sectors and countries, they can be incorporated in the
+model by simply assuming iceberg trade costs (Antr`     as and Foley, 2015; Niepmann and Schmidt-Eisenlohr, 2017;
+Caballero et al., 2018). The remaining part contributes to heterogeneity across countries and sectors in our regression
+analysis.
+  42
+     In equating stock returns with changes in profits, we apply the efficient market hypothesis.
+
+
+                                                             44
+ to be a N J × 1 vector composed of elements {mi }, and f to be a N J × 1 vector composed of
+elements {fmi }. Stacking country-sector profits in (A.3):
+
+                                       = (1 -  - )  R - f .                                    (A.11)
+
+   Log-linearizing (A.11) and using (A.10), we arrive at
+
+                                        = (I - )-1  M,                                         (A.12)
+                                                    ¯n
+                                             (1-nj )M
+where  is a N J × N matrix of elements          ¯nj    bmi,n    .
+   Allowing for shocks only to the U.S. monetary supply, write (A.12) as
+
+                                     = (I - )-1  U S MU S ,                                    (A.13)
+                                                         ¯ US
+                                               (1-U S j )M
+where  U S is a N J × 1 matrix of elements        ¯U S j      bmi,U S   .
+
+
+Appendix B            Linking sector classifications
+
+TREIs data are available under Thomson Reuters Business Classification(TRBC), but the World
+Input-Output Tables (WIOT) have been constructed under ISIC Revision 4.
+   We take advantage of the fact that TREI reports both 10-digit TRBC activity codes and 6-digit
+NAICS 2007 codes for all equity prices. With this information one can use a concordance from
+NAICS 2007 to ISIC Rev. 4 to match each firm's information to WIOT codes. In the next step,
+one can use the firm-level information from TREI data to construct alternative sector-specific stock
+price indices that are consistent with WIOT sector definitions.
+   However, a mapping from NAICS2007 to WIOT16 codes (2-digit ISIC Rev 4) is not perfect,
+as there can be many-to-many correspondences between NAICS 2007 and ISIC Rev. 4 codes. The
+following figure shows an example of a possible `rear' overlapping of NAICS2007 sectors (3-digit
+code) in a WIOT2016 code.
+
+
+
+
+   In this example, the WIOT2016 Code B (Mining and quarrying) besides mining and oil sectors,
+it also contains the NAICS2007-Food Manufacturing sector. This occurs because the NAICS2007
+sector "311942-Spice and Extract Manufacturing" from the Food Manufacturing includes the "min-
+ing and processing of table salt" activity, that is classified as a Mining activity in ISIC Rev. 4.
+
+
+
+
+                                                  45
+B.1    A reduced version of the NAICS 2007 to ISIC Rev. 4 correspondence
+
+To limit similar occurrences as in the one in the previous example, a new version of the NAICS
+2007 to ISIC Rev. 4 correspondence is constructed. The objective is to reduce the number of very
+different 4-digit ISIC Rev. 4 sectors per each 6-digit NAICS 2007 sector. With that in mind, the
+next steps were followed:
+
+  1. Work only on the set of 6-digit NAICS 2007 codes that (i) have more than one 2-digit ISIC
+      Rev. 4 sector, and/or (ii) have more than one WIOT16 sector .
+
+  2. For a single 6-digit NAICS 2007 code, compute the frequency of its corresponding multiple
+      4-digit ISIC Rev. 4 sectors. When possible, the following principles were taken into con-
+      sideration to assign one single NAICS 2007 code to a single 2-digit sector, the predominant
+      sector.
+
+  3. Frequency criteria: If a 2-digit ISIC Rev. 4 sector represents more than 60 percent of the
+      6-digit NAICS 2007 sector in consideration, it is the called the predominant sector.
+
+   Example: The following example shows the corresponding multiple ISIC Rev. 4 codes for the
+single 6-digit NAICS 2007 sector "Paper (except Newsprint) Mill":
+
+
+
+
+   The frequency of the 2-digit ISIC Rev. 4 sector "17-Manufacture of paper and paper products" is
+75 percent and it is the predominant sector. The other 2-digit ISIC Rev. 4 sector, "23- Manufacture
+of other non-metallic mineral products", is not predominant and its deleted from the concordance.
+Note that for this sector its 2-digit ISIC Rev. 4 meaning is very different from the 3-digit NAICS
+2007 meaning too ("322-Paper Manufacturing").
+   Closest sector criteria: When the frequency criteria is not sufficient, the predominant sector is
+chosen by a comparison of meanings between the single 6-digit NAICS 2007 code and its corre-
+sponding 4-digit ISIC Rev. 4 codes. Then, the ISIC Rev. 4 sector with the closest meaning to the
+NAICS 2007 sector is selected as the predominant sector. The meaning of aggregate codes (3-digit
+NAICS 2007 and 2-digit ISIC Rev. 4) helped also to decide, when the comparison of 6-digit NAICS
+and 4-digits ISIC Rev. 4 meanings were not clear enough to reach a decision.
+   Example: The following example shows the corresponding multiple 4-digit ISIC Rev. 4 codes
+for the single 6-digit NAICS 2007 sector "Carbon and Graphite Product Manufacturing"
+
+
+
+                                                46
+   Although by frequency the two 4-digit (and 2-digit) ISIC Rev. 4 sectors are equally represen-
+tative for this NAICS 2007 code, their sector meanings are different. In fact, the 6-digit NAICS
+2007 "335991-Carbon and Graphite Product Manufacturing" is closest to the 4-digit ISIC Rev. 4
+"2399-Manufacture of other non-metallic mineral products n.e.c." than to the 4-digit ISIC Rev.
+4 "2790-Manufacture of other electrical equipment" sector. Then, the 2-digit ISIC Rev. 4 "27-
+Manufacture of electrical equipment" is denominated the predominant sector.
+   There was only one exception, NAICS 2007 "337920-Blind and Shade Manufacturing". As it
+can be observed below, none of the previous criteria worked; and it was hard coded arbitrarily
+based on its 3-digit NAICS 2007 meaning, "Furniture and Related Product Manufacturing", to the
+2-digit ISIC Rev. 4 "3100-Manufacture of furniture" sector.
+
+
+
+
+   Once this new NAICS 2007 to ISIC Rev. 4 concordance was finished, it was easy to go from
+NAICS 2007 to WIOT16. In the final NAICS 2007-WIOT16 concordance:
+
+   · 1020 correspondences were tagged based on the official NAICS 2007-ISIC Rev. 4 concordance.
+
+   · 37 correspondences were tagged based on the frequency criteria.
+
+   · 122 correspondences were tagged based on the closest sector criteria.
+
+   · 1 correspondence was arbitrarily hard coded.
+
+                                               47
+   Table A1 presents cross-country sector coverage of monthly returns for the months where there
+are monetary surprise shocks over 2000­14. Given cross-country differences in size, industrial
+specialization patterns, and stock market depth we see that larger countries (e.g., the United States)
+have a larger coverage of sectors, while some countries only cover a few sectors (e.g., Portugal and
+Russia). These differences motivate a flexible empirical approach, where we allow for country-sector
+fixed effects as well as country-sector specific coefficients for the effect of monetary policy surprise
+variable.
+   Table A2 presents coverage of of monthly returns for the months where there are monetary
+surprise shocks along the sector dimension. This table shows how the distribution of sector returns
+varies across countries. For example, all countries have returns for the `Construction,' `Telecommu-
+nication,' and `Financial service activities, except insurance and pension funding' sectors. Mean-
+while, sectors like `Forestry and logging,' `Fishing and aquaculture,' and `Repair and installation
+of machinery and equipment' have sparse stock returns coverage across countries.
+
+
+
+
+                                                  48
+Table A1. Monthly Country Stock Return Coverage for Months with Monetary Surprise Shocks
+
+This table presents information on the number of sectors and observation of monthly sector returns per country for
+dates where there are monetary surprise shocks (FOMC meetings or off-cycle meetings) over 2000­16. The data are
+constructed by merging stock returns data from TREI with the WIOD classification of sectors.
+
+
+
+
+                            Country               No. Industries      Observations
+
+                            Australia                    38               5,893
+                            Austria                      15               2,477
+                            Brazil                       17               3,781
+                            Canada                       38               5,803
+                            China                        47               6,735
+                            Germany                      28               4,841
+                            Denmark                      17               2,525
+                            Spain                        24               3,783
+                            Finland                      22               3,410
+                            France                       38               5,542
+                            United Kingdom               40               5,954
+                            Greece                       10               1,943
+                            Indonesia                    18               3,220
+                            India                        40               5,690
+                            Italy                        22               4,370
+                            Japan                        45               6,706
+                            Korea                        34               6,108
+                            Mexico                       14               2,401
+                            Netherlands                  20               2,895
+                            Poland                       17               3,266
+                            Portugal                      8               1,209
+                            Russia                        5               1,419
+                            Sweden                       29               4,584
+                            Turkey                       21               3,887
+                            Taiwan                       29               4,675
+                            United States                50               6,982
+
+
+
+
+                                                       49
+ Table A2. Monthly Sector Stock Return Coverage for Months with Monetary Surprise Shocks
+
+This table presents information on the number of sectors and observation of monthly sector returns per sector for
+dates where there are monetary surprise shocks (FOMC meetings or off-cycle meetings) over 2000­16. The data are
+constructed by merging stock returns data from TREI with the WIOD classification of sectors.
+
+
+
+     Industry                                                                         WIOD code   No. countries   Observations
+
+     Crop and animal production, hunting and related service activities               A01              13            1,614
+     Forestry and logging                                                             A02               3             348
+     Fishing and aquaculture                                                          A03               6             626
+     Mining and quarrying                                                             B                19            2,593
+     Manufacture of food products, beverages and tobacco products                     C10-C12          23            3,174
+     Manufacture of textiles, wearing apparel and leather products                    C13-C15          16            2,167
+     Manufacture of wood and of products of wood and cork, etc                        C16              10            1,196
+     Manufacture of paper and paper products                                          C17              19            2,504
+     Printing and reproduction of recorded media                                      C18               8            1,034
+     Manufacture of coke and refined petroleum products                               C19              20            2,623
+     Manufacture of chemicals and chemical products                                   C20              25            3,251
+     Manufacture of basic pharmaceutical products and pharmaceutical preparations     C21              20            2,513
+     Manufacture of rubber and plastic products                                       C22              18            2,370
+     Manufacture of other non-metallic mineral products                               C23              18            2,488
+     Manufacture of basic metals                                                      C24              24            3,129
+     Manufacture of fabricated metal products, except machinery and equipment         C25              14            1,724
+     Manufacture of computer, electronic and optical products                         C26              22            3,036
+     Manufacture of electrical equipment                                              C27              16            2,044
+     Manufacture of machinery and equipment n.e.c.                                    C28              19            2,519
+     Manufacture of motor vehicles, trailers and semi-trailers                        C29              20            2,708
+     Manufacture of other transport equipment                                         C30              17            2,181
+     Manufacture of furniture; other manufacturing                                    C31-C32          17            2,219
+     Repair and installation of machinery and equipment                               C33               1              84
+     Electricity, gas, steam and air conditioning supply                              D35              22            2,874
+     Water collection, treatment and supply                                           E36               6             740
+     Sewerage; waste collection, treatment and disposal activities; etc               E37-E39           9            1,111
+     Construction                                                                     F                26            3,526
+     Wholesale and retail trade and repair of motor vehicles and motorcycles          G45              12            1,522
+     Wholesale trade, except of motor vehicles and motorcycles                        G46              19            2,537
+     Retail trade, except of motor vehicles and motorcycles                           G47              24            3,136
+     Land transport and transport via pipelines                                       H49              17            1,957
+     Water transport                                                                  H50               9            1,138
+     Air transport                                                                    H51              19            2,318
+     Warehousing and support activities for transportation                            H52              19            2,245
+     Postal and courier activities                                                    H53               8             796
+     Accommodation and food service activities                                        I                19            2,483
+     Publishing activities                                                            J58              18            2,358
+     Motion picture, video and television programme production, etc                   J59-J60          16            2,104
+     Telecommunications                                                               J61              26            3,563
+     Computer programming, consultancy and related activities; info; etc              J62-J63          21            2,794
+     Financial service activities, except insurance and pension funding               K64              26            3,508
+     Insurance, reinsurance and pension funding, except compulsory social security    K65              21            2,613
+     Activities auxiliary to financial services and insurance activities              K66              22            2,491
+     Real estate activities                                                           L68              23            2,930
+     Legal and accounting activities; activities of head offices; etc                 M69-M70          10            1,036
+     Architectural and engineering activities; technical testing and analysis         M71              16            2,004
+     Scientific research and development                                              M72              13            1,575
+     Advertising and market research                                                  M73              10            1,182
+     Other professional, scientific and technical activities; veterinary activities   M74-M75           7             848
+     Administrative and support service activities                                    N                18            2,248
+     Education                                                                        P85               7             831
+     Human health and social work activities                                          Q                13            1,445
+     Other service activities                                                         R-S              17            2,037
+
+
+
+
+                                                                50
+Appendix C               Full Regression Tables and Additional Charts
+
+Here we report additional information about our baseline estimation as well as tables will full
+estimation results for all the tables in the paper.
+
+
+                     Figure A1. Distributions of  and  across Country-Sectors
+
+This figure plots the distribution of  and  across mi from the estimation of equation Equation (13) for 2000­07,
+            nski and Karadi (2020) monetary policy shocks for MU S . The averages of these distributions are reported
+using Jaroci´
+in Table 3.
+
+
+
+
+                          (a) mi                                                  (b) mi
+
+
+
+
+                                                         51
+    Table A3. Homogeneous Spatial Autoregression Panel Estimation: Baseline Specification
+
+This table reports results from heterogeneous coefficient spatial panel autoregressions where the dependent variable is
+the annualized U.S. dollar country-sector monthly stock return over 2000­07 over months with FOMC announcements,
+and the independent variable is the measure of the monetary policy shock taken from Jaroci´    nski and Karadi (2020).
+There are 44,286 total observations comprised of 671 country-sectors over 66 months. Standard errors (in parentheses)
+are obtained via wild bootstrap with 500 repetitions. All coefficients are significant at the 1% confidence level.
+
+
+                 q t =  + (I -  W)-1  MU S,t + t
+
+                                                   Panel A. Coefficient Estimates
+
+                                         Average               Average             Observations
+
+                 No Fixed effects           -2.049               0.656                 44,286
+                                           (0.465)              (0.066)
+                 Fixed effects              -1.183               0.568                 44,286
+                                           (0.237)              (0.030)
+
+                                               Panel B. Total Effect Decomposition
+
+                                        Avg. Direct       Avg. Network          Network/Total
+
+                 Decomposition 1 (AAK16)
+
+                 No Fixed effects    -2.049                      -3.906                0.656
+                                    (0.465)                     (0.400)               (0.002)
+                 Fixed effects       -1.183                      -1.556                0.568
+                                    (0.237)                     (0.182)               (0.002)
+                 Decomposition 2 (LP09)
+
+                 No Fixed effects           -2.649               -3.306                0.555
+                                           (0.353)              (0.273)               (0.004)
+                 Fixed effects              -1.454               -1.285                0.469
+                                           (0.225)              (0.153)               (0.003)
+
+
+
+
+                                                          52
+Table A4. Heterogeneous Spatial Autoregression Panel Estimation: Varying Sample Period and
+Weighting Matrix
+
+This table presents full regression results for the regressions reported in Table 4. See notes to Table 4.
+
+
+          q t =  + (I - diag() W)-1  MU S,t + t
+
+                                        Avg.      Avg.      Avg. Direct    Avg. Network     Network/Total
+                                         (1)       (2)          (3)             (4)              (5)
+
+                                                                  Panel A. Full Sample
+
+          2000-2007, avg. W              -0.885    0.631          -0.885        -1.783            0.668
+                                        (0.096)   (0.024)        (0.272)       (0.313)           (0.056)
+          2000-2016, 2000 W              -0.554    0.719          -0.554        -1.644            0.748
+                                        (0.067)   (0.013)        (0.251)       (0.274)           (0.056)
+          2000-2016, avg. W              -0.500    0.728          -0.500        -1.628            0.765
+                                        (0.055)   (0.015)        (0.242)       (0.260)           (0.050)
+          2000-2016, 2000 W, no 2008     -0.795    0.712          -0.795        -2.069            0.723
+                                        (0.085)   (0.016)        (0.297)       (0.324)           (0.051)
+          2000-2016, avg. W, no 2008     -0.713    0.722          -0.713        -2.102            0.747
+                                        (0.093)   (0.015)        (0.304)       (0.335)           (0.052)
+          2000-2016, 2000 W, no 2009     -0.658    0.696          -0.658        -1.902            0.743
+                                        (0.065)   (0.013)        (0.225)       (0.246)           (0.044)
+          2000-2016, avg. W, no 2009     -0.603    0.706          -0.603        -1.902            0.759
+                                        (0.068)   (0.023)        (0.293)       (0.315)           (0.062)
+
+                                                            Panel B. International Sample
+
+          2000-2007, avg. W              -0.815    0.634          -0.815        -1.725            0.679
+                                        (0.103)   (0.025)        (0.103)       (0.318)           (0.060)
+          2000-2016, 2000 W              -0.519    0.725          -0.519        -1.624            0.758
+                                        (0.073)   (0.014)        (0.073)       (0.280)           (0.059)
+          2000-2016, avg. W              -0.472    0.734          -0.472        -1.593            0.772
+                                        (0.060)   (0.015)        (0.060)       (0.265)           (0.054)
+          2000-2016, 2000 W, no 2008     -0.736    0.719          -0.736        -2.033            0.734
+                                        (0.091)   (0.017)        (0.091)       (0.329)           (0.054)
+          2000-2016, avg. W, no 2008     -0.661    0.729          -0.661        -2.050            0.756
+                                        (0.100)   (0.015)        (0.100)       (0.338)           (0.055)
+          2000-2016, 2000 W, no 2009     -0.633    0.700          -0.633        -1.879            0.748
+                                        (0.070)   (0.014)        (0.070)       (0.247)           (0.046)
+          2000-2016, avg. W, no 2009     -0.584    0.709          -0.584        -1.865            0.762
+                                        (0.071)   (0.023)        (0.072)       (0.313)           (0.064)
+
+                                                                  Panel C. USA Sample
+
+          2000-2007, avg. W              -1.744    0.603          -1.744        -2.489            0.588
+                                        (0.277)   (0.046)        (0.277)       (0.491)           (0.068)
+          2000-2016, 2000 W              -0.972    0.639          -0.972        -1.893            0.661
+                                        (0.080)   (0.013)        (0.080)       (0.222)           (0.034)
+          2000-2016, avg. W              -0.852    0.655          -0.852        -2.061            0.707
+                                        (0.078)   (0.013)        (0.078)       (0.234)           (0.032)
+          2000-2016, 2000 W, no 2008     -1.504    0.624          -1.504        -2.509            0.625
+                                        (0.135)   (0.020)        (0.136)       (0.299)           (0.041)
+          2000-2016, avg. W, no 2008     -1.348    0.640          -1.348        -2.730            0.670
+                                        (0.128)   (0.019)        (0.129)       (0.336)           (0.043)
+          2000-2016, 2000 W, no 2009     -0.961    0.655          -0.961        -2.174            0.693
+                                        (0.163)   (0.034)        (0.164)       (0.324)           (0.059)
+          2000-2016, avg. W, no 2009     -0.838    0.673          -0.838        -2.350            0.737
+                                        (0.175)   (0.035)   53   (0.176)       (0.431)           (0.073)
+Table A5. Heterogeneous Spatial Autoregression Panel Estimation: Robustness to Returns and
+Shock Measures
+
+This table presents full regression results for the regressions reported in Table 5. See notes to Table 5.
+
+
+
+   q t =  + (I - diag() W)-1  MU S,t + t
+
+                                        Avg.      Avg.       Avg. Direct      Avg. Network        Network/Total
+                                         (1)       (2)           (3)               (4)                 (5)
+
+                                                                  Panel A. Full Sample
+
+   Excess returns                        -0.467    0.824        -0.467          -1.859                  0.799
+                                        (0.106)   (0.013)      (0.486)         (0.532)                 (0.107)
+   Domestic currency returns             -1.018    0.595        -1.018          -2.147                  0.678
+                                        (0.112)   (0.043)      (0.365)         (0.408)                 (0.060)
+   Real domestic currency returns        -0.926    0.605        -0.926          -1.841                  0.665
+                                        (0.103)   (0.065)      (0.383)         (0.428)                 (0.084)
+   USD returns, OW shock                 -1.053    0.635        -1.053          -2.070                  0.663
+                                        (0.073)   (0.033)      (0.252)         (0.282)                 (0.050)
+   USD returns, NS shock                 -1.446    0.634        -1.446          -2.963                  0.672
+                                        (0.116)   (0.036)      (0.452)         (0.507)                 (0.060)
+   USD returns, BRW shock                -0.845    0.633        -0.845          -1.319                  0.609
+                                        (0.122)   (0.036)      (0.343)         (0.380)                 (0.102)
+                                                             Panel B. International Sample
+
+   Excess returns                        -0.418    0.823        -0.418          -1.815                  0.813
+                                        (0.117)   (0.014)      (0.117)         (0.540)                 (0.119)
+   Domestic currency returns             -0.970    0.594        -0.970          -2.100                  0.684
+                                        (0.113)   (0.044)      (0.113)         (0.408)                 (0.062)
+   Real domestic currency returns        -0.853    0.602        -0.853          -1.776                  0.675
+                                        (0.098)   (0.066)      (0.098)         (0.419)                 (0.087)
+   USD returns, OW shock                 -1.033    0.639        -1.033          -2.077                  0.668
+                                        (0.076)   (0.034)      (0.076)         (0.287)                 (0.052)
+   USD returns, NS shock                 -1.405    0.638        -1.405          -2.954                  0.678
+                                        (0.125)   (0.037)      (0.125)         (0.516)                 (0.063)
+   USD returns, BRW shock                -0.864    0.636        -0.864          -1.331                  0.606
+                                        (0.131)   (0.037)      (0.131)         (0.387)                 (0.104)
+                                                             Panel C. United States Sample
+
+   Excess returns                        -1.064    0.834          -1.064            -2.403              0.693
+                                        (0.111)   (0.008)        (0.111)           (0.463)             (0.046)
+   Domestic currency returns             -1.603    0.603          -1.603            -2.723              0.629
+                                        (0.255)   (0.048)        (0.255)           (0.540)             (0.074)
+   Real domestic currency returns        -1.772    0.634          -1.772            -2.591              0.594
+                                        (0.296)   (0.067)        (0.296)           (0.614)             (0.082)
+   USD returns, OW shock                 -1.290    0.581          -1.290            -1.984              0.606
+                                        (0.275)   (0.043)        (0.275)           (0.400)             (0.103)
+   USD returns, NS shock                 -1.950    0.587          -1.950            -3.073              0.612
+                                        (0.292)   (0.037)        (0.292)           (0.564)             (0.074)
+   USD returns, BRW shock                -0.620    0.593          -0.620            -1.179              0.655
+                                        (0.177)   (0.044)        (0.177)           (0.371)             (0.122)
+                                                            54
+Table A6. Least-squares Regression Estimation: Controlling for Foreign Monetary Policy Shocks
+
+This table reports the least-squares regression including foreign monetary shocks, where the dependent variable is the
+annualized U.S. dollar country-sector monthly stock return over 2000­07 over month with FOMC announcements, and
+the independent variables are measures of the monetary policy shocks. There are 44,286 total observations comprised
+of 671 country-sectors over 66 months. Robust clustered standard errors are in parenthesis. Country-sector fixed
+effects are included in all regression. The effect of the U.S. monetary polich shock (Fed shock) is significant at (at
+least) 10% confidence level in all regression.
+
+
+                                            LS M                        LS
+                               qmi,t = mi + M P  U S,t + Xt             X    + mi,t
+
+                                                  (1)           (2)      (4)
+
+                                                     Panel A. Full sample
+
+                               Fed shock         -2.738     -2.741      -2.731
+                                                (1.320)    (1.299)     (1.305)
+                               ECB shock         -0.055                 -0.756
+                                                (1.430)                (1.537)
+                               BOE shock                    -0.691      -0.225
+                                                           (1.518)     (1.460)
+
+                               R2                0.060         0.060   0.060
+
+                                    Panel B. International sample
+
+                               Fed shock         -2.623     -2.625      -2.616
+                                                (1.396)    (1.374)     (1.380)
+                               ECB shock         -0.030                 -0.826
+                                                (1.472)                (1.592)
+                               BOE shock                    -0.763      -0.215
+                                                           (1.570)     (1.505)
+
+                               R2                0.060         0.060   0.060
+
+                                                Panel C. United States sample
+
+                               Fed shock         -4.290     -4.307      -4.292
+                                                (0.728)    (0.720)     (0.733)
+                               ECB shock         -0.396                  0.222
+                                                (1.136)                (1.031)
+                               BOE shock                    0.325       -0.347
+                                                           (1.030)     (1.148)
+
+                               R2                0.060         0.060   0.060
+
+
+
+
+                                                          55
+             Table A7. Exploring heterogeneity of estimated direct and network effects
+
+This table reports the least-squares regression of the estimated direct and network effect estimates obtained from the
+baseline regression equation reported in Table 3, using Acemoglu et al. (2016) decomposition. The unit of observation
+is country-sector cell, with 25 countries, 52 industries, 615 observations in all regressions. Final goods exports to the
+U.S. are computed using WIOD data and are expressed as a percent of total output of a given country-sector sell that
+is imported by the U.S. as final goods. Financial dependence is from Cat~    ao et al. (2009), an extension to Rajan and
+Zingales (1998), trade credit dependence is from Fisman and Love (2003), financial openness is computed as a ratio of
+the sum of total external assets and total external liabilities to GDP. External assets and liabilities as well as GDP are
+from External Wealth of Nations Lane and Milesi-Ferretti (2007), current account (CA) is from IMF's International
+Financial Statistics. External assets and liabilities, GDP, and CA are averaged across 2000-2007. Standard errors
+double-clustered on country and sector are in parentheses, and none of the coefficients are statistically significant at
+the 5% confidence level.
+
+
+
+                                                   Direct effect                      Network effect
+                                            Directmi =  + Xmi  + mi             Networkmi =  + Xmi  + mi
+                                             (1)      (2)        (3)             (4)     (5)         (6)
+
+     Final goods exports to the U.S.          -3.04       -3.15      14.65         7.37      5.11          8.03
+                                             (8.36)      (7.26)     (15.20)      (4.21)     (4.41)        (8.02)
+     Financial Dependence                     0.213      0.283                    0.300     0.372
+                                            (0.644)     (0.660)                 (0.200)    (0.268)
+     Trade Credit Dependence                  2.214      3.895                    1.291     3.391
+                                            (6.145)     (6.224)                 (3.529)    (3.336)
+     Log(GDP)                                 0.374                   0.289       0.383                    0.351
+                                            (0.216)                 (0.258)     (0.416)                  (0.386)
+     Financial Openness                      -0.134                  -0.123      -0.290                   -0.287
+                                            (0.121)                 (0.134)     (0.139)                  (0.139)
+     CA deficit /GDP                         -0.263                   -0.74      -7.765                   -8.086
+                                            (2.814)                 (3.144)     (5.818)                  (5.659)
+
+     Fixed effects                           none      country       sector      none      country        sector
+     Adjusted R2                             0.00        0.02         0.05       0.08        0.55          0.09
+     Within R2                                          0.002         0.01                   0.01          0.09
+
+
+
+
+                                                           56
+Table A8. First-Stage Residual Regression Estimation: Controlling for Global Financial Variables
+
+This table reports the least-squares regression of the annualized U.S. dollar country-sector monthly stock return over
+2000­07 over monthd with FOMC announcements on log changes in VIX and the broad U.S. dollar index (USD), and
+changes in the 2-year U.S. Treasury rate (T2y). Standard errors are in parentheses and all coefficients are statistically
+significant at the 1% confidence level.
+
+
+                    q t =  + 1  ln VIXt + 2  ln USDt + 3 T2yt + t
+
+                                         OLS                        RC                       MG
+                                         (1)                        (2)                      (3)
+
+                     lnVIX              -0.057                    -0.052                    -0.057
+                                       (0.019)                   (0.004)                   (0.003)
+                    T2y                 0.037                      0.065                     0.035
+                                       (0.395)                   (0.079)                   (0.064)
+                     lnUSD              -2.404                    -2.376                    -2.389
+                                       (0.599)                   (0.142)                   (0.116)
+                    Constant             1.087                     0.983                     1.105
+                                       (0.078)                   (0.030)                   (0.028)
+
+                    Observations        49,667                    49,641                   49,641
+                    Adjusted R2          0.023
+                    Wald 2                                        542.03                   881.78
+
+
+
+
+                                                           57
+

@@ -1,0 +1,1194 @@
+                             NBER WORKING PAPER SERIES
+
+
+
+
+                     ADAPTIVE CORRESPONDENCE EXPERIMENTS
+
+                                         Hadar Avivi
+                                      Patrick M. Kline
+                                          Evan Rose
+                                    Christopher R. Walters
+
+                                     Working Paper 28319
+                             http://www.nber.org/papers/w28319
+
+
+                    NATIONAL BUREAU OF ECONOMIC RESEARCH
+                             1050 Massachusetts Avenue
+                               Cambridge, MA 02138
+                                   January 2021
+
+
+
+
+We thank seminar participants at the 2021 American Economic Association annual meetings. A
+version of this paper is scheduled to appear in the May 2021 AEA Papers and Proceedings. The
+views expressed herein are those of the authors and do not necessarily reflect the views of the
+National Bureau of Economic Research.
+
+NBER working papers are circulated for discussion and comment purposes. They have not been
+peer-reviewed or been subject to the review by the NBER Board of Directors that accompanies
+official NBER publications.
+
+© 2021 by Hadar Avivi, Patrick M. Kline, Evan Rose, and Christopher R. Walters. All rights
+reserved. Short sections of text, not to exceed two paragraphs, may be quoted without explicit
+permission provided that full credit, including © notice, is given to the source.
+Adaptive Correspondence Experiments
+Hadar Avivi, Patrick M. Kline, Evan Rose, and Christopher R. Walters
+NBER Working Paper No. 28319
+January 2021
+JEL No. C9,J18,J71
+
+                                          ABSTRACT
+
+Correspondence experiments probe for discrimination by manipulating employer perceptions of
+applicant characteristics. We consider the gains from dynamically adapting the number and
+characteristics of fictitious applications to the sequence of employer responses received so far.
+Calibrating the employer callback process to data from a recent correspondence experiment by
+Nunley et al. (2015), we find it is possible to cut the number of applications required to detect a
+fixed number of discriminatory jobs roughly in half relative to the static benchmark design that
+sends the same number and mix of applications to all jobs. These gains are achieved primarily
+from abandoning jobs with very low callback probabilities and those that demonstrate a
+willingness to call black applicants.
+
+Hadar Avivi                                      Evan Rose
+Department of Economics                          Microsoft Research
+University of California, Berkeley               Cambridge, MA
+Berkeley, CA 94720                               evanrose@microsoft.com
+havivi@berkeley.edu
+                                                 Christopher R. Walters
+Patrick M. Kline                                 Department of Economics
+Department of Economics                          University of California, Berkeley
+University of California, Berkeley               530 Evans Hall #3880
+530 Evans Hall #3880                             Berkeley, CA 94720-3880
+Berkeley, CA 94720                               and NBER
+and NBER                                         crwalters@econ.berkeley.edu
+pkline@econ.berkeley.edu
+1    Introduction
+A large social science literature uses correspondence experiments to measure discrimination
+(Bertrand and Duflo, 2017; Baert, 2018). Kline and Walters (forthcoming) argue that exper-
+iments sending multiple applications to each job can be used to reliably detect discrimination
+by particular employers. A practical impediment to such exercises is that employer callback
+rates are often very low, leading a large fraction of applications to be wasted on unrespon-
+sive jobs. Sending many applications to a particular job may also compromise the callback
+evidence by alerting an employer to the experiment.
+    This paper considers the potential for dynamic correspondence experiments to reduce
+the costs of detecting discrimination by particular employers. We consider an experimental
+design in which the researcher adapts the number and characteristics of applications sent
+to each job in response to prior callback outcomes from that job. Our analysis is inspired
+by proposals in the medical sciences to personalize treatments based on time-varying health
+information (Brown et al., 2009; Chakraborty and Murphy, 2014) as well as econometric
+procedures that update estimators, decision rules, and experimental designs in response to
+new data (Dimakopoulou et al., 2018; Kasy and Sautmann, forthcoming; Tabord-Meehan,
+2020). In the discrimination context, adaptive experimentation provides a potential tool
+for regulatory agencies charged with preventing and remedying discrimination, such as the
+Equal Employment Opportunity Commission (EEOC), to fulfil their regulatory mandates
+with greater efficiency and rigor.
+    We begin by building a statistical model of job callback decisions, which we fit to data
+from a recent correspondence study by Nunley et al. (2015) (henceforth, NPRS). NPRS
+submitted four applications with distinctively black or white names to each of 2,305 entry-
+level jobs for new college graduates in the US. Though this study was conducted by academic
+researchers, one can imagine such training data also coming from a pilot study commissioned
+by the EEOC. We ask how an auditor who has learned the distribution of discrimination
+from such a pilot might send applications to new vacancies to find discriminatory jobs at
+minimum cost.
+    Simulating the performance of the optimal auditing strategy, we find that adaptive exper-
+iments can cut the number of applications needed to detect a fixed number of discriminators
+by more than half without increasing the prevalence of type I errors. This feat is accom-
+plished primarily by giving up early on jobs with very low callback rates and those that
+demonstrate a willingness to call black applicants. These results reinforce the conclusion of
+Kline and Walters (forthcoming) that correspondence experiments can potentially be used
+by regulatory agencies to target investigations more efficiently. Similar adaptive methods
+
+
+
+                                              1
+may be useful in other domains where racial bias is a concern and monitoring may be feasi-
+ble, including criminal justice (Arnold, Dobbie and Hull, 2020; Rose, forthcoming), policing
+(Fryer Jr., 2019; Feigenberg and Miller, 2020), healthcare (Alsan, Garrick and Graziani,
+2019; Obermeyer et al., 2019), and education (Carlana, 2019; Bergman and McFarlin Jr.,
+2020).
+
+
+2    A model of callbacks
+Following Kline and Walters (forthcoming), we model callbacks at each job as independent
+Bernoulli trials. A fictitious applicant of race r  {w, b} (white or black) possessing observ-
+able characteristics x has a callback probability pjr (x) of being called back by job j . We
+assume that
+                              pjr (x) =  (j - j 1 {r = b} + x  ) ,
+
+where  (z )  [1 + exp (-z )]-1 is the logit link function, the parameter j governs the
+white callback rate, j governs the callback penalty for being perceived as black, and x 
+is an application quality index. We treat the parameters (j , j ) as random draws from a
+bivariate distribution. Kline and Walters (forthcoming) were unable to reject the hypothesis
+that white names are never discriminated against in the NPRS experiment. We therefore
+assume that j = max 0,      ~j , which censors discrimination from below at zero. The model
+is completed by the following distributional assumption:
+
+                                                    2
+                               j     iid      0       
+                                      N         ,               ,                         (1)
+                               ~j
+                                              0       2
+
+
+
+which allows for continuous heterogeneity in overall callback rates and discrimination sever-
+ity, as well as a positive mass of jobs that do not discriminate at all.
+    Maximum likelihood estimates of this model are presented in Table 1. We cannot re-
+ject that  = 0, and therefore impose this restriction in what follows. Using the esti-
+mates in column 1, the share of jobs with white callback probabilities lower than 1% is
+         -ln(99)
+ 4.922  4.968
+                  0.53, suggesting that a majority of the jobs in this study are essentially
+unresponsive to applications of either race. The share of jobs with j = 0 is  5 .035
+                                                                               6.347
+                                                                                      0.79.
+Hence, discrimination is confined to a small minority of jobs. However, the average severity
+                                                                             (0 / )
+of discrimination among this minority is intense, as E [j |j > 0] = 0 +    /  3.6,
+                                                                              ( 0 )
+which implies the odds of being called back by a discriminating job are roughly 36 times
+higher for whites than equivalent blacks. This finding of rare but intense discrimination
+accords closely with the non-parametric analysis of the NPRS data in Kline and Walters
+
+
+                                              2
+           Table 1. Mixed logit censored-normal results, Nunley et al. (2015) data
+
+                                                                (1)       (2)
+                                   0                           -4.922    -4.918
+                                                              (0.234)   (0.234)
+                                                                4.968    4.963
+                                                              (0.240)   (0.240)
+                                   0                           -5.035    -5.022
+                                                              (0.176)   (0.329)
+                                                                6.347    6.521
+                                                              (0.148)   (0.154)
+                                                                         -0.013
+                                                                        (0.017)
+
+                                   Likelihood              -2788.3      -2788.3
+                                   Number of jobs           2305         2305
+
+Notes: This table presents simulated maximum likelihood estimates of the mixed logit censored-normal
+model in the Nunley et al. (2015) data. Models also include demeaned resume covariates: gender, industry,
+high socioeconomic status indicator, work history gaps, business degree, internship experience and GPA.
+Robust standard errors in parentheses.
+
+
+
+(forthcoming) and suggests it may be possible to ascertain whether or not a responsive job
+is discriminating with very few applications.1
+
+
+3       The auditor's problem
+Consider now a hypothetical auditor who knows the parameters of Table 1 and can draw
+additional jobs from the same distribution. Her goal is to find as many discriminating jobs as
+possible by sending fictitious applications. The auditor may send up to 8 applications to each
+job and is free to choose the race and quality q of each application. To simplify the problem,
+we coarsen applicant quality to two levels (labeled "high" and "low") that correspond to
+setting the covariate index x  to one standard deviation above or below its estimated mean.
+If the auditor believes a job is discriminating she can initiate an investigation. Once an
+investigation is initiated, the job's true type is revealed and the auditor receives a payoff
+
+                                      1
+                                                    [pjw (q ) - pjb (q )] -,                         (2)
+                                      2
+                                          q {h,l}
+
+                                                      Sj
+
+    1
+    Kline and Walters (forthcoming) find that at least 17% of jobs in the NPRS data are discriminating
+and that the distribution of discriminatory severity is highly variable and skewed.
+
+
+
+
+                                                          3
+where Sj gives the average severity of discrimination at job j and  is the cost of conducting
+an investigation. Choosing not to investigate yields a payoff of zero. Hence, an auditor with
+ = .01 is indifferent about investigating a job that contacts black applicants a percentage
+point less often than comparable white applicants. The linear formulation in (2) implies
+that the auditor cares about the expected number of callbacks lost to racial discrimination,
+which reflects both discrimination severity and the baseline callback rate for white applicants.
+Severity is unknown and must be assessed by sending job applications.
+   Rather than send 8 applications to each job, the auditor solves a sequential problem: in
+each period, she may send an application to a job and choose its race and quality, launch
+an investigation, or give up. The auditing history Hn encodes the assigned race and observ-
+able characteristics of the n prior applications sent to a given job along with whether each
+application was called back. The auditor's value function can be written
+                                                                       
+                                                                       
+                                                                       
+                            
+                             max  max   v    ( H   ) ,  v   (H   ) , 0  if n < 8
+                            
+                                          rq     n        I    n
+                            
+                            
+                                   r,q                                 
+                                                       investigate 
+                     V(Hn )=
+                                                                       
+                                   send new app 
+                                                
+                            
+                             max  v   ( H  ) , 0                        if n = 8,
+                            
+                                    I    n
+                                                
+                                                
+                                       investigate
+
+where vrq (Hn ) = -c + E[V (Hn+1 )|Hn ] is the expected value of sending an application of race
+r and quality q net of the cost c of sending a new application. The value of giving up on a job
+equals zero, while the auditor's expected payoff from investigating is vI (Hn ) = E[Sj |Hn ] - .
+All expectations are evaluated via Bayes' rule starting from a prior distribution based on
+the parameters in column 1 of Table 1. As Kline and Walters (forthcoming) emphasize, the
+use of Bayes' rule allows the auditor to borrow strength from the experience of the pilot
+study, which can generate informative conclusions about a particular job even when very
+few applications have been sent.
+
+
+4    Optimal auditing policy
+The solution to the sequential problem was computed numerically by backwards induction.
+Figure 1 shows the decision problem that arises after 3 applications when setting  = .13
+and c = 10-4 . Seven distinct values of H3 arise under optimal auditing, which we have
+ordered by the auditor's posterior expectation of discrimination severity. If sending another
+application is optimal, the bar representing the value of that action is bolded.
+    Least suspicious is the case where 3 high-quality white applications are sent and none are
+called back. To ascertain whether a job is responsive, the auditor always begins by sending
+
+
+                                                     4
+Figure 1. The auditor's expected value and optimal strategy after sending three applications
+( = .13 c = 10-4 )
+                        0.15
+                                                                       Value give-up
+                                                                       Value investigate
+                        0.10                                           Value send LQ white
+                                                                       Value send LQ black
+                                                                       Value send HQ white
+                        0.05                                           Value send HQ black
+                Value
+
+
+
+                        0.00
+
+                        0.05
+
+                        0.10
+                                Se ,0) 2)
+
+
+                                Se ,0) 1)
+
+
+                                Se ,1) 2)
+
+
+                                Se ,0) 0)
+
+
+                                Se ,1) 1)
+
+
+                                Se ,2) 2)
+
+                                         0,0 ,0)
+                                         1 ,
+
+
+                                         1 ,
+
+
+                                         1 ,
+
+
+                                         1 ,
+
+
+                                         1 ,
+
+
+                                         1 ,
+                                      ,0, 0,1
+
+
+                                      ,0, 0,2
+
+
+                                      ,0, 0,1
+
+
+                                      ,0, 0,3
+
+
+                                      ,0, 0,2
+
+
+                                      ,0, 0,1
+
+
+                                      ,0, 0,3
+                                            )
+                                  : (0 (0,
+
+
+                                  : (0 (0,
+
+
+                                  : (0 (0,
+
+
+                                  : (0 (0,
+
+
+                                  : (0 (0,
+
+
+                                  : (0 (0,
+
+
+                                  : (0 (0,
+                               CBent:
+
+
+                               CB nt:
+
+
+                               CB nt:
+
+
+                               CB nt:
+
+
+                               CB nt:
+
+
+                               CB nt:
+
+
+                               CB nt:
+                                S
+
+
+
+
+                                                      Histories
+
+Notes: This figure depicts the expected value associated with each possible action given a job history H3 .
+Job history is characterised by the number applications of each of race and quality level that are sent and
+the number that are called back (CB). On the horizontal axis, the values in parentheses are ordered as
+follows: (LQ white, LQ black, HQ white, HQ black). If sending another application is the optimal action,
+the bar representing the value of that action is bolded.
+
+
+
+high-quality white applications. The estimates in Table 1 imply that 72% of jobs will fail to
+call back any of the first 3 applications, at which point the auditor gives up. Doing so this
+                             ×5
+early saves the auditor 0.728
+                                × 100 = 45% of the maximum possible number of applications.
+    If the auditor's first high-quality white application is called back, her optimal response
+is to begin sending high-quality black applications. Receiving no callbacks for any high-
+quality black applications produces the most suspicious configuration in Figure 1. Because
+the posterior probability that the job is discriminating is only about 18.8% in this scenario,
+the auditor decides to send another high quality black application to obtain greater certainty
+regarding the severity of any discrimination present.
+    Receiving one callback for a high-quality black application produces the third most suspi-
+cious configuration in Figure 1. While the callback to the black application makes it unlikely
+that this job is discriminating, the evidence could also be rationalized by a very high baseline
+white callback probability (j        0) in conjunction with non-trivial discrimination severity
+(Sj > ). To assess this possibility, the auditor opts to send a low quality white application.
+Similar logic applies to the auditor's choices for additional histories, the full set of which
+
+
+                                                     5
+         Figure 2. The auditor's value after sending eight applications ( = .13, c = 10-4 )
+                                  0.40
+                                                                                 E[pw pb|Hn]
+                                  0.35
+                                  0.30
+                                  0.25
+                    E[pw pb|Hn]
+
+
+                                  0.20
+                                  0.15
+                                  0.10
+                                  0.05
+                                  0.00
+                                         Sent: (0,0,3,5)
+                                         Sent: (0,1,4,3)
+                                         Sent: (3,0,1,4)
+                                         Sent: (0,0,5,3)
+                                         Sent: (3,1,1,3)
+                                         Sent: (2,0,2,4)
+                                         Sent: (2,0,2,4)
+                                         Sent: (2,0,4,2)
+                                         Sent: (2,0,3,3)
+                                         Sent: (1,0,5,2)
+                                         Sent: (0,1,4,3)
+                                         Sent: (0,0,5,3)
+                                         Sent: (0,0,3,5)
+                                         Sent: (2,0,4,2)
+                                         Sent: (3,0,1,4)
+                                         Sent: (1,0,5,2)
+                                         Sent: (2,0,2,4)
+                                         Sent: (2,0,3,3)
+                                         Sent: (3,1,1,3)
+                                         Sent: (2,0,2,4)
+                                         Sent: (0,0,5,3)
+                                         Sent: (2,0,4,2)
+                                         Sent: (1,0,5,2)
+                                          CB: (0,0,3,1)
+                                          CB: (0,0,3,0)
+                                          CB: (2,0,1,1)
+                                          CB: (0,0,3,0)
+                                          CB: (3,0,1,2)
+                                          CB: (2,0,1,1)
+                                          CB: (1,0,2,1)
+                                          CB: (2,0,1,0)
+                                          CB: (2,0,2,1)
+                                          CB: (1,0,2,0)
+                                          CB: (0,1,3,0)
+                                          CB: (0,0,2,0)
+                                          CB: (0,0,2,1)
+                                          CB: (1,0,1,0)
+                                          CB: (2,0,1,2)
+                                          CB: (0,0,2,0)
+                                          CB: (2,0,1,2)
+                                          CB: (1,0,2,1)
+                                          CB: (2,0,1,2)
+                                          CB: (0,0,2,1)
+                                          CB: (0,0,3,1)
+                                          CB: (2,0,1,1)
+                                          CB: (1,0,2,1)
+                                                          Histories
+
+Notes: This figure depicts the value of investigation given a job history H8 . Job history is characterized by
+the number of applications of each race and quality level that are sent and the number that are called back
+(CB). On the horizontal axis, the values in parentheses are ordered as follows: (LQ white, LQ black, HQ
+white, HQ black).
+
+
+
+appear in Figure 6 in the appendix.
+    Once 8 applications have been sent, the auditor can no longer send additional applications
+and the decision problem simplifies to a binary choice: either launch an investigation or give
+up. Figure 2 shows the auditor's posterior expectation E[Sj |H8 ] of the job's discrimination
+severity given its callback history H8 . The relevant values of H8 have been depicted by
+the 23 distinct callback configurations that might arise under optimal auditing. Expected
+discrimination severity is maximized when 3 high quality white and 5 high quality black
+applications have been sent and all 3 white applications but only 1 black application have
+been called back.2 A horizontal line gives the investigation cost . When the expected
+benefit exceeds , an investigation is launched. Otherwise, the auditor gives up.
+
+
+5        The gains from sequential auditing
+To evaluate the performance of various auditing strategies, we borrow concepts from the
+medical literature on diagnostic testing. The sensitivity of an auditing strategy is the prob-
+    2
+        All histories with zero black callbacks lead the auditor to investigate or give up before n = 8.
+
+
+                                                         6
+                              Figure 3. Applications sent vs. sensitivity
+                                   (investigation probability fixed)
+
+
+
+
+Notes: This figure plots the average number of applications sent per job against the sensitivity of the
+auditing strategy for strategies that result in 5.5-6% of jobs investigated. The number of initial pairs refers
+to the number of applications of each race that are sent before the auditor begins optimizing. The curves
+are generated by varying  between 0.01 and 0.09 and c between 10-5 and 0.004.
+
+
+
+ability that an investigation is launched when a job is engaged in discrimination (i.e., when
+j > 0). The specificity of an auditing strategy is the probability that an investigation is
+not launched when a job is not discriminating (i.e., when j = 0).
+    Figure 3 plots the average number of applications per job associated with a given auditing
+strategy against its sensitivity when jobs are drawn randomly from the data generating
+process described in column 1 of Table 1. To enumerate auditing strategies, the parameters
+(, c) have been varied over a range that results in the probability of investigation falling in
+the interval [.055, .06]; each dot, therefore, corresponds to a different strategy that results in
+roughly the same expected number of investigations.
+    To illustrate the gains from sequential optimization, we include strategies where the
+auditor's discretion is constrained by requiring her to send a fixed number of mixed race
+application pairs (of random quality) before behaving optimally. Hence, the case where 4
+pairs must be sent corresponds to a static auditing strategy, where the auditor must either
+decide to investigate each job or give up. As the auditor is given more discretion, the number
+of applications sent to each job falls. For example, when the auditor is allowed to optimize
+
+
+
+                                                      7
+                             Figure 4. Applications sent vs. specificity
+                                        (sensitivity fixed)
+
+
+
+
+Notes: This figure plots the average number of applications per job against the specificity of the auditing
+strategy for strategies where 14-14.5% of discriminating jobs are investigated. The number of initial pairs
+refers to the number of applications of each race that are sent before the auditor begins optimizing. The
+curves are generated by varying  between 0.01 and 0.09 and c between 10-5 and 0.004.
+
+
+
+after sending 3 pairs, it is possible to maintain a sensitivity of 14% by sending an average
+of only 6.3 applications to each job. A fully unconstrained (0 pairs) auditor can achieve a
+sensitivity of 14.5% while sending fewer than 3 applications per job. In sum, by giving up on
+unresponsive jobs and jobs that call back some black applicants in early trials, the dynamic
+auditor is able to correctly identify more discriminators than the static auditor with fewer
+than half as many applications.
+    Figure 3 held the probability of investigated fixed, which can be thought of as approx-
+imating a setting where the auditor faces an ex-ante budget constraint on the expected
+number of investigations to be conducted. Figure 4 depicts an analogous exercise fixing
+the sensitivity of the auditing strategy in the interval [.14,.145] but allowing the marginal
+probability of an investigation to vary. This scenario can be thought of as one where the
+auditor plans to continue to experiment until a desired number of discriminators are inves-
+tigated. Because investigations of non-discriminating jobs constitute type I errors, points
+in the Southeast quadrant of Figure 4 are preferable. Evidently, an unconstrained auditor
+(0 pairs) can achieve the same sensitivity as a static auditor (4 pairs) while incurring fewer
+
+
+
+                                                     8
+               Figure 5. Discrimination severity by investigation status (0 pairs)
+
+
+
+
+Notes: This figure depicts the conditional probability mass function of Sj given investigation status for a
+dynamic auditor with payoff parameters  = 0.13 and c = 10-4 . Dots show fractions of jobs with Sj = 0.
+
+
+
+false positives and utilizing less than half as many applications.
+    Figure 5 provides a histogram of discrimination severity for investigated and non-investigated
+jobs for an auditor with cost parameters of  = .13 and c = 10-4 . The unconstrained auditor
+investigates only 3.5% of the jobs, but the jobs she investigates tend to be heavy discrimina-
+tors. Roughly 30% of investigated jobs are not engaged in any discrimination, far below the
+79% prevalence of non-discrimination in the overall population. Given her low investigation
+rate, the auditor's type I error rate evaluates to only 0.3× 0.035
+                                                           0.79
+                                                                   × 100 = 1.3%. Discrimination
+tends to be much less severe among jobs that the auditor chooses not to investigate: 80%
+of the jobs not investigated are not engaged in discrimination at all, 15% engage in negli-
+gible discrimination with Sj  (0, 0.03], and the remainder exhibit only mild racial gaps in
+callback rates.
+
+
+6     Conclusion
+Correspondence experiments are a widespread tool used throughout the social sciences to
+detect discrimination in many contexts. While such experiments typically send a predeter-
+mined number of applications to each job, substantial cost reductions can, in principle, be
+
+
+
+                                                     9
+achieved by giving up on unresponsive jobs. Our analysis suggests that adaptive correspon-
+dence experiments can yield substantial reductions in the number of applications per job
+needed to achieve a desired level of sensitivity and specificity of investigative decisions.
+    Our analysis was predicated on the existence of a pilot study from which the distribution
+of unit heterogeneity could be learned in a first step. While dividing the problem into sepa-
+rate "exploration" and "exploitation" steps simplified our analysis considerably, in practice
+it may be desirable to combine these steps to reduce the costs of making an initial determi-
+nation of market-wide discrimination. Likewise, updating estimates of the job heterogeneity
+distribution may be important for enforcement if one is worried that the parameters of the
+callback process are drifting over the course of a study, perhaps because of the enforcement
+activities themselves. An interesting topic for future research is the potential for reinforce-
+ment learning techniques (e.g., Kasy and Sautmann, forthcoming) to balance the exploration
+and exploitation goals of correspondence experiment design without relying on parametric
+assumptions regarding the job callback process.
+
+
+
+
+                                              10
+References
+Alsan, Marcella, Owen Garrick, and Grant Graziani. 2019. "Does diversity mat-
+ ter for health? Experimental evidence from Oakland." American Economic Review,
+ 109(12): 4071­4111.
+
+Arnold, David, Will S Dobbie, and Peter Hull. 2020. "Measuring racial discrimination
+ in bail decisions." National Bureau of Economic Research.
+
+Baert, Stijn. 2018. "Hiring discrimination: an overview of (almost) all correspondence
+ experiments since 2005." In Audit studies: Behind the scenes with theory, method, and
+ nuance. 63­77. Springer.
+
+Bergman, Peter, and Isaac McFarlin Jr. 2020. "Education for all? A nationwide audit
+ study of school choice." Working paper.
+
+Bertrand, Marianne, and Esther Duflo. 2017. "Field experiments on discrimination." In
+ Handbook of Field Experiments. Vol. 1, , ed. Esther Duflo and Abhijit Banerjee. Elsevier.
+
+Brown, C Hendricks, Thomas R Ten Have, Booil Jo, Getachew Dagne, Peter A
+ Wyman, Bengt Muth´       en, and Robert D Gibbons. 2009. "Adaptive designs for ran-
+ domized trials in public health." Annual review of public health, 30: 1­25.
+
+Carlana, Michela. 2019. "Implicit Stereotypes: Evidence from Teachers' Gender Bias*."
+ The Quarterly Journal of Economics, 134(3): 1163­1224.
+
+Chakraborty, Bibhas, and Susan A Murphy. 2014. "Dynamic treatment regimes."
+ Annual review of statistics and its application, 1: 447­464.
+
+Dimakopoulou, Maria, Zhengyuan Zhou, Susan Athey, and Guido Imbens. 2018.
+ "Estimation considerations in contextual bandits."
+
+Feigenberg, Benjamin, and Conrad Miller. 2020. "Racial disparities in motor vehicle
+  searches cannot be justified by efficiency." NBER Working Paper, , (w27761).
+
+Fryer Jr., Roland G. 2019. "An empirical analysis of racial differences in police use of
+  force." Journal of Political Economy, 127(3): 1210­1261.
+
+Kasy, Maximilian, and Anja Sautmann. forthcoming. "Adaptive treatment assignment
+ in experiments for policy choice." Econometrica.
+
+
+
+
+                                           11
+Kline, Patrick M, and Christopher R Walters. forthcoming. "Reasonable doubt: Ex-
+ perimental detection of job-level employment discrimination." Econometrica.
+
+Nunley, John M, Adam Pugh, Nicholas Romero, and R Alan Seals. 2015. "Racial
+ discrimination in the labor market for recent college graduates: Evidence from a field
+ experiment." The BE Journal of Economic Analysis & Policy, 15(3): 1093­1125.
+
+Obermeyer, Ziad, Brian Powers, Christine Vogeli, and Sendhil Mullainathan.
+ 2019. "Dissecting racial bias in an algorithm used to manage the health of populations."
+ Science, 366(6464): 447­453.
+
+Rose, Evan K. forthcoming. "Who gets a second chance? effectiveness and equity in
+ supervision of criminal offenders."
+
+Tabord-Meehan, Max. 2020. "Stratification trees for adaptive randomization in random-
+  ized controlled trials."
+
+
+
+
+                                           12
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     A
+                                                                                                                                                                                                                                                                                                                                     Value                                                                                                                               Value
+
+
+
+
+                                                                                                                                                                                                                                                                                                               0.10
+                                                                                                                                                                                                                                                                                                                        0.05
+                                                                                                                                                                                                                                                                                                                                 0.00
+                                                                                                                                                                                                                                                                                                                                         0.05
+                                                                                                                                                                                                                                                                                                                                                   0.10
+                                                                                                                                                                                                                                                                                                                                                           0.15
+                                                                                                                                                                                                                                                                                                                                                                                                                                         0.12
+                                                                                                                                                                                                                                                                                                                                                                                                                                                 0.10
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        0.08
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                  0.06
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                             0.04
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      0.02
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               0.00
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      0.02
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              0.04
+                                                                                                                                                                                                                                                                                      Sent: (0,0,1,3)
+                                                                                                                                                                                                                                                                                       CB: (0,0,1,0)
+                                                                                                                                                                                                                                                                                      Sent: (1,0,1,2)
+                                                                                                                                                                                                                                                                                       CB: (1,0,1,1)
+                                                                                                                                                                                                                                                                                      Sent: (0,0,1,3)
+
+
+
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                         Value give-up
+                                                                                                                                                                                                                                                                                       CB: (0,0,1,1)
+
+
+
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                         Value investigate
+
+
+
+
+                                                                                                                                                                                                                                                                                                                                                                                                               CB: (0,0,1,0)
+                                                                                                                                                                                                                                                                                      Sent: (0,0,2,2)
+
+
+
+
+                                                                                                                                                                                                                                                                                                                                                                                                              Sent: (0,0,1,0)
+                                                                                                                                                                                                                                                                                                                                                                                                                                         Value send LQ black
+                                                                                                                                                                                                                                                                                                                                                                                                                                         Value send LQ white
+                                                                                                                                                                                                                                                                                       CB: (0,0,1,0)
+
+
+
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                         Value send HQ black
+                                                                                                                                                                                                                                                                                                                                                                                                                                         Value send HQ white
+                                                                                                                                                                                                                                                                                      Sent: (0,0,4,0)
+                                                                                                                                                                                                                                                                                       CB: (0,0,2,0)
+                                                                                                                                                                                                                                                                                      Sent: (0,0,1,3)
+                                                                                                                                                                                                   Value                                                                               CB: (0,0,1,2)
+
+
+
+
+                                                                                                                                                                                                                                                                               Histories
+                                                                                                                                                                                                                                                                                                                                                                                                    Histories
+                                                                                                                                                                                                                                                                                      Sent: (1,0,1,2)
+
+
+
+
+                                                                                                                                                                           0.1
+                                                                                                                                                                                     0.0
+                                                                                                                                                                                              0.1
+                                                                                                                                                                                                           0.2
+                                                                                                                                                                                                                     0.3
+                                                                                                                                                                                                                                  0.4
+                                                                                                                                                                                                                                                                                       CB: (0,0,1,1)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     Appendix
+
+
+
+
+                                                                                                                                                                                                                                                                                      Sent: (0,0,4,0)
+                                                                                                                                                         Sent: (0,0,2,5)                                                                                                               CB: (0,0,1,0)
+                                                                                                                                                          CB: (0,0,2,0)
+                                                                                                                                                         Sent: (3,0,1,3)
+                                                                                                                                                          CB: (3,0,1,1)                                                                                                               Sent: (0,0,2,2)
+                                                                                                                                                         Sent: (1,0,2,4)
+                                                                                                                                                          CB: (1,0,2,1)                                                                                                                CB: (0,0,1,1)
+                                                                                                                                                         Sent: (0,0,4,3)
+                                                                                                                                                          CB: (0,0,3,0)
+
+
+
+
+                                                                                                                                                                                                                                                                                                                                                                                                               CB: (0,0,0,0)
+                                                                                                                                                         Sent: (0,0,2,5)                                                                                                              Sent: (0,0,1,3)
+
+
+                                                                                                                                                                                                                                                                                                                                                                                                              Sent: (0,0,1,0)
+                                                                                                                                                          CB: (0,0,2,1)                                                                                                                CB: (0,0,1,3)
+                                                                                                                                                         Sent: (0,0,5,2)
+
+
+
+
+                                                                                                                                                                                                                                                                                                                                             Value give-up
+                                                                                                                                                          CB: (0,0,3,0)
+
+
+
+
+     model in column (1) of Table (1).
+                                                                                                                                                         Sent: (2,1,1,3)                                                                                                              Sent: (0,0,2,2)
+
+
+
+
+                                                                                                                                                                                                                                                                                                                                             Value investigate
+                                                                                                                                                          CB: (2,0,1,2)
+
+
+
+
+                                                                                                                                                                                                                                                                                                                                                                      (a) One application snet
+                                                                                                                                                         Sent: (3,0,1,3)                                                                                                               CB: (0,0,1,2)
+                                                                                                                                                          CB: (2,0,1,1)
+
+
+
+
+                                                                                                                                                                                                                                                                                                                                             Value send LQ black
+                                                                                                                                                                                                                                                                                                                                             Value send LQ white
+
+                                                                                                                                                                                                                                                                                                                                             Value send HQ black
+                                                                                                                                                                                                                                                                                                                                             Value send HQ white
+
+
+
+
+                                                                                                                                                                                                                                                  (d) Four applications sent
+                                                                                                                                                         Sent: (0,0,4,3)
+                                                                                                                                                          CB: (0,0,2,0)
+                                                                                                                                                         Sent: (2,0,2,3)
+                                                                                                                                                          CB: (2,0,1,1)
+                                                                                                                                                         Sent: (2,0,4,1)
+                                                                                                                                                          CB: (2,0,1,0)
+                                                                                                                                                         Sent: (1,0,5,1)
+                                                                                                                                                          CB: (1,0,2,0)
+                                                                                                                                                         Sent: (1,0,3,3)                                                                                                                                                         Value                                                                                                                                   Value
+                                                                                                                                                          CB: (1,0,2,1)
+                                                                                                                                                         Sent: (1,0,2,4)
+                                                                                                                                                          CB: (0,0,2,1)
+
+
+
+
+                                                                                                                                                  Histories
+                                                                                                                                                         Sent: (1,0,4,2)
+
+
+
+
+                                                                                                                                                                                                                                                                                                         0.1
+                                                                                                                                                                                                                                                                                                                      0.0
+                                                                                                                                                                                                                                                                                                                                 0.1
+                                                                                                                                                                                                                                                                                                                                             0.2
+                                                                                                                                                                                                                                                                                                                                                          0.3
+                                                                                                                                                          CB: (1,0,1,0)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                0.10
+                                                                                                                                                                                                                                                                                                                                                                                                                                                               0.05
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                              0.00
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               0.05
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             0.10
+
+
+
+
+                                                                                                                                                         Sent: (0,0,5,2)
+                                                                                                                                                          CB: (0,0,2,0)
+                                                                                                                                                         Sent: (1,0,5,1)
+                                                                                                                                                          CB: (0,0,2,0)                                                                                                               Sent: (0,0,2,3)
+                                                                                                                                                         Sent: (3,0,1,3)                                                                                                               CB: (0,0,2,0)
+                                                                                                                                                          CB: (1,0,1,1)
+                                                                                                                                                         Sent: (0,0,4,3)                                                                                                              Sent: (1,0,1,3)
+                                                                                                                                                          CB: (0,0,1,0)                                                                                                                CB: (1,0,1,1)
+                                                                                                                                                         Sent: (2,1,1,3)
+                                                                                                                                                          CB: (1,0,1,2)                                                                                                               Sent: (0,0,3,2)
+                                                                                                                                                         Sent: (1,0,3,3)                                                                                                               CB: (0,0,2,0)
+                                                                                                                                                          CB: (0,0,2,1)
+                                                                                                                                                         Sent: (2,0,2,3)                                                                                                              Sent: (0,0,2,3)
+                                                                                                                                                                                                                                                                                                                                                                                                               CB: (0,0,1,0)
+                                                                                                                                                                                                                                                                                                                                                                                                              Sent: (0,0,1,1)
+
+
+
+
+                                                                                                                                                          CB: (2,0,1,2)                                                                                                                CB: (0,0,1,0)
+                                                                                                                                                         Sent: (1,0,4,2)
+                                                                                                                                                          CB: (0,0,1,0)                                                                                                               Sent: (0,0,4,1)
+
+
+
+
+                                                                                                                                                                                                                 Value give-up
+                                                                                                                                                         Sent: (0,0,5,2)                                                                                                               CB: (0,0,2,0)
+                                                                                                                                                          CB: (0,0,3,1)
+
+
+
+
+                                                                                                                                                                                                                 Value investigate
+                                                                                                                                                         Sent: (2,0,4,1)                                                                                                              Sent: (1,0,1,3)
+                                                                                                                                                          CB: (2,0,1,1)                                                                                                                CB: (1,0,1,2)
+
+
+
+
+                                                                                                                                                                                                                 Value send LQ black
+                                                                                                                                                                                                                 Value send LQ white
+
+                                                                                                                                                                                                                 Value send HQ black
+                                                                                                                                                                                                                 Value send HQ white
+                                                                                                                                                                                                                                                                                      Sent: (0,1,1,3)
+
+
+
+
+                                                                                                                    (g) Seven applications sent
+                                                                                                                                                                                                                                                                                       CB: (0,0,1,2)
+                                                                                                                                                                                                                                                                                      Sent: (0,0,3,2)
+                                                                                                                                                                                                                                                                                       CB: (0,0,1,0)
+                                                                                                                                                                                                                                                                                                                                                                                                     CB: (0,0,1,0)
+
+
+
+
+13
+                                                                                                                                                                                                                                                                                      Sent: (2,0,1,2)
+                                                                                                                                                                                                                                                                                       CB: (1,0,1,1)
+
+
+
+
+                                                                                                                                                                                                                                                                               Histories
+                                                                                                                                                                                              E[pw pb|Hn]                                                                             Sent: (1,0,4,0)
+                                                                                                                                                                                                                                                                                                                                                                                                                 Histories
+
+
+
+
+                                                                                                                                                                                                                                                                                       CB: (1,0,1,0)
+                                                                                                                                                                                                                                                                                      Sent: (1,0,2,2)
+
+
+
+
+                                                                                                                                                                       0.00
+                                                                                                                                                                              0.05
+                                                                                                                                                                                     0.10
+                                                                                                                                                                                            0.15
+                                                                                                                                                                                                   0.20
+                                                                                                                                                                                                           0.25
+                                                                                                                                                                                                                    0.30
+                                                                                                                                                                                                                           0.35
+                                                                                                                                                                                                                                           0.40
+                                                                                                                                                                                                                                                                                       CB: (1,0,1,1)
+                                                                                                                                                                                                                                                                                      Sent: (1,0,1,3)
+                                                                                                                                                         Sent: (0,0,3,5)
+                                                                                                                                                                                                                                                                                       CB: (0,0,1,1)
+                                                                                                                                                                                                                                                                                                                                                                                                                         CB: (0,0,1,1)
+
+
+
+
+                                                                                                                                                          CB: (0,0,3,1)
+                                                                                                                                                                                                                                                                                                                                                                                                    Sent: (0,0,2,0) Sent: (0,0,1,1)
+
+
+
+
+                                                                                                                                                                                                                                                                                      Sent: (0,1,1,3)
+                                                                                                                                                         Sent: (0,1,4,3)                                                                                                               CB: (0,1,1,2)
+                                                                                                                                                          CB: (0,0,3,0)
+                                                                                                                                                         Sent: (3,0,1,4)                                                                                                              Sent: (1,0,4,0)
+                                                                                                                                                          CB: (2,0,1,1)                                                                                                                CB: (0,0,1,0)
+                                                                                                                                                         Sent: (0,0,5,3)                                                                                                              Sent: (2,0,1,2)
+                                                                                                                                                          CB: (0,0,3,0)                                                                                                                CB: (0,0,1,1)
+                                                                                                                                                         Sent: (3,1,1,3)
+                                                                                                                                                          CB: (3,0,1,2)                                                                                                               Sent: (1,0,2,2)
+                                                                                                                                                                                                                                                                                                                                             Value give-up
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             Value give-up
+
+
+
+
+                                                                                                                                                         Sent: (2,0,2,4)                                                                                                               CB: (0,0,1,1)
+                                                                                                                                                          CB: (2,0,1,1)
+                                                                                                                                                                                                                                                                                                                                             Value investigate
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             Value investigate
+
+
+
+
+                                                                                                                                                         Sent: (2,0,2,4)                                                                                                              Sent: (0,0,4,1)
+                                                                                                                                                                                                                                                                                                                                                                                                               CB: (0,0,0,0)
+                                                                                                                                                                                                                                                                                                                                                                                                              Sent: (0,0,2,0)
+
+
+
+
+                                                                                                                                                          CB: (1,0,2,1)                                                                                                                CB: (0,0,2,1)
+
+
+
+                                                                                                                                                                                                                                                  (e) Five applications sent
+                                                                                                                                                                                                                                                                                                                                             Value send LQ black
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             Value send LQ black
+
+
+
+
+                                                                                                                                                                                                                                                                                                                                             Value send LQ white
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             Value send LQ white
+
+
+
+
+                                                                                                                                                                                                                                                                                                                                             Value send HQ black
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             Value send HQ black
+
+
+
+
+                                                                                                                                                         Sent: (2,0,4,2)
+                                                                                                                                                                                                                                                                                                                                             Value send HQ white
+                                                                                                                                                                                                                                                                                                                                                                      (b) Two applications sent
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             Value send HQ white
+
+
+
+
+                                                                                                                                                          CB: (2,0,1,0)
+                                                                                                                                                         Sent: (2,0,3,3)
+                                                                                                                                                          CB: (2,0,2,1)
+                                                                                                                                                         Sent: (1,0,5,2)
+                                                                                                                                                          CB: (1,0,2,0)
+                                                                                                                                                         Sent: (0,1,4,3)
+                                                                                                                                                          CB: (0,1,3,0)
+                                                                                                                                                         Sent: (0,0,5,3)                                                                                                                                                        Value                                                                                                                                          Value
+                                                                                                                                                          CB: (0,0,2,0)
+                                                                                                                                                         Sent: (0,0,3,5)
+
+
+
+
+                                                                                                                                                  Histories
+                                                                                                                                                          CB: (0,0,2,1)
+                                                                                                                                                         Sent: (2,0,4,2)
+                                                                                                                                                                                                                                                                                                        0.1
+                                                                                                                                                                                                                                                                                                                 0.0
+                                                                                                                                                                                                                                                                                                                               0.1
+                                                                                                                                                                                                                                                                                                                                         0.2
+                                                                                                                                                                                                                                                                                                                                                    0.3
+                                                                                                                                                                                                                                                                                                                                                                0.4
+
+
+
+
+                                                                                                                                                          CB: (1,0,1,0)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        0.10
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                      0.05
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                               0.00
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             0.05
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      0.10
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               0.15
+
+
+
+
+                                                                                                                                                         Sent: (3,0,1,4)
+                                                                                                                                                          CB: (2,0,1,2)                                                                                                                                                                                                                                             S
+                                                                                                                                                         Sent: (1,0,5,2)                                                                                                              Sent: (0,0,2,4)
+                                                                                                                                                          CB: (0,0,2,0)                                                                                                                CB: (0,0,2,0)                                                                                                               CBent:
+                                                                                                                                                         Sent: (2,0,2,4)                                                                                                              Sent: (2,0,1,3)
+                                                                                                                                                          CB: (2,0,1,2)
+                                                                                                                                                                                                                                                                                                                                                                                                                      : (0 (0,
+                                                                                                                                                         Sent: (2,0,3,3)                                                                                                               CB: (2,0,1,1)                                                                                                                      ,0, 0,1
+                                                                                                                                                          CB: (1,0,2,1)                                                                                                               Sent: (0,0,3,3)                                                                                                                        1 ,
+                                                                                                                                                         Sent: (3,1,1,3)                                                                                                               CB: (0,0,2,0)                                                                                                                Se ,0) 2)
+                                                                                                                                                          CB: (2,0,1,2)                                                                                                               Sent: (0,0,2,4)
+                                                                                                                                                         Sent: (2,0,2,4)                                                                                                               CB: (0,0,2,1)                                                                                                               CB nt:
+                                                                                                                                                          CB: (0,0,2,1)                                                                                                               Sent: (0,0,5,1)
+                                                                                                                                                                                                                                                                                                                                                                                                                      : (0 (0,
+                                                                                                                                                         Sent: (0,0,5,3)                                                                                                               CB: (0,0,3,0)
+                                                                                                                                                          CB: (0,0,3,1)
+                                                                                                                                                                                                                                                                                                                                                                                                                          ,0, 0,2
+                                                                                                                                                         Sent: (2,0,4,2)                                                                                                              Sent: (0,0,4,2)                                                                                                                        1,0 ,1)
+                                                                                                                                                          CB: (2,0,1,1)                                                                                                                CB: (0,0,2,0)                                                                                                                S           )
+                                                                                                                                                         Sent: (1,0,5,2)                                                                                                              Sent: (1,1,1,3)                                                                                                              CBent:
+                                                                                                                                                          CB: (1,0,2,1)                                                                                                                CB: (1,0,1,2)
+                                                                                                                                                                                                                             E[pw pb|Hn]
+
+
+
+
+                                                                                                                                                                                                                                                                                      Sent: (2,0,1,3)
+                                                                                                                                                                                                                                                                                                                                                                                                                      : (0 (0,
+
+
+
+
+                                                                                                                    (h) Eight applications sent
+                                                                                                                                                                                                                                                                                       CB: (1,0,1,1)                                                                                                                      ,0, 0,1
+                                                                                                                                                                                                                                                                                                                                                                                                                             1 ,
+                                                                                                                                                                                                                                                                                      Sent: (2,0,4,0)
+                                                                                                                                                                                                                                                                                       CB: (2,0,1,0)                                                                                                                Se ,1) 2)
+                                                                                                                                                                                                                                                                                      Sent: (2,0,2,2)                                                                                                              CB nt:
+                                                                                                                                                                                                                                                                                       CB: (2,0,1,1)                                                                                                                  : (0 (0,
+                                                                                                                                                                                                                                                                                      Sent: (0,0,5,1)
+                                                                                                                                                                                                                                                                                       CB: (0,0,2,0)
+                                                                                                                                                                                                                                                                                                                                                                                                                          ,0, 0,3
+                                                                                                                                                                                                                                                                               Histories
+                                                                                                                                                                                                                                                                                                                                                                                                    Histories
+
+
+
+
+                                                                                                                                                                                                                                                                                      Sent: (0,0,3,3)
+                                                                                                                                                                                                                                                                                                                                                                                                                             1,0 ,0)
+                                                                                                                                                                                                                                                                                       CB: (0,0,1,0)
+                                                                                                                                                                                                                                                                                                                                                                                                                    S           )
+                                                                                                                                                                                                                                                                                      Sent: (0,0,3,3)                                                                                                              CBent:
+                                                                                                                                                                                                                                                                                       CB: (0,0,2,1)                                                                                                                  : (0 (0,
+                                                                                                                                                                                                                                                                                      Sent: (2,0,4,0)                                                                                                                     ,0, 0,2
+                                                                                                                                                                                                                                                                                       CB: (1,0,1,0)                                                                                                                         1,1 ,1)
+                                                                                                                                                                                                                                                                                      Sent: (1,1,1,3)                                                                                                               S           )
+                                                                                                                                                                                                                                                                                       CB: (1,1,1,2)                                                                                                               CBent:
+                                                                                                                                                                                                                                                                                      Sent: (0,0,4,2)
+                                                                                                                                                                                                                                                                                       CB: (0,0,1,0)                                                                                                                  : (0 (0,
+                                                                                                                                                                                                                                                                                      Sent: (2,0,2,2)                                                                                                                     ,0, 0,1
+                                                                                                                                                                                                                                                                                       CB: (1,0,1,1)                                                                                                                         1 ,
+                                                                                                                                                                                                                                                                                      Sent: (2,0,1,3)                                                                                                               Se ,2) 2)
+                                                                                                                                                                                                                                                                                       CB: (1,0,1,2)                                                                                                               CB nt:
+                                                                                                                                                                                                                                                                                                                                             Value give-up
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         Value give-up
+
+
+
+
+                                                                                                                                                                                                                                                                                      Sent: (2,0,1,3)
+                                                                                                                                                                                                                                                                                       CB: (0,0,1,1)
+                                                                                                                                                                                                                                                                                                                                                                                                                      : (0 (0,
+                                                                                                                                                                                                                                                                                                                                             Value investigate
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         Value investigate
+
+
+
+
+                                                                                                                                                                                                                                                                                      Sent: (1,1,1,3)
+                                                                                                                                                                                                                                                                                                                                                                                                                          ,0, 0,3
+                                                                                                                                                                                                                                                  (f) Six applications sent
+
+
+
+
+                                                                                                                                                                                                                                                                                       CB: (0,0,1,2)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      Figure 6. The auditor's expected value and optimal strategy,  = .13 c = 10-4
+
+
+
+
+                                                                                                                                                                                                                                                                                                                                                                                                                             0,0 ,0)
+                                                                                                                                                                                                                                                                                                                                             Value send LQ black
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         Value send LQ black
+
+
+
+
+                                                                                                                                                                                                                                                                                                                                             Value send LQ white
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         Value send LQ white
+
+
+
+
+                                                                                                                                                                                                                                                                                                                                             Value send HQ black
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         Value send HQ black
+
+
+
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                )
+                                                                                                                                                                                                                                                                                                                                             Value send HQ white
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         Value send HQ white
+
+
+
+
+                                                                                                                                                                                                                                                                                                                                                                      (c) Three applications sent
+
+
+
+
+     HQ white, HQ black). If sending another application is the optimal action, the bar representing the value
+     Job history is characterised by the number of applications of each race and quality level that are sent and
+     Notes: This figures presents the auditor's expected value from each possible action given a job history Hn .
+
+     called-back. On the horizontal axis, the values in parentheses are ordered as follows: (LQ white, LQ black,
+
+     of that action is bolded. Expectations are formed assuming the data was generated from the censored logit
+

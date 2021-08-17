@@ -1,0 +1,2348 @@
+                              NBER WORKING PAPER SERIES
+
+
+
+
+   EXPLOITING SYMMETRY IN HIGH-DIMENSIONAL DYNAMIC PROGRAMMING
+
+                                     Mahdi Ebrahimi Kahou
+                                   Jesús Fernández-Villaverde
+                                           Jesse Perla
+                                          Arnav Sood
+
+                                      Working Paper 28981
+                              http://www.nber.org/papers/w28981
+
+
+                     NATIONAL BUREAU OF ECONOMIC RESEARCH
+                              1050 Massachusetts Avenue
+                                Cambridge, MA 02138
+                                     July 2021
+
+
+
+
+We would like to thank Benjamin Bloem-Reddy, Samira Ebrahimi Kahou, Kevin Leyton-Brown,
+Yaniv Plan, Kevin Song, and Vincent Michalski for useful comments. The views expressed
+herein are those of the authors and do not necessarily reflect the views of the National Bureau of
+Economic Research.
+
+NBER working papers are circulated for discussion and comment purposes. They have not been
+peer-reviewed or been subject to the review by the NBER Board of Directors that accompanies
+official NBER publications.
+
+© 2021 by Mahdi Ebrahimi Kahou, Jesús Fernández-Villaverde, Jesse Perla, and Arnav Sood. All
+rights reserved. Short sections of text, not to exceed two paragraphs, may be quoted without
+explicit permission provided that full credit, including © notice, is given to the source.
+Exploiting Symmetry in High-Dimensional Dynamic Programming
+Mahdi Ebrahimi Kahou, Jesús Fernández-Villaverde, Jesse Perla, and Arnav Sood
+NBER Working Paper No. 28981
+July 2021
+JEL No. C02,E00
+
+                                         ABSTRACT
+
+We propose a new method for solving high-dimensional dynamic programming problems and
+recursive competitive equilibria with a large (but finite) number of heterogeneous agents using
+deep learning. The "curse of dimensionality" is avoided due to four complementary techniques:
+(1) exploiting symmetry in the approximate law of motion and the value function; (2)
+constructing a concentration of measure to calculate high-dimensional expectations using a single
+Monte Carlo draw from the distribution of idiosyncratic shocks; (3) sampling methods to ensure
+the model fits along manifolds of interest; and (4) selecting the most generalizable over-
+parameterized deep learning approximation without calculating the stationary distribution or
+applying a transversality condition. As an application, we solve a global solution of a multi-firm
+version of the classic Lucas and Prescott (1971) model of "investment under uncertainty." First,
+we compare the solution against a linear-quadratic Gaussian version for validation and
+benchmarking. Next, we solve nonlinear versions with aggregate shocks. Finally, we describe
+how our approach applies to a large class of models in economics.
+
+Mahdi Ebrahimi Kahou                            Jesse Perla
+Department of Economics                         Vancouver School of Economics
+University of British Columbia                  University of British Columbia
+Vancouver                                       jesse.perla@ubc.ca
+Canada
+mahdi.ebk@gmail.com                             Arnav Sood
+                                                Carnegie Mellon University
+Jesús Fernández-Villaverde                      5000 Forbes Ave
+Department of Economics                         Pittsburgh, PA 15213
+University of Pennsylvania                      arnav@arnavsood.com
+The Ronald O. Perelman Center
+ for Political Science and Economics
+133 South 36th Street Suite 150
+Philadelphia, PA 19104
+and CEPR
+and also NBER
+jesusfv@econ.upenn.edu
+1    Introduction
+    We propose a new method for solving high-dimensional dynamic programming problems and
+recursive competitive equilibria with a large (but finite) number of heterogeneous agents. The key
+to our approach is to exploit symmetry in dynamic programming and concentration of measure
+to build a deep neural network that is particularly efficient and easy to train.
+    Models with many finite agents are very popular in economics. Think about models of in-
+dustry dynamics with many firms, models with many regions or countries, or models with many
+households. In fact, one can argue that we only use models with a continuum of agents in macroe-
+conomics or international trade as a convenient abstraction: the U.S. economy had around 128.45
+million households in 2020, not an infinite number of them.
+    Unfortunately, dealing with multi-agent models is challenging, as we quickly bump into the
+"curse of dimensionality" (Bellman, 1958, p. ix). As soon as we have more than a few agents, it
+becomes nearly impossible to solve these models or take them to the data. As noted by Powell
+(2007), there are two sources for the "curse of dimensionality" in dynamic programming. First,
+the cardinality of the state space is enormous. Second, it is difficult to compute highly-dimensional
+conditional expectations.
+    To illustrate these two sources, consider a simple economy. We start with the case that there
+is only one agent that produces a single perishable good. Since the good is perishable, there are
+no savings. The agent can have high or low productivity in every period and work with high
+or low effort. Productivity has persistence: high productivity today makes high productivity
+tomorrow more likely. Work effort yesterday affects the disutility of effort today: high effort
+yesterday means higher disutility today. The dynamic programming problem of this agent is
+trivial. The state has a cardinality of 4 (low productivity today with low work effort yesterday,
+low productivity today with high work effort yesterday, high productivity today with low work
+effort yesterday, and high productivity today with high work effort yesterday). The agent only
+needs to decide whether to work with high or low effort in each of these 4 states.
+    Let us next modify the model. We will have N agents, with the same environment as before,
+except that now each agent produces a differentiated, perishable good but consumes all the N
+goods in the economy (to simplify, we assume that each agent behaves parametrically with respect
+to all prices, including the price of the good she produces). By introducing many agents, we have
+gone from having 4 states to having 4N states. Each agent needs to keep track of the individual
+states of all the N agents in the economy: these states determine the current supply and prices of
+goods and the (conditional) future distribution of productivities and work effort. Without that
+information, the agent cannot make an optimal decision regarding her work effort today (and
+hence, her disutility tomorrow). If the economy has 133 agents (a small village), the cardinality
+of the state space is 4133 , which is larger than the Eddington number, the estimate of protons in
+the universe, of 1080 .
+
+                                                 2
+    However, not only must the agent keep track of 4N states, but she also must compute the
+conditional expectation of her continuation value function over these 4N states. This computation
+requires either large sums (if the states, as here, are finite) or complex highly-dimensional integrals
+(if the states are continuous). Both tasks become prohibitively expensive as soon as N grows
+above the single digits.
+    This simple example might seem discouraging: we cannot even compute a simple economy!
+But it also suggests intriguing possibilities. For example, does an agent need to keep track of
+the states of every single agent? Under an appropriate symmetry assumption, it might only be
+necessary to keep track of how many agents are in each of the 4 individual states. Imagine, for
+instance, that all the goods enter into the agent's utility function with equal weight. The only
+information the agent requires, beyond her own states, is how many agents are in each of the four
+possible states. The indices (e.g., whether agent 45 or 79 is the one who has high productivity
+today with high or low work effort yesterday) are irrelevant. The cardinality of the new state
+space when N = 133 is  1.56 million points, something we can easily handle with a laptop.
+    We will show that this result is much more general: it holds in each case where we can find
+symmetry in the problem. Since we can include heterogeneity among the agents (e.g., different
+discount factors or utility weights) in the definition of the states, there will be plenty of cases
+where symmetry holds. In fact, most heterogeneous agent models in economics have a latent but
+obvious symmetry imposed by the presence of a Walrasian auctioneer. In general equilibrium,
+the auctioneer collects all the excess supply of each agent, aggregates them, and sells them.
+This aggregation removes the indices of agents in the economy and the solution of the model
+is invariant under all the permutations of other agents' states. Mathematically speaking, any
+function representing the solution belongs to the family of symmetric functions, i.e., the solution
+is a function on a set rather than on a vector space (see Macdonald, 1998, for an introduction to
+symmetric functions).
+    Notice that, for symmetry to hold, we do not require agents to have the same state values.
+We only require that they behave the same when they happen to have the same state values. To
+formalize this idea, we will introduce the notion of permutation-invariant dynamic programming
+and describe how we can use powerful results to represent functions invariant to permutations.
+    But our argument goes even further. Suppose we have many agents and there is an underlying
+symmetry assumption. Will we not have something that resembles a law of large numbers when
+computing the conditional expectation of the next-period value function? Intuitively, suppose the
+continuation utility does not depend too much on the states of any given agent. In that case, the
+continuation utility will become essentially constant for all draws of (independent) idiosyncratic
+shocks. Hence, we can calculate it with a single Monte Carlo draw from the distribution of
+idiosyncratic shocks.
+    We can show this possibility more carefully by relying on some recent developments in high-
+
+
+                                                  3
+dimensional probability theory, concentration of measure.1 Loosely speaking, concentration of
+measure states that a "well-behaved" (Lipschitz continuous) function that depends on lots of
+independent random variables is essentially constant. Applying this idea to the expected con-
+tinuation value function, if we have many agents and their idiosyncratic shocks are independent,
+each draw from the distribution of idiosyncratic shocks will deliver, approximately, the same re-
+sult. In models with a continuum of heterogeneous agents, we use an extreme form of this result:
+usually, we assume that a law of large numbers holds in the economy regarding the idiosyncratic
+shocks.2
+     The beauty of this result is that it reduces an N + 1 dimensional integration (each of the N
+idiosyncratic shocks plus the aggregate shock) to a two-dimensional integration: the idiosyncratic
+shock of the agent of interest and the aggregate shock. The argument works, a fortiori, when
+the idiosyncratic shock is a multidimensional vector, not a scalar. This drastic dimensionality
+reduction allows us to use deterministic integration methods such as Gaussian quadrature, as
+opposed to Monte Carlo methods, on the remaining variation in the aggregate shock. In other
+words: while normally we think of a high-dimensional state space as making integrals more
+difficult, we show that a large number of shocks make expectations easier to calculate.
+     Finally, we train the neural network that implements the permutation-invariant dynamic
+programming by choosing training points inspired by the symmetry of the problem. For instance,
+consider an economy where the profit is a function of linear aggregate demand. In this case,
+a firm's profit is invariant under the permutation of other firms' production level: the profit
+isoquants are hyperplanes in a simplex. Hence, the sampling is reduced to a two-dimensional
+problem: sampling from the space of the firm of interest and the space of hyperplanes in a
+simplex. In this paper, we can sample from those hyperplanes by simulating the aggregate
+dynamics from initial conditions of interest--and using the equilibrium policy for the dynamics
+of each agent. In such a way, our sampling process provides an especially accurate approximation
+starting from a finite set of (distributional) initial conditions.
+     With all these results, we define a general class of recursive competitive equilibrium models
+with heterogeneous agents, called permutation-invariant economies, and establish that the value
+function and optimal policy of each agent are invariant under permutation of other agents in
+the economy. We provide a theorem on how to represent permutation-invariant functions that
+can lead to a substantial reduction in the dimensionality of the state space. This functional
+   1
+     See Vershynin (2018) and Barvinok (2005) for an introduction to high-dimensional probability theory and
+concentration of measure.
+   2
+     As we will explain in detail at the end of Section 3, drawing from the distribution of idiosyncratic shocks,
+even just once, is the right thing to do. Instead, setting the shocks to zero (as a naive intuition would suggest if
+the idiosyncratic shocks are Gaussian) would miss the typical set of the distribution, which in high dimensions
+does not include the mode of the distribution (i.e., zero). Also, notice that our argument of drawing once from
+the distribution of idiosyncratic shocks, thanks to concentration of measure, is different from Judd et al. (2017),
+who propose precomputing the integrals required in Bellman or Euler equations.
+
+
+
+                                                         4
+representation sheds light on why in some heterogeneous agent models, such as Krusell and Smith
+(1998), the first moment of the aggregate distribution is enough to explain the perceived law of
+motion, and provides an extension for models that requires more information on the distribution
+of aggregates. The spirit of our method is, therefore, to take the `big K, little k' approach and
+generalize it to a `many big K, one little k' where each `k' can accurately forecast functions of
+the evolution of the other `K' that are invariant to relabeling and permutation.
+     We illustrate our arguments with a variation of the classic Lucas and Prescott (1971) model of
+investment under uncertainty. We pick this model for two reasons. First, this model generates one
+of the simplest nontrivial recursive competitive equilibria. For instance, Ljungqvist and Sargent
+(2018, ch. 7) use this model to introduce recursive competitive equilibria to students. Thus, the
+model is very well understood. Second, a particular case of this model, when the pricing function
+is linear, has a known linear-quadratic (LQ) solution, which gives us a classical optimal control
+solution against which we can benchmark our results and verify the numerical error. The classical
+control solution (which ignores symmetry) requires computations that scale with the cube of the
+number of variables (i.e., O(N 3 )), whereas our approximation method is independent of the scale
+(i.e., O(1) for reasonable N ).
+     Furthermore, we can solve the global solution of the LQ model by only fitting it to two data
+points, regardless of the number of firms. Given that the closed-form model with linearity only
+requires two parameters, this should not be a surprise. The interesting point is that we can do
+so even in cases where the guessed solution is heavily over-parameterized (e.g., if we pretend
+not to know the exact functional form of the solution and, instead, we try to fit a nonlinear
+solution with 10,000 parameters). An even more exciting result is that this solution is found
+without directly applying a transversality condition or even using a stationary solution as a
+special case of a boundary. Despite possibly tens of thousands of parameters, the process finds
+the "right" equilibrium, which generalizes well outside of the small number of points used in the
+approximation.3
+     We also use the LQ solution to show the concentration of measure and permutation invariance
+exactly. While, ex-post, these results should not be surprising, they are more general than one
+might suspect. To show this, we solve a non-LQ version of the model using neural networks to
+represent the optimal policy and value function. This strategy is justified by the observation
+that neural networks are universal approximators, i.e., they can get -close to any continuous
+function (Cybenko, 1989, and Hornik, 1991). Also, neural networks are flexible in their design,
+and we have efficient and fast software (e.g., Pytorch and TensorFlow) and hardware (e.g., GPUs)
+platforms for training them. Notice, nonetheless, that the neural networks do not cause reduction
+   3
+    The mathematical theory of highly over-parameterized models (when the number of parameters          the data
+points) shows that this class of models, when fitted with stochastic optimization algorithms, generalize by con-
+verging to a minimum-norm solution within the space of approximating functions (see Belkin et al., 2019, and
+Advani et al., 2020). This minimum-norm solution coincides with the equilibrium we are interested in.
+
+
+
+                                                       5
+of dimensionality: symmetry does.
+    To frame our paper within the literature, remember that symmetry is a property of a mathe-
+matical system that remains invariant under a set of operations or transformations. The existence
+of symmetry in a problem can lead to a reduction in dimensionality and, thus, alleviate the curse
+of dimensionality, enhance accuracy, and reduce complexity. For instance, symmetry plays a
+crucial role in reducing of dimensionality in studying ordinary and partial differential equations
+(Walcher, 2019, and Bluman et al., 2010).
+    Symmetry has been applied in economics before. For instance, Hartford et al. (2016) use
+permutation-equivariant symmetry in order to reduce dimensionality to study the best responses
+in a normal form game. Sato (1985) and Samuelson (1990) use the Lie groups symmetry to
+reduce the dimensionality of income space required to describe aggregate demand. Symmetry is
+also implicitly used every time economists solve models with a mean-field approximation whenever
+a continuum of agents is assumed.4
+    But it has been the recent developments in the machine learning literature that have proved
+that exploiting symmetry can significantly alleviate the curse of dimensionality in regression and
+classification problems. This has been done for data augmentation and designing architectures
+for neural networks.
+    Regarding data augmentation, we can create pseudo-data that reflect the symmetry of the
+problem. For instance, if the function of interest is invariant to any permutation of its inputs, the
+pseudo-data are all the permutations of independent variables with the same dependent variable.
+Chen et al. (2019) provide a comprehensive group-theoretical treatment of data augmentation.
+In terms of architecture design, we can design a parametric approximating family of functions
+to preserve the symmetry of the problem, such as a neural network that is invariant under the
+rotation of its input arguments. This design reduces the size of the set of parameters in the
+optimization problem and alleviates over-fitting.5
+    Our use of permutation-invariant symmetry falls under the architectural approach. We follow
+the recent developments in the representation of functions that are invariant under permutation
+groups. Zaheer et al. (2017) establish that using permutation invariance and equivariant sym-
+metry can lead to a significant reduction in dimensionality. Yarotsky (2018) provides a detailed
+treatment of representing permutation-invariant functions with neural networks and provides a
+representation that is a universal approximator for permutation-invariant functions. Wagstaff
+et al. (2019) illustrate cases where this functional representation fails to reduce dimensional-
+ity. Our choice of functional representation is also closely linked to the literature of symmetric
+   4
+     The Walrasian auctioneer uses symmetry, which manifests as an equilibrium condition on a distribution rather
+than individual states. Thus, agents can use the forecast of the distribution to forecast the scalar prices they care
+about. Similarly, without aggregate shocks, the evolution of the distribution is deterministic. Hence, agents can
+forecast the scalar functions of the distribution imposed by the auctioneer perfectly.
+   5
+     Lyle et al. (2020) compares the benefits of data augmentation versus architectural design for deep neural
+networks.
+
+
+                                                         6
+functions, see Prasad (2018) and Zabrocki (2015).
+    Exploiting symmetry in Markov decision processes (MDPs) to reduce dimensionality was in-
+troduced by Ravindran and Barto (2001), who treat symmetry as a homomorphism between two
+MDPs that commutes with transition dynamics and preserves the reward function. Similarly,
+in our work, the permutation symmetry can be thought of as a homomorphism between two
+economies. However, earlier work regarding symmetry has mainly focused on discovering sym-
+metries in MDPs rather than exploiting a priori knowledge of symmetry; see Narayanamurthy
+and Ravindran (2008).6
+    Using neural networks as a family of approximating functions to solve a stochastic dynamic
+problem in economics can be traced back to Duffy and McNelis (2001). Due to recent sub-
+stantial hardware and software advances in training deep neural networks, this method has be-
+come popular in solving dynamic models in economics. See, among others, Maliar et al. (2019),
+Fern´andez-Villaverde et al. (2019), Duarte (2018), and Azinovic et al. (2019).
+    The rest of the paper is organized as follows. Section 2 formally introduces the ideas of
+permutation-invariant dynamic programming and concentration of measure. Section 3 presents
+our application. Section 4 solves the special case with a linear inverse-demand using the classic
+control solution using LQ Gaussian techniques. Section 5 introduces our deep learning imple-
+mentation to solve both the LQ and non-LQ cases. Finally, Section 6 explores the full generality
+of these techniques.
+
+
+2     Permutation-Invariant Dynamic Programming and Con-
+      centration of Measure
+    This section describes the two ideas that will efficiently tackle highly-dimensional dynamic
+programs: permutation-invariant dynamic programming and concentration of measure. Permu-
+tation invariance will give us a structure in the solution of dynamic programming problems that
+we can exploit, even when the number of states is large. Concentration of measure will let us deal
+with the complex conditional expectations that appear in highly-dimensional dynamic programs.
+In Section 3, we will present a model of investment under uncertainty where we can apply these
+two ideas.
+    But, before introducing permutation invariance and concentration of measure, we briefly
+discuss the concept of a permutation matrix and the associated symmetric group of permutation
+matrices under matrix multiplication.
+    6
+      There is also an emerging literature in deep reinforcement learning that uses symmetry to reduce dimension-
+ality (van der Pol et al., 2020).
+
+
+
+
+                                                       7
+2.1    The symmetric group of permutation matrices
+    We denote a column vector of length N of 1s or 0s as 1N and 0N respectively. Similarly, we
+write matrices of size M × N of 0s or 1s as 0M N and 1M N respectively, and an identity matrix
+of size N as IN . Notice that 1N N = 1N 1N , a result that will be helpful momentarily.
+    A permutation matrix is a square matrix with a single 1 in each row and column and ze-
+ros everywhere else. These matrices are called "permutation" because, when they premultiply
+(postmultiply) a conformable matrix A, they permute the rows (columns) of A.
+    Let SN be the set of all n! permutation matrices of size N × N . For example,
+
+                                             1 0   0 1
+                                    S2 =         ,            .
+                                             0 1   1 0
+
+The first element of S2 is the identity matrix, which leaves rows and columns of a multiplied
+matrix A unchanged, while the second element swaps the rows or columns of A. The set SN
+forms a symmetric group under matrix multiplication. See Appendix A for further notation.
+
+
+2.2    Permutation-invariant dynamic programming
+   We want to study a class of dynamic programming problems where the aggregate state vector
+X can be permuted. To do so, we start by defining a general dynamic programming problem for
+environments with many agents and using recursive notation.
+
+Definition 1 (A `big X , little x' dynamic programming problem). Consider the dynamic pro-
+gramming problem:
+
+                           v (x, X ) = max r x, u, X +  E [v (x , X )]                          (1)
+                                       u
+
+                              s.t. x = g (x, u) + w +                                           (2)
+                                  X = G(X ) + W +  1N .                                         (3)
+
+Here, x is the individual state of the agent, X is a vector stacking the individual states of all of
+the N agents in the economy, u is the control, w is random innovation to the individual state of
+the agent, which gets stacked in W  N (0N , IN ) where, without loss of generality w = W1 , and
+  N (0, 1) is a random aggregate innovation to all the individual states. Also, v : RN +1  R
+is the value function, r : RN +2  R is the return function, g : R2  R is the deterministic
+component of the law of motion for x, G : RN  RN is the the deterministic component of the
+law of motion for X , and E [·] is the conditional expectations operator.
+
+   Extending the previous notation to the case where every agent has several state or control
+variables is straightforward but tedious. To simplify derivations, from now on, we focus on the
+
+                                                 8
+case where r(·), g (·), and G(·) are differentiable.
+
+Definition 2 (Permutation-invariant dynamic programming). A `big X , little x' dynamic pro-
+gramming problem is a permutation-invariant dynamic programming problem if, for all (x, X ) 
+RN +1 and all permutations   SN , the reward function r is permutation invariant:
+
+                                      r(x, u, X ) = r(x, u, X ),                               (4)
+
+the deterministic component of the law of motion for X is permutation equivariant:
+
+                                          G(X ) = G(X ),                                       (5)
+
+and the covariance matrix of the idiosyncratic shocks satisfies
+
+                                                = .                                            (6)
+
+   The intuition behind the previous definition is that we are interested in dynamic programming
+problems where we care, for example, about the distribution of capital among the agents in the
+economy, but not whether the rich agent is agent 12 or agent 27. If agent 12 swaps her capital with
+agent 27 (and other relevant states such as her preference shock or income level), the equilibrium
+dynamics of the economy would still be the same.
+   The next proposition shows a basic property of permutation-invariant dynamic programming.
+
+Proposition 1 (Permutation invariance of the optimal solution). The optimal solution of a
+permutation-invariant dynamic programming problem is permutation invariant. That is, for all
+  SN :
+                                    u(x, X ) = u(x, X )                                 (7)
+
+and
+                                         v (x, X ) = v (x, X ).                                (8)
+
+Proof. Appendix C.1
+
+    Building on our previous example, Proposition 1 tells us that, if the equilibrium dynamics
+of the economy do not change if agent 12 swaps her capital with agent 27, the policy and value
+functions of agent 1 will not change either. This straightforward property allows us to write the
+solution of the problem using a remarkable result regarding the representation of permutation-
+invariant functions.
+
+Proposition 2 (Representation of permutation-invariant functions). Let f : RN +1  R be a
+
+
+
+                                                   9
+continuous permutation-invariant function under SN , i.e., for all (x, X )  RN +1 and all   SN :
+
+                                        f (x, X ) = f (x, X ).
+
+Then, there exist L  N and continuous functions  : RL+1  R and  : R  RL such that:
+
+                                                           N
+                                                  1
+                                  f (x, X ) =  x,                (Xi ) .
+                                                  N        i=1
+
+
+Proof. The proof can be found in Wagstaff et al. (2019).
+
+   This result is powerful: if we can find functions  and  with a small L, we can represent
+highly-dimensional functions, such as the policy and value functions of models with high N
+in a much more efficient way and, therefore, exploit the symmetric structure of the dynamic
+programming problem to solve it quickly and accurately.
+
+
+2.3    Concentration of measure
+   We complete this section by introducing the idea of concentration of measure. First, we need
+to have an appropriate notion of boundedness and how it applies to gradients of functions of
+Gaussian random variables.
+
+Definition 3 (Bounded functions in N ). Let:
+
+                            H(M )  {y  RN : |yi |  M i = 1, ..., N }
+
+be an N -dimensional hypercube in RN . A function f : RN  R is bounded in N if for every M
+there exists KM such that
+                                       sup |f (y )| < KM
+                                        y H(M )
+
+where KM is a constant that does not depend on N , but may depend on M .
+                                                                                             1   N
+    A simple example of a symmetric function fulfilling Definition 3 is the mean, f (X ) = N     i=1 Xi
+since supyH(M ) |f (y )| < M for all N . The main purpose of this definition is to reject functions
+that explode in the number of states, such as the f (X ) = N  i=1 Xi since supy H(M ) |f (y )| = N M .
+
+
+Definition 4 (Expected gradient bounded in N ). Let f : RN  R be a bounded function in N
+and z  N (0N , IN ) be a normalized Gaussian random vector. The function f has its expected
+gradient bounded in N if there exists a C such that:
+
+                                                       2         C
+                                        E    f (z )                .
+                                                                 N
+
+                                                  10
+where C does not depend on N .
+
+   Loosely speaking, Definition 4 tells us that a function has an expected gradient bounded in
+N when its value does not change too fast when its Gaussian random arguments vary by a small
+amount.
+   The next proposition delivers the intuitive result that, for a large N , a function f (·) with an
+expected gradient bounded in N is essentially a constant. That is, the measure of its values is
+"concentrating."
+
+Proposition 3 (Concentration of measure when expected gradients are bounded in N ). Suppose
+z  N (0N , ), where the spectral radius of , denoted by (), is independent of N and f :
+RN  R is a function with expected gradient bounded in N . Then:
+
+                                                            ()C 1
+                              P   f (z ) - E [f (z )]        2
+                                                                  .
+                                                                N
+
+Proof. Appendix C.2
+
+   As Ledoux (2001) puts it: "A random variable that depends in a Lipschitz way on many
+independent variables (but not too much on any of them) is essentially constant."
+
+
+3    An Application: A Model of Investment
+    To illustrate how permutation-invariant dynamic programming and concentration of measure
+operate in a common economic application, we propose an extension of the classic model of
+investment under uncertainty by Lucas and Prescott (1971). We will consider an industry with
+a large number of firms and follow the recursive formulation in Prescott and Mehra (1980). In
+contrast to Lucas and Prescott (1971), we will not require that all firms have symmetric states,
+just that they have symmetric policy functions.
+    More concretely, we study an industry consisting of N  1 price-taking firms, each producing
+a single good using capital under constant returns to scale. By picking appropriate units, we can
+consider that a firm i produces output x with x units of capital. We can stack the production
+(or capital) of the whole industry in the vector X  [x1 , . . . xN ] .
+    The capital of the firm depreciates at a rate   [0, 1], is increased by investment u, and
+is shifted by an i.i.d. idiosyncratic shock w  N (0, 1) and a single i.i.d. aggregate shock,
+  N (0, 1), common to all firms (adding persistence for the shocks is trivial but complicates
+notations). Thus, the law of motion for capital is:
+
+                                  x = (1 -  )x + u + w + .
+
+Due to adjustment frictions, investing u has a cost, in valuation terms, c(u) = 2
+                                                                                  u2 .
+
+                                                 11
+   We assume that the (inverse) demand function for the industry is, for some  > 0 and  > 0:
+
+                                                     N                      
+                                                1                       
+                             p(X ) = 0 - 1                max{0, xi }          .                  (9)
+                                                N   i=1
+
+
+When  = 1, this function ­an affine transformation of the power-mean­ is differentiable almost
+everywhere. The max operator ensures the inverse demand function is well defined even for
+negative outputs.
+    Since we will be looking at competitive equilibria where a firm is a price taker, the firm does
+not consider the impact of its individual decisions on p(X ). Also, all firms use their cash flow to
+finance their investment, u. Hence, the period profits of firm x are:
+
+                                                       
+                                     profits = p(X )x - u2 .
+                                                       2
+
+The dynamic problem of the firm is to choose u to maximize the expected present discounted
+value of the firm at discount rate  .
+   Since the firm is a price taker, its Bellman equation takes the evolution of X as given and
+determined by the equilibrium policy of all firms, including itself. In the case of a single repre-
+sentative firm, where N = 1, this formulation nests the classic `big K , little k ' approach.
+   First, we write such a Bellman equation considering X as a vector, as it is the most common
+practice in economics.
+
+Bellman equation with vector X The firm of interest with capital x takes a symmetric
+       ^(·, X ) as given for all other firms in X . Without loss of generality, we assume that the
+policy u
+firm is the first in the vector, i.e., x = X1 . With this assumption, we can write the recursive
+problem of the firm taking the exogenous policy u   ^(·, X ) as:
+
+                                          
+               v (x, X ) = max p(X )x - u2 +  E [v (x , X )]                                     (10)
+                            u             2
+                   s.t. x = (1 -  )x + u + w +                                                   (11)
+                       Xi = (1 -  )Xi + u
+                                        ^(Xi , X ) + Wi + ,                for i  {2, ..., N }   (12)
+                       X1 = (1 -  )X1 + u
+                                        ^(X1 , X ) + w + .                                       (13)
+
+    Four points deserve further explanation. First, the expectation in equation (10) is taken over
+the i.i.d. idiosyncratic shocks {w, W2 , . . . WN } and the aggregate shock  . Second, equation (11)
+is just the law of motion of capital of the firm given its control u. Third, equation (12) is the
+forecast the firm makes over the evolution of the distribution of capital of all firms given the
+exogenous policy. Fourth, equation (13) takes care of the contribution of the firm's own policy
+to the aggregate state X . When  > 0, we can let the firm consider that w = W1 . When N is
+
+                                                12
+sufficiently large, this last point becomes irrelevant for the optimal u and we could remove the
+special case of that correlated shock, combining (13) into (12). In the case of N = 1 and µ = 0,
+this formulation exactly nests the textbook `big-K, little-k' example derived in Ljungqvist and
+Sargent (2018), Section 7.2.
+     Next, we show that it is easy to rewrite the previous problem considering X as a set. While
+both formulations look similar cosmetically, the conditions for treating the aggregate distribution
+as a set rather than a vector are essential to our method.
+
+Bellman equation with Set X To use our results, we need to show that the investment
+model described in (10) to (13) satisfies all the conditions of a permutation-invariant dynamic
+programming problem in Definition 2.
+    First, to show that the payoff is permutation invariant according to equation (4), it is sufficient
+for the p(X ) function in equation (9) to be permutation invariant. This is easily shown since the
+function is an affine transformation of a power mean.
+    Second, the law of motion must be permutation equivariant according to equation (5). This
+is shown more formally in Appendix D.1, but the intuition is that, conditional on a permutation-
+invariant u^(·, X ), we can reorder any of the indices in equations (12) and (13), i.e., Xi = (1- )Xi +
+^(Xi , X ) to Xj = (1- )Xj +^
+u                               u(Xj , X ) for the permutation matrix  since u ^(Xj , X ) = u  ^(Xj , X ).
+    Finally, to show that the covariance matrix fulfills condition (6) from equations (12) and (13),
+notice that the idiosyncratic shocks of other agents are embodied in the identity matrix times  .
+Therefore, for all permutation   SN ,  IN =  IN .
+    Hence, by Proposition 1, the solution to the investment model (u, v ) is permutation invariant
+and can be treated as a function on sets rather than a vector space (i.e., the ordering of the inputs
+does not matter). If we create a tuple of the states and the corresponding shocks as (X, W ), the
+set equivalent of equations (12) and (13) becomes:
+
+              X = {(1 -  )^
+                          x+u
+                            ^(^
+                              x, X ) +  w
+                                        ^ +  for all (^  ^ )  (X, W ) \ (x, w)}
+                                                      x, w
+                   {(1 -  )x + u
+                               ^(x, X ) + w +  } .                                                   (14)
+
+    As before, the special case of the x in expression (14) is to ensure the firm does not take
+its choice into account when forecasting the evolution, but can still allow for the correlation of
+shocks when calculating expectations. While this is important for correctness with very small N
+­and in particular nesting the N = 1 case­ it has almost no quantitative impact as N increases.
+For that reason, we will drop the special case in further calculations in this section, effectively
+decoupling x from the set X . Since the forecast X is only used for expectations, this is equivalent
+to assuming that the firm does not take into account that its contribution to X is correlated with
+its own shock when calculating expectations of X .
+
+
+
+                                                   13
+   Using this simplification, we can rewrite equations (10) to (13) as:
+
+                                         
+              v (x, X ) = max p(X )x - u2 +  E [v (x , X )]                                       (15)
+                           u             2
+                  s.t. x = (1 -  )x + u + w +                                                     (16)
+                      X = {(1 -  )^
+                                  x+u x, X ) +  w
+                                    ^(^         ^ +  for all (^  ^ )  (X, W )} .
+                                                              x, w                                (17)
+
+    The expectation in (15) is taken over w  R,   R, and W  RN , all independent normal
+shocks. This reformulation allows us to solve for the equilibrium with functions on sets rather
+than vectors and to use the representation in Proposition 2.
+    Since the problem fulfills the requirements of Definition 2 for any permutation-invariant u^(·, ·),
+Proposition 1 tells us that we have a permutation-invariant optimal solution. Since in the sym-
+metric equilibrium every agent solves the same policy, the u  ^(x, X ) is also permutation invariant,
+which we needed to ensure for the law of motion, (5), to be equivariant. Thus, we are ready to
+define a symmetric competitive equilibrium.
+Definition 5. An equilibrium is a v (x, X ) and u
+                                                ^(x, X ) such that:
+   · Given u
+           ^(x, X ), v (x, X ) is the value function solving (15) for each agent and u(x, X ) is the
+     optimal policy function.
+
+   · The optimal policy is symmetric, i.e., u(x, X ) = u
+                                                       ^(x, X )
+   In this paper, we focus on problems that the optimal solution is unique and can be found via
+a well-defined Euler equation, though our techniques are not specific to that class of models.
+Proposition 4. For a permutation-invariant p(X ), the Euler equation takes the form:
+
+                               u(X ) =  E [P (X ) +  (1 -  )u(X )]                                (18)
+                    X = {(1 -  )^
+                                x + u(X ) +  w
+                                             ^ + , for (^  ^ )  (X, W )} .
+                                                        x, w                                      (19)
+
+Proof. See Appendix C.3.
+    The economic interpretation of the Euler equation (18) is standard. The firm weighs the
+marginal cost of an additional unit of investment, u(X ), against the benefit of additional profits
+from that marginal increase in output at a price p(X ) plus the value of investment after de-
+preciation. In this application, the policy becomes independent of x. That result is, however,
+incidental. If we had some curvature on x in the revenue function (as we will have in an extension
+in Section 6.1), the policy will not be independent of x.
+    Later, we will solve our model by minimizing the Euler residuals, using equation (19) for the
+law of motion of X :
+
+                      (x, X )  u(x, X ) -  E [P (X ) +  (1 -  )u(x , X )] .                       (20)
+
+                                                  14
+Dimensionality and intuition on the problem structure While seemingly simple, the
+dimensionality of the Euler equation (18) is nontrivial. Consider if N was a thousand, then
+u(x, X ) is a policy function on a thousand and one dimensional state-space. Furthermore, even
+given a u(x, X ) function, the expectation is taken over a thousand dimensions of w     ^  W draws
+and a single dimension for  , correlated in the evolution of each agent state. It is not feasible to
+solve this problem with standard methods.
+    But hope is not lost. First, think about the expectation in the simple case of  = 0 but  > 0:
+while considering a thousand individual forecasts of x from (19) is computationally intractable,
+since N is large, a firm may have an accurate forecast of functions of the distribution of x . In
+fact, the firm does not care about the individual x unless its u(·, X ) depends a great deal on a
+single x
+       ^ (hence the important of boundedness of the gradient for the concentration of measure).
+    In the case where firms do not care about the individual x , a forecast of the distribution
+is good enough. Furthermore, when  = 0 and N is large, the distribution evolves almost
+deterministically. Similarly, even when there are aggregate shocks, an agent may have an accurate
+forecast of functions of the distribution conditional on an aggregate shock realization.7
+    Next, consider the structure of u(·, X ). Since the price function was invariant to permutations,
+we know that the policy function will be invariant as well. Hence, even if the firm cannot
+accurately predict an individual x ^  X without large amounts of computations, it only needs to
+predict the general distribution of X rather than each element in it. This is the essence of the
+permutation invariance, i.e., u(·, X ) = u(·, X ) for any permutation  of X .
+    The interaction of these provides the intuition for how to simplify the expectations. If u(·)
+and p(·) are functions of a large number of random x      ^  X , but do not depend too much on
+any individual one of them (as defined by the notion of bounded gradients, Definition 4), then
+the expectation conditional on the aggregate shock may be close to a deterministic function.
+Conditional on any aggregate shocks, the distribution evolves close to a deterministic function,
+and the p(X ) and u(·, X ) are functions of the distribution, so they are fully predictable. In
+practice, this means that if we do a Monte Carlo expectation drawing random X consistent with
+the law of motion, then for a large enough N , we only need a single draw of individual shocks
+according to Proposition 3.
+    In the case of a linear p(·), we can set the draw of all w ^  W and  to be zero, which relies
+on certainty equivalence. However, in the more general cases, we will need to draw a random W .
+The intuition is that, in high dimensions, the typical set of a measure does not include the mode of
+the distribution (i.e., the N -dimensional zero). For example, an N -dimensional Gaussian random
+                                                      
+variable concentrates on a hypersphere of radius N , rather than at the origin. Furthermore,
+the distance between the typical set and the origin increases with the dimensionality of the
+   7
+    The extreme case of this result appears in models `a la Aiyagari-Krusell-Smith. With a continuum of agents,
+we only care about the distribution, not the position of each agent on it.
+
+
+
+                                                      15
+distribution. See Vershynin (2018) and Fern´   andez-Villaverde and Guerr´
+                                                                         on-Quintana (2020) for
+a formal definition of a typical set, examples, and more details.
+
+
+4       A Symmetric Linear-Quadratic Model of Investment
+   In this section, we focus on the case where the aggregate price p(X ) has a linear structure
+and the revenue has linear dependency on the agents' states, i.e.,  =  = 1. This choice of
+parameters reduces the problem to a linear-quadratic (LQ) dynamic programming problem as
+described in Ljungqvist and Sargent (2018, Section 7.2)--except with N  1 firms.8
+   The LQ formulation helps us along two dimensions. First, this simple environment lets
+us formally demonstrate some of the fundamental symmetry and concentration of measure in
+Section 2 that we will exploit in solving this model with neural network approximations for the
+non-LQ version of the model. Second, this formulation will provide us with an accurate solution
+using classical optimal control techniques against which we can benchmark our solution method.
+
+
+4.1     The linear-quadratic regulator formulation
+   We start by working with a vector. While this is unlike Proposition 4, it simplifies our notation.
+As before, without loss of generality, assume that the x in (16) is the first element of X . Denote
+the state of all firms and a constant term as x  1 x X                  1 x x X2 . . . XN               
+
+RN +2 and the vector of all Gaussian shocks as w   W                 =  w W2 . . . WN              
+N (0, IN +1 ).
+   Next, define   S to be a permutation represented by a (N + 2) × (N + 2) permutation
+matrix where the lower-right N × N block is in SN , i.e., holding the first and second entries fixed.
+That is, we are looking at permutations of the form
+                                                             
+                                                 1 0      0N
+                                        =        0 1      0N  ,                                      (21)
+                                                             
+
+                                                0N 0N     N
+
+where N  SN as defined in Section 2.1.
+    8
+    Anderson et al. (1996) offer a detailed mathematical treatment of LQ dynamic programming, dealing with
+topics such as existence, uniqueness, and convergence.
+
+
+
+
+                                                   16
+       If we define the matrices:
+                                                                                     
+                                              1      0                0N
+                              A               0     1-                0N                                     (22)
+                                                                                     
+                                                                                     
+                                                                            H1
+                                         H0 1N         0N     (1 -  )IN +      1 1
+                                                                            N N N
+
+                              B        0 1 0N                                                                (23)
+
+                                                   0N -1
+                              C                                                                              (24)
+                                          1N            IN
+                                                    0
+                                                                     
+                                         0          2
+                                                               0N
+                                         0                     1
+                              R                     0         -2  1                                          (25)
+                                                                     
+                                         2                       N N 
+                                                   1
+                                         0N       -2  1
+                                                     N N
+                                                              0N 0N
+                                     
+                              Q      2
+                                          ,                                                                  (26)
+
+we can write the problem as an LQ optimal regulator as derived in Appendix D.1.9
+
+Proposition 5 (LQ formulation). Taking H0 and H1 as given, each firm solves:
+
+                               v (x) = max -x Rx - u Qu +  E [v (x)]                                         (27)
+                                              u
+
+                                              s.t.x = Ax + Bu + C w                                          (28)
+
+With solutions characterized by a P , d, and F :
+
+                                                  v (x) = -x P x - d                                         (29)
+                                                  u(x) = -F x.                                               (30)
+
+A symmetric recursive competitive equilibrium is defined as H0 and H1 such that:
+
+                                          H1      H1          H1                     H1
+                     F = - H0 0           N       N
+                                                        ...   N
+                                                                   =-       H0 0     N N
+                                                                                        1   .                (31)
+
+Furthermore, both the control u(·) and value function v (·):
+
+   1. are invariant to permutations   S as defined by (21);
+
+   2. have expected gradients bounded in N , according to Definition 4:
+
+                                                                   H1
+                                                       W u(x ) =      1N ;                                   (32)
+                                                                   N
+   9
+    See also Ljungqvist and Sargent (2018, Ch. 5 and 7), in particular, Section 5.3 and exercises 5.11, 5.12, 7.1,
+and 7.2.
+
+
+
+                                                              17
+  3. have a concentration of measure according to Proposition 3 when calculating with a Monte
+     Carlo draw rather than certainty equivalence, which leads to --for some Cv independent of
+     N:
+
+                                                                      2 H1
+                                                                         2
+                                                                           1
+                            P    u(x ) - E [u(x ) | w, , x]             2 N
+                                                                                               (33)
+                                                                     2C 2 1
+                             P   v (x ) - E [v (x ) | w, , x]         2v ;                     (34)
+                                                                           N
+
+Besides, the Euler residual (X ; u) is a Gaussian random variable, when calculating with a Monte
+Carlo draw rather than certainty equivalence, as follows
+                                                                         2
+                                          2  2 1 -  (1 -  )H1
+                           (X ; u)  N 0,                                     .                 (35)
+                                                   N
+
+Proof. See Appendix D.1 for the proof using classic LQ-Gaussian control, Appendix D.2 for
+permutation invariance, and Appendix D.3 for concentration of measure
+   As a demonstration of some of the symmetry properties, we will sketch out the proof for u(·)
+in Proposition 5, where we take the functional form of F as given.
+
+  1. Since F as defined in (31) is identical for all but the first two elements, it aligns with the
+     block structure of the permutations. Hence, for any of the  in (21), F = F , which ensures
+     that u(·) is symmetric in all changes to the X vector.
+
+  2. The gradient of an affine function is constant. Hence, for any w, the policy next period is
+     u(Ax + Bu + C w). Given the block structure of F and C , we differentiate with respect to
+     W in the w to find:
+
+                                                         H1
+                            W u(Ax + Bu + C w) =            1N                                 (36)
+                                                         N
+
+     Therefore, the square of the norm of the gradient of the policy can be bounded as:
+
+                                                          N          2
+                                                 2              H1            2 H1
+                                                                                 2
+                                  E   W u(x )        =                   =         .           (37)
+                                                          i=1
+                                                                N             N
+
+
+  3. Since W  N (0N , IN ), the spectral radius of IN is 1 and the concentration of measure
+     follows from (32) and Proposition 3.
+
+
+
+    Recall that, in classic LQ control, certainty equivalence allows us to calculate the policy u(·)
+setting w = 0N +2 in the maximization (27), while the variance of the shock only enters into the d
+
+                                                18
+of the solution (29). The d can be decomposed into a component related to the  aggregate shock
+and another for the W associated with the finite number of firms. Consistent with intuition, as
+N goes to infinity, the component of d associated with the idiosyncratic shocks goes to 0. That
+is, conditioning on the aggregate shock, the firm can get closer and closer to the deterministic
+forecast of the distribution of X , at which point certainty equivalence is no longer necessary.
+    Given that we know the exact solution, certainty equivalence gives us a closed-form expression
+for the numerical error associated with using a single Monte Carlo draw for the expectation, which
+can serve as a guide for the quality of the approximation in the many cases of interest where
+certainty equivalence would not hold.
+    To illustrate some of these ideas, we fix the model parameters at conventional levels. Unless
+stated otherwise, we will have  = 0.005,  = 0.001, 0 = 1, 1 = 1,  = 0.95,  = 90,  = 1,  = 1,
+and µ = 0. In terms of solving for an equilibrium in Proposition 5, we guess an H0 and H1 , solve
+the LQ problem as a matrix Ricatti equation, and then find the fixed point of H0 and H1 .
+
+
+                Std. Dev. of (X ; u)                                Std. Dev. of u(X ) Errors
+
+  10-2                                                 10-2
+
+  10-3                                                 10-3
+
+  10-4                                                 10-4
+
+  10-5                                                 10-5
+
+         100     101      102      103      104               100      101     102    103       104
+                           N                                                   N
+
+Figure 1: The concentration of Euler residuals (X ; u) and the optimal policy u(X ) for  =  = 1.
+
+   The left panel of Figure 1 plots the standard deviation of the Euler residuals (X ; u) induced
+by the concentration of measure approximation as we increase the number of firms in the industry
+and we solve the model with the algorithm described above. By the time we get to 10,000 firms,
+the standard deviation of the Euler errors is 2.4 × 10-4 . In the right panel of Figure 1, we draw
+the standard deviation of the optimal policy u(X ) for the linear aggregate prices given the same
+Monte Carlo approximation and find the standard deviation of the policy error is 2.5 × 10-6 for
+N = 10, 000 and 2.2 × 10-5 for our baseline of N = 128.
+
+
+
+
+                                                  19
+4.2    Why do we need a functional representation?
+   While the algorithm outlined in the previous subsection works in delivering accurate solutions,
+as N becomes large, it is too slow, as it requires computations of order O(N 3 )). In comparison,
+the specialized algorithms we will introduce in Section 5 that exploit the symmetry of the dynamic
+programming problem will only require computations of order O(1) for reasonable N .
+   For instance, if it is known that optimal policy is permutation invariant, linear, and does not
+depend on x0 , Proposition 2 tells us that:
+
+                                                              N
+                                                       1
+                                    u(x, X ) = H0 +      H1         Xi                             (38)
+                                                       N      i=1
+                                                        N
+                                                   1
+                                            =                (Xi ) .                               (39)
+                                                   N   i=1
+
+
+In other words,  : R  R1 (i.e., L = 1) is the identity function (X ) = X and  : R1  R
+such that (y ) = H0 + H1 y for some undetermined H0 and H1 . In this case, regardless of the
+number of firms N , the problem is two dimensional in the space of parameters. See Appendix D.4
+for the functional representation of v (x, X ).
+    We move now to provide a detailed treatment of the representation of the optimal policy
+function when the only a priori knowledge available is the permutation invariance of the optimal
+policy function, but while certainty equivalence is not assumed or does not hold.
+
+
+5     A Deep Learning Implementation
+    Our goal is to search for a policy function, u(X ), that satisfies Proposition 4 and works much
+faster than the standard LQ solution. We are interested in a global solution that is not just
+accurate in a ball around some particular X ss  X (usually, but not necessarily, the steady
+state of the model), but beyond it as well. However, we will not require that the solution
+needs to be accurate for any X  X . In particular, we want the u(·) to generalize well on
+                            T
+paths Xt1 , Xt2 , . . . XtJ t=0 that are likely were we to start from a particular (or finite number)
+                                            1    2          J
+of distributional initial conditions X0       , X0 , . . . X0 . An extreme version of this idea would be
+to focus our effort on getting an accurate solution along the transition path after an unexpected
+shock. Fortunately, we will see that the solutions will do much better in many cases and will be
+accurate in a much larger set of points.
+
+
+
+
+                                                  20
+5.1     Solution method
+    Our solution algorithm assumes a function form u(X ; ). A common choice might be a
+polynomial with a set of weights . Then, we pick points in the X space and minimize a loss
+function (e.g., mean squared error of the Euler residuals, as in equation (20)) with respect to .
+The points can be some collocation nodes, simulated points a    ` la Rust, or many others.
+    Thus, the algorithm starts by following the spirit of the classical collocation-style approaches.
+We diverge in using relatively few points in X and in ignoring stationarity in both the simulation
+and the solution. In particular, we use the concentration of measure described in Appendix B
+to calculate the integral over the W shocks in (18). To do so, though, we must condition on the
+aggregate  shock to ensure that Definition 4 holds.
+
+
+5.2     Symmetric approximations
+    We will consider any parametric specification for the u(·) function that can be implemented
+in a machine learning framework as a neural network. It can be as simple as a 2-parameter
+specification to find the H0 and H1 that implement the affine  and  in equation (38), or it can
+be flexible representations with many parameters. Symmetry within this model is encoded in the
+structure of the approximating function. For example, the LQ solution in equation (38) has a
+built-in symmetry on the X vector by taking its mean. We will use the representation theorem in
+Proposition 2 to implement approximations where the functional form is not known and choose
+L, and neural networks for  and  separately.
+    Symmetry will allow us to tackle a potential problem of deep learning: its reliance on heavily
+over-parameterized models, indexed by a number of parameters frequently several orders of mag-
+nitude greater than the number of available data points. Recall that deep learning approximates a
+function f (·; ) by composing a set of activation functions. For example, we can choose the activa-
+tion functions {f1 (·; 1 ), f2 (·; 2 ), f3 (·; 3 )} and then approximate f (·; )  f1 (f2 (f3 (·); 3 ); 2 ); 1 ).
+Suppose we can impose some structure on the approximation. In that case, we can get a nesting
+of functions that is considerably more efficient than blind nesting.10
+    Symmetry is one clear example of structure we can encode in the approximation by using
+the representation theorem in Proposition 2 to design our neural network. For instance, we
+can use rectified linear units (ReLU), a common nonlinear specification in deep learning, to
+approximate the functions  and . In particular, our (one-layer) approximating function will
+be f (x; 1 , 2 ) = 1 max (2 x, 0), where the max is the point-wise maximum, 2  RN ×M and
+  10
+    For instance, Krizhevsky et al. (2012) use the fact that images are invariant under translational and reflection
+transformations to increase the accuracy of image recognition algorithms (e.g., a mirror image of a cat must be a
+cat). Clark and Storkey (2015) substantially enhance the performance of learning Go by encoding symmetry under
+rotation in their algorithm since Go is a board game where the board is invariant under rotation. Hartford et al.
+(2016) use permutation-equivariant symmetry to reduce dimensionality in the approximation of best responses in
+a normal form game.
+
+
+                                                        21
+1  RM ×1 are matrices of unknown coefficients found in the fitting procedure, and M  N is
+the width of the model. To make the network "deeper," we could have multiple layers of these,
+e.g., f (x; 1 , 2 , 3 ) = 1 max (3 max (2 x, 0)).11
+    A surprising benefit of a high-dimensional approximation is the "double-descent" phenomenon
+in machine learning (see Belkin et al., 2019, and Advani et al., 2020). In classical statistics, the
+bias-variance trade-off tells us that the generalization error of a function approximation becomes
+large when the number of free parameters approaches the number of data points (at the limit,
+when the number of free parameters is equal to the number of data points, we have a simple
+interpolation). For that reason, one typically wants to choose a smaller number of free parameters
+than the number of data points. The double-descent phenomenon, which is shown with many
+machine learning algorithms, is that if one further increases the number of parameters far above
+this interpolation threshold, then the generalization error begins to decrease again. That is, often
+the cure to over-fitting is to add more parameters. We explore this topic in Section 5.5, where
+we consider the lack of treatment of transversality conditions and stationarity in more detail.
+
+
+5.3     Solving the LQ case with neural networks
+    Now, we solve our investment model in the LQ case using a neural network that takes ad-
+vantage of symmetry. Then, we will compare that solution against the closed-form LQ solution
+solved using classic control in Section 4. Finally, we will use the same neural network for the case
+that is not LQ.
+    First, we will consider an approximation with  as a finite set of moments in the same spirit
+as Krusell and Smith (1998) or the deep-learning model of Fern´       andez-Villaverde et al. (2019).
+Second, we consider approximating  by a flexible ReLU network. In both cases,  is left as a
+highly parameterized neural network. This model is fit using simulations from a single initial
+condition and only 16 trajectories from t = 0 to 63 (including both aggregate and idiosyncratic
+shocks). Interestingly, it is not important that the transition is very close to any stationary
+solution (i.e., this does not require a hidden transversality condition or some form of backward
+induction from a steady state) or that a small or large number of trajectories are used. In fact,
+in Section 5.5, we solve a version with only a few of those data points.
+
+Baseline specifications We call the approximation of  using the first moment (Identity),
+using the higher moments (four in our case), (Moments), and the more flexible ReLU-based
+neural networks (with two layers each with 128 nodes) (ReLU). Across all of their layers,
+the baseline (Identity), (Moments), and (ReLU) have 49.4K, 49.8K, and 66.8K parameters
+respectively. In these three approximations,  is represented by a neural network with four layers,
+  11
+    Experience suggests it is better to be deep than wide for the same number of parameters, though the computer
+science theory explaining this result is in its infancy.
+
+
+                                                      22
+each with 128 nodes.
+    Our first check is on the accuracy of the solution. Figure 2 shows the mean squared error
+of the Euler residuals at each time step on the equilibrium path (averaged over 256 different
+simulated trajectories) and the corresponding 95th percentile bandwidth of those errors, and
+linear demand (i.e.,  =  = 1). The left panel shows the results for (Identity), the center
+panel shows the results for (Moments), and the right panel shows the result for (ReLU). Both
+models are highly accurate. However, the model with ReLU is especially stable. This result can
+be interpreted as the function generalizing very consistently because of --rather than in spite
+of-- the extra parameters.
+
+          Test MSE () with (Identity)           Test MSE () with (Moments)           Test MSE () with (ReLU)
+
+
+   10-6                                 10-6                                 10-6
+
+
+   10-8                                 10-8                                 10-8
+
+
+  10-10                                 10-10                                10-10
+
+                                                                                               ×10-7
+
+  10-12                                 10-12                                10-12         6
+
+
+                                                                                           4
+
+
+
+          0        25         50                0        25        50                0         25        50
+                    Time(t)                              Time(t)                               Time(t)
+
+
+Figure 2: The Euler residuals for  =  = 1 and N = 128 for (Identity), (Moments), and
+(ReLU). The dark blue curve shows the average residuals along equilibrium paths for 256
+different trajectories. The shaded areas depict the 2.5th and 97.5th percentiles.
+
+    To interpret the scale of this Euler error, Figure 3 compares a simulated economy with aggre-
+gate shocks using the same approximations as in Figure 2 and the analytical solution provided
+by the algorithm described in Section 4.1. The red dashed trajectory provides the analytical
+solution, the orange trajectory depicts the solution obtained by (Moments), the blue trajectory
+depicts the solution obtained by (ReLU), and the green trajectory depicts the solution obtained
+by (Identity). All four policies are almost identical.
+    While these figures show that the solution is very accurate, we need to gauge whether the
+performance is practical, and--in particular--whether the "curse of dimensionality" has been
+sidestepped. Figure 4 shows the performance for (ReLU) as a function of N . The left panel
+shows the computation time in seconds.12 The right panel shows the MSE of Euler residuals
+  12
+     The time is calculated from the beginning of the fitting process until the mean squared Euler error reaches
+1 × 10-6 , which is chosen to be in the same order of magnitude as the error coming from the concentration of
+measure approximation of the integral in Figure 1 when N =128.
+
+                                                        23
+                                    u(Xt ) with (ReLU) and (Moments): Equilibrium Path
+
+                    0.034
+
+                    0.032
+                                                      54           55             56
+                    0.030
+                                             0.0341
+
+
+
+                    0.028                    0.0340
+
+
+
+
+                                                                                       u(Xt ), (ReLU)
+                    0.026                                                              u(Xt ), (Moments)
+                                                                                       u(Xt ), (Identity)
+                    0.024                                                              u(Xt ), Analytical
+
+                              0         10            20          30         40        50           60
+                                                                 Time(t)
+
+Figure 3: Comparison between baseline approximate solutions and the LQ-regulator solution
+(Section 4.1) for the case with  =  = 1 and N = 128.
+
+
+(i.e., ) on the test data. The reported numbers are the median values of 21 trials with different
+seeds. The algorithm is finding the global solution of the model with high accuracy in just around
+a minute. Furthermore, this computation is not a systematic function of N . The variation in
+solution time is largely due to the use of random initial conditions in a high dimensional space
+(the 66.8K parameters), which is--counterintuitively--essential for convergence when fitting deep
+learning models.
+
+
+            Computation time(seconds)                                   ×10-7      Mean Test Loss()
+                                                                   5
+  100
+                                                                   4
+
+    90                                                             3
+
+                                                                   2
+    80
+      100     101       102       103        104           105         100    101        102         103    104   105
+                              N                                                                 N
+
+                       Figure 4: Performance of the (ReLU) for different N .
+
+  Finally, Table 1 shows the results for different variations in the approximations, (Identity),
+(ReLU), and (Moments). The columns are as follows: Time is measured in seconds. Params
+
+
+                                                             24
+represents the number of parameters () in functional approximation, in thousands. Train MSE
+reports the mean squared error of the Euler residuals for the simulated trajectories used for
+training. Test MSE documents the mean squared error of the Euler residuals on simulated data
+after the training is complete, and which internally uses the approximation itself during the
+simulation. Val MSE displays the mean squared error on the validation data, that is, trajectories
+used to check the quality of the generalization during the training process, but where the data
+are not used to fit the model directly. Policy error ( u - uref ) is the mean absolute value of the
+approximate solution and the accurate solution (uref ) on the test data. Policy error |u- uref |
+                                                                                        uref
+is the mean absolute value of the relative error of the approximate solution and the accurate
+solution (uref ) on the test data. The results in Table 1 are the median among 21 trials with
+different seeds. See Table 2 in Appendix E.1 for additional experiments.
+
+              Table 1: Performance of Different Networks in Solving the Linear Model
+
+                                                                                                          Policy Error
+                                              Time Params Train MSE Test MSE Val MSE Policy Error
+                                                                                                             |u-uref |
+                                               (s)  (K)       ()       ()       ()    (|u - uref |)            uref
+ group        description
+           Baseline                             42    49.4        4.1e-06   3.3e-07   3.3e-07   2.9e-05         0.10%
+ (Identity)
+           Thin (64 nodes)                      33    12.4        3.7e-06   2.7e-07   2.7e-07   3.4e-05         0.10%
+           Baseline                            107    66.8        3.7e-06   3.3e-07   3.3e-07   2.7e-05         0.09%
+           L=2                                  86    66.3        1.3e-05   2.1e-07   2.2e-07   2.6e-05         0.08%
+           L = 16                               91    69.9        5.5e-06   1.5e-07   1.5e-07   2.1e-05         0.07%
+ (ReLU)
+           Shallow( : 1 layer,  : 2 layers)     79    17.7        2.0e-06   5.5e-07   5.5e-07   3.2e-05         0.11%
+           Deep( : 4 layers,  : 8 layers)      242   165.1        2.1e-03   2.2e-03   2.1e-03   2.7e-03         8.50%
+           Thin(,  : 64 nodes)                  87    17.0        1.1e-05   4.5e-07   4.5e-07   3.0e-05         0.10%
+           Baseline                             55    49.8        1.4e-06   7.6e-07   7.6e-07   2.8e-05         0.09%
+           Moments (1,2)                       211    49.5        2.4e-06   1.1e-06   2.3e-06   4.4e-05         0.14%
+ (Moments)
+           Very Shallow(1 layer)               241     0.6        1.1e-05   8.4e-06   7.9e-06   1.1e-02        34.00%
+           Thin (64 nodes)                      82    12.6        1.6e-06   9.1e-07   9.2e-07   3.8e-05         0.12%
+
+
+
+
+    The first lesson from Table 1 is that the results are mainly robust to variations in the net-
+works' architecture. However, for small networks, as can be seen in the case of the Very Shallow
+example in (Moments), sometimes the optimization procedure finds a local minimum that is
+not close to the global minimum solution. Not coincidentally, this is the model with the fewest
+number of parameters--which should give us pause since it is still orders of magnitude above the
+dimensionality of 2 parameters required for the analytical solution.
+    The second lesson from Table 1 is that the results are, in general, good when we use a larger
+number of moments (equivalently, a higher dimension of L) than when we use only the first
+moment (L = 1, which we know from the analytical solution is a sufficient statistic for payoff-
+relevant values). Compare, for example, the (Identity) case with (ReLU(L = 16)). The latter
+solves the model with many more parameters, but the neural network finds the lower-dimensional
+manifold in about the same amount of time.
+
+                                                             25
+5.4    Nonlinear demand function
+   In this section, we move to the case where  > 1, i.e., the (inverse) demand function is
+nonlinear. In this situation, the LQ solution and certainty equivalence no longer hold and we
+do not have an analytical solution. We find the solution to this nonlinear case using exactly the
+same algorithm, code, and functional approximations as in Section 5.3. As before, we fit the
+model and then check its generalization with a set of simulated trajectories.
+
+
+                      Test MSE () with (Moments)              Test MSE () with (ReLU)
+
+
+            10-5                                    10-5
+
+            10-6                                    10-6
+
+            10-7                                    10-7
+
+            10-8                                    10-8                  ×10-6
+
+
+                                                                   1.50
+
+                 -9                                      -9
+            10                                      10             1.25
+
+                                                                   1.00
+
+                                                                   0.75
+
+            10-10                                   10-10
+                      0        25        50                   0           25        50
+                               Time(t)                                    Time(t)
+
+
+Figure 5: The Euler residuals for  = 1.5,  = 1.0, and N = 128 for (Identity), (Moments),
+and (ReLU). The dark blue curve shows the average residuals along equilibrium paths for 256
+different trajectories. The shaded areas depict the 2.5th and 97.5th percentiles.
+
+    Figure 5 shows the average Euler residuals over 256 simulated trajectories, with the corre-
+sponding 95th percentile bandwidth. The economy uses  = 1,  = 1.5, and N = 128. The left
+panel shows the results for baseline (Moments). The right panel shows the results for baseline
+(ReLU). As in Figure 2, the mean squared error is fairly low and tight. Table 3 in Appendix E.2
+provides additional information on this experiment and different variations on it. The main con-
+clusion is that the performance is roughly the same as in the linear case because it is using the
+same algorithm.
+    We can also investigate the qualitative behavior of the approximate optimal solution, u(·),
+along the transition path as  approaches one, which coincides with the linear case where an
+accurate solution exists. Figure 6 depicts the optimal policy along the equilibrium paths for
+ = [1.0, 1.05, 1.1, 1.5] and  = 1, for an economy with N = 128. In this experiment, the baseline
+(ReLU) is utilized to approximate the optimal policies. Figure 6 shows how the optimal policy
+for a trajectory smoothly approaches the known analytical solution as  approaches one.
+
+
+
+                                               26
+                                      u(Xt ) with (ReLU): Equilibrium Path
+
+
+                   0.035
+
+
+
+                   0.030                                                             =   1.0
+                                                                                     =   1.05
+                                                                                     =   1.1
+                   0.025                                                             =   1.5
+
+                             0        10        20       30        40        50          60
+                                                        Time(t)
+Figure 6: The optimal policy u along the equilibrium paths for prices,  = [1.0, 1.05, 1.1, 1.5],
+ = 1, and N = 128. Each path shows the optimal policy for a single trajectory.
+
+
+5.5     Generalization: Where is the transversality condition?
+    Intriguingly, to get our approximation, we neither applied a transversality condition nor solved
+a stationary problem. While we fitted the data to a T where the equilibrium was getting close to
+some ergodic distribution, we did not use that behavior as a special case. However, in general, we
+can have many candidate solutions that satisfy the first-order conditions of a dynamic model if we
+do not constrain the long-run behavior of these solutions in one form or another. In fact, that is
+what we did to get the LQ solution: the classic control solutions implicitly applied a transversality
+condition.13 And, yet, in Section 5.3, we saw that our neural networks achieved the same solution
+as the LQ one, i.e., they consistently picked the solution that generalizes best.14 Why would we
+so carelessly disregard what has been thought of as an essential boundary condition for solving
+models?
+    This question can be recast in terms of generalization and regularization. First: Why would
+our algorithm choose the "right" solution to the functional equation in the absence of explicit
+handling of the long-run behavior? Second, if the algorithm chooses a particular solution (rather
+than a random one), is it the one we want (as measured by its ability to generalize)?
+    In terms of answering the first question, one might suspect that this is simply because we
+are simulating with a great deal of data, but this turns out not to be the case. To show this,
+we can conduct an even more extreme example of over-parameterization by fitting a nonlinear
+network with a parameter vector in R17700 using only 3 random data points in R512 for the linear
+  13
+      Or, alternatively, we could think of this as being a guess-and-verify approach where we assumed a functional
+form consistent with a transversality condition.
+   14
+      Of course, with shorter simulations, the generalization error for very large t > T becomes worse. But that
+is a consequence of there being insufficient numbers of data points in a domain of interest, not a consequence of
+whether the system is ergodic or not.
+
+
+                                                       27
+demand function. In this case, the solution consistent with a transversality condition or imposing
+a stationary solution boundary condition only needs 2 points to interpolate.
+
+
+                   Validation MSE                                Training MSE 
+        10-1                                          10-1
+
+
+        10-3                                          10-3
+
+
+        10-5                                          10-5
+
+
+               0            200            400               0         200           400
+                           Step                                       Step
+
+Figure 7: Training and validation loss of the Euler residuals . The training procedure utilizes 3
+data points in the state space for an economy with  =  = 1 and N = 512.
+
+    The results are shown in Figure 7. In this experiment, we fit a model with both  and  rep-
+resented by a neural network with two and one hidden layers, each with 128 nodes and  =  = 1.
+The output dimension of  is L = 4. Each step is one gradient updating in stochastic gradient
+descent optimization. We draw 3 random data points within R512 from simulated trajectories.
+The model fits using random "batches" of data of size 2, where the randomization in the op-
+timization algorithm (e.g., stochastic gradient descent) is an essential part of regularizing the
+solutions. The right panel of Figure 7 shows the convergence of the MSE of the training data,
+which the optimizer is minimizing. The left panel of Figure 7 shows the MSE of the Euler errors
+on "validation" data, i.e., random data used to test the generalization error during training, but
+which does not enter the optimization objective directly. The training error drops to within the
+numerical tolerance, as expected. But rather than over-fitting, the validation error also drops to
+less than 5 × 10-5 , which corresponds to a relative policy error of 0.06%, despite a large number
+of parameters and the minimal data.
+    While the theoretical understanding of this over-fitting phenomenon is still an active area of
+research within computer science, it is robustly found in many functional approximation prob-
+lems. In application after application, using stochastic optimization methods with highly over-
+parameterized models tends to robustly find solutions that fulfill a minimum norm solution in the
+space of approximating functions. Recent work in understanding convergence and generalization
+
+                                                 28
+of over-parameterized models includes Arora et al. (2018), Allen-Zhu et al. (2019), and Nakkiran
+et al. (2019).
+    For our specific problem, the minimum norm solution seems to coincide with the most general-
+izable solution--and in particular, it seems to automatically fulfill the boundary-value conditions
+(e.g., transversality or imposing a boundary at a terminal period) we often need to apply directly
+when approximating with lower-dimensional models.
+
+
+6     Extensions and Generalizations
+   Did we choose a setup that was particularly amenable to our methods? In this section, we
+consider how these general techniques can be used for a much larger class of models. Most
+broadly, our tools are useful for solving any high-dimensional functional equations with some
+degree of symmetry--and are especially useful when they contain high-dimensional expectations.
+The functional equation could come from static problems, Bellman equations, or Euler equations,
+and can be solved by various approximation techniques.15
+
+
+6.1     Decreasing returns to scale
+   The constant returns to scale in production and the linear marginal cost of investment in
+equation (15) led to the value function in Proposition 4 being independent from x. As the
+primary interest was in analyzing the high-dimensional state, this was a convenient result.
+   But what if the value function (10) has decreasing returns to scale and, thus, the policy
+becomes a function of x? Imagine, for example:
+
+                                                        x1-µ  
+                                      profits = p(X )        - u2 .
+                                                        1-µ 2
+
+This formulation leads to an Euler equation:
+
+                           u(x, X ) =  E P (X )x-µ +  (1 -  )u(x , X ) .
+
+    Given this equation, the solution techniques are identical except that E [·] now depends
+strongly on the idiosyncratic shock associated with state x. Extending the previous approach
+where we condition on random variables that strongly influence the gradient, as defined by Def-
+inition 4, the expectation can be approximated by a two-dimensional Gaussian quadrature in w
+and , where the W for the aggregate evolution is still performed with a Monte Carlo draw.
+  15
+     For example, we could also use reinforcement learning (also known as approximate dynamic programming or
+neuro-dynamic programming). See Sutton and Barto (2018) and Bertsekas (2019) for a survey of methods, and
+van der Pol et al. (2020) for an example applying symmetry to reinforcement learning.
+
+
+
+                                                    29
+The only other modification required is to ensure we are using a representation in Proposition 2
+where (x, y ) and (x) where y  RL .
+
+                                       Test MSE () with (Moments)
+
+
+                 10-5
+
+                 10-6
+
+                 10-7
+
+                 10-8
+
+                 10-9
+                          0       10     20       30          40             50      60
+                                                 Time(t)
+
+
+Figure 8: The Euler residuals for  =  = 1, µ = 0.05, and N = 128, over 256 different
+trajectories. The shaded areas depict the 2.5th and 97.5th percentiles. In this case, the baseline
+(Moments) is used to approximate the optimal policy.
+
+    Figure 8 depicts the average Euler residuals along the equilibrium path (averaged over 256
+trajectories) and the corresponding 95th percentile bandwidth for an economy with  =  = 1,
+µ = 0.05, and N = 128. In this experiment baseline (Moments) is used to approximate the
+optimal policy. The generalization properties are excellent, and the mean squared Euler error is
+on the order of 1 × 10-6 for most of the trajectories and periods.
+
+
+6.2    Multiple productivity types
+                                                                              1-µ
+    We consider now the case when firms have profitsj = j p(X ) x 1-µ
+                                                                        -   2
+                                                                              u2 for some finite set
+of productivities, e.g., 1 , 2 . Then, rather than having permutation invariance based on the
+entire X , we could group them such that the policy becomes u(x, X 1 , X 2 ), where X1 contains all
+firms with 1 , etc. That is, the elements of X could be symmetric in blocks, and this could be
+implemented in the network with a representation such as
+
+                                                N1                     N2
+                              1   2       1                       1
+                        u(x, X , X )   x,             1 (Xi1 ),              2 (Xi2 ) .
+                                          N1    i=1
+                                                                  N2   i=1
+
+
+
+
+                                                30
+If there were reasons in the problem structure to think that the 1 and 2 could be proportional
+to each other, then the representation might even be
+
+                                                         N1                   N2
+                                 1    2    1                             1
+                         u(x, X , X )   x,                     (Xi1 ),              (Xi2 ) .
+                                           N1            i=1
+                                                                         N2   i=1
+
+
+6.3     Complex idiosyncratic states
+    Next, we study the case where firms also have a stochastic productivity y , such that the firm is
+identified by the tuple z  (x, y ) and the aggregate state is a collection of tuples Z  {(Xi , Yi )}N
+                                                                                                    i=1 .
+We can apply our techniques by considering that it is the symmetry with respect to the z tuple
+of states, rather than permutation within that tuple, that is required. We can then implement
+this symmetry in an approximation along the lines of
+
+                                                                 N
+                                                     1
+                                 u(x, y, Z )   x, y,                  (Xi , Yi ) ,
+                                                     N          i=1
+
+
+for some  : R2  RL and (x, y ) the idiosyncratic state of interest.16 Hence our techniques are
+easily applyed to models with exchangeable "agents" containing a finite number of states.
+    Our approach can even be extended to cases where the collection of underlying states is itself
+exchangeable. For example, consider if, in addition to its x, each firm has up to M customers of
+varying sizes, y j , where those customers are otherwise exchangeable in the firm's payoffs.17 Then
+                                                                        M
+we can denote the customers themselves as a set, and use z  (x, {y j }j =1 ) as an individual firm's
+                      j      M
+state. If we let Yi  yi j =1
+                             , the aggregate distribution is Z  {Xi , Yi }.
+    A neural network imposing this symmetry might be
+
+                                            M                   N                    M
+                                        1                1                    1
+                 u(x, Y, Z )  1      x,              j
+                                                 1 (y ),             2   Xi ,               2 (Yij )   ,
+                                        M   j =1
+                                                         N     i=1
+                                                                              M      j =1
+
+
+where the training process would fit parameters for 1 , 1 , 2 , and 2 , and the 2 function itself
+could have a latent dimension greater than one. This last example demonstrates why deep
+learning, in the sense of many layers of highly-parameterized functions, is so important for dealing
+with symmetry. Without modern (and easily available) machine learning software, it would be
+impractical to fit this nested approximation.
+    Given the flexibility of working with states that are themselves complicated structures, a
+natural application of these methods is to solve dynamic models with networks--expanding the
+computational feasibility of solving extensions of models surveyed in Carvalho and Tahbaz-Salehi
+  16
+     In a model with a continuum of agents, this would simply lead to a two-dimensional distributional state, and
+the modeler would typically write payoffs as expectations using that distribution.
+  17
+     See Hartford et al. (2018) for methods to represent permutation equivariance with interactions between sets.
+
+
+                                                         31
+(2019). In particular, it holds the promise of making multi-period dynamic programming in
+models such as Oberfield (2018) possible by enabling network connections as a persistent state
+variable and enabling firms to form expectations of the network's evolution.
+
+
+6.4    Global solutions with transitions and aggregate shocks
+    In many applications, researchers use a continuum of agents. Unfortunately, as soon as we
+add several aggregate shocks to them, these models are difficult to tackle. Since the distributional
+state becomes a stochastic partial differential equation (or its discrete-time equivalent), agents
+need to solve optimal control problems with an infinite-dimensional state, which in turn depends
+on their decisions. The forward equation for the evolution is difficult enough to simulate, even
+as an initial value problem, but becomes intractable when it is part of an infinite-dimensional
+optimal control problem. The continuum approximation is then the source of the numerical
+intractability rather than the solution to it, hinting that leaving things discrete might help.
+    In that sense, our methods offer a path forward by offering the possibility of simulating
+economies with a large number of finite agents (on the order of thousands or tens of thousands),
+without even having to worry about stationarity properties. In comparison, in perturbation
+solutions such as Kaplan et al. (2018) in continuous time and Den Haan (2010) in discrete time
+one would require appropriate stationarity properties.
+    This insight might be particularly fruitful when solving growth models with heterogeneous
+agents, which often have steady states and balanced growth paths that are notoriously sensitive
+to parameters, multiplicity of equilibria, and hysteresis (i.e., they may not even be ergodic). By
+using a finite number of agents--along the models discussed in Buera and Lucas (2018)--models
+with endogeneity of both innovation and diffusion as in Benhabib et al. (2021) without ergodicity
+could be solved from arbitrary initial conditions.
+
+
+7     Conclusion
+   In this paper, we have shown how to exploit symmetry in dynamic programming problems and
+the solution of recursive competitive equilibria with a large (but finite) number of heterogeneous
+agents using deep learning. Symmetry, together with concentration of measure, allowed us to
+break the "curse of dimensionality." The method is easy to implement using standard, open-
+source software libraries and fast to run on a standard laptop. Our results open the door to many
+applications of interest, including macro, finance, international finance, industrial organization,
+and other fields.
+
+
+
+
+                                                32
+References
+Advani, M. S., A. M. Saxe, and H. Sompolinsky (2020): "High-dimensional dynamics of
+ generalization error in neural networks," Neural Networks, 132, 428­446.
+
+Allen-Zhu, Z., Y. Li, and Z. Song (2019): "A convergence theory for deep learning via
+ over-parameterization," in International Conference on Machine Learning, PMLR, 242­252.
+
+Anderson, E. W., E. R. McGrattan, L. P. Hansen, and T. J. Sargent (1996): "Me-
+ chanics of forming and estimating dynamic linear economies," Handbook of Computational
+ Economics, 1, 171­252.
+
+Arora, S., R. Ge, B. Neyshabur, and Y. Zhang (2018): "Stronger generalization bounds
+ for deep nets via a compression approach," in Proceedings of the 35th International Conference
+ on Machine Learning, ed. by J. Dy and A. Krause, vol. 80, 254­263.
+
+Azinovic, M., L. Gaegauf, and S. Scheidegger (2019): "Deep equilibrium nets," Available
+ at SSRN 3393482.
+
+Barvinok, A. (2005): "Math 710: Measure concentration," Lecture notes.
+
+Belkin, M., D. Hsu, S. Ma, and S. Mandal (2019): "Reconciling modern machine-learning
+ practice and the classical bias­variance trade-off," Proceedings of the National Academy of
+ Sciences, 116, 15849­15854.
+
+Bellman, R. (1958): Dynamic Programming, Princeton University Press.
+
+Benhabib, J., J. Perla, and C. Tonetti (2021): "Reconciling models of diffusion and
+ innovation: A theory of the productivity distribution and technology frontier," Econometrica
+ (Forthcoming).
+
+Bertsekas, D. P. (2019): Reinforcement Learning and Optimal Control, Athena Scientific.
+
+Bluman, G. W., A. F. Cheviakov, and S. C. Anco (2010): Applications of Symmetry
+ Methods to Partial Differential Equations, Springer.
+
+Boucheron, S., G. Lugosi, and P. Massart (2013): Concentration Inequalities: A
+ Nonasymptotic Theory of Independence, Oxford University Press.
+
+Buera, F. J. and R. E. Lucas (2018): "Idea flows and economic growth," Annual Review of
+ Economics, 10, 315­345.
+
+Carvalho, V. M. and A. Tahbaz-Salehi (2019): "Production networks: A primer," Annual
+ Review of Economics, 11, 635­663.
+
+                                              33
+Chen, S., E. Dobriban, and J. H. Lee (2019): "Invariance reduces variance: Understanding
+ data augmentation in deep learning and beyond," arXiv preprint arXiv:1907.10905.
+
+Clark, C. and A. Storkey (2015): "Training deep convolutional neural networks to play
+ Go," in International Conference on Machine Learning, 1766­1774.
+
+Cybenko, G. (1989): "Approximation by superpositions of a sigmoidal function," Mathematics
+ of Control, Signals and Systems, 2, 303­314.
+
+Den Haan, W. J. (2010): "Comparison of solutions to the incomplete markets model with
+ aggregate uncertainty," Journal of Economic Dynamics and Control, 34, 4­27.
+
+Duarte, V. (2018): "Machine learning for continuous-time finance," Tech. rep., Gies College of
+ Business.
+
+Duffy, J. and P. D. McNelis (2001): "Approximating and simulating the stochastic growth
+ model: Parameterized expectations, neural networks, and the genetic algorithm," Journal of
+ Economic Dynamics and Control, 25, 1273­1303.
+
+    ´ ndez-Villaverde, J. and P. A. Guerro
+Ferna                                          ´ n-Quintana (2020): "Estimating DSGE
+ Models: Recent Advances and Future Challenges," Working Paper 27715, National Bureau of
+ Economic Research.
+
+Ferna´ ndez-Villaverde, J., S. Hurtado, and G. Nun       ~ o (2019): "Financial frictions and
+ the wealth distribution," Working Paper 26302, National Bureau of Economic Research.
+
+Hartford, J., D. R. Graham, K. Leyton-Brown, and S. Ravanbakhsh (2018): "Deep
+ models of interactions across sets," arXiv preprint arXiv:1803.02879.
+
+Hartford, J. S., J. R. Wright, and K. Leyton-Brown (2016): "Deep learning for pre-
+ dicting human strategic behavior," in Advances in Neural Information Processing Systems,
+ 2424­2432.
+
+Hornik, K. (1991): "Approximation capabilities of multilayer feedforward networks," Neural
+ Networks, 4, 251­257.
+
+Judd, K. L., L. Maliar, S. Maliar, and I. Tsener (2017): "How to solve dynamic stochas-
+  tic models computing expectations just once," Quantitative Economics, 8, 851­893.
+
+Kaplan, G., B. Moll, and G. L. Violante (2018): "Monetary policy according to HANK,"
+ American Economic Review, 108, 697­743.
+
+
+
+
+                                             34
+Krizhevsky, A., I. Sutskever, and G. E. Hinton (2012): "Imagenet classification with
+ deep convolutional neural networks," in Advances in Neural Information Processing Systems,
+ 1097­1105.
+
+Krusell, P. and A. A. Smith, Jr (1998): "Income and wealth heterogeneity in the macroe-
+ conomy," Journal of Political Economy, 106, 867­896.
+
+Ledoux, M. (2001): The Concentration of Measure Phenomenon, 89, American Mathematical
+  Society.
+
+Ljungqvist, L. and T. J. Sargent (2018): Recursive Macroeconomic Theory, MIT Press, 4
+  ed.
+
+Lucas, R. E. and E. C. Prescott (1971): "Investment under uncertainty," Econometrica,
+ 659­681.
+
+Lyle, C., M. van der Wilk, M. Kwiatkowska, Y. Gal, and B. Bloem-Reddy (2020):
+  "On the Benefits of Invariance in Neural Networks," arXiv preprint arXiv:2005.00178.
+
+Macdonald, I. G. (1998): Symmetric Functions and Hall Polynomials, Oxford University
+ Press.
+
+Maliar, L., S. Maliar, and P. Winant (2019): "Will artificial intelligence replace compu-
+ tational economists any time soon?" Tech. Rep. 14024, C.E.P.R. Discussion Papers.
+
+Nakkiran, P., G. Kaplun, Y. Bansal, T. Yang, B. Barak, and I. Sutskever
+ (2019): "Deep double descent: Where bigger models and more data hurt," arXiv preprint
+ arXiv:1912.02292.
+
+Narayanamurthy, S. M. and B. Ravindran (2008): "On the hardness of finding symmetries
+ in Markov decision processes," in Proceedings of the 25th International Conference on Machine
+ Learning, 688­695.
+
+Oberfield, E. (2018): "A theory of input-output architecture," Econometrica, 86, 559­589.
+
+Powell, W. B. (2007): Approximate Dynamic Programming: Solving the Curses of Dimen-
+ sionality, vol. 703, John Wiley & Sons.
+
+Prasad, A. (2018): "An introduction to Schur polynomials," arXiv preprint arXiv:1802.06073.
+
+Prescott, E. C. and R. Mehra (1980): "Recursive competitive equilibrium: The case of
+ homogeneous households," Econometrica, 48, 1365­1379.
+
+
+
+                                             35
+Ravindran, B. and A. G. Barto (2001): Symmetries and Model Minimization in Markov
+ Decision Processes, University of Massachusetts.
+
+Samuelson, P. A. (1990): "Law of conservation of the capital-output ratio in closed von
+  Neumann systems," in Conservation Laws and Symmetry: Applications to Economics and
+  Finance, ed. by R. Sato and R. V. Ramachandran, Springer Netherlands, 53­56.
+
+Sato, R. (1985): "The invariance principle and income-wealth conservation laws: Application
+  of Lie groups and related transformations," Journal of Econometrics, 30, 365­389.
+
+Sutton, R. S. and A. G. Barto (2018): Reinforcement Learning: An Introduction, MIT
+  press.
+
+van der Pol, E., D. E. Worrall, H. van Hoof, F. A. Oliehoek, and M. Welling
+  (2020): "MDP homomorphic networks: Group symmetries in reinforcement learning," arXiv
+  preprint arXiv:2006.16908.
+
+Vershynin, R. (2018): High-Dimensional Probability: An Introduction with Applications in
+ Data Science, vol. 47, Cambridge university press.
+
+Wagstaff, E., F. B. Fuchs, M. Engelcke, I. Posner, and M. Osborne (2019): "On
+ the limitations of representing functions on sets," arXiv preprint arXiv:1901.09006.
+
+Walcher, S. (2019): "Symmetries of ordinary differential equations: A short introduction,"
+ arXiv preprint arXiv:1911.01053.
+
+Yarotsky, D. (2018): "Universal approximations of invariant maps by neural networks," arXiv
+ preprint arXiv:1804.10306.
+
+Zabrocki, M. (2015): "Introduction to symmetric functions," unpublished work http://garsia.
+  math. yorku. ca/ghana03/mainfile. pdf.
+
+Zaheer, M., S. Kottur, S. Ravanbakhsh, B. Poczos, R. R. Salakhutdinov, and
+  A. J. Smola (2017): "Deep sets," in Advances in Neural Information Processing Systems,
+  3391­3401.
+
+
+
+
+                                            36
+Appendix A              Mathematics Definitions and Background
+Definition 6 (The permutation group and the permutation operator). Define:
+
+   · A permutation group is a group G whose elements are permutations of a given set I and
+     whose group operation is the composition of permutations in G.
+
+   · A symmetric group of a set I is the group of all permutations of set I , denoted by S I .
+
+Definition 7 (Permutation invariance). A function f : RN  R is permutation invariant if, for
+all permutations   SN :
+                                      f (X ) = f (X ).
+
+Definition 8 (Permutation equivariance). A function f : RN  RN is permutation equivariant
+if, for all permutations   SN :
+                                     f (X ) = f (X ).
+
+Proposition 6. Let X be a compact subset of RN and f : X  RN  R be a continuous
+permutation invariant function under S N , i.e., for all Y  RN and all   S N :
+
+                                        f ( Y ) = f (Y ).
+
+Then, there exist L  N , and continuous functions         : RL  R and  : R  RL , such that
+
+                                                    N
+                                               1
+                                  f Y    =                (yi ) .
+                                               N    i=1
+
+
+Proof. See Wagstaff et al. (2019) and Zaheer et al. (2017).
+
+
+Appendix B              Concentration of Measure
+Proposition 7 (Gaussian Poincar´   e inequality). Suppose f : RN  R is a continuously differen-
+tiable function and z  N (0N , IN ) is a standard Gaussian random vector. Then:
+
+                                                              2
+                                  Var[f (z )]  E    f (z )        ,
+
+Moreover, if z  N (0N , ) is a Gaussian random vector with mean zero and covariance matrix
+, then:
+                              Var[f (z )]  E f (z )f (z ) .
+
+Proof. See Boucheron et al. (2013), Theorem 3.20.
+
+
+                                               37
+Appendix C                    Proofs
+C.1      Proof of Proposition 1
+Proof. Let   SN be a permutation and Y  X . The Bellman equation can be written as:
+
+                               v (x, Y ) = max r(x, u, Y ) +  E v (x , Y )                             (C.1)
+                                             u
+
+                                  s.t. x = g (x, u) + w +                                              (C.2)
+                                          Y = G(Y ) + W +  1N .                                        (C.3)
+
+           g (x,u)
+Assuming    u
+                     = 0, the Euler equation can be written as
+
+    ru x, u(x, Y ), Y                                                            gx x , u(x , Y )
+                         +  E rx x , u(x , Y ), Y        - ru x , u(x , Y ), Y                      = 0,
+      gu x, u(x, Y )                                                             gu x , u(x , Y )
+
+            r           r           g               g
+where ru  u   , rx      x
+                          ,   gx    x
+                                      ,   and gu    u
+                                                        . Since r is permutation invariant with respect to
+X , we have
+
+                                    ru x, u(x, Y ), Y = ru x, u(x, Y ), X
+                                    rx x, u(x, Y ), Y = rx x, u(x, Y ), X .
+
+Using the fact that G(Y ) = G(X ) and  =  
+
+                                  Y =  G(X ) + W +  1N = X .                                           (C.4)
+
+Defining u(x, X ) = u   (x, X )  u (x, X ), the Euler equation becomes:
+
+ ru x, u (x, X ), X                                                  gx x , u (x , X )
+                    +  E rx x , u (x , X ), X - ru x , u (x , X ), X                                  = 0,
+   gu x, u (x, X )                                                   gu x , u (x , X )
+
+where:
+
+                                          x = g (x, u) + w +                                           (C.5)
+                                          X = G(X ) + W +  1N .                                        (C.6)
+
+Since the solution of the Euler equation is unique, then:
+
+                                      u (x, X ) = u(x, X ) = u(x, X ).
+
+
+
+
+                                                        38
+Given the permutation invariant optimal policy, u, and reward function, r, the Bellman equation
+can be written as:
+
+                          v (x, Y ) = r x, u(x, X ), X +  E v (x , Y ) ,
+
+where x and Y are described by equations (C.2) and (C.3). Using equation (C.4) and defining
+v (x, X ) = v   (x, X )  v (x, X ), the Bellman equation can be written as:
+
+                          v (x, X ) = r x, u(x, X ), X +  E [v (x , X )] ,
+
+where x and X are described by equations (C.5) and (C.6). By the contraction mapping theorem,
+the solution of the Bellman equation is unique. Therefore:
+
+                                   v (x, X ) = v (x, X ) = v (x, X ).
+
+
+
+
+C.2    Proof of Proposition 3
+Proof. By the Chebyshev's inequality:
+
+                                                                  Var f (z )
+                             P     f (z ) - E [f (z )]                 2
+                                                                               .
+
+By the Gaussian Poincar´
+                       e inequality (Proposition 7):
+
+                                   Var f (z )  E f (z ) f (z ) .
+
+Therefore:
+
+                                                           1
+                      P    f (z ) - E [f (z )]             2
+                                                               E f (z ) f (z ) .
+
+Since a covariance matrix is symmetric and positive semi-definite, there exists an orthogonal
+matrix U (i.e. U = U -1 ) and a diagonal matrix  such that:
+
+                                              = U U ,
+
+where  is the diagonal matrix of the eigenvalues of . Hence:
+
+                             N
+                                                  2                                2
+         f (z ) f (z ) =           i U f (z )     i
+                                                       max {i } f (z )                 = () f (z ) 2 ,
+                                                       i=1,..,N
+                             i=1
+
+
+
+                                                      39
+where ()  max {i } is the spectral radius of . Therefore,
+               i=1,..,N
+
+
+                                                                ()C 1
+                                  P   f (z ) - E [f (z )]        2
+                                                                      .
+                                                                    N
+
+
+
+
+C.3     Proof of Proposition 4
+Proof. Since the price function p(X ) is permutation invariant and u
+                                                                   ^ is differentiable, the agent
+problem can be written as:
+
+                                        x1-µ  
+             v (x, X ) = max p(X )           - u2 +  E [v (x , X )]                            (C.7)
+                              u         1-µ 2
+                 s.t. x = (1 -  )x + u + w +                                                   (C.8)
+                          X = {(1 -  )^
+                                      x+u x, X ) +  w
+                                        ^(^         ^ +  for all (^  ^ )  (X, W )} .
+                                                                  x, w                         (C.9)
+
+The first-order condition is:
+
+                                                    v (x , X )
+                                       -u +  E                 = 0.                           (C.10)
+                                                       x
+
+
+
+   Given that the other agents' law of motion is independent of the agent of interest's choice,
+the envelope condition is:
+
+                                  v (x , X )
+                                             = P (X )(x )-µ +  (1 -  )u ,                     (C.11)
+                                     x
+
+where u is the optimal policy in the next period. Combining the first-order condition (C.10) and
+the envelope condition (C.11) yields:
+
+                          -u(x, X ) +  E P (X )(x )-µ +  (1 -  )u(x , X ) = 0.                (C.12)
+
+In a symmetric equilibrium, all the agents use the same policy function, i.e., u
+                                                                               ^(., .) = u(., .), and
+the laws of motion can be rewritten as:
+
+                   x = (1 -  )x + u + w +                                                     (C.13)
+                  X = {(1 -  )^
+                              x + u(^
+                                    x, X ) +  w
+                                              ^ +  for all (^  ^ )  (X, W )} .
+                                                            x, w                              (C.14)
+
+
+
+
+                                                     40
+   For the case of µ = 0, the Euler equation becomes:
+
+                       -u(x, X ) +  E [P (X ) +  (1 -  )u(x , X )] = 0.                   (C.15)
+
+In this case, the x drops out of the Euler equation. Hence, u does not depend on x, and the
+Euler equation can be rewritten as:
+
+                          -u(X ) +  E [P (X ) +  (1 -  )u(X )] = 0,                       (C.16)
+
+and the law of motion for X is described by equation (C.9).
+
+
+Appendix D              LQ Formulations
+   This section solves the special case of the LQ model. The purpose is to demonstrate the
+symmetry and concentration of measure when we know the closed-form solution of the problem.
+
+
+D.1     Proof of Proposition 5: Linear-quadratic Gaussian control
+With an LQ Gaussian model, we know that the policy will be affine. Therefore, u
+                                                                              ^ for other firms
+can be written as
+                                                      N
+                                                 H1
+                       u
+                       ^(Xi , X ) = H0 + H2 Xi +            Xi   i = 1, ..., N,            (D.1)
+                                                 N    i=1
+
+
+for some undetermined H0 , H1 , and H2 . As shown in Proposition 4, in a permutation invariant
+symmetric equilibrium, u(^  x, X ) does not depend on x  ^ and, hence, H2 = 0. The symmetric
+constants, which we arbitrarily define as HN
+                                            1
+                                              for all of the X vector, are the only ones that can
+fulfill permutation invariance with respect to the  permutations defined in equation (21). The
+law of motion for x is then:
+
+                                      x = Ax + Bu + C w                                    (D.2)
+
+where A, B , and C are defined in equations (22), (23), and (24). The reward and policy u of the
+firm of interest at state x take the form:
+
+                                       -x Rx - u Qu,                                       (D.3)
+
+where R and Q are defined in equations (25) and (26).
+
+
+
+
+                                               41
+   For a given pair of (H0 , H1 ), the solution of this LQ problem has the form:
+
+                                       v (x) = -x P x - d                                  (D.4)
+                                       u(x) = -F x,                                        (D.5)
+
+where P solves the following discounted algebraic matrix Riccati equation:
+
+                                                                     -1
+                      P = R + A P A -  2 A P B Q + B P B                  B P A,           (D.6)
+
+d can be found via:
+
+                                          
+                                    d=      trace P CC        ,                            (D.7)
+                                         1-
+
+and F satisfies:
+
+                                                       -1
+                                F =  Q + B P B              B P A.                         (D.8)
+
+Ljungqvist and Sargent (2018, ch. 5) derive equations (D.6), (D.7), and (D.8).
+
+
+D.2     Proof of Proposition 5: Permutation invariance
+    Now, we illustrate the permutation invariance of the optimal policy and value function of the
+linear quadratic model described in Proposition 5. Define y  x. The value function associated
+with y in (29) can be written as:
+
+                            v (y ) = -y P y - d = -x     P  x - d,
+
+where P solves the discounted algebraic Riccati equation:
+
+                                                                     -1
+                      P = R + A P A -  2 A P B Q + B P B                  B P A.           (D.9)
+
+Sandwiching both sides of Equation (D.9) by  and  and using the fact that R is permutation
+invariant (i.e.,  R = R) yields:
+
+                                                                            -1
+                P  = R +  A P A -  2  A P B Q + B P B                            B P A.
+
+Since the deterministic part of the laws of motion A is permutation equivariant (i.e., A = A)
+and the vector B remains unchanged under a permutation (i.e., B = B ), the above equation
+
+
+
+
+                                               42
+can be rewritten as:
+
+                                                                              -1
+    P  = R + A           P  A -  2A           P  B Q + B ( P  )B                   B ( P  )A.    (D.10)
+
+   Notice that  P  solves the same discounted algebraic Riccati equation (D.9) as P . Since
+the solution of equation (D.9) is unique:
+
+                                               P  = P.
+
+The constant term d can be written as
+
+                                  d =  (1 -  )-1 trace(P CC  )
+                                    =  (1 -  )-1 trace( P CC )
+                                    =  (1 -  )-1 trace(P CC ).                                   (D.11)
+
+As shown above, d remains unchanged under permutation and, therefore:
+
+                                        v (y ) = v (x) = v (x).
+
+The optimal policy u(y ) can be written as
+
+                                       -1                                -1
+           u(y ) = - Q + B P B              B P Ay = - Q + B P B              B ( P  )Ax.
+
+Since ( P  ) = P , then:
+
+                                        u(y ) = u(x) = u(x).
+
+Structure of the P Quadratic Form. When solving for Proposition 5, you can further find
+that the permutation invariant matrix P is of the form
+
+                                                           p3
+                                                                   
+                                             p1     p2     N N
+                                                              1
+                                                           p4
+                                  P          p2     0         1                                  (D.12)
+                                                                   
+                                                           N N     
+                                            p3     p4     p5
+                                            N N
+                                               1   N N
+                                                      1      1 1
+                                                          N2 N N
+
+                                                           p5
+for some p1 , . . . p5 . The lower block of this matrix is N 2 1N 1N (the N × N matrix of 1s is then the
+
+outer-product 1N 1N .) This shows the symmetry with respect to the i = 2, . . . N states in x due
+to the block structure similar to than in equation (21), and the magnitude of their interaction
+(i.e., the lower block decreases at rate N 2 rather than N ).
+
+
+
+
+                                                   43
+D.3     Proof of Proposition 5: Concentration of measure
+   The optimal policy for x can be written as:
+
+                                 u(x ) = -F x = -F (Ax + Bu + C w).
+
+                                                                                         N
+The optimal policy defined in Proposition 5 for a given H0 and H1 is u(x) = H0 + H  N
+                                                                                     1
+                                                                                         i=1 Xi =
+H0 + H1 E [x], and, hence, a bounded function in N according to Definition 3. For any finite H1
+(including the equilibrium value), the gradient of u(x ) with respect to the idiosyncratic shocks
+W  {W1 , . . . WN } becomes:
+
+                                                             H1
+                                            W u(x ) =           1N .
+                                                             N
+
+Therefore, the square of the norm of the gradient of the policy can be bounded by:
+
+                                                             2        2 H1
+                                                                         2
+                                      E         W u(x )          =         .
+                                                                      N
+
+Using Proposition 3 and conditioning on the aggregate shock  :
+
+                                                                                2 H1
+                                                                                   2
+                                                                                     1
+                            P   u(x ) - E [u(x ) | w, , x]                        2 N
+                                                                                       .              (D.13)
+
+For the µ = 0 case, the optimal policy u(·) does not depend on x and, thus, conditioning on the
+idiosyncratic shock of the firm of interest is not required.
+    The value function can be written as:
+
+                                            v (x ) = -x P x - d.                                      (D.14)
+
+
+Recall that the vector of all states next period within the x is X  x1 . . . xN . Given the
+symmetry in equations (31) and (D.12), we will drop the vector notation and instead use the
+x  1 x X notation where possible (i.e., let x0 = x for the firm of interest).
+   Using the chain rule and additive structure of the idiosyncratic shocks, the gradient of the
+value function is:
+
+                                            2 (p3 + p4 x )      2p5 
+                            W v ( x ) = -                  1N -      1N 1N X ,
+                                                 N               N2
+
+and then:
+                                            2
+                     2     2 (p3 + p4 x )           8 2 p5 (p3 + p4 x )         (2p5 )2
+         W v ( x )       =                      +                       1 N X +         X 1N 1N X .
+                                 N                          N2                    N3
+
+
+
+                                                        44
+Since conditional on (w, , x), x it is not a stochastic variable, we have:
+
+                                                                     2
+                                2             2 (p3 + p4 x )   8 2 p5 (p3 + p4 x )
+            E     W v ( x )          w, , x =                +                     1N E [X | w, , x]
+                                                    N                  N2
+                                                    2
+                                              2p5
+                                                      E X 1N 1N X w, , x .
+                                               N3
+
+ Since X is a normal random vector with conditional mean E [X | w, , x] = X + u(X ) +
+ 1N and conditional covariance cov (X | w, , x) =  2 IN , we have:18
+
+                                                                 2
+                            2                 2 (p3 + p4 x )     8 2 p5 (p3 + p4 x ) 1N X
+        E       W v ( x )           w, , x =                  +                            + u(X ) + 
+                                                    N                     N           N
+                                             (2p5 )2 trace  2 1N 1N         1N X                2
+                                                               2
+                                                                        +          + u(X ) +  .
+                                               N             N               N
+
+                IN X
+      Since      N
+                       and u(X ) are bounded functions in N (Definition 3), there exists K1 such that:
+
+                                                1N X
+                                                     + u(X ) +   K1 .
+                                                 N
+
+Also note that:
+                                 trace  2 1N 1N     2
+                                         2
+                                                  =      2
+                                       N            N
+Therefore, by the Cauchy-Schwarz inequality, there exists a positive Cv such that
+
+                                                            2               2 Cv
+                                                                               2
+                                           E    W v ( x )        w, , x          .
+                                                                            N
+
+Hence, by Proposition 3:
+
+                                                                                2 Cv
+                                                                                   2
+                                                                                     1
+                                     P   v (x ) - E [v (x ) | w, , x]             2 N
+                                                                                       .                (D.15)
+
+    The inequalities in (D.13) and (D.15) show that even with a single draw, we can calculate
+the expectation as N increases. A high-dimensional state space is a help rather than a hindrance
+when calculating expectations (as long as there is sufficient independence in the states) because
+of the concentration of measure phenomenon. Inequality (33) shows that, with a single draw
+of w, we know the precise distribution of the deviation from the expectation, and with a large
+enough N , it converges to 0. We could take multiple draws if required. But since Monte Carlo
+integration converges very slowly in general, the gains in extra accuracy will be minor even if we
+increase the number of draws substantially.
+ 18
+  If z is a random vector with mean m and covariance matrix , then, for any matrix , E z z = trace()+
+m m.
+
+
+
+                                                                45
+                                                                                     H1       N
+   The Euler residuals for a linear policy of the form u(X ) = H0 +                  N        i=1   Xi are:
+
+                                                             N
+                                                  1
+                    (X, u) =u(X ) -           0 -                  Xi + u(X ) + wi +
+                                                  N          i=1
+                                                       N
+                                              H1
+                                 (1 -  ) H0 +                Xi + u(X ) + wi              .
+                                              N        i=1
+
+
+From the Euler equation, equation (19) becomes:
+
+                                N                                                   N
+                         1                                       H1
+        u(X ) -      0 -              Xi + u(X ) +  (1 -  ) H0 +                         Xi + u(X )            = 0.
+                         N      i=1
+                                                                 N               i=1
+
+
+The Euler residuals are then:
+                                                                          N
+                                                                      1
+                           (X, u) =  1 -  (1 -  )H1                             wi .
+                                                                      N   i=1
+
+
+Using the fact that wi  N (0, 1), the Euler residual is a Gaussian random variable
+
+                                                                                2
+                                         2  2 1 -  (1 -  )H1
+                           (X, u)  N 0,                                              .
+                                                  N
+
+D.4    Representation of the v function
+   If it is known that the LQ problem satisfies certainty equivalence and the value function is
+quadratic and permutation invariant, v can be represented as:
+                                                 N                        N                         N
+                                                 i=1   Xi                 i=1   Xi                  i=1   Xi   2
+         v (x, X ) = - p1 + d + 2p2 x + 2p3                  + 2 p4 x                + p5
+                                                 N                        N                         N
+                                N
+                          1
+                 = v x,             v (Xi )
+                          N   i=1
+
+
+In other words, v : R  R1 (i.e., L = 1) is the identity function v (X ) = X , and v : R × R1 
+R such that:
+
+                      v (x, y ) = -(p1 + d + 2p2 x + 2p3 y + 2p4 xy + p5 y 2 ).
+
+
+
+
+                                                  46
+Appendix E                   Additional Numerical Results
+E.1      More network variations
+   Table 2 reports a more complete list of experiments, including those of Table 1.
+
+                    Table 2: Linear Model Performance in Additional Experiments
+
+                                                                                                          Policy Error
+                                              Time Params Train MSE Test MSE Val MSE Policy Error
+                                                                                                             |u-uref |
+                                               (s)  (K)       ()       ()       ()    (|u - uref |)            uref
+ group        description
+           Baseline                             42    49.4        4.1e-06   3.3e-07   3.3e-07   2.9e-05         0.10%
+ (Identity)Thin (64 nodes)                      33    12.4        3.7e-06   2.7e-07   2.7e-07   3.4e-05         0.10%
+           Shallow (2 layers)                  159    16.6        3.7e-06   7.8e-07   7.6e-07   9.4e-03        33.53%
+           Baseline                            107    66.8        3.7e-06   3.3e-07   3.3e-07   2.7e-05         0.09%
+           L=1                                  88    66.0        1.8e-05   2.3e-07   2.4e-07   2.8e-05         0.10%
+           L=2                                  86    66.3        1.3e-05   2.1e-07   2.2e-07   2.6e-05         0.08%
+           L=8                                  70    67.8        3.0e-05   5.9e-07   5.9e-07   3.3e-05         0.11%
+           L = 16                               91    69.9        5.5e-06   1.5e-07   1.5e-07   2.1e-05         0.07%
+           Shallow( : 1 layer,  : 2 layers)     79    17.7        2.0e-06   5.5e-07   5.5e-07   3.2e-05         0.11%
+ (ReLU)
+           Shallow( : 1 layer)                  58    50.4        8.7e-06   1.5e-07   1.5e-07   2.5e-05         0.08%
+           Shallow( : 2 layers)                 89    34.0        3.1e-06   4.2e-07   4.2e-07   2.7e-05         0.09%
+           Deep( : 4 layers,  : 8 layers)      242   165.1        2.1e-03   2.2e-03   2.1e-03   2.7e-03         8.50%
+           Very Thin(,  : 16 nodes)             45     1.2        1.2e-05   4.9e-07   4.9e-07   3.2e-05         0.10%
+           Thin(,  : 64 nodes)                  87    17.0        1.1e-05   4.5e-07   4.5e-07   3.0e-05         0.10%
+           Wide(,  : 256 nodes)                115   264.7        5.4e-06   4.0e-07   4.0e-07   4.1e-05         0.13%
+           Baseline                             55    49.8        1.4e-06   7.6e-07   7.6e-07   2.8e-05         0.09%
+           Moments (1,2)                       211    49.5        2.4e-06   1.1e-06   2.3e-06   4.4e-05         0.14%
+           Very Shallow(1 layer)               241     0.6        1.1e-05   8.4e-06   7.9e-06   1.1e-02        34.00%
+ (Moments) Shallow (2 layers)                  137    17.0        1.6e-06   9.9e-07   9.5e-07   1.8e-02        59.41%
+           Deep(8 layers)                      241   115.3        2.8e-06   1.2e-06   1.0e-06   5.2e-05         0.16%
+           Thin (64 nodes)                      82    12.6        1.6e-06   9.1e-07   9.2e-07   3.8e-05         0.12%
+           Wide (256 nodes)                     61   197.9        1.8e-06   8.7e-07   8.0e-07   4.3e-05         0.13%
+
+
+
+
+E.2      Nonlinear demand function
+    The results in Table 3 confirm the conventional wisdom in the deep learning literature. First,
+Very Shallow in (ReLU), and Very Shallow and Shallow in (Moments) highlight the role of
+depth and generalizability. In these experiments, the MSE of the Euler residuals on both the
+training and validation data is very low. However, as seen in Test MSE (), the approximated
+policy is incapable of generalization. Second, for cases where there is nonlinearity in the function
+of interest, depth plays a more important role than pure capacity (number of parameters). For
+instance, in (Moments), Thin has way fewer parameters than Shallow, but it has more depth.
+Thin has an extraordinarily higher generalization power than Shallow.
+
+
+
+                                                             47
+                          Table 3: Nonlinear Model Performance
+
+                                        Time Params Train MSE Test MSE Val MSE
+                                         (s)  (K)       ()       ()       ()
+group       description
+          Baseline                        60     67.1     1.4e-05    4.7e-06   3.3e-06
+          L=1                            109     66.3     9.4e-06    1.3e-05   4.5e-06
+          L=2                             73     66.6     1.0e-05    3.3e-06   2.3e-06
+          L=8                             73     68.1     1.1e-05    4.9e-06   2.0e-06
+(ReLU)
+          L = 16                          72     70.2     1.5e-05    5.4e-06   1.7e-06
+          Very Shallow(,  : 1 layer)     136      1.4     8.9e-06   4.8e+06    4.9e-06
+          Shallow(,  : 2 layers)          47     34.3     1.0e-05    9.2e-06   2.8e-06
+          Thin(,  : 32 nodes)             52      4.5     1.3e-05    6.0e-06   2.7e-06
+          Baseline                        26     49.8     6.0e-06    5.0e-06   3.8e-06
+          Moments (1)                     24     49.4     2.7e-05    6.5e-06   3.4e-06
+          Moments (1,2)                   27     49.5     8.0e-06    5.1e-06   3.6e-06
+(Moments)
+          Very Shallow (1 layer)         252      0.6     8.3e-06   1.4e+00    5.0e-06
+          Shallow (2 layers)              35     17.0     5.8e-06   1.2e+00    4.4e-06
+          Thin (32 nodes)                 66      3.2     1.1e-05    9.7e-06   4.4e-06
+
+
+
+
+                                          48
+

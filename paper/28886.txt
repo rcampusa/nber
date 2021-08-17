@@ -1,0 +1,2374 @@
+                              NBER WORKING PAPER SERIES
+
+
+
+
+                 SYNTHETIC CONTROLS WITH STAGGERED ADOPTION
+
+                                        Eli Ben-Michael
+                                           Avi Feller
+                                        Jesse Rothstein
+
+                                      Working Paper 28886
+                              http://www.nber.org/papers/w28886
+
+
+                     NATIONAL BUREAU OF ECONOMIC RESEARCH
+                              1050 Massachusetts Avenue
+                                Cambridge, MA 02138
+                                     June 2021
+
+
+
+
+We would like to thank Alberto Abadie, Howard Bloom, Peng Ding, Arin Dube, Guido Imbens,
+Skip Hirshberg, Brian Jacob, Luke Keele, Luke Miratrix, Joe Ornstein, Agustina Paglayan, Sam
+Pimentel, Jake Soloff, Panos Toulis, Chelsea Zhang, and Ben Zipperer for useful discussion and
+comments, as well as participants at the 2019 Atlantic Causal Inference Conference. We also
+thank the associate editor and reviewers for constructive feedback. This research was supported
+in part by the Opportunity Lab and the Institute for Research on Labor and Employment at UC
+Berkeley, as well as the Institute of Education Sciences, U.S. Department of Education, through
+Grant R305D200010. The opinions expressed are those of the authors and do not represent views
+of the Institute, the U.S. Department of Education, or the National Bureau of Economic Research.
+
+NBER working papers are circulated for discussion and comment purposes. They have not been
+peer-reviewed or been subject to the review by the NBER Board of Directors that accompanies
+official NBER publications.
+
+© 2021 by Eli Ben-Michael, Avi Feller, and Jesse Rothstein. All rights reserved. Short sections of
+text, not to exceed two paragraphs, may be quoted without explicit permission provided that
+full credit, including © notice, is given to the source.
+Synthetic Controls with Staggered Adoption
+Eli Ben-Michael, Avi Feller, and Jesse Rothstein
+NBER Working Paper No. 28886
+June 2021
+JEL No. C21,C23,I21,J5
+
+                                            ABSTRACT
+
+Staggered adoption of policies by different units at different times creates promising
+opportunities for observational causal inference. Estimation remains challenging, however, and
+common regression methods can give misleading results. A promising alternative is the synthetic
+control method (SCM), which finds a weighted average of control units that closely balances the
+treated unit's pre-treatment outcomes. In this paper, we generalize SCM, originally designed to
+study a single treated unit, to the staggered adoption setting. We first bound the error for the
+average effect and show that it depends on both the imbalance for each treated unit separately and
+the imbalance for the average of the treated units. We then propose "partially pooled" SCM
+weights to minimize a weighted combination of these measures; approaches that focus only on
+balancing one of the two components can lead to bias. We extend this approach to incorporate
+unit-level intercept shifts and auxiliary covariates. We assess the performance of the proposed
+method via extensive simulations and apply our results to the question of whether teacher
+collective bargaining leads to higher school spending, finding minimal impacts. We implement
+the proposed method in the augsynth R package.
+
+Eli Ben-Michael                                 Jesse Rothstein
+Institute for Quantitative Social Science       Goldman School of Public Policy and
+Harvard University                               Department of Economics
+1737 Cambridge Street                           University of California, Berkeley
+Cambridge, MA 02138                             2607 Hearst Avenue #7320
+ebenmichael@fas.harvard.edu                     Berkeley, CA 94720-7320
+                                                and NBER
+Avi Feller                                      rothstein@berkeley.edu
+Goldman School of Public Policy
+University of California, Berkeley
+2607 Hearst Avenue
+Berkeley, CA 94720
+afeller@berkeley.edu
+
+
+
+
+An R package, augsynth, is available at https://github.com/ebenmichael/augsynth
+1    Introduction
+Jurisdictions often adopt policies at dierent times, creating promising opportunities for observa-
+tional causal inference. In our motivating application, 33 states passed laws between 1964 and 1987
+mandating that school districts bargain with teachers unions (Hoxby, 1996; Paglayan, 2019); our
+goal is to estimate the impact of these laws on teacher salaries and school expenditures.
+    Estimating causal eects under staggered adoption remains challenging, however. Workhorse
+methods, such as the regression-based two-way fixed eects model, rely on strong modeling assump-
+tions and can give misleading estimates when treatment timing varies (Sun and Abraham, 2020;
+Borusyak et al., 2021; Goodman-Bacon, 2021). A promising alternative is the synthetic control
+method (SCM; Abadie et al., 2010, 2015). SCM estimates the counterfactual untreated outcome
+via a weighted average of untreated units, with weights chosen to match the treated unit's pre-
+treatment outcomes as closely as possible. SCM, however, was developed for settings where only a
+single unit is treated, and proposals for extending SCM to the staggered adoption case have been
+ad hoc. One common strategy is to estimate SCM weights separately for each treated unit and
+then average the estimates (see, e.g., Dube and Zipperer, 2015; Donohue et al., 2019). However,
+this relies on being able to find good synthetic controls for every treated unit, which is not possible
+in our application.
+    In this paper, we develop SCM for the staggered adoption setting. Under two common data
+generating processes for panel data, an autoregressive model and a linear factor model, we bound
+the error of a weighting estimator for the average eect and show that it depends on both the
+unit-specific imbalance for each treated unit and the imbalance for the average of the treated
+units. This leads to our main proposal, partially pooled SCM, which minimizes a weighted average
+of the two imbalances. This approach nests two special cases: separate SCM, which reflects the
+current practice of estimating weights that separately minimize the pre-treatment imbalance for
+each treated unit; and pooled SCM, which instead minimizes the average pre-treatment imbalance
+across all treated units. Both special cases have drawbacks. Separate SCM can lead to poor fit for
+the average, leading to possible bias when the average treatment eect is the estimand of interest.
+Pooled SCM, by contrast, can achieve nearly perfect fit for the average treated unit but can yield
+substantially worse unit-specific fits. This can lead to poor estimates of unit-level treatment eects
+and to bias for the average eect if the data generating process varies over time. Partially pooled
+SCM moves smoothly between these two extremes, with a hyperparameter denoting the relative
+weight of the two balance measures in the optimization problem. We discuss how to select weights
+to trade o between these two quantities in practice.
+    We then explore several extensions. First, we incorporate an intercept shift into the SCM
+problem, following proposals by Doudchenko and Imbens (2017) and Ferman and Pinto (2021).
+The resulting treatment eect estimator has the form of a weighted dierence-in-dierences esti-
+mator, connecting our proposed approach to a large econometric literature (Sun and Abraham,
+
+
+                                                  1
+2020; Callaway and Sant'Anna, 2020). We recommend this approach as a reasonable default in
+practice; it amounts to applying our partially pooled SCM estimator to de-meaned outcome se-
+ries. Second, we modify the SCM problem to incorporate auxiliary covariates alongside lagged
+outcomes. We also briefly address inference for SCM-like estimates in the staggered adoption
+setting. We implement the proposed methodology in the augsynth package for R, available at
+https://github.com/ebenmichael/augsynth.
+   We apply our methods to estimating the impact of mandatory teacher collective bargaining and
+show that they achieve better pre-treatment balance than existing approaches. We find no impact
+of teacher collective bargaining laws on either teacher salaries or student expenditures, consistent
+with several recent papers (Frandsen, 2016; Paglayan, 2019) but counter to earlier claims (most
+notably Hoxby, 1996).
+
+Related work.      Our paper contributes to several methodological literatures. First, there is a
+large and active applied econometrics literature on challenges and remedies for two-way fixed eects
+models with multiple treated units; see Borusyak et al. (2021); Sun and Abraham (2020); Athey
+and Imbens (2021); Goodman-Bacon (2021); Callaway and Sant'Anna (2020); Roth and Sant'Anna
+(2021). See also Xu (2017) and Athey et al. (2021) for recent generalizations of these models.
+   SCM has also attracted a great deal of attention; see Abadie (2019) for a recent review. Several
+recent papers have explored SCM with multiple treated units. In the case where all units adopt
+treatment at the same time, some propose to first average the units and then estimate SCM
+weights for the average, analogous to our fully pooled SCM estimate; for discussion, see Kreif et al.
+(2016); Robbins et al. (2017). An alternative is Abadie and L'Hour (2018), who instead propose
+to estimate separate SCM weights for each treated unit. In particular, they propose a penalized
+SCM approach that aims to reduce interpolation bias, allowing for weights that move continuously
+between standard SCM and nearest-neighbor matching. Our approach complements these papers
+by adapting some of these ideas to the staggered adoption setting. For some other examples of SCM
+under staggered adoption, see also Dube and Zipperer (2015); Toulis and Shaikh (2018); Donohue
+et al. (2019); Cao and Lu (2019).
+
+Motivating example: Teacher collective bargaining.             The United States, like other devel-
+oped countries, spends substantial resources on public education. Approximately 80% of education
+spending goes to teacher salaries and benefits (U.S. Department of Education, National Center
+for Education Statistics, 2018), and research points to teacher quality as a key determinant of
+student outcomes (Jackson et al., 2014). Over recent decades, the teacher employment relation-
+ship has changed dramatically via the introduction of unions and collective bargaining agreements
+(Goldstein, 2015). Critics identify these as a "harmful anachronism" and "the most daunting im-
+pediments" to education reform (Hess and West, 2006), while proponents argue that collective
+bargaining raises pay and thereby helps to attract and retain high-quality teachers. A major 2018
+
+                                                 2
+Supreme Court decision, Janus v AFSCME, is expected to weaken teachers' unions, bringing re-
+newed attention to this area and raising interest in understanding the eects of teacher collective
+bargaining.
+    Since 1964, a number of states have passed laws mandating that school districts bargain with
+teachers' unions.1 Given the strong criticism directed at teachers' unions, there is surprisingly
+little evidence that they, or the mandatory bargaining laws, have any eect at all. In a seminal
+study, Hoxby (1996) uses state-level changes in collective bargaining laws to argue that teacher
+collective bargaining raises teacher salaries and school expenditures but reduces student outcomes.
+Several more recent papers have disputed Hoxby's conclusions, however. Using a panel of school
+districts, Lovenheim (2009) finds little eect of unionization on teacher pay or class size. Frandsen
+(2016) similarly finds little eect of state unionization laws on teacher pay. Finally, Paglayan (2019)
+extends the historical state-level data set from Hoxby (1996). Using a variant of the two-way fixed
+eect model, she finds precisely estimated zero eects of mandatory bargaining laws on per-pupil
+school expenditures2 and teacher salaries. Motivated in part by recent criticisms of such models
+(Goodman-Bacon, 2021), we revisit the Paglayan (2019) analysis using dierent methods.
+    Figure 1 shows adoption times of state mandatory bargaining laws between 1964 and 1990.
+Adoptions were spread across 14 separate years, though 16 states adopted laws between 1965 and
+1970. Following Paglayan (2019), our main outcomes of interest are per-pupil student expenditures
+and teacher salaries, both measured in 2010 dollars and log transformed. We observe these outcomes
+back to 1959 for 49 states; we exclude Wisconsin, which adopted a mandatory bargaining law in
+1960 and thus has only one year of pre-intervention data, as well as Washington, DC. This gives
+between 6 and 28 years of data before the adoption of mandatory bargaining, with an average of
+13 years.
+
+Paper roadmap          Section 2 lays out the technical background and introduces the synthetic control
+estimator for a single treated unit. Section 3 bounds the estimation error for general weighting
+estimators under two families of data generating process, an autoregressive model and a linear factor
+model, with staggered adoption. Section 4 introduces partially pooled SCM as a solution to the
+problem of minimizing estimation error and considers two special cases, separate SCM and pooled
+SCM. Section 5 proposes several important extensions, including incorporating an intercept shift
+and auxiliary covariates, and briefly discusses inference. Section 6 describes a calibrated simulation
+study. Section 7 gives additional results for the teacher collective bargaining application. Finally,
+Section 8 discusses some directions for future work. The appendix includes further analyses and
+technical results. In particular, we provide an alternative motivation for our proposed partially
+   1
+     Another 10 states allow but do not require collective bargaining, while 7 prohibit it. We focus on estimating the
+eects of mandates.
+   2
+     Paglayan (2019) defines this as "the total current operational expenditures (regardless of funding source) that
+are devoted to public schools in a state divided by the number of public school students in that state."
+
+
+
+                                                          3
+      Figure 1: Staggered adoption of mandatory collective bargaining laws from 1964 to 1990.
+
+
+pooled estimator, which we show is based on partially pooling parameters in the Lagrangian dual
+of the SCM constrained optimization problem.
+
+
+2     Preliminaries
+2.1    Setup and notation
+We consider a panel data setting where we observe outcomes Yit for i = 1, . . . , N units over t =
+1, . . . , T time periods. In the teacher collective bargaining application, N = 49 and T = 39 years.
+Some but not all of the units adopt the treatment during the panel; once units adopt treatment,
+they stay treated for the remainder of the panel. Let Ti represent the time period that unit i
+receives treatment, with Ti = 1 denoting never-treated units. Without loss of generality, we order
+units so that T1  T2  · · ·  TN . We assume that there are a non-zero number of never-treated
+            P                                 P
+units, N0  i Ti =1 , and we let J = N N0 = i Ti 6=1 . To clearly dierentiate units that are
+eventually treated, we index them by j = 1, . . . , J .
+    We adopt a potential outcomes framework to express causal quantities (Neyman, 1923; Rubin,
+1974) and assume stable treatment and no interference between units (SUTVA; Rubin, 1980). In
+principle, each unit i in each time t might have a distinct potential outcome for each potential
+treatment time s, Yit (s), for s = 1, . . . , T, 1. Following Athey and Imbens (2021), we assume that
+prior to treatment, a unit's potential outcomes are equal to its never-treated potential outcome
+(see also Abbring and Van den Berg, 2003):
+
+Assumption 1 (No anticipation). Yit (s) = Yit (1) for t < s, with treatment time s.
+
+
+
+                                                    4
+This assumption generalizes the consistency assumption typically employed in cross-sectional stud-
+ies. We maintain it throughout. With it, the observed outcome is Yit = {t < Ti }Yit (1) + {t
+Ti }Yit (Ti ).
+
+2.2     Estimands
+As is common in many panel data settings, we focus on eects a specified duration after treatment
+onset, known as event time. For treated unit j , we index event time relative to treatment time Tj by
+k = t Tj . The unit-level treatment eect for treated unit j at event time k is the dierence between
+the potential outcome at time Tj + k under treatment at time Tj and under never treatment:
+
+                                    jk = YjTj +k (Tj )   YjTj +k (1).
+
+By Assumption 1, jk = 0 for any k < 0.
+     The unit-specific eects, jk , are often the central quantities of interest in many synthetic
+controls analyses. In addition to these eects, we also focus on their average. Our primary averaged
+estimand is the Average Treatment Eect on the Treated (ATT) k periods after treatment onset:
+
+                                     J        J
+                                   1X       1X
+                         ATTk          jk =     YjTj +k (Tj )       YjTj +k (1).
+                                   J        J
+                                     j =1         j =1
+
+                                                                                             1     PK
+We are also interested in the average post-treatment eect, averaging across k : ATT =       K +1    k=0 ATTk .
+Our methods generalize to many other estimands; see Callaway and Sant'Anna (2020) for examples
+in this setting.
+     A challenge for staggered adoption analyses is that a panel that is balanced in calendar time
+is necessarily imbalanced in event time. That is, we observe outcomes ` periods before treatment
+only for units treated after period `, and we observe outcomes k periods after treatment only for
+treated units treated before T      k . This means that populations of treated units over which one
+can average treatment eects vary with k , as do the possible donors. To minimize this problem,
+we assume that all treated units are observed for at least several periods before being treated (i.e.,
+T1      1) and for at least K    0 periods after treatment (TJ  T        K ). For treated unit j , we will
+consider outcomes up to Lj  Tj        1 periods before treatment, with L  maxj J Lj denoting the
+maximum number of lagged outcomes.
+     With this, the challenge in estimating ATTk for k  K is to impute the average of the missing
+never-treated potential outcomes. We define the set of possible "donor units" for treated unit j at
+event time k as those units i for which we observe YiTj +k (1), which we denote Djk  {i : Ti >
+Tj + k }. The composition of Djk varies with both treated unit j and event time k ; in particular,
+unit i with Ti < 1 is in Djk for k < Ti        Tj but not for k     Ti     Tj . We focus on fixed donor
+pools DjK rather than allowing the donor pools to vary with k . This limits the number of potential
+
+
+                                                    5
+donors, but ensures that estimated counterfactual outcomes do not vary spuriously across event
+time due to changing composition of the donor pool. Our proposed estimator does not require this
+restriction, but it greatly simplifies exposition. If K                      TJ      T1 then Djk will only include never
+treated units as donors; otherwise Djk will include both never treated and not-yet-treated units.
+   In our empirical application we exclude Wisconsin -- which adopted a mandatory collective
+bargaining law in the second year of the sample -- so the first treated state is Connecticut with
+T1 = 7. We follow Paglayan (2019) in considering treatment eects only up to event time K = 10,
+and use as potential donors for treated state j any states that are not treated by Tj + 10.
+
+2.3    Restrictions on the data generating process
+We now detail various restrictions on the data generating process that we will consider below.
+Because we are interested in treatment eects on treated units -- and observe potential outcomes
+under treatment -- we will place restrictions only on the potential outcomes under the never treated
+condition Yit (1) (see, for example Borusyak et al., 2021). Throughout, we follow Chernozhukov
+et al. (2021) and Ben-Michael et al. (2021) and write these potential outcomes as a model component
+plus additive noise. We consider two alternative restrictions on the model terms and noise terms,
+corresponding to two common data generating processes for Yit (1): a time-varying autoregressive
+process and a linear factor model.
+
+Assumption 2 (Data generating processes). We consider the following:
+
+ (a) The untreated potential outcomes Yit (1) follow a time-varying AR(L) process with coe -
+      cients at time t (t1 , . . . , tL ) 2 RL :
+
+                                                              L
+                                                              X
+                                                  Yit (1) =         t` Yit ` (1) + "it ,                             (1)
+                                                              `=1
+
+      where "it are mean zero and independent across units and time, with "is+k ?
+                                                                                ? {Ti = s} for
+      k     0 for all i = 1, . . . , N .
+
+ (b) There are F latent time-varying factors, where F is typically small relative to both N and
+      T . The factors, µt 2 RF , are bounded, maxt kµt k1  M . Each unit has a vector of time-
+      invariant factor loadings            i   2 RF , and the untreated potential outcomes Yit (1) are generated
+      as:
+                                                       Yit (1) =      i   · µt + "it ,                               (2)
+
+      where "it are mean zero, independent across units and time and "it ?
+                                                                         ? Ti for all i = 1, . . . , N ,
+      t = 1, . . . , T .
+
+Assumptions 2a and 2b impose dierent restrictions on the noise terms. Assumption 2b rules out
+correlation between treatment timing and the noise terms for any period while Assumption 2a only
+
+                                                                6
+excludes correlation for noise terms after treatment. Therefore, under Assumption 2b treatment
+timing and pre-treatment outcomes are only dependent through the factor loadings, while under
+Assumption 2a there is no restriction on their dependence.
+    Finally, under each process, we assume that the noise terms do not have fat tails.
+
+Assumption 3. "it are sub-Gaussian random variables with scale parameter .
+
+We use this restriction on the tail behavior for the finite sample estimation error bounds we intro-
+duce in Section 3.
+
+2.4     The Synthetic Control Method
+In the synthetic control method (SCM), the counterfactual outcome under control is estimated from
+a weighted average, known as a synthetic control, of untreated units, where weights are chosen to
+minimize the squared imbalance between the lagged outcomes for the treated unit and the weighted
+control ("donor") units.
+    We consider a modified version of the original SCM estimator of Abadie et al. (2010, 2015)
+for a single treated unit j . In this version, the SCM weights ^j are the solution to a constrained
+optimization problem:
+
+                                          Lj                     N
+                                                                                      !2             N
+                                       1 X                       X                                   X
+                                                                                                             2
+                             min             YjTj       `                 ij YiTj `           +              ij    ,                         (3)
+                            j2
+                               scm
+                                 j    Lj
+                                         `=1                     i=1                                  i=1
+                                      |                     {z                            }        | {z }
+                                                        objective                                 regularization
+
+                   scm
+                                                                                              P
+where    j    2    j     has elements {   ij }   that satisfy        ij    0 for all i,           i ij   = 1, and              ij   = 0 whenever
+i is not a possible donor, i 62 DjK .
+    Given an N -vector of weights ^ij that solve Equation (3), the SCM estimate of the missing
+potential outcome for treated unit j at event time k , YjTj +k (1), is:
+
+                                                                 N
+                                                                 X
+                                             ^jT +k (1) =
+                                             Y                            ^ij YiTj +k ,
+                                                j
+                                                                  i=1
+
+
+with estimated treatment eect ^jk = YjTj +k                      ^jT +k (1). This formulation can also be applied
+                                                                 Y  j
+
+when k < 0, generating placebo treatment eect estimates, often referred to as "gaps." We denote
+                                                       pre
+the vector of placebo pre-treatment eect estimates as ^j   = (^
+                                                              j (                                 L) , . . . , ^j ( 1) )       2 RL , where we
+define ^j (   `)   to be zero for ` > Lj . With this notation, the synthetic controls objective in Equation
+(3) is the mean squared placebo treatment eect on pre-treatment outcomes:
+
+                                                             Lj                               N
+                                                                                                                      !2
+                                      1             2     1 X                                 X
+                      (qj (^j ))2        ^pre
+                                                        =       YjTj                  `              ^ij YiTj     `        .                 (4)
+                                      Lj j          2     Lj
+                                                                     `=1                      i=1
+
+
+                                                                 7
+    The optimization problem in Equation (3) modifies the original SCM proposal in two key
+ways. First, where Abadie et al. (2010, 2015) balance auxiliary covariates, we focus exclusively on
+lagged outcomes; we re-introduce auxiliary covariates in Section 5.2. Second, following a suggestion
+in Abadie et al. (2015), we include a term that penalizes the weights toward uniformity, with
+hyperparameter . While we penalize the sum of the squared weights, there are many options, e.g.,
+an entropy or elastic net penalty (see Doudchenko and Imbens, 2017; Abadie and L'Hour, 2018).
+In settings where it is possible to achieve perfect balance, selecting   > 0 ensures that Equation
+(3) has a unique solution. This is not the case in our setting, however, and so we largely view this
+term as a technical convenience.
+    Abadie (2019) gives several reasons for preferring SCM to outcome models such as linear re-
+gression or directly fitting the factor model. In particular, SCM weights are guaranteed to be
+non-negative, and are generally sparse and interpretable. By contrast, alternatives based on ex-
+plicit models for Yit (1) often imply negative weights and thus unchecked extrapolation outside the
+support of the donor units. Outcome modeling can also be sensitive to model mis-specification,
+such as selecting an incorrect number of factors in a factor model. Finally, as we emphasize in our
+theoretical results in the next section, SCM can be appropriate under multiple data generating pro-
+cesses (e.g., both the autoregressive model and the linear factor model) so that it is not necessary
+for the applied researcher to take a strong stand on which is correct.
+    A central question for SCM is how to assess whether Y  ^jT +k (1) is a reasonable estimate for
+                                                               j
+
+YjTj +k (1). A minimal condition is that the SCM weights achieve a low root mean squared placebo
+treatment eect, i.e., qj (^j ) is close to zero. If it is not close to zero, there is a concern that
+estimated eects also capture systematic dierences between Y       ^jT +k (1) and YjT +k (1). Under
+                                                                     j               j
+
+versions of either Assumptions 2a or 2b and for a single treated unit, Abadie et al. (2010) show
+that if qj (^j ) = 0 then the bias will tend to zero as Lj ! 1; Ben-Michael et al. (2021) bound the
+estimation error of ^jk in terms of qj (^j ). Abadie et al. (2010, 2015) recommend that researchers
+only proceed with an SCM analysis if the pre-treatment fit is excellent, while Ben-Michael et al.
+(2021) propose an augmented SCM estimator that attempts to salvage cases where it is not.
+
+
+3    Estimation error under staggered adoption
+In order to extend SCM to the staggered adoption setting, we first develop appropriate balance
+measures for synthetic control-style weighting estimators under staggered adoption. We use these to
+develop bounds on the estimation error for the ATT for our two example data generating processes.
+These bounds in turn motivate our proposal for partially pooled SCM as a way to choose weights
+under staggered adoption.
+
+
+
+
+                                                 8
+3.1     Weights and measures of balance
+With multiple treated units, we can generalize the above setup to allow for weights for each treated
+unit. For each j  J , let                   2      scm    be an N -vector of weights on potential donor units, where
+                                       j           j                                                                                                             ij
+is the weight on unit i in the synthetic control for treated unit j . We collect the weights into an
+N -by-J matrix          = [ 1, . . . ,            2      scm ,                  scm           scm  . . .          scm .
+                                             J]                  where                =       1                   J       The estimated treatment
+eect on unit j at event time k is then ^jk as defined above, and the estimated ATT averages over
+the unit-level eect estimates:
+             J         J
+                         "                                           N
+                                                                                          #          J                    N X
+                                                                                                                            J
+           1 X       1 X                                             X                             1X                     X   ^ij
+      [k =
+      ATT      ^jk =       YjTj +k                                         ^ij YiTj +k =               YjTj +k                    YiTj +k .                  (5)
+           J         J                                                                             J                          J
+                    j =1                   j =1                      i=1                               j =1               i=1 j =1
+
+
+Equation (5) highlights two equivalent interpretations of the estimator: as the average of unit-
+specific SCM estimates and as an SCM estimate for the average treated unit.
+   Using the two interpretations of the ATT estimator in Equation (5), we construct goodness-of-
+                                         pre
+fit measures for the ATT by aggregating ^j   in two ways. First, we consider the root mean square
+of the pre-treatment fits across treated units,
+         v                v             v
+         u                u             u                                                                                                               !2
+             J
+             X                J
+                              X 1 pre   u X J    Lj                                                                              N
+   sep b
+         u
+         t 1    2
+                          u
+                          t 1         2 u1    1 X                                                                                X
+  q ( )        qj (^j ) =         k^ k =t           YjTj                                                                   `             ^ij YiTj   `        .
+           J                J   Lj j 2    J   Lj
+                        j =1                             j =1                                 j =1        `=1                    i=1
+
+
+This is a useful measure of overall imbalance when SCM is estimated separately for each treated
+unit and generalizes the objective for the single synthetic control problem. Second, we consider the
+pre-treatment fit for the average of the treated units,
+                                                                      v     2                                                            32
+                                                                      u
+                                                  J
+                                                  X                   u X L     X                                  N
+                                                                                                                   X
+                              1  1                                    u1
+               q pool ( b )  p                            pre
+                                                         ^j          =t     41    YjTj                        `           ^ij YiTj   `
+                                                                                                                                         5 .
+                               L J                j =1
+                                                                        L     J
+                                                                                 `=1          T j >`                i=1
+                                                                 2
+
+We refer to this interchangeably as the pooled or global fit.
+                                                                                [ k . However,
+   Both q pool and q sep are on the same scale as the estimated treatment eect, ATT
+the measures dier in whether they average before or after evaluating the pre-treatment fit. Thus,
+we typically expect (q pool )2  (q sep )2 , since the lagged outcomes for the average of the treated
+units are less extreme than the lagged outcomes for the units themselves. In practice, we therefore
+consider normalizing the imbalance measures by their values computed with weights ^ sep , the set of
+solutions to Equation (3) applied separately to each treated unit. We define normalized measures
+~pool ( ) 
+q            q pool ( )/q pool ( ^ sep )       ~sep ( ) 
+                                           and q                     q sep ( )/q sep ( ^ sep ),   and use them in our proposed estimator
+in Section 4 below.
+   Ideally, both q sep and q pool would be close to zero; indeed if q sep = 0 then q pool = 0 is also
+
+
+                                                                                9
+zero. When this is not possible, there is a trade o between these two sources of imbalance.
+Our proposed "partially pooled" SCM estimator generalizes Equation (3) to minimize a weighted
+                                       q pool )2 + (1
+average of their normalized squares,  (~                    q sep )2 , where  is a hyperparameter selected
+                                                          )(~
+by the researcher. To motivate this and to inform the choice of  , we develop error bounds for
+SCM-style weights under our two data generating models.
+
+3.2     Error bounds
+3.2.1    Autoregressive model
+
+We first bound the estimation error for the ATT under the autoregressive process in Assumption
+2a. To simplify notation and concepts, we initially focus on the ATT at event time k = 0, ATT0 .
+                                                                                     1 PJ
+Two summaries of the autoregressive coe cients are important to our analysis:    ¯= J    j =1 Tj ,
+                                                                         2    1 PJ
+the average autoregression coe cient across the J treatment times, and S  J j =1 kTj          ¯k2
+                                                                                                2,
+the corresponding variance ; this variance is zero under simultaneous adoption, S2 = 0.
+
+
+Theorem 1. Under Assumptions 2a and 3 with Lj = L < T1 for j = 1, . . . , J , for ^ 2                scm ,   where
+                                                              [ 0 is
+^j is independent of "·Tj +k , and for any > 0, the error for ATT
+
+                                   p                      p                                   
+               [0
+               ATT      ATT0         L k¯k2 q pool ( ^ ) + LS q sep ( ^ ) + p      1 + k ^ kF
+                                   |       {z         } |        {z         }   J
+                                        pooled fit         unit-specific fit  |      {z       }
+                                                                                   noise
+
+                                   2                                               qP P
+                                                                                     n  m
+with probability at least 1   2e   2   , where for a matrix A 2 Rnm , kAkF =               i=1
+                                                                                                        2
+                                                                                                  j =1 Aij   is the
+Frobenius norm.
+
+Theorem 1 shows that the error for the ATT is bounded by several distinct terms, giving guidance
+for the choice of the weights . First, error arises from the level of both the global fit and the unit-
+specific fits. The relative importance of these fits is governed by the ratio of the average coe cient
+value k¯k2 and the standard deviation S for the autoregressive coe cients over time.
+   Second, there is error due to post-treatment noise, inherent to any weighting method. Because
+the weights are independent of post-treatment outcomes, this term has mean zero and enters the
+finite sample bound above through the standard deviation, which is proportional to the Frobenius
+norm of the weight matrix, k ^ kF . Thus, when selecting among weight matrices that yield similar
+unit-specific and pooled balance, we should prefer the one that minimizes k ^ kF . This motivates a
+penalty term similar to that in Equation (3).
+   Finally, we can extend the bound in Theorem 1 to ATTk by noting that the autoregressive struc-
+                           P     (k )         Pk    (k )                                  (k )      (k )
+ture implies that YiTj +k = L`=1 t` YiTj ` +    s=0 s "iTj +s for some set of coe cients t1 , . . . tL
+      (k )      (k )
+and 0 , . . . , k . We can then apply Theorem 1 to obtain bounds for ATT [ k ATTk by defining
+                                                                      r
+                                           (k )                              P  (k )  2
+¯ and S in terms of the new coe cients t` and replacing with             1 + s s        . Similarly,
+
+
+                                                    10
+                                                          1     PK
+we can obtain bounds for the overall ATT =               K +1     k=0 ATTk ,   by noting that the average outcome
+over K + 1 periods following treatment can again be written as a weighted sum of the last L out-
+comes before treatment plus a weighted sum of the K + 1 errors following treatment. Thus, with
+suitable redefinition of the parameters, Theorem 1 continues to apply.
+
+3.2.2     Linear factor model
+
+Next we consider the linear factor model in Assumption 2b and begin by defining additional no-
+tation. Let j 2 RLF denote the matrix of factor values for time Tj L to Tj 1, and denote
+        p
+P (j ) = L (  0     1 0
+              j j ) j 2 R
+                          F L as the scaled projection matrix from outcomes to factors. Analo-
+
+gous to the autoregressive process above, the average (projected) factor value across the J treatment
+             1 PJ       (j )0 µ                            2   1 PJ       (j ) 0 µ
+times, µ
+       ¯k = J    j =1 P         Tj +k , and the variance, Sk = J  j =1 kP          T j +k ¯k k2
+                                                                                          µ   2 , determine the
+relative importance of the pooled and unit-specific fits, respectively.
+                                                1
+Theorem 2. Assume that j is non-singular and k p   k = 1 for j = 1, . . . , J . With Lj = L < T1
+                                                 L j 2
+for j = 1, . . . , J , ^1 , . . . , ^J 2    scm
+                                   where ^j is independent of "·Tj +k , K                    0, and    > 0, under
+                                   [ k is
+Assumptions 2b and 3 the error for ATT
+
+   [k                                                          M 2F       p                          
+   ATT         ATTk  kµ¯k k2 q pool ( b ) + Sk q sep ( b ) + p       3 + 2 log N J + p    1 + k ^ kF
+                     |       {z        } | {z }                 L                      J
+                         pooled fit        unit-specific fit |         {z         } |       {z       }
+                                                                      approximation error             noise
+
+                                            2
+with probability at least 1            6e   2   , where maxt kµt k1  M .
+
+    Theorem 2 shows that under the linear factor model the error for the ATT can again be
+controlled by the level of pooled fit and unit-specific fits. As in Theorem 1, the relative importance
+of these fits is governed by the ratio of the average factor value µ
+                                                                   ¯k and the standard deviation Sk ;
+similarly, under simultaneous adoption, Sk = 0 and q sep does not enter the bound.
+    Unlike in Theorem 1, this bound also includes an approximation error that arises due to bal-
+ancing -- and possibly over-fitting to -- noisy outcomes rather than to the true underlying factor
+loadings. In the worst case, the J synthetic controls match on the noise rather than the factors.
+Constraining the weights to lie in the simplex reduces the impact of this worst case, however, and
+the error decreases as more lagged outcomes are balanced; see Abadie et al. (2010); Ben-Michael
+et al. (2021); Arkhangelsky et al. (2019) for further discussion.
+    Finally, we can extend Theorem 2 to the estimation error of the overall post-treatment eect,
+              PK
+ATT = K1   +1    k=0 ATTk , by noting that the average post-treatment potential outcome also follows
+                                                 PK                           1 PK
+a linear factor structure with factor values K1
+                                              +1   k=0 µTj +k and noise term K +1   k=0 "iTj +k . Thus
+the pooled- and unit-specific fit terms and the approximation error will depend, respectively, on
+the average, variance, and maximum of the (projected) average post-treatment factor value, and
+the noise term will be reduced by a factor of             p 1 .
+                                                           K +1
+
+
+                                                            11
+4     Partially Pooled SCM
+We now turn to our main proposal, partially pooled SCM. Motivated by the finite sample error
+bounds in Theorems 1 and 2, this chooses SCM weights to minimize a weighted average of the
+(squared) pooled and unit-specific pre-treatment fits:
+
+                           min
+                             scm
+                                   q pool ( ))2 + (1
+                                  (~                            q sep ( ))2 +
+                                                             ) (~               k k2
+                                                                                   F.                         (6)
+                          2
+
+The hyperparameter  2 [0, 1] governs the relative importance of the two objectives; higher values
+of  correspond to more weight on the pooled fit relative to the separate fit. In Appendix A.3, we
+show that intermediate values of  correspond to a partial pooling solution for the weights in the
+dual parameter space, motivating our choice of a name.
+    The optimization in Equation (6) diers from the bounds in Section 3 in two practical ways.
+                                                            ~pool rather than q pool ), so that the
+First, we minimize the normalized imbalance measures (e.g., q
+minimum with  = 0 and            = 0 is indexed to 1. This ensures that the two objectives are on the
+same scale, regardless of the number of treated units, and makes it easier to form intuition about  .
+Second, we minimize the squared imbalances, which permits a computationally feasible quadratic
+program. As with the single synthetic controls problem in Equation (3), we penalize the sum of
+the squared weights, k k2
+                        F.
+
+
+4.1    Special cases: Separate SCM ( = 0) and Pooled SCM ( = 1)
+We first consider two special cases of Equation (6), which correspond to extreme values of the
+hyperparameter  , and then consider intermediate cases.
+    To date, common practice for staggered adoption applications of SCM is to estimate separate
+SCM fits for each treated unit, then estimate the ATT by averaging the unit-specific treatment
+eect estimates. This approach, which we refer to as separate SCM, minimizes q sep alone and is
+equivalent to our proposal in Equation (6) with  = 0. Since this separate SCM strategy prioritizes
+the unit-specific estimates, ^jk , an important question is when this approach will also give reasonable
+estimates of ATTk . From Theorems 1 and 2, we can see that if the unit-specific fits are all excellent,
+                          [ k ATTk will be small. This is not the case in our application,
+then the estimation error ATT
+however. Figure 2a shows SCM "gap plots" of ^j ` against ` for three illustrative treated states,
+taken one at a time. While Ohio shows relatively good pre-treatment fit, there are no synthetic
+controls that closely track Illinois or New York's pre-treatment outcomes. Thus, simply averaging
+the estimated treatment eects across these three states without attention to the overall fit does
+not yield a convincing estimate. Other recent applications also face the same issue where several
+treated units have poor pre-treatment fit (see e.g. Dube and Zipperer, 2015; Donohue et al., 2019).3
+   3
+     One way to address this is to trim the sample and drop treated units with poor pre-treatment fit, noting that
+this changes the estimand.
+
+
+
+                                                       12
+   (a) SCM "gap plots" for three illustrative states        (b) SCM pre-treatment fits by state
+
+
+Figure 2: (a) SCM pre-treatment fit for three states: (i) Ohio, with good overall fit, (ii) Illinois,
+where SCM fails to match an important pre-treatment trend, and (iii) New York, with pre-treatment
+imbalance roughly an order of magnitude larger than typical estimates for the impact of teacher
+mandatory bargaining. (b) SCM fits by state show that Separate SCM gives better pre-treatment
+fit than Pooled SCM for all treated states.
+
+
+   The other extreme case, which we refer to as pooled SCM, instead sets  = 1, finding weights
+that minimize q pool , the root mean squared placebo estimate of the ATT. This ignores the unit-
+specific pre-treatment fits in the objective, resulting in poor unit-level synthetic controls and, in
+turn, leading to poor estimates of the unit-level treatment eects jk . Furthermore, even if the ATT
+is the only estimand of interest, Theorems 1 and 2 indicate that Separate SCM is unlikely to control
+the error. In particular, if the pooled weights do a poor job of matching individual treated units,
+the pooled synthetic control may involve a great deal of interpolation and the component of the
+error bound due to separate imbalance can be large. In Section 6 we validate through simulation
+that pooled SCM leads to substantially worse unit-level estimates than separate SCM, and also
+that there are indeed settings where the bounds in Theorems 1 and 2 do bind, leading to large
+error in pooled SCM estimates of the ATT. See Abadie and L'Hour (2018) for further discussion
+on interpolation bias in synthetic control settings.
+   There are special cases where only controlling q pool with pooled SCM is su cient, however.
+Theorems 1 and 2 indicate that only the across-treated-unit variation in Tj +k and µTj +k leads
+to unit-specific fits contributing to the error bounds. Thus, when this variation is zero, the ATT
+error bound is minimized with  = 1. As we discuss above, under simultaneous adoption, with
+
+
+                                                       13
+T1 = . . . = TJ , S = 0 in the autoregressive model and Sk = 0 in the linear factor model. The
+same arises in staggered adoption settings where the data generating process is homogeneous over
+time -- e.g., where t   in the autoregressive model. It also holds approximately when the
+average autoregressive coe cient or factor values are large relative to the standard deviations --
+i.e., S  ¯ or Sk  µ
+                  ¯k , which could justify a choice of  = 1. Finally, when units are treated in
+cohorts (with Tj = Tk for units in the same cohort), there is no variation in t and µt across units
+in the same cohort. This suggests fully pooling (i.e., averaging) units that are treated at the same
+time, even if there is only partial pooling across treatment cohorts. We discuss this modification
+in Appendix A.2.
+       Figure 2b plots the state-level pre-treatment imbalances in our application for separate SCM
+versus pooled SCM. The separate SCM fit is better for all treated states, and so leads to more
+credible unit-level estimates. However, these fits are far from perfect and so the results from
+Section 3 imply that there is room for improvement by controlling the pooled fit. Figure 3a shows
+the implied placebo estimates for the overall ATT using the separate and pooled approaches: they
+are consistently positive for separate SCM weights and are all nearly zero for pooled SCM weights.
+At the same time, Figure 3b shows that pooled SCM has very poor unit-level fit, leading to the
+potential for error for both the overall ATT estimate and the unit-level estimates. This motivates
+choosing an intermediate choice of  2 (0, 1).
+
+4.2      Intermediate choice of 
+As we have seen, it is important to control both the pooled fit (for the ATT) and the unit-level
+fits (for both the ATT and the unit-level estimates). The hyper-parameter  controls the relative
+weight of these in the objective.
+       One approach to choosing  is to return to the error bounds in Theorems 1 and 2. The
+optimization problem in Equation (6) can be seen as a first-order approximation to the squares of
+the error bounds. Therefore, if the parameters of those bounds are known -- and our only goal is
+to estimate the ATT -- we can use these to choose an appropriate  .4 Unfortunately, these will
+generally be infeasible as the analyst will not know these parameters, though in some applications
+it may be possible to obtain pilot estimates.
+       An alternative approach is to directly assess the implications of the choice of  for the imbalance
+criteria for both the overall ATT and the unit-level eects. Figure 4 provides two views of this for
+the teacher collective bargaining application. Figure 4a shows the balance possibility frontier : the
+y -axis shows the pooled imbalance q pool and the x-axis shows the unit-level imbalance q sep . The
+curve traces out how these change as we vary  from the separate SCM solution at the upper left
+to the pooled solution at the lower right. The relationship is strongly convex, indicating that by
+   4
+  For example, in the autoregressive model, letting a = k     ¯k2 q pool ( b sep ) and b = S q sep ( b sep ), we could choose
+     a2
+ = a2 +b2 , with comparable quantities for the linear factor model.
+
+
+
+                                                             14
+   (a) Estimated ATT on per-pupil expenditure              (b) Distribution of state-level fits
+   (log, 2010 $)
+
+
+Figure 3: (a) Series                                                [ ` and (b) state-level pre-
+                 q of   estimated pre- and post-treatment eects ATT
+                     1 PL    2 using separate, pooled, and partially pooled SCM.
+treatment RMSE L `=1        ^j `
+
+
+
+accepting a very small increase in pooled imbalance from the fully pooled solution we can obtain
+large reductions in unit-level imbalance, and vice versa starting from the separate  = 0 solution.
+See King et al. (2017) and Pimentel and Kelz (2020) for other examples of balance frontiers in
+observational settings.
+                                                          ~pool and q
+   Figure 4b plots the two imbalances, here normalized as q         ~sep , to put them on comparable
+scales, against  . As  rises, pooled imbalance falls while unit-level imbalance rises, though this
+is highly nonlinear, as the convex frontier in Figure 4a suggests. Moving from the separate SCM
+estimate of  = 0 to a partially pooled SCM estimate of  = 0.5 reduces the pooled imbalance by
+80 percent, with more modest further reductions as  ! 1. Meanwhile, the unit-level imbalance
+declines quickly as  falls from 1 to 0.9, then more slowly as  declines further. Even a very
+small deviation from the pooled SCM solution, such as moving from  = 1 to  = 0.99, cuts the
+unit-level imbalance by 30 percent with essentially no change in the pooled fit. Due to the number
+of degrees of freedom involved, the pooled imbalance will often be near zero for  = 1, and the
+objective function q pool will be relatively flat in the neighborhood of the pooled solution. Therefore
+we expect that in many cases it will be possible to trade o a small increase in pooled imbalance
+for a large decrease in the unit-level imbalance, yielding a better estimator of both the overall
+ATT and the unit-level estimates at relatively little cost. We view the balance possibility frontier
+plot in Figure 4a as an important tool for using partially-pooled SCM in practice. By tracing out
+the curve, practitioners can see the trade-os between the pooled and unit-level fit, and choose 
+
+
+                                                  15
+               (a) The balance possibility frontier               (b) Separate and pooled balance versus  .
+
+Figure 4: (a) The trade-o between pooled imbalance (q pool ) and unit-specific imbalance (q sep ) as
+ varies, where  = 0 is the separate SCM solution and  = 1 is the pooled SCM solution. (b) q sep
+and q pool versus  , each normalized by their values for separate SCM. The dashed red line indicates
+^. The large distance in unit-level imbalance between  = 0.99 and  = 1 suggest meaningful gains
+in balance from deviating from the complete pooling estimate even by a small amount.
+
+
+according to the trade-o they desire.
+         In our application, we use a simple heuristic to set  based on the pooled fit of separate SCM,
+q pool ( ^ sep ),
+            which we also use to normalize our objective function in Equation (6). We set  to be
+                                                              p                    1 PJ
+                                                                                           p        sep
+the ratio of the pooled fit to the average unit-level fit: ^ = L q pool ( b sep )/ J  j =1  Lj qj (^j   ).
+This is bounded above by 1 due to the triangle inequality.5 The key idea is that, if the separate
+SCM problem with  = 0 achieves good pooled fit on its own, then we want to select a small  ,
+which will ensure both good unit-specific and pooled fit. Conversely, if the pooled fit of separate
+SCM is poor, then there can be substantial gains to giving q pool higher priority by setting  to be
+large. In Section 6 we find through simulation that this heuristic results in weights that significantly
+reduce both the estimation error for the ATT relative to separate SCM and the estimation error of
+the unit-level eects relative to pooled SCM.
+         In the teacher bargaining example, our heuristic yields ^  0.44 for the per-pupil expenditure
+outcome, and we label this point in Figure 4a. The heuristic choice has similar global pre-treatment
+imbalance to the fully pooled estimator,  = 1, with only a modest increase in unit-level imbalance
+relative to the separate SCM estimate,  = 0. This is reflected in Figure 3, which also shows
+the placebo ATT estimates for partially pooled SCM. While the imbalance for the ATT is slightly
+larger than for pooled SCM, it is substantially better than for separate SCM.
+     5                                                      1
+                                                              PJ p
+     If the SCM fits with  = 0 are perfect for each unit, J     j =1 Lj qj = 0, then the overall fit will also be perfect,
+p      pool
+    Lq      = 0, and our heuristic sets ^ = 0. This is not a common situation.
+
+
+                                                            16
+     There are many other potential choices for  , and, even if we focus solely on the ATT, this one
+is unlikely to be optimal. An alternative strategy when the balance possibility frontier exhibits a
+strong "kink" shape is to choose  to be the point after which small improvements to the pooled
+fit lead to substantially worse unit-level fits. Another heuristic is to choose  to be the point where
+the tangent of the frontier is equal to the slope between the end points at  = 0 and  = 1 ( = .84
+in the teacher bargaining application).
+     In the end, the nonlinear relationship between  and {q sep , q pool } in Figure 4b suggests that the
+loss from choosing a suboptimal  is likely to be small, so long as we do not choose something too
+close to 0 or 1. We also recommend inspecting the sensitivity of estimates to the particular choice
+of  in practice; we do this in Section 7.
+
+
+5     Extensions
+We now add two elaborations to the basic setup. First, we incorporate an intercept shift into
+the SCM problem, following proposals by Doudchenko and Imbens (2017) and Ferman and Pinto
+(2021). Second, we incorporate auxiliary covariates alongside lagged outcomes. We conclude by
+briefly addressing inference in this setting.
+
+5.1     Incorporating intercept shifts
+We have established that the partially pooled SCM estimator achieves nearly as good overall balance
+as the fully pooled estimator, while achieving much better balance for each unit. Nevertheless, unit-
+level balance is often imperfect. Particularly when the scale of the outcome varies across units,
+it can be di cult to construct an adequate synthetic control, as one needs to match both the
+overall level and patterns over time. Several recent papers have proposed modifying SCM for
+a single treated unit by allowing for an intercept shift between the treated unit and its synthetic
+control (Doudchenko and Imbens, 2017; Ferman and Pinto, 2021; Abadie, 2019). We can adapt this
+approach to the staggered adoption setting by including an additional parameter vector  2 RJ ,
+where j is an intercept term for unit j . We include this intercept in the counterfactual estimate
+as
+                                                           N
+                                                           X
+                                        ^jt (1) = j +
+                                        Y                        ij Yit
+                                                           i=1
+
+and in the separate and pooled imbalance measures as
+                                       2                                                    !2 3
+                                     J      Lj                            N
+                                   1 X      X                             X
+                  (q sep (, ))2 =      4 1     YjTj         `       j           ij YiTj `     5,
+                                  2J     Lj
+                                      j =1      `=1                       i=1
+
+
+
+
+                                                      17
+and                                    2
+                                     L                                                N
+                                                                                                             !32
+                                   1 X     X                                          X
+                  (q pool (, ))2 =     41                      YjTj   `         j            ij YiTj `        5 .
+                                   L     J
+                                             `=1      T j >`                          i=1
+
+Again we can define normalized versions of these objectives, q     ~pool (, )  qpool (, )/qpool (^ sep , b sep ),
+
+where ^ sep and b sep are the minimizers of (q sep (, ))2 . As above, we then form an overall objective
+function as a convex combination of the normalized squares:
+
+                        min            q pool (, ))2 + (1
+                                      (~                                  q sep (, ))2 +
+                                                                       ) (~                          k k2
+                                                                                                        F.                        (7)
+                    2 RJ , 2   scm
+
+
+The intercept  ^ that solves Equation (7) has a closed form in terms of the solution for the weights,
+^ ;
+   ^ j is the average pre-treatment dierence between treated unit j and its synthetic control,
+
+                                         Lj                           N Lj
+                                      1 X                          1 XX 
+                                 ^j =       YjTj           `               ^ij YjTj          `.                                   (8)
+                                      Lj                           Lj
+                                               `=1                    i=1 `=1
+
+Plugging this value of ^ into Equation (7), we see that this procedure is equivalent to solving
+                                                          iT `  YiT `      1 P Lj
+the partially-pooled SCM problem (6) using the residuals Y  j       j      Lj   `=1 YiTj ` . The
+resulting treatment eect estimates have a particularly useful form:
+
+                              Lj        "                             N
+                                                                                                             #
+                           1 X                                        X
+                                                                             
+                     ^jk =
+                                            YjTj +k    YjTj    `            ^ij YiTj +k           YiTj   `       ,                (9)
+                           Lj
+                                 `=1                                  i=1
+
+and                     2                                                                                                   #3
+                      J      Lj "                                                   N
+              1     1 X   1  X                                                      X
+         [k = 
+         ATT    ^ =     4         YjTj +k                           YjTj    `
+                                                                                           
+                                                                                          ^ij YiTj +k            YiTj   `
+                                                                                                                            5.   (10)
+              J jk  J     Lj
+                                 j =1         `=1                                   i=1
+
+We can view this as a weighted dierence-in-dierences (DiD) estimator. In the special case with
+                              = 1/kD k, Equation (9) is the simple average over all two-period,
+uniform weights over units, ^ij     j
+two-group DiD estimates, averaging over all pre-treatment lags ` and donor units i. This is equiv-
+alent to recent proposals for DiD estimators that allow for treatment eect heterogeneity with a
+fixed donor set per treatment time cohort (see Sun and Abraham, 2020; Callaway and Sant'Anna,
+2020, among others). With non-uniform weights,   compares the change in outcomes for treated
+                                               ^jk
+unit j to the change for the synthetic control, rather than the average change across all potential
+                                                                                   
+                                                                              [ k.
+donors. Equation (10) averages these estimates across treated units j to form ATT
+    Figure 5 shows the value of including an intercept to improving pre-treatment fit in the teacher
+collective bargaining application. Figure 5a presents this as a balance possibility frontier for SCM
+with the weights alone and with the intercept, as well as the implied imbalance for the DiD estimator
+alone. Here, simple unweighted DiD achieves unit-level and pooled balance that improves on the
+no-intercept SCM possibility frontier. However, the intercept-shifted estimator dominates both DiD
+
+                                                               18
+       (a) The balance possibility frontier for SCM with           (b) Distribution of unit-level fits
+       and without an intercept.
+
+Figure 5: (a) The balance possibility frontier for SCM with and without an intercept, as well as the
+implied imbalance for DiD. Incorporating unit-level fixed eects
+                                                             r leads  to substantial improvements
+                                                              PL           2
+in balance. For DiD, we compute the implied balance as               [ ` , the RMSE of the
+                                                                     ATT
+                                                                 `=1
+placebo estimates, from Equation (9) with uniform weights. (b) The distribution of state-level fits
+(in terms of RMSE) with and without an intercept and covariates; dashed lines show the pooled
+pre-treatment RMSE.
+
+
+and no-intercept SCM estimates on both criteria, for all but the largest  . We see similar results
+when examining the state-specific fits. Figure 5b shows the unit-level fit for both partially pooled
+SCM and the intercept-augmented version. Two states, New York and Alaska, have especially
+bad pre-treatment fits without including an intercept because they have the highest per-pupil
+expenditures of all the states for many years (see Appendix Figure B.5). Accounting for the pre-
+treatment average through the intercept dramatically improves the fits for these states.
+
+5.2      Incorporating auxiliary covariates
+We have focused thus far on matching pre-treatment values of the outcome variable. In practice,
+we typically observe a set of auxiliary covariates Xi 2 Rd as well. In our collective bargaining
+application, we consider five covariates, measured as of the start of the sample in 1959-1960: income
+per capita, the student to teacher ratio, the percent of the population with 12+ and 13+ years of
+education, and the female labor force participation rate.6 We standardize all five covariates to have
+mean zero and variance one.
+   6
+   Due to missing data for these auxiliary covariates, we restrict our analysis here to the contiguous United States.
+Note that this drops Alaska, which we have seen is far outside the convex hull of its donor units.
+
+
+
+                                                         19
+       There are several ways to incorporate auxiliary covariates in the setting with a single treated
+unit. Here we directly include them into the optimization problem. Analogous to above, we define
+both the unit-level imbalance and pooled imbalance of X ,
+                                                      v
+                                                      u                                                2
+                                                      u X J                         N
+                                                                                    X
+                                              sep     u1
+                                             qX   ( )=t     Xj                             ij Xi           ,
+                                                        J
+                                                                    j =1            i=1                2
+
+
+and another for the pooled synthetic control,
+
+                                                                   J              N
+                                               pool              1X               X
+                                              qX    ( )=             Xj                   ij Xi        ,
+                                                                 J
+                                                                    j =1          i=1
+                                                                                                   2
+
+                           sep           pool
+with normalized versions q
+                         ~X    ( ) and q
+                                       ~X     ( ).7 We then include these in our objective, with an
+additional hyper-parameter  :
+
+                                                         
+                                               pool                                                    sep
+       min                  q pool (, ))2 +  (~
+                           (~                 qX    ( ))2 + (1                       q sep (, ))2 +  (~
+                                                                                  ) (~                qX   ( ))2                  +     k k2
+                                                                                                                                           F.
+ 2 RJ , 2    scm
+
+                                                                                                                                             (11)
+While we write this optimization problem with an intercept shift, we could also include auxiliary
+covariates but no intercept. The choice of  determines the relative importance of the outcomes
+and the auxiliary covariates. Setting  = 0 recovers the optimization problem (7) without auxiliary
+covariates, while in the extreme case setting  = 1 will, if feasible, enforce exact balance on the
+auxiliary covariates. We decide to give equal priority to both terms. Since the auxiliary covariates
+are standardized, we set  to be the sample variance of the pre-TJ outcomes for the never treated
+units. This equally weights both components in the objective functions, and reduces the number
+of hyper-parameters and specification choices. Finally, we can incorporate time-varying covariates
+by including the values at time periods before the first treatment time T1 into the vector Xi .
+       Figure 6 shows the level of covariate balance between each treated unit and its synthetic con-
+trol, as well as for the average across treated units. Before weighting there are large dierences
+between the treated units and their donor sets, and weighting on the outcomes alone does little to
+alleviate these dierences. Including the auxiliary covariates into the optimization procedure finds
+weights that give nearly perfect covariate balance for the pooled synthetic control (indicated as the
+black squares), while also significantly improving covariate balance for the individual treated units
+(indicated as boxplots). Figure 5b shows that this improved covariate balance comes at a small
+   7
+    Specifically, let  ^ sep and b sep be the minimizers of (q sep (, ))2 +  (qX             sep
+                                                                                                 ( ))2 , and (C sep )2 = (q sep (^ sep , b sep ))2 +
+    sep b sep 2          pool 2          pool    sep b sep 2        pool b sep 2
+ ( qX  (     )) and (C       ) = (q           (^ ,         )) +  (qX (           )) be the combined separate and pooled imbalances.
+                                                    pool        pool                sep         sep
+We define the normalized objectives as q           ~X    ( ) = qX ( )/C pool , q   ~X   ( ) = qX ( )/C sep , and slightly abuse notation by
+              pool             pool                       sep           sep
+re-defining q
+            ~      ( , )     q      (  ,  )/C pool
+                                                   and q ~ ( , )      q     (  ,  )/C .
+                                                                                      sep
+
+
+
+
+                                                                        20
+Figure 6: Distribution of the absolute dierence between each treated unit and its synthetic control
+for the (standardized) auxiliary covariates, before weighting and with/without including covariates
+in the optimization procedure. Black squares show the absolute average dierence.
+
+
+cost to the fit on the pre-treatment outcomes: the distribution of unit-level pre-treatment RMSE
+shifts slightly to the right.
+
+5.3    Inference
+There is a growing literature on inference for SCM-type estimators, though no proposed approach
+is fully satisfactory for all cases. In settings where multiple units adopt treatment simultaneously,
+Abadie and L'Hour (2018) propose an extension of the original permutation procedure of Abadie
+et al. (2010), and Arkhangelsky et al. (2019) propose resampling-based approaches. In a staggered
+adoption setting, Toulis and Shaikh (2018) propose a weighted permutation approach based on a
+Cox proportional hazards model. This is not appropriate in our application, however, since multiple
+units have the same treatment time, which is incompatible with the Cox model. Finally, Cao
+and Lu (2019) propose an Andrews test for inference with intercept-shifted SCM under staggered
+adoption. Building on the existing literature, we consider constructing confidence intervals via
+the wild bootstrap. We briefly describe this method here; we address asymptotic Normality and
+inference via the jackknife in Appendix A.1.
+    The wild bootstrap approach we implement adapts the proposal from Otsu and Rai (2017) for
+                                                                                        [ k as the
+bias-corrected matching estimators; see also Imai et al. (2019). First, we can re-write ATT
+
+
+
+                                                 21
+following average over units:
+                      0                                 1                                         !
+                   TJ
+                 N X
+                 X                           X                                   g 1
+                                                                                 X                          N
+          [k = 1      @                                                  1                                1X
+          ATT                      Ti =g              ^ij A Yig+k                       Yig   `       =       ~i .
+                                                                                                                     (12)
+               J                                                     g       1                            J
+                      i=1 g =T1              T j =g                              `=1                        i=1
+
+
+                                                                                 (b )              (b )
+This bootstrap procedure draws a sequence of random variables W1 , . . . , WN independently with
+           p             p         p               p             p            p
+P (Wi = ( 5 1)/2) = ( 5 + 1)/2 5 and P (Wi = ( 5 + 1)/2) = ( 5 1)/2 5 for b = 1, . . . , B ,
+and computes the boostrap statistic:
+
+                                             1 X (b )                   
+                                               N
+                                  S (b ) =       Wi    ~i           [k ,
+                                                                    ATT                                              (13)
+                                             J
+                                                i=1
+
+
+for each draw. Letting q/2 and q1 /2 denote the /2 and 1 /2 quantiles of S (b) , we construct
+                          [ k q1 /2 , ATT
+confidence intervals via [ATT           [ k + q/2 ]. Importantly, we keep the weights and
+                                                                         (b )
+outcomes fixed, and only re-sample the multiplier variables Wi .
+    In the next section, we evaluate the coverage of the wild bootstrap with a simulation study
+that mimics the structure of the collective bargaining application. In Appendix A.1, we take
+an alternative route and motivate the use of resampling methods via asymptotic Normality. In
+                                                        [ k ATTk to be asymptotically Normal.
+particular, we provide a set of su cient conditions for ATT
+We consider an asymptotic regime in which J, N0 ! 1, with the number of lags L fixed and the
+                                                                                              J
+number of control units growing faster than the number of treated units                       N0      ! 1. We also adapt
+a generalization of the conditional parallel trends assumption in Abadie (2005) to the staggered
+adoption setting. However, there are several ways such asymptotic results can be misleading. First,
+our result assumes that the synthetic control weights can achieve perfect fit within treatment time
+                                                 [ k is centered around ATTk . Poor fit, either
+cohorts, which ensures that the distribution of ATT
+overall or across time cohorts, can lead to under-coverage. Second, the asymptotic approximation
+can be poor when there are relatively few total units, and the use of resampling methods can
+exacerbate this. Thus, while we show that these approaches yield reasonable results in simulations,
+we suggest interpreting any confidence intervals for typical applications with caution.
+
+
+6    Simulation study
+We now consider the performance of dierent approaches in a simulation study calibrated to the
+collective bargaining dataset; we turn to the impacts of mandatory teacher collective bargaining
+laws in the actual data in the next section. We evaluate performance with three dierent data
+generating processes. First, we generate never treated outcomes according to a two-way fixed
+eects model,
+                                  Yit (1) = int + uniti + timet + "it ,                                              (14)
+
+
+                                                        22
+with both unit and time eects are normalized to have mean zero. This model satisfies the parallel
+trends assumption needed for the DiD estimator we consider below. We estimate (14) using only
+the never-treated observations, and extract the estimated variance of the unit eects, ^ , and of the
+             2 . We then generate unit iid     ^         iid     2
+error term, ^"                        i  N (0, ) and "it  N (0, ^" ).
+    Second, we use a factor model with a 2-dimensional latent time-varying factor µt 2 R2 and
+unit-specific coe cients      i   2 R2 :
+
+                                                                               0
+                                   Yit (1) = int + uniti + timet +             i µt   + "it .                       (15)
+
+We estimate (15) using the R package gsynth (Xu, 2017) for the untreated units and time periods,
+then estimate the variance-covariance matrix of the unit fixed eects and factor loadings, ^ , and
+                                                                d t, µ
+                                2 . Here we use the estimated {time                                                      iid
+the variance of the error term ^"                                    ^t }, and draw {uniti ,                        i}   
+         ^          iid      2
+MVN(0, ) and "it  N (0, ^" ).
+    Finally, we have a random eects autoregressive model:
+
+                                           3
+                                           X
+                                                                                                2
+                            Yit (1) =            ` Yit ` (1) + "it ,         N ( µ ,             ),                 (16)
+                                           `=1
+
+that we fit using lme4 (Bates et al., 2015) to obtain estimates µ
+                                                                ^ and ^ . In order to increase
+the level of heterogeneity across time, we simulate from this hierarchical model with 8 times the
+standard deviation 8^ . For all three outcome processes we generate simulated data sets with the
+same dimensions as the data, N = 49 and T = 39, and impose a sharp null of no treatment eect,
+Yit (s) = Yit (1) = Yit .
+    A key component of the simulation model is selection into treatment. We fix the treatment
+times to be the same as in the teacher unionization application. For each treatment time, we
+assign treatment to those units not already treated with probability i , sweeping through the
+fixed set of treatment times. For the two-way fixed eects model, we set the probability that
+unit i is treated at each treatment time to be i = logit(0 + 1 · uniti ), with 0 =                              2.7 and
+1 =     1, yielding around 30 units that are eventually treated in each simulation draw. For the
+factor model we choose i = logit(0 + 1 (uniti +                   i1   +   i2 )),   and set 0 =       2.7 and 1 =   1 so
+that around 32 units are eventually treated in each simulation draw, following the distribution of
+the data. For the autoregressive
+                              process we allow selection to depend on the three lagged outcomes
+                   P3
+i = logit 0 + 1 `=1 Yit ` , where 0 = log 0.04 and 1 = 2.
+
+Estimation.      We consider several estimators for the average post-treatment eect ATT. Figure 7
+shows four: (1) A dierence-in-dierences estimator following Equation (9) with uniform weights,
+(2) the partially pooled SCM estimator, as we vary  between 0 and 1, (3) partially pooled SCM
+with an intercept, again varying  , and (4) directly estimating the factor model. Solid points
+
+
+
+                                                             23
+Figure 7: Monte Carlo estimates of the MAD for the overall ATT vs the MAD the individual ATT
+estimates. The lines trace out values for  2 [0, 1], the solid points are the average value using the
+heuristic ^. In the two-way fixed eects and factor model simulations, the estimated factor model
+is the oracle estimator. Among the alternatives, the intercept-shifted partially pooled SCM has
+lowest MAD for both the overall ATT and the individual ATT estimates.
+
+
+indicate the heuristic choice of ^ above.
+                                    h     The vertical
+                                                  i axis of each panel shows the Mean Absolute
+                                            [
+Deviation (MAD) for the ATT, E ATT ATT , while the horizontal axis shows the average of
+                                                 h P              i
+                                                  1    J
+the individual post-treatment eect estimates, E J          |
+                                                       j =1 j ^ |
+                                                               j . Appendix Figures B.1 and B.2
+show the analogous results for the bias and Root Mean Square Error (RMSE).
+   There are several key takeaways from Figure 7. First, under each data generating process there
+is a tradeo between estimating the ATT and the individual eects, with  = 1 at the top left of
+the "MAD frontier" and  = 0 at the bottom right. Partially pooled SCM significantly reduces
+the bias for the overall ATT relative to separate SCM, and a small amount of pooling also leads
+to slightly better individual ATT estimates. The gains to pooling, however, diminish for  close
+to 1, with the fully pooled SCM yielding poor individual ATT estimates under all three models.
+Under a two-way fixed-eects model there is no penalty to pooling in terms of MAD for the overall
+ATT. This comports with Theorem 2, which shows that targeting the pooled pre-treatment fit is
+su cient under a two-way fixed eects model. However, under the factor model and AR process
+the fully pooled estimator leads to worse MAD for the overall ATT estimates than partially pooled
+SCM. Second, when mis-specified, the DiD estimator does not do particularly well at controlling
+the MAD for either overall ATT or the unit-level estimates. Third, the intercept-shifted estimator
+dominates either of the alternatives in terms of both overall and unit-level estimates. Here again
+there are gains to partially pooling SCM, albeit with the possibility for a large amount of error
+from over-pooling. Fourth, our heuristic choices of  perform reasonably well at selecting a point
+close to the value that minimizes the MAD for the ATT, while also reducing the MAD for the
+
+
+                                                 24
+individual estimates. Finally, the partially-pooled SCM estimator with an intercept shift performs
+as well as or better than fitting the factor model directly.
+
+Inference. We conclude by examining the finite-sample coverage of approximate 95% confidence
+intervals from the wild bootstrap. Figure 8 shows the coverage of approximate confidence intervals
+for partially pooled SCM with an intercept shift, using the wild bootstrap to construct the intervals.
+Under the two-way fixed eects model, in which there is no bias from inexact fit, the wild bootstrap
+has close to 95% coverage. Under both the linear factor model and the autoregressive model,
+however, the wild bootstrap is somewhat conservative.8 Overall, the wild bootstrap appears to be
+a reasonable, if conservative, choice.
+
+
+7        Impacts of mandatory teacher collective bargaining laws
+We now return to measuring the impact of mandatory teacher collective bargaining. The left of
+Figure 9a shows the placebo estimates from Equation (9), where k < 0.9 We see that along with
+the good unit-specific fits shown in Figure 5b and the good covariate balance shown in Figure 6,
+the pooled synthetic control estimate is near zero for k < 0. The right side of the figure shows the
+estimated impact on per-pupil current expenditures, with approximate 95% confidence intervals
+computed via the wild bootstrap.
+        Consistent with Paglayan (2019), we find weakly negative eects of mandatory teacher collective
+bargaining laws on student expenditures. Pooled across the eleven years after treatment adoption,
+                        [ = 0.03, or a 3 percent decrease in per-pupil expenditures, with an
+the overall estimate is ATT
+approximate 95% confidence interval of [ 0.06, +0.005]. In Appendix Figure B.6 we show the
+average post-treatment eect for each state and the unit-level fits. For those states with good pre-
+treatment fit, we find small positive and negative eects, while we estimate larger negative eects
+for those with worse fit. These estimates are in stark contrast to the results from Hoxby (1996),
+who argues for a 12 percent positive eect, although she gives a range of estimates. One possible
+explanation for this is that school districts are able to divert funds from other purposes to fund
+higher teacher salaries with minimal net eect on total expenditures. In Appendix Figure B.7 we
+show estimates of the eect on teacher salaries, finding evidence against a positive eect.
+        We can assess the strength of evidence by conducting robustness and placebo checks. First,
+following Abadie et al. (2015), we begin by assessing out-of-sample validity via in time placebo
+    8
+     Appendix Figure B.4 shows the analogous results for partially-pooled SCM without including an intercept. In
+this case, the wild bootstrap is extremely conservative.
+   9
+     These placebo checks dier from those typically performed in traditional event studies, which test for the parallel
+trends assumption by comparing pre-treatment outcomes between treated and control units. These tests generally
+have low power, however; see, e.g., Roth (2018); Bilinski and Hatfield (2018); Kahn-Lang and Lang (2019). In
+contrast, the intercept-shifted estimator uses pre-treatment outcomes to select donor units that best balance the
+treated units, in eect optimizing for the placebo test. It is still possible to inspect pre-treatment fit, as in standard
+SCM, but this is best seen as an assessment of the quality of the match rather than as a formal placebo test.
+
+
+                                                           25
+Figure 8: Monte Carlo estimates of the coverage of approximate 95% confidence intervals k =
+0, . . . , 9 periods after treatment. The solid line indicates the coverage for the overall ATT estimate
+averaged across all post-treatment periods.
+
+
+checks. These checks hold out some pre-treatment time periods by re-indexing treatment time to
+be earlier (i.e. setting Tj0 = Tj   x for some x), then estimate placebo eects for the held-out pre-
+intervention time periods. Figure 9b shows the placebo estimates for the intercept-shifted partially
+pooled SCM estimator with covariates using a placebo treatment time two and four periods before
+the true treatment time. Both estimators achieve excellent pre-treatment fit and estimate placebo
+eects that are indistinguishable from zero.
+   Another important check that we recommend in practice is to gauge the sensitivity of the
+ATT estimates to the particular choice of pooling parameter  . Figure 10a shows the overall ATT
+estimates varying  from separate SCM  = 0 to pooled SCM  = 1. No choice of  substantively
+changes the conclusions, and each rules out large positive eects. Finally, we consider the result of
+trimming states with poor pre-treatment fit, following common practice in the matching and SCM
+literatures. Figure 10b shows the overall ATT estimates when removing an increasing number of
+treated units with poor fits, in order of decreasing unit-level fit. Overall, omitting the worst-fit
+states decreases the magnitude of the estimated eect, and increases the variability of the estimate.
+However, all estimates still rule out large positive eects.
+   An important feature of SCM-based methods over model-based methods is that we can directly
+inspect the weights, and that these weights are non-negative and sum to one. Appendix Figures
+B.8 and B.9 show the state-specific weights over donor states for each treated unit for partially
+pooled SCM without an intercept and with both an intercept and auxiliary covariates, respectively.
+Without the intercept, both Illinois and Wyoming are consistently important donor states. Both
+states had relatively high levels of per-pupil expenditures throughout the study period and several
+synthetic controls place nearly all of the weight on these two states in order to match the level.
+However, after removing pre-treatment averages via an intercept, the weights are much more evenly
+
+
+                                                  26
+    (a) Eect of mandatory collective bargaining on               (b) Placebo estimates
+    per-pupil expenditures (^
+                             = 0.22)
+
+Figure 9: Estimates of the ATT on per-pupil current expenditures (log, 2010 $) and placebo
+estimates re-indexing treatment time to two and four years before the true treatment time. The
+placebo eects are very close to zero and are indistinguishable from zero at this level of precision.
+
+
+distributed across the donor pool, suggesting that estimates are not overly reliant on a single control
+unit.
+
+
+8       Discussion
+In this paper, we develop a new framework for estimating the impact of a treatment adopted
+gradually by units over time. In our motivating example, 33 states have enacted laws mandating
+school districts to bargain with teachers unions (Paglayan, 2019), and we seek to estimate the
+eects of these laws on educational expenditures. To do so, we adapt SCM to the staggered
+adoption setting. We argue that current practice of estimating separate SCM weights for each
+treated unit is unlikely to yield good results, but also that fully pooled SCM may over-correct; our
+preferred approach, partially pooled SCM, finds weights that balance both state-specific and overall
+pre-treatment fit. We then extend this basic approach to incorporate an intercept shift as well as
+auxiliary covariates. We apply this approach to the teacher bargaining example and, consistent
+with recent analyses, find weakly negative estimates on student expenditures.
+    We briefly note some directions for future work. First, we could extend these ideas to other
+settings with multiple treated units, such as where treatment can "shut o " for some units (Imai
+and Kim, 2021), or where all units are eventually treated (Athey and Imbens, 2021). This would
+likely require additional assumptions. We could similarly incorporate other structure from our
+application. For example, in staggered adoption settings where multiple units adopt treatment at
+
+                                                     27
+              (a) Varying  from 0 to 1.               (b) Dropping 1 to 20 treated units according to
+                                                      their worst fit.
+
+                 [ and approximate 95% confidence intervals as  varies between 0 and 1, 
+Figure 10: (a) ATT                                                                                ^
+highlighted. (b) Estimates are not especially sensitivity to dropping an increasing number of units
+(ranked by pre-treatment imbalance), although the uncertainty intervals are wider with fewer units
+in the analysis.
+
+
+the same time, we could add a layer in the hierarchy and more closely pool units treated at the
+same time while still partially pooling dierent treatment cohorts. See Appendix A.2.
+   Second, many SCM analyses explore multiple outcomes. As in other SCM studies, we treat
+each outcome separately, choosing dierent synthetic control weights for each. In many settings,
+however, lagged values from one outcome may predict future values of another, suggesting that
+balancing multiple outcome variables would be useful. This seems especially important in settings
+like ours with relatively few units.
+   Finally, we could adapt recent proposals for bias correction and other "doubly robust" estimators
+to this setting, which will be important for both estimation and inference (Ben-Michael et al., 2021;
+Abadie and L'Hour, 2018; Arkhangelsky et al., 2019). Existing approaches have largely been limited
+to the case with a single treated unit or, if multiple units are treated, to a single adoption time.
+More complex models are possible and may be desirable in the staggered adoption setting. For
+example, Fesler and Pender (2019) apply the Ridge Augmented SCM proposal in Ben-Michael et al.
+(2021) to a staggered adoption setting, modeling each treated unit separately. Partial pooling may
+be helpful here. In another direction, we might consider an outcome model that incorporates the
+time weights used in Arkhangelsky et al. (2019). We anticipate that, unlike in the simple case with
+unit fixed eects, these augmented approaches likely require more elaborate shrinkage estimation,
+such as via matrix penalties.
+
+
+
+                                                 28
+References
+Abadie, A. (2005). Semiparametric dierence-in-dierences estimators. The Review of Economic
+ Studies 72 (1), 1­19.
+
+Abadie, A. (2019). Using synthetic controls: Feasibility, data requirements, and methodological
+ aspects. Journal of Economic Literature .
+
+Abadie, A., A. Diamond, and J. Hainmueller (2010). Synthetic Control Methods for Comparative
+ Case Studies: Estimating the Eect of California's Tobacco Control Program. Journal of the
+ American Statistical Association 105 (490), 493­505.
+
+Abadie, A., A. Diamond, and J. Hainmueller (2015). Comparative Politics and the Synthetic
+ Control Method. American Journal of Political Science 59 (2), 495­510.
+
+Abadie, A. and J. L'Hour (2018). A penalized synthetic control estimator for disaggregated data.
+
+Abbring, J. H. and G. J. Van den Berg (2003). The nonparametric identification of treatment
+ eects in duration models. Econometrica 71 (5), 1491­1517.
+
+Arkhangelsky, D., S. Athey, D. A. Hirshberg, G. W. Imbens, and S. Wager (2019). Synthetic
+  Dierence In Dierences. Technical report.
+
+Athey, S., M. Bayati, N. Doudchenko, G. Imbens, and K. Khosravi (2021). Matrix completion
+  methods for causal panel data models. Journal of the American Statistical Association , 1­41.
+
+Athey, S. and G. W. Imbens (2021). Design-based analysis in dierence-in-dierences settings with
+  staggered adoption. Journal of Econometrics .
+
+Bates, D., M. M¨
+               achler, B. M. Bolker, and S. C. Walker (2015). Fitting linear mixed-eects models
+  using lme4. Journal of Statistical Software 67 (1).
+
+Ben-Michael, E., A. Feller, and J. Rothstein (2021). The augmented synthetic control method.
+  Journal of the American Statistical Association (just-accepted), 1­34.
+
+Bilinski, A. and L. A. Hatfield (2018). Seeking evidence of absence: reconsidering tests of model
+  assumptions. arXiv preprint arXiv:1805.03273 .
+
+Borusyak, K., X. Jaravel, and J. Spiess (2021). Revisiting event study designs: Robust and e cient
+  estimation.
+
+Callaway, B. and P. H. Sant'Anna (2020). Dierence-in-dierences with multiple time periods.
+  Journal of Econometrics .
+
+Cao, J. and S. Lu (2019). Synthetic control inference for staggered adoption: Estimating the
+  dynamic eects of board gender diversity policies. arXiv:1912.06320 .
+
+Chernozhukov, V., K. W¨  uthrich, and Y. Zhu (2021). An exact and robust conformal inference
+ method for counterfactual and synthetic controls. Journal of the American Statistical Associa-
+ tion (just-accepted), 1­44.
+
+
+
+                                               29
+Donohue, J. J., A. Aneja, and K. D. Weber (2019). Right-to-carry laws and violent crime: A
+ comprehensive assessment using panel data and a state-level synthetic control analysis. Journal
+ of Empirical Legal Studies 16 (2), 198­247.
+
+Doudchenko, N. and G. W. Imbens (2017). Dierence-In-Dierences and Synthetic Control Meth-
+ ods: A Synthesis. arxiv 1610.07748 .
+
+Dube, A. and B. Zipperer (2015). Pooling multiple case studies using synthetic controls: An
+ application to minimum wage policies.
+
+Ferman, B. and C. Pinto (2021). Synthetic controls with imperfect pre-treatment fit. Quantitative
+  Economics .
+
+Fesler, L. and M. Pender (2019). Local promise programs: Varying impacts on enrollment, gradu-
+  ation, and financial outcomes.
+
+Frandsen, B. R. (2016). The eects of collective bargaining rights on public employee compensation:
+  Evidence from teachers, firefighters, and police. ILR Review 69 (1), 84­112.
+
+Goldstein, D. (2015). The teacher wars: A history of America's most embattled profession. Anchor.
+
+Goodman-Bacon, A. (2021). Dierence-in-dierences with variation in treatment timing. Journal
+ of Econometrics .
+
+Hess, F. M. and M. R. West (2006). A better bargain: Overhauling teacher collective bargaining
+  for the 21st century. Program on Education Policy and Governance, Harvard University .
+
+Hoxby, C. M. (1996). How teachers' unions aect education production. The Quarterly Journal of
+  Economics 111 (3), 671­718.
+
+Imai, K. and I. S. Kim (2021). On the use of two-way fixed eects regression models for causal
+  inference with panel data. Political Analysis .
+
+Imai, K., I. S. Kim, and E. Wang (2019). Matching Methods for Causal Inference with Time-Series
+  Cross-Section Data.
+
+Jackson, C. K., J. E. Rocko, and D. O. Staiger (2014). Teacher eects and teacher-related policies.
+  Annu. Rev. Econ. 6 (1), 801­825.
+
+Kahn-Lang, A. and K. Lang (2019). The promise and pitfalls of dierences-in-dierences: Reflec-
+ tions on 16 and pregnant and other applications. Journal of Business & Economic Statistics ,
+ 1­14.
+
+King, G., C. Lucas, and R. A. Nielsen (2017). The balance-sample size frontier in matching methods
+  for causal inference. American Journal of Political Science 61 (2), 473­489.
+
+Kreif, N., R. Grieve, D. Hangartner, A. J. Turner, S. Nikolova, and M. Sutton (2016). Examination
+  of the synthetic control method for evaluating health policies with multiple treated units. Health
+  economics 25 (12), 1514­1528.
+
+
+
+
+                                                30
+Lovenheim, M. F. (2009). The eect of teachers' unions on education production: Evidence from
+  union election certifications in three midwestern states. Journal of Labor Economics 27 (4),
+  525­587.
+
+Neyman, J. (1990 [1923]). On the application of probability theory to agricultural experiments.
+  essay on principles. section 9. Statistical Science 5 (4), 465­472.
+
+Otsu, T. and Y. Rai (2017). Bootstrap Inference of Matching Estimators for Average Treatment
+  Eects. Journal of the American Statistical Association 112, 1720­1732.
+
+Paglayan, A. S. (2019). Public-sector unions and the size of government. American Journal of
+  Political Science 63 (1), 21­36.
+
+Pimentel, S. D. and R. R. Kelz (2020). Optimal tradeos in matched designs comparing us-trained
+  and internationally trained surgeons. Journal of the American Statistical Association 115 (532),
+  1675­1688.
+
+Robbins, M., J. Saunders, and B. Kilmer (2017). A Framework for Synthetic Control Methods With
+  High-Dimensional, Micro-Level Data: Evaluating a Neighborhood-Specific Crime Intervention.
+  Journal of the American Statistical Association 112 (517), 109­126.
+
+Roth, J. (2018). Should we condition on the test for pre-trends in dierence-in-dierence designs?
+  arXiv preprint arXiv:1804.01208 .
+
+Roth, J. and P. H. Sant'Anna (2021). E cient estimation for staggered rollout designs. arXiv
+  preprint arXiv:2102.01291 .
+
+Rubin, D. B. (1974). Estimating causal eects of treatments in randomized and nonrandomized
+ studies. Journal of educational Psychology 66 (5), 688.
+
+Rubin, D. B. (1980). Comment on "randomization analysis of experimental data: The fisher
+ randomization test". Journal of the American Statistical Association 75 (371), 591­593.
+
+Sun, L. and S. Abraham (2020). Estimating dynamic treatment eects in event studies with
+  heterogeneous treatment eects. Journal of Econometrics .
+
+Toulis, P. and A. Shaikh (2018). Randomization tests in observational studies with time-varying
+  adoption of treatment.
+
+U.S. Department of Education, National Center for Education Statistics (2018). Fast facts: Ex-
+  penditures. Technical report.
+
+Xu, Y. (2017). Generalized Synthetic Control Method: Causal Inference with Interactive Fixed
+ Eects Models. Political Analysis 25, 57­76.
+
+
+
+
+                                               31
+                          Supplementary Materials for:
+                  "Synthetic Controls with Staggered Adoption"
+
+
+
+A     Additional theoretical results
+A.1    Further discussion of inference
+We now continue the discussion of inference from the main text in Section 5.3. Our goal here
+is to discuss the conditions under which the proposed estimator is asymptotically Normal. Since
+asymptotic theory is not the focus of our paper, we leave for future work a rigorous derivation of
+the validity of the wild bootstrap procedure, in particular, adapting the proof of the main theorem
+in Otsu and Rai (2017) and showing that the additional conditions in that proof are satisfied with
+our proposed procedure.
+     In order to discuss inferential procedures for partially pooled SCM with an intercept shift, we
+will consider a generalization of parallel trends. For each time period g , we assume that the expected
+dierences between post-g and pre-g outcomes do not depend on whether unit i is treated at time
+g , conditional on auxiliary covariates Xi and the vector of pre-g residuals Y  g  (Yig L , . . . , Yig 1 )
+   P                                                                            i
+ 1    L
+L        Y
+      `=1 ig ` .
+
+Assumption A.1 (Conditional parallel trends). With L < T1 , for all k              0 and `    1
+
+    E[Yig+k (1)                         g , Xi ] = E[Yig+k (1)
+                   Yig ` (1) | Ti = g, Y                                        g , Xi ]  mgk` (Y
+                                                                   Yig ` (1) | Y                 g , Xi )
+                                         i                                       i                i
+
+   Assumption A.1 is a generalization of the conditional parallel trends assumption in Abadie
+(2005) to the staggered adoption setting, including the pre-treatment residuals Y  g . It loosens the
+                                                                                   i
+usual parallel trends assumption by allowing trends to dier depending on the auxiliary covariates
+and the deviation of lagged outcomes from their baseline value. Thus, we are essentially conditioning
+on pre-treatment "dynamics," rather than pre-treatment levels. For instance, even if two states
+have very dierent levels of student expenditures, under conditional parallel trends we can compare
+them so long as they have similar pre-treatment trends and shocks. See Hazlett and Xu (2018) and
+Callaway and Sant'Anna (2020) for related conditional parallel trends assumptions. In addition,
+we will assume that the conditional expectation of the post- and pre-g dierences is linear.
+
+Assumption A.2.
+                                         g , Xi ) =
+                                  mgk` (Y             Y      g+
+                                                            ·Y     X
+                                                                         · Xi
+                                          i           gk`      i   gk`
+
+   We make two further assumptions that allow for asymptotic normality as the number of units
+grows while the number of lags L stays fixed. First, we assume that the synthetic controls have
+perfect fit when averaged within time-cohorts; second, we assume that the sum of the squared
+weights is bounded.
+
+
+                                                      1
+Assumption A.3 (Exact balance within treatment cohorts and bounded weights). Assume that
+                                 N                        N
+                     1 X g    1 XX       g    1 X      1 XX
+                         Yi =      ^ij Yi and     Xi =      ^ij Xi ,
+                     ng       ng              ng       ng
+                         T i =g               i=1 Tj =g                 T i =g      i=1 Tj =g
+
+for all g = T1 , . . . , TJ . Furthermore, k ^j k2        pC    for all j = 1, . . . , J and some constant C .
+                                                           N0
+
+Note that by transforming from the penalized optimization problem (7) to the constrained form,
+there is a choice of that guarantees that the constraint on the weights are satisfied, if there
+exists a feasible solution. Finally, we make two assumptions on the noise terms "igk  Yig+k (1)
+1 PL                 1 PL             g
+L    `=1 Yig ` (1) L      `=1 mk` (g, Yi , Xi ). First, we assume that they are independent across units;
+second, we assume that they are su ciently regular so that their average satisfies a central limit
+theorem.
+Assumption A.4.                                                                                                    th
+                h "igk are  i independent across units i = 1, . . . , N , and for some              > 0, the 2 +
+                         2+
+moment exists, E |"igk |      < 1, and furthermore
+
+                                                     P   h                 i
+                                                                        2+
+                                                Ti 6=1 E   | " iT i k |
+                                           lim                       i1+ = 0.
+                                          N !1 P         h
+                                                                            2
+                                                 Ti 6=1 E "iTi k
+                                                              2
+
+
+                                                                                 [ k , will be
+   Under these assumptions, the estimate of the eect k periods after treatment, ATT
+asymptotically normal as N grows with a fixed number of lags L, and where the number of control
+units N0 grows more quickly than the number of treated units J .
+                         J
+Theorem A.1. Assume that N 0
+                             ! 0 as both J, N0 ! 1, with L fixed. Under Assumptions A.1,
+A.2, A.3, and A.4
+                    p                       1 X
+                         [ k ATT = p
+                      J ATT                          "iTj +k + op (1).
+                                             J T 6=1
+                                                                    i
+
+                      [ k ATT
+                     ATT                  d
+Furthermore,         P         h        i !   N (0, 1).
+                 1
+                 J     T 6=1 E   " 2
+                                   iT k
+                        i          i
+
+
+
+Jackknife. Finally, we briefly discuss constructing confidence intervals via the leave-one-unit-out
+jackknife approach, which proceeds as follows. Fix hyperparameter values ,  , and ; for each unit
+i = 1, . . . , N : drop unit i and re-fit the intercepts and the weights via Equation (11) to obtain        ^ ( i) ,
+b ( i) , and the synthetic control estimates Y           ^ ( i) . Then compute the leave-one-unit-out estimate
+                                                          jTj +k
+      ( i)            PJ           n                      o
+[ k = ( i)
+ATT                1
+                                     Y          ^
+                                                Y
+                                                   (  i )             ( i)  J
+                J       j =1 j 6=i     jTj +k     jTj +k , where J                 Ti <1 . The jackknife estimate
+of the standard error is then:
+                                                     0                              12
+                                                n
+                                                X                      Xn
+                                 ^k =   n     1      @ATT[k
+                                                               ( i) 1          ( j)
+                                                                           [k A ,
+                                 V                                         ATT                               (A.1)
+                                           n                        n
+                                                   i=1                    j =1
+                                                         q
+                                             [
+with an approximate 95% confidence interval ATTk ± 1.96 V   ^k . We include Monte Carlo estimates
+of the coverage under our simulation setup in Figures B.3 and B.4.
+
+                                                            2
+A.2     Fully pooling within time cohorts
+As we discuss in Section 3, if all units are treated at the same time, T1 = · · · = TJ , our error
+bounds depend only on the pooled imbalance and do not include the unit-level imbalance. Thus, if
+units are treated in cohorts (i.e., several units treated at the same time), then the bounds suggest
+modeling variation in pre-treatment outcomes between treatment cohorts separately from the pooled
+average. This leads to a natural modification of our partially pooled estimator: We can fully pool
+within cohorts by applying the estimator to treatment cohorts rather than individual treated units,
+optimizing a weighted average of the overall imbalance and the average cohort-level imbalance.
+Concretely, let
+              PG be the number of distinct treatment times, which we denote T (g ), g = 1, . . . , G,
+and let ng = N   i=1 {Ti = T (g )} be the number of units treated in time T (g ). We can modify the
+optimization problem to find G sets of weights, where the individual objective for treatment cohort
+g is                            v
+                                u    Lg                                                 !2
+                                u 1 X     XN                          XN
+              qg ( g ) cohort
+                              = t              {Tj = T (g )}YiT (g) `     ig YiT (g ) `    .
+                                  Lg
+                                        `=1     i=1                    i=1
+
+As before, we will restrict the set of donor units for cohort g to those not yet treated K periods
+after T (g ), D(g )  {i : P   Ti > T (g ) + K }, and we will restrict the weights so that g 2 scm (g )
+satisfies ig 0 for all i, i ig = ng , and ig = 0 if i 62 D(g ). We then define the relevant separate
+and pooled balance measures:
+                               v
+                               u                                                               !2
+                               u X  G      XLg
+                                                 XN                         XN
+                               u 1       1
+            q sep cohort ( ) = t                     {Tj = T (g )}YiT (g) `      ig YiT (g ) `    ,
+                                 G      Lg
+                                 g =1         `=1     i=1                    i=1
+
+
+and
+                        v                       0                                                    12
+                        u
+                        u             maxg Lg
+                                        X          XX   G   N                      N
+                                                                                   X
+                        u     1
+      q pool cohort
+                    ( )=t                       @1    {Tj = T (g )}YiT (g)    `          ig YiT (g ) ` A   .
+                            maxg Lg              G
+                                        `=1            g =1 i=1                    i=1
+
+We can then use these cohort-level measures of imbalance in the partially pooled SCM optimization
+problem (6), and similarly can include an intercept as in (7). More generally, if we do not want to
+fully pool within clusters, we can include three (or more) imbalance terms in our objective function
+to capture unit-level, pooled, and intermediate cluster-level imbalance.
+
+A.3     Partially pooled SCM: Dual shrinkage
+We now inspect the Lagrangian dual problem to the partially pooled SCM problem in Equation (6),
+showing that the optimization problem partially pools a set of unit-specific dual variables toward
+global dual variables. We focus on balancing the first Lj = L  T1 1 lagged outcomes, which are
+observed for each treated unit.
+    For each treated unit j , the sum-to-one constraint induces a Lagrange multiplier j 2 R, and the
+state-level balance measure induces a set of Lagrange multipliers j 2 RL , with elements `j . We
+combine these dual parameters into a vector  = [1 , . . . , J ] 2 RJ and a matrix = [ 1 , . . . , J ] 2
+RLJ . In addition to the J sets of Lagrange multipliers -- one for each treated unit -- the pooled
+balance measure in the partially pooled SCM problem Equation (6) induces a set of global Lagrange
+
+                                                            3
+multipliers µ 2 RL . As we see in the following proposition, in the dual problem the parameters
+ 1 , . . . , J are regularized toward this set of pooled Lagrange multipliers, µ .
+
+Proposition A.1. The Lagrangian dual to Equation (6) with un-normalized objevtices q sep and
+q pool with Lj = L < T1 and > 0 is:
+                                      0                             1
+                                              J
+                                              X
+                                    L@ 1                     J    2A
+                     min L(, ) +                k j µ k2 2 + kµ k2 ,                   (A.2)
+                     ,µ ,           2   (1  )                
+                                                      j =1
+
+where the dual objective function is
+                             2      "                        #2                           !3
+                           J              L                             L
+                        1 X4X             X                             X
+                                                                                           5,
+            L(  , )                   j +        `j YiTj `        j +         `j YjT1 `         (A.3)
+                       J
+                          j =1   i 2D j    `=1                +         `=1
+
+where
+h      [x]+ = max{0  i, x}. For treated unit j , the synthetic control weight on unit i is ^ij =
+       PL ^
+  ^ j + `=1 `j YjTj ` .
+                      +
+
+Proposition A.1 highlights that the estimator partially pools the individual synthetic controls to
+the pooled synthetic control in the dual parameter space, with  controlling the level of pooling.
+When  = 0 in the separate SCM problem, the parameters 1 , . . . J are shrunk towards zero rather
+than a set of global parameters. By contrast, when  = 1, 1 , . . . , J are constrained to be equal
+to µ , fitting a single pooled synthetic control in the dual parameter space. By choosing  2 (0, 1),
+we move continuously between the two extremes of J separate Lagrangian dual problems and a
+single dual problem, regularizing the individual j s toward the pooled µ , allowing for some limited
+dierences between the J dual parameters.
+
+
+
+
+                                                  4
+B     Additional figures
+B.1   Additional simulation results
+
+
+
+
+                                      5
+Figure B.1: Monte Carlo estimates of the bias for the overall ATT vs the MAD for the individual
+ATT estimates.
+
+
+
+
+Figure B.2: Monte Carlo estimates of the RMSE for the overall ATT vs the RMSE of the individual
+ATT estimates.
+
+
+
+
+                                              6
+Figure B.3: Monte Carlo estimates of the coverage of approximate 95% confidence intervals k =
+0, . . . , 9 periods after treatment using partially pooled SCM with an intercept. The solid line
+indicates the coverage for the overall ATT estimate averaged across all post-treatment periods.
+
+
+
+
+Figure B.4: Monte Carlo estimates of the coverage of approximate 95% confidence intervals k =
+0, . . . , 9 periods after treatment using partially pooled SCM without an intercept. The solid line
+indicates the coverage for the overall ATT estimate averaged across all post-treatment periods.
+
+
+
+
+                                                 7
+B.2   Additional results for the mandatory collective bargaining application
+
+
+
+
+                                       8
+             Figure B.5: Per-pupil expenditures for US states over the study period.
+
+
+
+
+                                                              PK
+Figure B.6: Average post-treatment eect estimates K1     +1    k=0 ^jk   for the treated states, plotted
+against the root-mean square pre-treatment fit qj (^j ).
+
+
+
+                                                 9
+Figure B.7: Partially-pooled SCM with intercept shifts and covariates (^
+                                                                        = 0.26), estimates of the
+impact of mandatory collective bargaining laws on average teacher salary (log, 2010 $).
+
+
+
+
+                                               10
+Figure B.8: Partially pooled SCM weights. White cells indicate zero weight, black cells indicate a
+weight of 1.
+
+
+
+
+                                               11
+Figure B.9: Partially pooled SCM weights when including an intercept. White cells indicate zero
+weight, black cells indicate a weight of 1.
+
+
+
+
+                                              12
+C     Proofs
+C.1    Error bounds
+Proof of Theorem 1. Defining t = t   ¯, the error is
+                                  0                                                1       0                               1
+                       L
+                       X                     X                                                          X
+            ^j 0 j 0 =     + Tj ) @YjTj `
+                         (¯                      ^ij YiTj                      `
+                                                                                   A + @"jTj                    ^ij "iTj A
+                             `=1                             i 2D j                                    i 2D j
+
+So by the triangle and Cauchy-Schwarz inequalities,
+                                    v   0                                              12
+                                    u
+                                    uXL          X                                                          X
+                                    u
+          |^j 0 j 0 |  k¯ +  T j k2 t   @YjTj `                             ij YiTj ` A        + "jTj                  ij "iTj
+                                                     `=1           i 2D j                                  i 2D j
+
+   Since ^j is fit on pre-Tj outcomes, the weights are independent of "Tj , and so the second term
+                                              p
+above is sub-Gaussian with scale parameter      1 + k ^j k2
+                                                          2  (1 + k ^j k2 ). This implies that
+                       0                                       1
+                                 X                                      2
+                     P @  "jTj      ^ij "iTj                   A
+                                                 (1 + k ^j k2 )  2 exp
+                                                                             2
+                                            i 2D j
+
+
+                 [ 0 , notice that
+For the bound on ATT
+
+                                                   2                  0                                                1    0                               13
+                     J                          J      L
+[0                 1X                      1 X 4X                                      X                                                    X
+ATT         ATT0 =     ^j 0          j 0 =                 ` + Tj ` ) @YjTj `
+                                                          (¯                                 ^ij YiTj              `
+                                                                                                                       A + @"jTj                     ^ij "iTj A5
+                   J                       J
+                      j =1                    j =1 `=1                                i 2D j                                                i 2D j
+                                                           0                               1
+                                           XL         X J               X
+                                                   1       @YjTj `
+                                         =      ¯`                            ^ij YiTj ` A
+                                                   J
+                                           `=1        j =1             i 2D j
+                                                             0                                1
+                                             X J X  L                      X
+                                           1
+                                         +              Tj ` @YjTj `             ^ij YiTj ` A
+                                           J
+                                             j =1 `=1                     i 2D j
+                                                   0                       1
+                                             X J              X
+                                           1       @"jTj
+                                         +                       ^ij "iTj A
+                                           J
+                                                      j =1       i 2D j
+                                                                                                                                        (A.4)
+By Cauchy-Schwarz the absolute value of the first term is
+              0                         1          v    0     2                                                                      3 12
+                                                   u
+    XL      J
+            X            X                         uXL      J
+                                                            X                                              X
+          1                                        u
+       ¯`
+              @YjTj `        ^ij YiTj ` A  k   ¯k2 t    @1    4YjTj                                `               ^ij YiTj      `
+                                                                                                                                     5A .
+          J                                               J
+      `=1      j =1                i 2D j                               `=1         j =1                  i 2D j
+
+
+
+
+                                                              13
+Similarly, the absolute value of the second term is
+                        0                                     1                         v   0                                                            12
+                                                                                        u
+         J X
+         X L                         X                                    J
+                                                                          X             uXL                                 X
+     1                                                                                  u
+                    Tj ` @YjTj   `            ^ij YiTj    `
+                                                              A  1               kTj k2 t   @YjTj                  `                 ^ij YiTj        `
+                                                                                                                                                         A
+     J                                                           J
+         j =1 `=1                    i 2D j                               j =1                  `=1                         i 2D j
+                                                                      v       0                                                                 12
+                                                                      u
+                                                                      u X J X
+                                                                            L                                       X
+                                                                      u1
+                                                                    S t       @YjTj                       `                  ^ij YiTj       `
+                                                                                                                                                A
+                                                                        J
+                                                                                  j =1 `=1                         i 2D j
+
+                     1 PJ
+Finally, notice that J     j =1 "jTj is the average of J independent sub-Gaussian random variables and
+                                                                     1 PJ    P
+so is itself sub-Gaussian with scale parameter pJ . However, J          j =1   i2Dj ^ij "iTj is the weighted
+average of sub-Gaussian variables that are independent over i but not necessarily independent over
+j , and so the weighted average is sub-Gaussian with scale parameter pJ k kF . The two averages
+are independent of each other, so
+                  0          0                       1                  1
+                       X J              X                                            2
+                    1
+                 P@          @"jTj          ^ij "iTj A p     1 + k ^ kF A  2 exp
+                    J                                     J                              2
+                       j =1            i 2D     j
+
+
+Putting together the pieces completes the proof.
+
+Proof of Theorem 2. Following Abadie et al. (2010), we can re-write                                            i    in terms of the lagged
+outcomes as
+                                           L
+                                           X
+                                   0     1
+                             i = ( j j )     µTj ` (YiTj ` "iTj ` )
+                                                              `=1
+                                                                                                                                                          (A.5)
+                                                    L
+                                                    X
+                                          1                (j )
+                                        =p                P` (YiTj `              "iTj     `)
+                                           L        `=1
+
+                                                                                                               1   (j )
+where j 2 RLF is the matrix of factors from time t = Tj L, . . . , Tj 1,                                      p  P
+                                                                                                                L `
+                                                                                                                              = ( 0
+                                                                                                                                  j j )
+                                                                                                                                                    1µ
+                                                                                                                                                         Tj `   2
+          1               1    (j )        (j )
+RF , and p L
+             P (j ) =    p  [ P , . . . , PJ ]
+                           L 1
+                                                    2 RF L . Using Equation (A.5), we can write the error for
+the ATT as
+                                                                                                0                                               1
+                        J                                         J X
+                                                                    L
+    [k                1X                                 1        X                    (j ) @
+                                                                                                                   X
+    ATT        ATTk =     ^jk
+                                          jk =           p                   µ0
+                                                                              T j + k P`     YjTj      `                    ^ij YiTj        `
+                                                                                                                                                A
+                      J                              J L
+                              j =1                                j =1 `=1                                         i 2D j
+                                                                                             0                                              1
+                                                                  J X
+                                                                  X L                                              X
+                                                         1                             (j ) @
+                                                         p                   µ0
+                                                                              T j + k P`     "jTj     `                     ^ij "iTj    `
+                                                                                                                                            A             (A.6)
+                                                     J L          j =1 `=1                                      i 2D j
+                                                       0                                              1
+                                                     J
+                                                     X                            X
+                                                   1   @"jTj +k
+                                                 +                                         ^ij "iTj +k A .
+                                                   J
+                                                          j =1                    i 2D j
+
+   From the proof of Theorem 1, we can bound the final term in Equation (A.6). We now bound
+the first two terms. First, as in the proof of Theorem 1, we decompose the first term into a time
+
+
+                                                                     14
+constant, and a time varying component:
+                          0                                                       1                                      0                                           1
+      XJ X L                          X                                                               L
+                                                                                                      X           J
+                                                                                                                  X                       X
+  1                  (j ) @                                                                    1
+  p          µ0    P
+               T +k `       Y jT j `        ^ij YiTj                          `
+                                                                                  A=           p            ¯k`
+                                                                                                            µ            @YjTj      `              ^ij YiTj      `
+                                                                                                                                                                     A
+ J L j =1 `=1 j                      i 2D j
+                                                                                             J L      `=1         j =1                    i 2D j
+|                         {z                                                      }
+                               ( )
+                                                                                                                    0                                                              1
+                                                                                                    J   L
+                                                                                               1 XX                                                    X
+                                                                                             + p           (Tj +k)` @YjTj                      `                ^ij YiTj       `
+                                                                                                                                                                                   A,
+                                                                                              J L j =1 `=1                                             i 2D j
+
+                1   PJ     (j )0                                                   ( j )0
+      ¯k` 
+where µ         J    j =1 P` µTj +k ,          and (Tj +k)`  P`                             µ Tj +k    µ
+                                                                                                       ¯k` . Now by Cauchy-Schwarz, we get
+that
+
+              v       0                                                                    12                           v     0                                                             12
+              u                                                                                                         u
+              u X  L      X J                                    X                                     J
+                                                                                                       X                u X L                                   X
+              u1                                                                                                        u1
+       ¯ k k2 t
+|()|  kµ              @1       YjTj                  `                    ^ij YiTj     `
+                                                                                           A + 1              kTj +k k2 t     @YjTj                     `                ^ij YiTj       `
+                                                                                                                                                                                            A
+                L       J                                                                      J                          L
+                  `=1     j =1                                   i 2D j                                j =1                         `=1                         i 2D j
+              v       0                                                                  12     v        0                                                                    12
+              u                                                                                 u
+              u X  L      X J                                    X                              u    J L
+              u1                                                                                u 1 XX                                             X
+       ¯ k k2 t
+      kµ              @1       YjTj                  `                    ^ij YiTj     `
+                                                                                         A + Sk t        @YjTj                             `                ^ij YiTj      `
+                                                                                                                                                                              A
+                L       J                                                                         JL
+                         `=1         j =1                        i 2D j                                           j =1 `=1                         i 2D j
+
+   We now turn to the second term in Equation (A.6). Since "it are independent sub-Gaussian
+                       1                          2
+random variables and p    kµ 0        (j ) k  M  pF,
+                        L    T j +k P        2     L
+                  0                                             1
+                             X J X  L                        2F
+                                                                          2
+                     1     1                     ( j )     M
+               P @p                        0
+                                         µTj +k P` "jTj ` p     A  2 exp
+                      L J                 j =1 `=1
+                                                            JL            2
+
+                                            scm , 1
+                                                         PJ
+    Next, since ^1 , . . . , ^J 2                 J              j =1 k ^j k1     = 1, by H¨
+                                                                                           older's inequality
+
+
+                                                                                                                                          M 2 F p          
+       J   L                                                                                           L
+  1 XX 0                 (j )
+                               X                                                                1 X 0        (j )
+  p           µ T j + k P`         ^ij "iTj              `                  max                p      µT +k P` "iTj                 `   2 p      log N J +
+ J L j =1 `=1                 i 2D
+                                                                    j 2{1,...,J },i2Dj           L `=1 j                                    L
+                                      j
+
+                                                                    2
+where the final inequality holds with probability at least 1 2 exp  2 by the standard tail
+bound on the maximum of sub-Gaussian random variables. Putting together the pieces with a
+union bound completes the proof.
+
+
+C.2     Asymptotic normality
+                                                                 PL                                         PL
+Proof of Theorem A.1. Define ¯gk
+                              Y =                            1
+                                                             L       `=1
+                                                                             Y
+                                                                             gk`   and ¯gk
+                                                                                        X =            1
+                                                                                                       L      `=1
+                                                                                                                         X
+                                                                                                                         gk` .   Note that under linearity
+in Assumption A.2,
+                                                             L
+                                                1X                   g + ¯X · Xi + "igk .
+                           Yig+k (1)               Yig ` (1) = ¯gk
+                                                                Y
+                                                                   ·Y i   gk
+                                                L
+                                                      `=1
+
+
+                                                                                  15
+So the estimation error for the treatment eect for unit j at time k is
+                                               L                                                        L
+                                                                                                                       !
+                                         1X                                X                       1X
+       ^jk
+              jk = YjTj +k (1)              YiTj             ` (1)                ^ij   YiTj +k          YiTj      `
+                                         L                                                         L
+                                            `=1                               i                      `=1
+                                                             !                                      !
+                                           X                                             X                              X
+                  = ¯T
+                     Y
+                          ·        Tj
+                                  Y                     Tj
+                                                   ^ij Y           + ¯T
+                                                                      X
+                                                                           ·      Xj           ^ij Xi   + "jTj k               ^ij "iTj k
+                       jk           j                    i              jk
+                                           i                                               i                               i
+
+Aggregating across treated units we see that
+                       J
+[k                   1X
+ATT          ATT =       ^jk          jk
+                     J
+                         j =1
+                                 0                                                 1          0                                                    1
+                     TJ
+                     X                X g                              N X
+                                                                       X                           X                                    N X
+                                                                                                                                        X
+                   1        Y @ 1                                   1           g A + ng ¯X · @ 1                                    1
+                 =      ng ¯gk ·       Y
+                                         i                                 ^ij Y i        gk         Xi                                     ^ij Xi A
+                   J               ng                               ng                          ng                                   ng
+                         g =1                      T i =g                 i=1 Tj =g                                    Ti =g                i=1 Tj =g
+                           J
+                         1X                X
+                     +       "jTj k                 ^ij "iTj k ,
+                         J
+                           j =1                i
+
+where ng is the number of units treated at time g . Now from Assumption A.3, we have exact
+                                                                                 P            P
+balance within each cohort, so this reduces to ATT      [ k ATT = 1 j "jTj k
+                                                                               J   j =1         i ^ij "iTj k . We now
+show that the second term is op (J      1 / 2                   2
+                                              ). Denote max = maxigk Var("igk ). Since the noise terms
+"i`k are independent across units i,
+      0                      1     2    0                                  13         0 2                         31
+           X J X                                X J X                                       X J X
+        1                                    1                                            1
+ Var @            "iTj k ^ij A = E 4Var @                  "iTj k ^ij | A5 + Var @E 4                 "igk ^ij | 5A
+        J                                    J                                            J
+           j =1 i                               j =1 i                                      j =1 i
+                                   2                 0                       13
+                                        X             X  J
+                                      1
+                               = E4 2         Var @         "iTj k ^ij | A5
+                                     J
+                                         i             j =1
+                                   2                                 3
+                                      1 2       X    X
+                                E 4 2 max                  ^ij ^ij 0 5
+                                     J
+                                                j,j 0 i
+                                   2                                         3
+                                      1 X             X
+                                E4 2            2
+                                                max        k ^j k2 k ^j 0 k2 5
+                                     J                   0
+                                                     i             j,j
+
+                                        C 2 max
+                                            2
+                                   
+                                         N0
+                                                               
+                                          1 PJ
+                                          P                          2  C2J             J
+By Chebyshev's inequality, P pJ j =1 i "iTj k ^ij                 max  2N   . Now since N   ! 0, this
+            p                           P
+                                                                          0               0
+
+implies that J ATT[ k ATTk = p       1
+                                      J    Ti 6=1 "iTi k + op (1). Applying the Lyapunov central limit
+theorem to the first term and Slutsky's theorem shows asymptotic normality.
+
+
+
+
+                                                                         16
+C.3    Partial pooling of dual parameters
+Lemma A.1. The Lagrangian dual to Equation (6) with  = 0, > 0, and Lj = L < T1 is
+              2     "                   #2                     !3
+          X J   X         XL                    X L                 X J
+        1     4                                                 5        L
+    min               j +     `j YiTj `    j +       `j YjT1 `    +        k j k2
+                                                                                2, (A.7)
+    , J                                                                  2
+          j =1 i2Dj       `=1            +      ` =1                j =1
+        |                            {z                         }
+                                                             L ( , )
+                                     h                                  PL                               i
+The resulting donor weights are ^ij =  ^j                                             ^`j YiT        `           .
+                                                                             `=1                 j
+                                                                                                             +
+
+Proof of Lemma A.1. Notice that the separate synth problem separates into J optimization prob-
+lems:
+                                                            J X
+                                                            X N
+                                                1 sep                                           2
+                              min                 q ( ) +                                       ij
+                       1 ,..., J 2
+                                       scm
+                                       j        2         2
+                                                                             j =1 i=1
+                             82                                                                                      !2 3                     9   (A.8)
+                    J
+                    X        < 1 X L                                                      N
+                                                                                          X                                        N
+                                                                                                                                   X          =
+                  =    min    4      YjTj                                    `                   ij YiTj `             5 +               2
+                                                                                                                                         ij
+                         scm : 2JL                                                                                             2              ;
+                      j2 j
+                     j =1                                `=1                              i=1                                      i=1
+
+Thus the Lagrangian dual objective is the sum of the Langrangian dual objectives of the individual
+objectives in Equation (A.8). Inserting the dual objectives derived by Ben-Michael et al. (2021)
+               1
+and scaling by J yields the result.
+
+                                                                                      J 2 R where Ej ` =
+Proof of Proposition A.1. We start be defining auxiliary           E0 , E1 , . . . , E     L
+         PN                                   P        variables,
+                                                              PN
+YjTj `     i=1 ij YiTj ` for j  1 and E0` = Tj >` YjTj `          i=1 ij YiTj ` . Additionally we
+             1
+rescale by       . Then we can write the partially pooled SCM problem (6) as
+                                                           L            J        J N
+                                                        X 2         1  X 1 2 XX 1                                                   2
+                                  min                        E 0` +        E   +                                                    ij
+                            1 ,..., J ,E0 ,...,EJ   2J 2 L           2J   L j`       2
+                                                                 `=1                             j =1                   j =1 i=1
+                                                                                 N
+                                                                                 X
+                            subject to              Ej ` = YjTj         `                  ij YiTj `
+                                                                                 i=1                                                              (A.9)
+                                                                                            N
+                                                                                                                       !
+                                                               X                            X
+                                                    E 0` =                  YjTj      `                  ij YiTj `
+                                                               T j >`                       i=1
+                                                                scm
+                                                     j   2      j
+
+With Lagrange multipliers µ , 1 , . . . , J 2 RL and 1 , . . . , J 2 R, the Lagrangian to Equation
+(A.9) is
+
+
+
+
+                                                                                 17
+                 L ( , E 0 , . . . , E J ,  1 , . . . ,  J , µ , 1 , . . . ,  J ) =
+                                      2                           0                                                   1                  3
+                                X L                                 X J                              X
+                                      4  E0             2
+                                                         `   µ  `
+                                                                  @        YjTj `                          ij YiTj ` A         E 0` µ ` 5
+                                          2LJ 2
+                                `=1                                 j =1                          i 2D j
+                                                     2                       0                                                1              3
+                                        X J X   L                                                      X
+                                                     4  1    
+                                +                              E 2 `j @YjTj                      `             ij YiTj ` A           `j Ej ` 5
+                                                        2JL j `
+                                         j =1 `=1                                                     i 2D j
+                                         J
+                                         X    X 1
+                                                         2
+                                  +                      ij       j       ij           j
+                                                2
+                                         j =1 i2Dj
+
+Defining     j   = µ + j , the dual problem is:
+
+                                      J X
+                                                         (                                 L
+                                                                                                             !        )       J            L
+                                      X                      1                             X                                  X            X
+                                                                 2
+        min            L( · ) =                   min            ij            j                 `j YiTj `       ij       +          j +         `j YjTj `
+     ,E0 ,E1 ,...,EJ                                ij       2
+                                      j =1 i2Dj                                            `=1                                j =1         `=1
+                            L
+                            X            
+                                             1  2
+                                  min            E               Ej ` (   `j           µ `)
+                                  Ej `       2JL j `
+                            `=1
+                            XL           n                                         o
+                                  min               E2            E 0` µ       `
+                                  E 0`       2J 2 L 0 `
+                            `=1
+
+   From Lemma A.1, we see that the first term is L(, ) and we have the same form for the
+implied weights. The next two terms are the convex conjugates of a scaled L2 norm. Using the
+computation that the convex conjugate of a         2     1    2
+                                              2 kxk2 is 2a kxk2 . We then scale the whole dual problem
+   1
+by J . Finally, the primal problem (6) is still convex and a primal feasible point exists, so by Slater's
+condition strong duality holds.
+
+
+
+
+                                                                                   18
+References
+Abadie, A. (2005). Semiparametric dierence-in-dierences estimators. The Review of Economic
+ Studies 72 (1), 1­19.
+
+Abadie, A., A. Diamond, and J. Hainmueller (2010). Synthetic Control Methods for Comparative
+ Case Studies: Estimating the Eect of California's Tobacco Control Program. Journal of the
+ American Statistical Association 105 (490), 493­505.
+
+Ben-Michael, E., A. Feller, and J. Rothstein (2021). The augmented synthetic control method.
+  Journal of the American Statistical Association (just-accepted), 1­34.
+
+Callaway, B. and P. H. Sant'Anna (2020). Dierence-in-dierences with multiple time periods.
+  Journal of Econometrics .
+
+Hazlett, C. and Y. Xu (2018). Trajectory balancing: A general reweighting approach to causal
+ inference with time-series cross-sectional data.
+
+Otsu, T. and Y. Rai (2017). Bootstrap Inference of Matching Estimators for Average Treatment
+  Eects. Journal of the American Statistical Association 112, 1720­1732.
+
+
+
+
+                                            19
+

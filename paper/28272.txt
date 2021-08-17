@@ -1,0 +1,1384 @@
+                             NBER WORKING PAPER SERIES
+
+
+
+
+      DYNAMIC PRICE COMPETITION, LEARNING-BY-DOING AND STRATEGIC
+                               BUYERS
+
+                                      Andrew Sweeting
+                                          Dun Jia
+                                         Shen Hui
+                                         Xinlu Yao
+
+                                     Working Paper 28272
+                             http://www.nber.org/papers/w28272
+
+
+                    NATIONAL BUREAU OF ECONOMIC RESEARCH
+                             1050 Massachusetts Avenue
+                               Cambridge, MA 02138
+                                  December 2020
+
+
+
+
+This paper was written while Andrew Sweeting was serving as Director of the Bureau of
+Economics at the Federal Trade Commission (FTC). The views expressed are those of the
+authors, and do not reflect the views of the FTC, its staff or any individual Commissioner.
+We are very grateful to Uli Doraszelski and Steve Kryukov for access to their computational
+results which helped to confirm our own results with non-strategic buyers. We are also very
+grateful to David Besanko and Uli Doraszelski for insightful comments, as well as to
+conference and seminar participants at Penn State, the FTC and the Washington DC IO
+conference. All errors are our own. We have no material or relevant financial relationships to
+disclosure. The views expressed herein are those of the authors and do not necessarily reflect
+the views of the National Bureau of Economic Research.
+
+NBER working papers are circulated for discussion and comment purposes. They have not been
+peer-reviewed or been subject to the review by the NBER Board of Directors that accompanies
+official NBER publications.
+
+© 2020 by Andrew Sweeting, Dun Jia, Shen Hui, and Xinlu Yao. All rights reserved. Short
+sections of text, not to exceed two paragraphs, may be quoted without explicit permission
+provided that full credit, including © notice, is given to the source.
+Dynamic Price Competition, Learning-By-Doing and Strategic Buyers
+Andrew Sweeting, Dun Jia, Shen Hui, and Xinlu Yao
+NBER Working Paper No. 28272
+December 2020
+JEL No. C73,D21,D43,L13,L41
+
+                                          ABSTRACT
+
+We generalize recent models of dynamic price competition where sellers benefit from learning-
+by-doing by allowing for long-lived strategic buyers, with a single parameter capturing the extent
+to which each buyer internalizes future buyer surplus. Many of the equilibria that exist when
+buyers are atomistic or myopic are eliminated when buyers internalize even a modest share of
+their effects on future surplus. The equilibria that survive tend to be those where long-run market
+competition is preserved.
+
+Andrew Sweeting                                  Shen Hui
+Department of Economics                          School of Management and Economics
+University of Maryland                           The Chinese University of Hong Kong, Shenzhen
+Tydings Hall 3135                                Shenzhen
+College Park, MD 20742                           China
+and NBER                                         huishen@cuhk.edu.cn
+sweeting@econ.umd.edu
+                                                 Xinlu Yao
+Dun Jia                                          Department of Economics
+Renmin University of China                       University of Maryland
+59 Zhongguancun Street                           Tydings Hall
+Haidian District                                 College Park, MD 20742
+Beijing 100872                                   yao@econ.umd.edu
+China
+calvin.dun.jia@gmail.com
+
+
+
+
+A data appendix is available at http://www.nber.org/data-appendix/w28272
+1         Introduction
+In industries where firms benefit from learning-by-doing (LBD), there is a natural tension
+between achieving productive efficiency, which will require concentrating production at a single
+producer, and sustaining competition, which may require spreading production across multiple
+firms. Economists have analyzed a range of models to understand whether unregulated market
+equilibria will sustain competition, how efficient these equilibria are and how surplus is split
+between customers and producers.
+        One literature has used analytical theory to consider models where there are two competing
+suppliers and a single long-lived buyer who purchases a single unit each period and cannot
+commit to long-run contracts (Lewis and Yildirim (2002)).1 The Lewis and Yildirim model
+has a unique Markov Perfect equilibrium where the monopsonist spreads its purchases across
+duopolists to maintain competition, although this strategy can raise prices as sellers have
+weaker incentives to gain an advantage.
+        A second literature also models two competing suppliers with a single unit sold each period,
+but assumes that buyers are atomistic or, equivalently, that buyers make purchase decisions
+myopically. Most notably, Cabral and Riordan (1994) consider a model where duopolists sell
+differentiated products, cost reductions stop once a certain level of cumulative sales is reached
+and there is an infinite sequence of short-lived buyers with heterogeneous preferences over
+the sellers. They show that when a supplier may choose to exit, equilibria where firms price
+aggressively to try to drive their rival out of the market can exist, and markets can tend
+towards monopoly.
+        This observation has led David Besanko and co-authors to use computational methods
+to analyze, in a systematic way, Markov Perfect equilibrium behavior in an enriched version
+of the Cabral and Riordan model, which we will call the "BDK model", while maintaining
+the assumption of short-lived buyers (Besanko, Doraszelski, and Kryukov (2014) (BDK1) and
+Besanko, Doraszelski, and Kryukov (2019) (BDK2)). Besanko, Doraszelski, Kryukov, and
+Satterthwaite (2010) (BDKS) consider a related model where exit is not possible but a firm's
+experience can stochastically decay ("forgetting") when it does not make a sale, consistent
+    1
+    Lewis and Yildirim (2005) and Anton, Biglaiser, and Vettas (2014) provide related models where a monop-
+sonist strategic buyer seeks to maintain competition between duopolist suppliers. Saini (2012) shows similar
+qualitative effects in a computational model of repeated procurement.
+
+
+                                                     2
+with the empirical evidence of forgetting identified by Benkard (2000). Forgetting and exit
+both create the possibility that a rival firm will move up its cost curve in the future.
+       The key conclusions that these papers draw is that it is the "norm rather than the excep-
+tion" (BDK1, p. 888) for these models to have multiple, and often very many, equilibria, and
+that aggressive equilibria that may tend to produce sustained monopoly, and higher long-run
+prices, commonly exist, and often coexist with equilibria where competition is certain to be
+maintained.
+       The fact that the conclusions drawn from models with atomistic buyers and monopsony
+can be so different raises the question of what happens when we allow for both assumptions
+in the same model, and when we consider intermediate cases, with multiple forward-looking
+repeat buyers. These questions are interesting theoretically, but also practically as many
+of the industries where LBD has been documented, such as aircraft manufacture (Alchian
+(1963), Benkard (2000)), power plants (Zimmerman (1982)), shipbuilding (Thompson (2001),
+Thornton and Thompson (2001)), semiconductors (Irwin and Klenow (1994), Dick (1991))
+and chemicals (Lieberman (1984), Lieberman (1987)), have at least some large and repeat
+customers.2 For example, for civilian aircraft, a small number of carriers often account for a
+significant share of the orders for particular models and it is common for the world's largest
+carriers and aircraft leasing companies to buy significant numbers of similar types of planes
+sold by different manufacturers.3
+       In this paper we extend the BDK and BDKS models to allow for long-lived strategic buyers.
+We assume that buyers are long-lived and we specify a single parameter (bp ) that measures
+each buyer's expected share of future buyer surplus, so that the atomistic and monopsonistic
+assumptions are polar cases. We study, in detail, what happens to strategies, prices and
+welfare as we vary this parameter.
+       We find that as buyers become more strategic, equilibrium multiplicity tends to be elimi-
+   2
+     Even in the case of hospital procedures (Gaynor, Seider, and Vogt (2005), Dafny (2005)) where an indi-
+vidual patient may hope to only purchase the service once, their choices are influenced by physician groups
+and payers that know they will be dealing with similar patients in the future.
+   3
+     For example, by July 2020 242 Airbus A380s have been delivered to 14 different buyers, with a buyer-
+side HHI (based on the number of aircraft sold to different airlines) of 0.239 (source, accessed July 18, 2020:
+https://en.wikipedia.org/wiki/List_of_Airbus_A380_orders_and_deliveries). Details on fleets by
+carrier in May 2019 reported by Air Transport World (July/August 2019 edition, pages 45-55, accessed August
+16, 2020). For example, Delta's fleet included 213 Boeing 737s and 62 Airbus A320s. Of course, some carriers,
+such as Southwest are known to purchase planes from a single manufacturer (in this case, Boeing).
+
+
+                                                      3
+nated, and that for parameters for which, with atomistic buyers, equilibria that can give rise
+to long-run dominance coexist with equilibria that always result in long-run competition, it
+is the equilibria with long-run competition that tend to survive. As a result, strategic buyers
+tend to lower expected long-run prices, although, when both firms start at the top of their
+learning curves, the net present value (NPV) of buyer welfare can be reduced when buyers
+act strategically as the initial competition between sellers to gain an advantage is softened.
+While these qualitative results might be expected given what we know about the incentives
+of a monpsonist, we find that multiplicity can be eliminated even when buyers only expect to
+receive a small proportion of future buyer surplus, which, in our framework, can be viewed as
+equivalent to the buyer-side of the market being relatively unconcentrated. This elimination
+of multiplicity for low levels of bp is a particular feature of our extension of the BDKS model.
+       One implication of existing research in which equilibria where a single firm can establish
+dominance through aggressive pricing can exist, is that claims of "predatory pricing", where a
+potentially competitive firm is forced to exit, may be plausible. Claims of predation are often
+hard to evaluate, and our results suggest that they may be less plausible when the buyer-side
+of a market is even moderately concentrated.4
+       Our paper also contributes to the emerging literatures in both economics and management
+science that consider how larger and more sophisticated buyers can affect how markets work
+(for example, Jerath, Netessine, and Veeraraghavan (2010), H¨
+                                                            orner and Samuelson (2011),
+Board and Skrzypacz (2016), Chen, Farias, and Trichakis (2019) and, motivated by antitrust
+analysis, Loertscher and Marx (2019)). In particular, we show how even limited strategic
+buyer behavior affects outcomes in an infinite horizon model that has quite rich supply-side
+competitive dynamics. Our results also suggest that empirical analyses of industries with LBD
+where atomistic buyers have been assumed for convenience (for example, Benkard (2004) and
+Kim (2014)) could give different results if strategic buyer behavior was accounted for. More
+encouragingly, however, our results also suggest that allowing for strategic buyer behavior
+may not only add realism to empirical analyses, but also reduce concerns that the possibility
+of multiple equilibria, which is often hard to detect, may undermine the researcher's ability
+   4
+    Of course, if we added features, such as financial constraints or asymmetric information, that are not
+features of the Cabral and Riordan (1994), BDKS or BDK models, or the models considered here, it may be
+that predatory equilibria could re-emerge. This is an important topic for future research.
+
+
+
+                                                    4
+to interpret structural counterfactuals.
+        We also make one methodological contribution. Much of our analysis will follow the
+Besanko et al. approach of using homotopies to identify the set of equilibria. However,
+homotopies are not guaranteed to find all equilibria, so one might doubt claims of uniqueness
+based only on homotopies. In the context of the BDK model, we develop a novel recursive,
+backwards induction algorithm that provides a way to prove whether or not equilibria where,
+once a certain point in the game has been reached, exit will result in permanent monopoly,
+exist. We use this approach to provide supporting evidence of equilibrium uniqueness, and,
+because the results from our homotopy analysis and this method turn out to be perfectly
+consistent, it also provides new evidence that the homotopy approach works in practice. We
+believe that the method will also be useful in the next step of this research where we plan
+to relax some of the assumptions from the earlier literature, such as the ex-ante symmetry of
+buyers, that we continue to maintain in this paper.5
+        The rest of the paper proceeds as follows. Section 2 describes our extended version of the
+BDK model and the methods used to identify equilibria. Section 3 provides the intuition for
+why strategic buyer behavior of the type that we model changes equilibrium behavior using a
+single set of parameters. Section 4 gives our results on existence, market outcomes and welfare
+in the BDK model for a range of parameters. Section 5 presents the results for our extended
+BDKS model. Section 6 concludes. The Appendices contain details of the methodology, and
+some additional results and figures.
+
+
+
+2         The Extended BDK Model
+In this section we present our extended version of the BDK model. Readers should consult
+BDK1 and BDK2 for additional discussion of the original model. Section 5 will describe the
+differences between the BDK and the BDKS model.
+    5
+        Gans and King (2002) provides an illustration of how buyer asymmetries affect results in a simpler model.
+
+
+
+
+                                                         5
+2.1     States and Costs.
+
+We consider an infinite horizon, discrete time, discrete state game between two ex-ante sym-
+metric price-setting firms (i = 1, 2) selling differentiated products. The common discount fac-
+              1
+tor is  =    1.05
+                  .   The state space consists of the level of "know-how" of each firm, e = (e1 , e2 ),
+with know-how observable to all players.6 For a firm that is active, ei = 1, ..., M . The BDK
+model allows for a firm not to be active. An exiting firm is replaced by a potential entrant
+in state ei = 0, which lives for a single period if it does not enter. The marginal cost of an
+active firm i, c(ei ), is log2 (min(ei ,m)) .   [0, 1] is known as the "progress ratio", and a lower
+number reflects stronger learning economies. When  = 1, marginal costs are  for all ei .
+BDK assume that m = 15 and M = 30, which implies that once a firm reaches m, additional
+sales do not lower costs.
+
+                                     Figure 1: Within-Period Timing
+
+
+
+             a. Active firms       b. Buyer     c. Successful   d. Private info. e. State space
+             simultaneously         makes          seller's       seller entry evolves given
+                set prices         purchase      experience     cost and scrap entry/exit
+                                    choice        increases     values revealed      choices
+                                                    by 1        and entry/exit
+                                                                 choices made.
+
+
+
+
+Timing, State Transitions and Entry/Exit. Within-period timing is summarized in
+Figure 1. Active firms simultaneously set prices, and then a buyer, who will be discussed
+in more detail below, chooses to either buy one unit from one of the active firms or to buy
+nothing. It is assumed that neither buyers nor sellers can commit to multi-period or multi-unit
+contracts. The buyer's flow indirect utility when it purchases from active firm i is vi - pi +  i ,
+where   i   is an iid Type I extreme value payoff shock,  is a scaling parameter that measures
+the degree of product differentiation and v1 = v2 = 10. It is assumed that the no purchase
+option has v0 - p0 = 0.
+   6
+    Asker, Fershtman, Jeon, and Pakes (forthcoming), Sweeting, Roberts, and Gedge (2020) and Sweeting,
+Tao, and Yao (2019) consider dynamic models where serially correlated state variables are private information.
+
+
+
+                                                      6
+       When a firm makes a sale its know-how increases by one unit, unless it is already at M ,
+in which case it remains at M . The firms receive private information draws of entry costs
+and scrap values, and make simultaneous entry and exit choices. If a firm exits, it cannot
+re-enter, and it is replaced by a potential entrant in the following period. Entry costs and
+scrap values are drawn independently from symmetric triangular distributions, with CDFs
+Fenter and Fscrap and supports [S - S , S + S ], with S > 0, and [X - X , X + X ], with
+X > 0, respectively. The fact that the distributions have finite supports implies that when
+the values of active firms are low enough or high enough, entry or exit will be certain or never
+optimal. This feature will play a role in our analysis below.
+
+
+2.2       Equilibrium without Strategic Buyers.
+
+The equilibrium concept is symmetric and stationary Markov Perfect equilibrium (MPE,
+Maskin and Tirole (2001), Ericson and Pakes (1995), Pakes and McGuire (1994)). An equilib-
+rium can be expressed as the solution (p(e) (prices), V S (e) (beginning of period seller values),
+V S,IN T (e) (seller values before entry and exit costs are revealed and continuation choices are
+made), (e) (continuation probabilities7 )) to four sets of equations, with one equation from
+each set for each state (e1 , e2 ). Symmetry implies that we can write the equations for firm 1
+only.
+
+Beginning of period value for firm 1 (V1S ):
+
+
+              V1S (e) - D1 (p(e), e)(p1 (e) - c1 (e1 )) -             Dk (p(e), e)V1S,IN T (ek ) = 0       (1)
+                                                            k=0,1,2
+
+
+where
+
+                                                       exp(vk - pk )
+                                   Dk (p, e) =                             ,                               (2)
+                                                    j =0,1,2 exp(vj - pj )
+
+
+e1 = (min(e1 + 1, M ), e2 ), e2 = (e1 , min(e2 + 1, M )) and e0 = (e1 , e2 ), i.e., the states that the
+game will transition to if there is a purchase from firm 1 or firm 2, or no purchase, respectively.
+   7
+    BDK use the notation  to indicate the probability that a firm does not continue, i.e., it exits or does not
+enter. Therefore, to match their notation, replace  with 1 - .
+
+
+
+
+                                                      7
+Value for firm 1 before entry/exit stage (V1S,IN T ) :
+
+                                                                                      
+                               1 (e)2 (e)V1S (e) + 1 (e)(1 - 2 (e))V1S (e1 , 0)+
+           V1S,IN T (e) -                                                             =0            (3)
+                                              (1 - 1 (e))E (X |1 (e))
+
+for e = (e1 , e2 ) where e1 , e2 > 0, with similar equations when one or both firms is a potential
+entrant. E (X |1 (e)) is the expected scrap value when firm 1 chooses to exit.
+First-order condition for firm 1's price (p1 ) if e1 > 0:
+
+                                  Dk (p(e), e) S,IN T                             D1 (p(e), e)
+       D1 (p(e), e) +                         V1      (ek ) + (p1 (e) - c1 (e1 ))              =0   (4)
+                          k=0,1,2
+                                     p  1                                            p  1
+
+
+
+Firm 1's continuation probability in entry/exit stage (1 ):
+
+
+              1 (e) - Fenter ( [2 (e)V1 (1, e2 ) + (1 - 2 (e))V1 (1, 0)]) = 0 if e1 = 0             (5)
+
+        1 (e) - Fscrap ( [2 (e)V1 (e1 , max(1, e2 )) + (1 - 2 (e))V1 (e1 , 0)]) = 0 if e1 > 0       (6)
+
+
+Multiple equilibria exist when there is more than one set of values, prices and continuation
+probabilities that satisfy these equations.
+
+
+2.3    Equilibrium with Strategic Buyers.
+
+We now explain how we extend the BDK model to allow for strategic buyers. Suppose that
+                      1
+there is a pool of   bp
+                          symmetric buyers (e.g., 10 buyers if bp = 0.1). Buyers' discount factors
+are  b , although we will assume  b =  except to highlight an important difference between
+bp and buyer patience. One member of the pool is chosen to be the buyer in each period, and
+the chosen buyer returns to the pool at the end of the period. The flow utility of the chosen
+buyer is the same as was assumed for non-strategic buyers, with buyer preferences iid across
+periods and sellers. In particular, a buyer's preferences do not depend on that buyer's own
+past consumption choices. However, a buyer will recognize that its purchase choice affects
+how the state of the model may evolve.
+   The beginning of period buyer value (V B ) is defined before nature has chosen the buyer
+for the current period. To define this value it is useful to first define V B,IN T , the value of a
+
+                                                     8
+buyer (whether or not they made the purchase choice this period) after the purchase decision
+has been made and seller know-how has evolved, but before entry and exit choices are made.
+Value for buyer before entry/exit stage (V B,IN T ) :
+
+                                                                                               
+                                           I (e1 > 0, e2 > 0)1 (e)2 (e)V B (e) + ...
+                                                                                               
+                                 I (e1 = 0, e2 > 0)1 (e)2 (e)V B (1, e2 )+...
+                                                                                               
+                                                                                               
+                                                                                               
+                                 I (e1 > 0, e2 = 0)1 (e)2 (e)V B (e1 , 1)+...
+                                                                                               
+              B,IN T       b
+                                                                                               
+            V        (e) -                                                                     =0              (7)
+                                 I (e1 = 0, e2 = 0)1 (e)2 (e)V B (1, 1) + ...
+                                                                                               
+                                                                                               
+                                                                                               
+                             I (e1 > 0, e2 > 0)1 (e)(1-2 (e))V B (e1 , 0) + ...
+                                                                                               
+                                                                                               
+                                                                                               
+                                                     ....
+
+where the sum is over the states that the game may transition to given entry/exit choices.
+Seller symmetry implies that V B,IN T (e1 , e2 ) = V B,IN T (e2 , e1 ) and V B (e1 , e2 ) = V B (e2 , e1 ).
+    Given the definition of V B,IN T , the probability that a buyer chooses seller i = 1, 2 is
+
+                                                exp(vi - pi + V B,IN T (ei ))
+                             Di (p, e) =                              B,IN T (e ))
+                                                                                   .                           (8)
+                                              k=0,1,2 exp(vk - pk + V          k
+
+
+with a similar formula for the outside option. V B is then defined as
+Beginning of Period Buyer Value (V B ) :
+
+
+V B (e) - bp log             exp vk - pk + V B,IN T (ek )      - (1 - bp )             Dk (p(e), e)V B,IN T (ek ) = 0,
+                   k=0,1,2                                                   k=0,1,2
+
+                                                                                                               (9)
+
+where bp is the probability that a buyer in the pool is the chosen buyer in the current period,
+in which case its value reflects the current and future surplus of its purchase choice. The value
+of a buyer that is not chosen is the weighted sum of the V B,IN T s, with the weights reflecting
+the probability that the chosen buyer makes different purchase choices.
+
+
+Discussion. The model is equivalent to the original BDK model if bp = 0, with V B =
+V B,IN T = 0. If bp = 1, there is a monopsonist who can buy one unit every period. Our
+                                                                1
+presentation assumed that bp takes on values where             bp
+                                                                    is an integer. However, bp is also equal
+
+
+                                                        9
+to the share of discounted future buyer surplus that a buyer expects to receive and, if we
+have a behavioral interpretation of the parameter, we can also consider values of bp > 0.5 or
+                  1
+values where     bp
+                      is not an integer, which will be a natural interpretation when we change bp
+continuously.
+       We will illustrate that one should not interpret variation in bp as variation in buyer pa-
+tience.8 Even though equilibrium seller behavior will be the same when bp = 0 or buyers are
+myopic ( b = 0), an increase in  b changes the relative weight that a buyer places on surplus
+in future periods in a way that an increase in bp does not.
+
+
+2.4       Methods for Finding Equilibria and their Classification
+
+BDK and BDKS use two computational approaches to find equilibria. The first approach fol-
+lows Pakes and McGuire (1994) who use an iterative algorithm, where optimal prices/continuation
+probabilities are computed and values are updated in each step, to find an equilibrium. Their
+second approach uses homotopies, which are essentially applications of the implicit function
+theorem to the system of equations that define an equilibrium, to trace equilibrium corre-
+spondences through the strategy and value space as a single parameter is varied, starting
+from an equilibrium found by the Pakes-McGuire algorithm or a different homotopy. An "-
+homotopy" is a homotopy where the equilibrium is traced varying parameter . An advantage
+of the homotopy approach is that it can identify equilibria that, because of the failure of local
+stability conditions, cannot be found using the Pakes-McGuire algorithm unless one started
+exactly at the equilibrium. However, even when the homotopy approach is applied repeatedly
+and different parameters are varied, it is not guaranteed to find all equilibria.9 Therefore, if
+homotopies find only one equilibrium for given parameters, it is unclear how confidently a
+researcher should claim that the equilibrium is unique.
+       In this paper we also make use of the homotopy approach, with our implementation de-
+tailed in Appendix A.10 However, we also use an additional approach that can prove whether
+   8
+     A question from David Besanko made us realize that a patience interpretation was inappropriate.
+   9
+     For example, BDK1, page 880: "Although it cannot be guaranteed to find all equilibria, the advantage
+of this method is its ability to explore the equilibrium correspondence and search for multiple equilibria in a
+systematic fashion."
+  10
+     Some of our numerical choices (e.g., tolerances) may differ from those of BDK or BDKS, but our results
+are almost identical when bp = 0.
+
+
+
+                                                      10
+particular types of equilibrium exist, as it helps to support our claims that equilibria are
+unique. In particular, we consider the following two types of equilibria.
+
+Definition An equilibrium is accommodative if 1 (e1 , e2 ) = 2 (e1 , e2 ) = 1 for all states
+(e1 , e2 ) where e1 > 0 and e2 > 0.
+
+Definition An equilibrium has the"Some Exit Leads to Permanent Monopoly" (SELPM)
+property if there is some e = (e1 , e2 ) where e1 > e2 > 0, and (i) 2 (e) < 1, (ii) 2 (e1 , 0) = 0
+and 1 (e1 , 0) = 1 for all e1  e1 , and (iii) 1 (e1 , e2 ) = 1 for all e1  e1 , e2  e2 .
+
+    BDK2 define accommodative equilibria in the same way. In these equilibria a game starting
+at state (1, 1) must end up at (M, M ), and then stay in that state, with both firms at the
+bottom of their cost curves. Equivalently, the ergodic distribution consists only of (M, M ). It
+is straightforward to check if an accommodative equilibrium exists by solving for equilibrium
+prices assuming no exit, and then verifying that no exit is optimal. As described in Appendix
+B, by examining the best response price functions in each state, we are confident that at most
+one accommodative equilibrium can exist.
+    Our definition of SELPM equilibria is new. The key feature of a SELPM equilibrium is that
+from the duopoly state e the game either will transition to permanent monopoly, following
+exit, in which case it will end up in states (M, 0) or (0, M ), which will be absorbing, or will
+remain in permanent duopoly, with (M, M ) as an absorbing state. In lower know-how states,
+exit and re-entry is possible. Appendix B describes an algorithm that will be able to identify
+a state e, if one exists, as long as we are able to solve for all equilibria in a given state for a
+given set of buyer and seller continuation values if the state was to change.11 An extended
+version of this algorithm can also be used to identify the existence of equilibria where any exit
+in the game will lead to permanent monopoly (AELPM) (the formal definition of an AELPM
+equilibrium is provided in Appendix B). All AELPM equilibria are SELPM.
+    It is straightforward to check whether an equilibrium found by a homotopy is accommoda-
+tive or SELPM. For the parameters that we consider, all of the equilibria that we identify in
+  11
+     Our algorithm follow paths consistent with the definition of a SELPM equilibrium, starting in the absorbing
+states, until we find a state e or determine that no such state exists. This does not involve solving for
+equilibrium strategies in the whole game, so it does not provide a method for counting the number of SELPM
+equilibrium. The structure of the game implies that there will always be positive probability of reaching e if
+the game starts in state (1, 1) and that equilibrium strategies for lower know-how states that are consistent
+with the existence of state e will exist.
+
+                                                      11
+the extended BDK model are either accommodative or SELPM as long as exit is never optimal
+in state (M, M ) (i.e., when both firms are at the bottom of their learning curves).12 Therefore
+when we find that, for particular parameters, an accommodative equilibrium exists and no
+SELPM equilibria exist, without relying on homotopies, this provides fairly convincing, and
+new, evidence that the accommodative equilibrium is likely to be the only equilibrium in the
+full game.13 One might also argue that policy analysis should be particularly concerned with
+equilibria where permanent monopoly could be established.
+
+
+3      The Effects of Strategic Buyers in the Extended BDK
+       Model: An Illustration
+In this section, we examine what happens if we vary bp when  = 1 and  = 0.75 ("the
+illustrative parameters").14 BDK1 argue that these parameters are empirically plausible even
+                                                                                                                 1
+though they are not intended to represent any particular industry. We assume  b =  =                            1.05
+
+unless otherwise noted.
+
+
+3.1      Three Baseline Equilibria for bp = 0
+
+There are three equilibria that can be supported for these parameters. Table 1 reports the
+strategies for a subset of states. The three equilibria differ only in strategies where one or
+both firms have not made a sale, i.e., where at least one e is equal to 0 or 1. Two of the
+equilibria involve some positive probability of exit by a firm with ei = 1, and they involve low
+equilibrium prices in these states. Intuitively, when a rival that has not made a sale may exit,
+a firm has an incentive to set a low price to make sure that the rival does not make a sale,
+  12
+      If scrap values can be very high and marginal costs in state M are high enough (i.e., there is little learning-
+by-doing), there will be some possibility of exit in state (M, M ). The assumption that scrap values are drawn
+from a triangular distribution with limited support is therefore important. If we considered parameters
+where entry costs could be very low, re-entry might always be optimal and there would never be permanent
+monopoly. Some non-accommodative equilibria would therefore not be SELPM if we considered a broader set
+of parameters.
+   13
+      Of course, we are not claiming to be first in using a recursive algorithm to prove the properties of equilibria
+in a dynamic model with LBD. Cabral and Riordan (1994) and BDKS use backwards induction to prove
+uniqueness when there is no possibility of exit and no forgetting respectively. However, our use of this type of
+algorithm to prove whether or not a particular type of equilibrium with exit exists, is, we believe, new.
+   14
+      For the remaining parameters:  (cost the top of the learning curve) is 10, X (scrap value) has a symmetric
+triangular distribution on [0, 3], S (entry cost) has a symmetric triangular distribution on [3, 6].
+
+
+
+                                                         12
+                  Table 1: Baseline (bp = 0) Equilibria for the Illustrative Parameters in the BDK Model
+
+                                     High-HHI Eqm.                       Mid-HHI Eqm.                 Accommodative Eqm.
+                                     (HHI  =0.96)                        (HHI  =0.58)                    (HHI  = 0.5)
+      e1   e2    c1     c2      p1     p2     1           2        p1     p2    1       2          p1     p2    1       2
+       1    1    10     10    -34.78 -34.78 0.9996      0.9996    3.27   3.27    1       1        5.05 5.05      1       1
+       2    1    8.5    10     0.08   3.63     1        0.7799    3.62   4.65    1    0.9998      5.34 6.29      1       1
+       3    1   7.73    10     0.56   4.15     1        0.7791    3.44   4.95    1    0.9874      5.45 6.65      1       1
+       3    2   7.73    8.5    5.61   5.94     1           1      5.61   5.94    1       1        5.61 5.94      1       1
+       4    1   7.23    10     0.80   4.41     1        0.7787    3.38   5.12    1    0.9767      5.51 6.82      1       1
+       4    2   7.23    8.5    5.55   6.06     1           1      5.55   6.06    1       1        5.55 6.06      1       1
+       4    4   7.23   7.23    5.65   5.65     1           1      5.65   5.65    1       1        5.65 5.65      1       1
+      10    1   5.83    10     1.21   4.86     1        0.7778    3.38   5.46    1    0.9586      5.59 7.12      1       1
+      10    2   5.83    8.5    5.44   6.28     1           1      5.44   6.28    1       1        5.44 6.28      1       1
+      10   10   5.83   5.83    5.32   5.32     1           1      5.32   5.32    1       1        5.32 5.32      1       1
+      29    1   3.25    10     1.24   4.90     1        0.7777    3.39   5.49    1    0.9577      5.58 7.15      1       1
+      29    2   3.25    8.5    5.42   6.30     1           1      5.42   6.30    1       1        5.42 6.30      1       1
+
+
+
+
+13
+      30    1   3.25    10     1.24   4.90     1        0.7777    3.39   5.49    1    0.9577      5.58 7.15      1       1
+      30    2   3.25    8.5    5.42   6.30     1           1      5.42   6.30    1       1        5.42 6.30      1       1
+      30   29   3.25   3.25    5.24   5.24     1           1      5.24   5.24    1       1        5.24 5.24      1       1
+      30   30   3.25   3.25    5.24   5.24     1           1      5.24   5.24    1       1        5.24 5.24      1       1
+       1    0    10      -     8.80     -      1           0      7.55     -     1    0.1357      8.19     -     1    0.8816
+       2    0    8.5     -     8.72     -      1           0      8.72     -     1       0        8.45     -     1    0.5233
+      10    0   5.83     -     8.56     -      1           0      8.56     -     1       0        8.55     -     1    0.2953
+       0    1     -     10       -    8.80     0           1        -    7.55 0.1357     1          -    8.19 0.8816     1
+       0    2     -     8.5      -    8.72     0           1        -    8.72    0       1          -    8.45 0.5233     1
+       0    3     -    7.73      -    8.68     0           1        -    8.68    0       1          -    8.52 0.4227     1
+       0    4     -    7.23      -    8.65     0           1        -    8.65    0       1          -    8.54 0.3739     1
+       0   10     -    5.83      -    8.56     0           1        -    8.56    0       1          -    8.55 0.2953     1
+       0   29     -    3.25      -    8.54     0           1        -    8.54    0       1          -    8.54 0.2899     1
+       0   30     -    3.25      -    8.54     0           1        -    8.54    0       1          -    8.54 0.2899     1
+     Notes: ci , pi , i are the marginal costs, equilibrium price and equilibrium probability of continuing to be in the industry
+     in the next period of firm i. HHI  is the expected long-run value of the HHI.
+and, in turn, this can make exit more attractive.
+       Long-run outcomes can be measured by the expected long-run HHI (HHI  ) implied by
+firm strategies assuming that the game begins in state (1,1). BDK define HHI  15 as
+
+                                                                                                      2
+                                 µ (e)                                              Di (p, e)
+        HHI      =                         HHI (e) where HHI (e) =
+                              1 - µ (0, 0)                         i=1,2
+                                                                              D1 (p, e) + D2 (p, e)
+                     e(0,0)
+
+
+and µ (e) is the probability that the game is in state e in the ergodic distribution. The
+long-run expected average price (P  ) can be defined in a similar way.
+       In any accommodative equilibrium, the ergodic distribution contains only state (M, M ) so
+HHI  = 0.5 and P  = 5.24 . The other equilibria are SELPM, so the ergodic distributions
+contain states (M, M ), (M, 0) and (0, M ) only, and HHI  and P  depend only on the
+probabilities of these states in each equilibrium, as equilibrium prices in absorbing states do
+not depend on bp (the optimal buyer strategy is to act statically). The Mid-HHI equilibrium
+is AELPM, as only a laggard exits and there is no re-entry against an incumbent.16
+
+3.2       Equilibrium Outcomes as bp Varies
+
+Figure 2 shows the values of HHI  and P  implied by the equilibria on the bp -homotopy
+paths from each of the baseline equilibria. The High- and Mid-HHI baseline equilibria lie at
+two ends of a single path that does not extend beyond bp = 0.142. All of the equilibria on
+this path are SELPM. On the other hand, the equilibria on the path from the accommodative
+baseline equilibrium are all accommodative.
+       As noted above, one might wonder if there are additional equilibria with exit on discon-
+nected sections of the equilibrium correspondence. We use our recursive algorithm to test for
+the existence of SELPM equilibria when we increase bp from 0 to 1 in steps of 0.01. We find
+that no SELPM equilibria exist for bp  0.15, consistent with the homotopies identifying all
+equilibria.
+       Figure 3 shows what the equilibria on the homotopy paths imply for the net present values
+of consumer and total surplus, for games starting in (1,1).17 The net present values are
+  15
+    In practice, BDK1 calculate HHI  based on the probability distribution of states after 1,000 periods (see
+BDK1, p. 883). We use the actual limiting distribution.
+ 16
+    The High-HHI equilibrium is not AELPM, as there is a small probability that both firms exit in (1,1).
+ 17
+    BDK1 calculate welfare assuming that the game starts in state (1,1), whereas BDK2 calculate welfare
+
+
+                                                     14
+Figure 2: Extended BDK Model: Equilibrium Expected Long-Run HHI and Price as a Func-
+tion of bp for the Illustrative Parameters. The black line traces the homotopy path from the
+Accommodative (A) baseline equilibrium. The red line traces the overlapping paths from the
+High-HHI (H) and Mid-HHI (M) baseline equilibria.
+   (a) Expected Long-Run HHI (HHI  ).                (b) Expected Long-Run Prices (p )
+
+
+
+
+Figure 3: Extended BDK Model: Equilibrium Expected NPV of Welfare as a Function of bp for
+the Illustrative Parameters. The black line traces the homotopy path from the Accommodative
+(A) baseline equilibrium. The red line traces the overlapping paths from the High-HHI (H)
+and Mid-HHI (M) baseline equilibria.
+             (a) Total Surplus                             (b) Consumer Surplus
+
+
+
+
+                                            15
+affected both by long-run variety and prices (better in accommodative equilibria) but also the
+intensity of competition to gain an advantage in the initial periods of the game. Total surplus
+is highest in the accommodative equilibria. On the other hand, consumer surplus is maximized
+in the baseline Mid-HHI equilibrium, although it is lowest in the High-HHI equilibrium, where
+monopoly is likely to be quickly established. Therefore, the type of equilibrium that tends to
+exist when buyers act strategically is not necessarily the best equilibrium for buyers. We will
+see that initial prices in an accommodative equilibrium tend to increase with bp , causing both
+measures of surplus to fall.
+    Appendix C.1 explores the welfare patterns by examining what happens to the number
+of sales and production costs, in the long-run and in the first ten periods of the game. Even
+though one firm is likely to exit, surplus is highest in the High-HHI equilibrium in the first
+ten periods because duopoly prices are so low.
+
+3.3     Effect of Changes in bp on Equilibrium Strategies and Dynamic
+        Incentives
+
+To explain these changes in the existence of different types of equilibria, outcomes and welfare,
+we focus on what happens in a single state, (3, 1). In the SELPM baseline equilibria, if firm
+2 makes the sale in this state, there will be permanent duopoly, and future play will be the
+same as in the accommodative equilibrium, whereas if firm 1 makes the sale or no sale occurs,
+firm 2 may exit and monopoly may result. A buyer in this state can therefore play a pivotal
+role in how the market develops, i.e., there is some probability that the long-run outcome will
+be duopoly only if it buys from firm 2. In an accommodative equilibrium, the buyer can make
+the firms more symmetric by buying from firm 2, but cannot affect long-run market structure.
+    Figure 4(a) shows how the demand for firm 1 (the leader) changes with bp when we hold
+seller pricing and exit strategies (in all states) fixed at their baseline bp = 0 equilibrium values,
+so that the changes in demand simply reflect the incentives of a buyer to affect how the game
+evolves.18 We see that the probability of purchasing from firm 1 falls as bp rises in all of the
+assuming the game starts in state (0,0), so that initial entry costs are included and the possibility that there is
+never duopoly is accounted for. While both measures are interesting, we focus on NPV measures assuming that
+the game starts in (1,1) as antitrust analysis is typically focused on settings where there is actual competition
+during the initial stages of an industry's development.
+  18
+     When we vary p1 , the players assume that p1 will have its baseline equilibrium value if the game is in
+state (3,1) in any future period. p2 is held fixed at its baseline equilibrium value.
+
+
+                                                        16
+     Figure 4: Extended BDK Model: Demand, Dynamic Incentives and Strategies for the Illustrative Parameters. H = High-HHI, M
+     = Mid-HHI and A = Accommodative Baseline Equilibria, and AB=Advantage-Building and AD=Advantage-Denying Incentives.
+     Panels (a) and (b) hold seller strategies fixed at baseline equilibrium values. The remaining panels show equilibrium strategies
+     and incentives on bp -homotopy Paths from the baseline equilibria
+           (a) Inverse Demand for Firm 1                   (b) Firm 1 Incentives            (c) Firm 2 Equilibrium Continuation Prob-
+                                                                                            ability in State (4,1)
+
+
+
+
+17
+        (d) Equilibrium Prices in State (3,1)        (e) Firm 1 Equilibrium Incentives           (f) Buyer Equilibrium Incentives
+equilibria, but that the falls are especially dramatic in the High-HHI equilibrium, even for low
+values of bp . For example, the probability that firm 1 makes the sale falls from 0.973 to 0.695
+as bp increases from 0 to 0.1.
+       To understand how shifts in demand in future states affects a seller's dynamic incentives,
+we follow BDK in defining two components of a seller's continuation values in a particular
+state.
+
+Definition The advantage-building incentive for firm 1 is V1S,IN T (e1 +1, e2 )-V1S,IN T (e1 , e2 ).
+The advantage-denying incentive for firm 1 is V1S,IN T (e1 , e2 ) - V1S,IN T (e1 , e2 + 1).
+
+The advantage-building incentive therefore measures the increase in a firm's continuation
+value when it makes a sale, compared to neither firm making a sale. The advantage-denying
+incentive measures the increase in the continuation value from no sale compared to the rival
+making a sale. BDK1 show that the advantage-denying incentive is important in sustaining
+equilibria with exit or high values of HHI  .19
+       Figure 4(b) shows these dynamic incentives for firm 1 in state (3,1) as a function of bp
+holding seller strategies fixed at their baseline equilibrium values, so that changes reflect only
+how buyer behavior affects the evolution of the game. Even though firm 2's exit probabilities
+are not changing, the advantage-denying incentive in the High-HHI equilibrium falls rapidly
+with bp , reflecting how a strategic buyer is more likely to buy from firm 2, if it does not exit,
+in future periods. The other incentives, which are much smaller, decline only slightly, and
+more linearly, as bp rises.
+       The remaining parts of the figure examine how equilibrium strategies and dynamic incen-
+tives change (i.e., when we allow for both buyer and seller strategies to adjust) along the bp
+homotopy paths from the baseline equilibria. Figure 4(c) shows the probability that firm 2
+will continue in state (4,1), i.e., the probabilities associated with firm 2's exit choice when firm
+1 makes the sale in state (3,1). Figure 4(d) shows the equilibrium prices of both firms in state
+(3,1). Figure 4(e) shows the equilibrium advantage-building and denying incentives for firm
+1. As bp increases from zero, firm 1's equilibrium price initially falls sharply when we follow
+the path from the High-HHI equilibrium. As the advantage-denying incentive is declining,
+  19
+   See, for example, Figure 3 (middle panel) in BDK1 where the surviving equilibria are accommodative
+when the advantage-denying incentive (Definition 2) is removed.
+
+
+                                                 18
+partly because firm 2 is less likely to exit, and the advantage-building incentive is almost flat,
+the fall in price reflects the decline in demand in state (3,1) as a strategic buyer becomes
+more likely to buy from firm 2. When the advantage-denying incentive is small enough, the
+incentive to maintain a price that is significantly below marginal cost disappears, and this
+type of equilibrium can no longer be sustained.
+   Figure 4(f) shows the equilibrium dynamic incentives of a strategic buyer, measured by the
+change in the chosen buyer's continuation values when, compared to not buying, it buys from
+firm 1 (V B,IN T (4, 1) - V B,IN T (3, 1)) or firm 2 (V B,IN T (3, 2) - V B,IN T (3, 1)). These incentives
+are zero in all of the equilibria when bp = 0. On the other hand, as bp rises, the dynamic
+incentive to buy from firm 2 increases sharply in the non-accommodative equilibria, while
+there is a a dynamic disincentive to buy from firm 1. In an accommodative equilibrium there
+is a positive dynamic incentive to buy from either firm as this lowers future costs and prices,
+although the incentive to buy from firm 2 is greater. The positive dynamic incentives, which
+raises demand for both firms, explains why equilibrium prices increase on the path from the
+accommodative baseline equilibrium.
+
+
+3.4     Comparison to Variation in Buyer Discount Factor
+
+One might expect that an increase in bp would have a similar effect on equilibrium outcomes
+to making a monopsonist buyer more patient (i.e., increasing  b when bp = 1). Increasing
+either bp or  b causes buyers to place more weight on future surplus, but changes in  b also
+affect the relative weight placed on surplus in different future periods. As a result, changes in
+ b and bp can affect what happens in different ways, even though equilibrium strategies when
+ b = 0 or bp = 0 are identical.
+   We can illustrate this difference using our state (3,1) example. In the High-HHI equilib-
+rium, firm 1's price in state (4,1) is even lower than its price in state (3,1). Therefore when  b
+increases from zero, a monopsonist buyer may actually shift its demand towards firm 1 even
+though this increases the probability of long-run monopoly. This is illustrated in Figure 5(a),
+which can be compared to Figure 4(a) as seller strategies are the same in both cases. Using
+High-HHI or Mid-HHI seller strategies, demand for firm 1 is higher when  b = 0.7 than when
+ b = 0. In contrast, demand was lower for firm 1 for all bp > 0. This type of demand shift
+
+
+                                                   19
+Figure 5: Extended BDK Model: Inverse Demand Curves For Seller 1 in State (3,1) and Equi-
+librium Expected Long-Run HHI as a Function of  b (bp = 1) for the Illustrative Parameters.
+In panel (a) seller strategies are held at baseline equilibrium levels. The paths in panel (b)
+are traced by  b -homotopies.
+           (a) Inverse Demand for Firm 1                             (b) Equilibrium HHI 
+
+
+
+
+implies that the equilibrium dynamic incentive for a seller to set a low price may increase
+when bp increases.20
+       Figure 5(b) shows the HHI  values implied by the equilibria traced by  b -homotopies
+from the baseline equilibria. Non-accommodative equilibria exist until  b is almost equal to
+ , in contrast to how multiplicity is eliminated for quite low bp .
+       We assume that  b =  and we will vary bp in the rest of this paper. This is because we
+think of industries with LBD as typically having a number of long-lived buyers, each of whom
+accounts for only a share of current and future demand, but who may care about the future
+just as much as the sellers. This situation is more closely approximated by a model where
+ b =  and bp > 0.
+
+
+4        Results for the Extended BDK Model Across Values
+         of  and 
+We now examine what happens when we look across values of , the progress ratio, which
+determines the extent of LBD, and  , which measures the degree of product differentiation,
+  20
+    In fact, when we calculate the advantage-denying incentives for firm 1, with fixed seller strategies, it
+increases until  b is 0.8 for the Mid-HHI equilibrium and until  b is 0.7 for the High-HHI equilibrium.
+
+
+                                                    20
+Figure 6: Extended BDK Model: Equilibrium Expected Long-Run HHI (HHI  ) on  -
+Homotopy Paths for Different bp , with Other Parameters at their Illustrative Values.
+                       (a) bp = 0                                        (b) Full Range of bp
+
+
+
+
+with other parameters fixed at their illustrative values. When product differentiation falls,
+equilibrium duopoly profits tend to shrink, which tends to lead to more exit. When  falls,
+there are two effects. First, lower costs tend to increase duopoly profits, making exit less
+attractive. On the other hand, a firm that makes initial sales gains a larger cost advantage,
+which may increase the probability that the laggard exits.
+
+4.1       Long-Run Market Structure and Multiplicity of Equilibria
+
+Figure 6(a) (which matches BDK1 Figure 2, Panel B) shows the HHI  implied by the
+equilibria on the  -homotopy path when bp = 0 and  = 0.75.21 The other parameters
+are held at their illustrative values. When  > 1.12 (high differentiation), there is only an
+accommodative equilibrium (HHI  = 0.5), but otherwise at least one equilibrium exists
+where a firm may exit and the market can end up as a permanent monopoly. For  < 0.9,
+all of the equilibria have a high probability of monopoly (HHI  very close to 1), and, as
+a result of the homotopy path bending back on itself (in a way that cannot be seen in the
+figure), there can be many equilibria. For example, for  = 0.8 there are 23 equilibria, all
+with HHI   0.95.22 All of the equilibria computed with HHI  > 0.5 are SELPM.
+      Figure 6(b) shows that, as bp increases, the  -homotopy paths unwind, reducing multiplic-
+ 21
+      The path begins at  = 1.3 where we find the equilibrium by solving the equilibrium equations.
+ 22
+      Prices are identical in all of these equilibria for (e1 > 6, e2 > 6) because there is no exit in these states.
+
+                                                          21
+Figure 7: Extended BDK Model: Equilibrium Expected Long-Run HHI (HHI  ) on -
+Homotopy Paths for Different bp , with Other Parameters at their Illustrative Values. Panel
+(b) classifies the equilibria into accommodative, AELPM and non-AELPM SELPM types,
+distinguishing within the latter two groups based on whether the equilibrium satisfies BDK2's
+definition of an aggressive equilibrium.
+             (a) Full Range of bp                             (b) Classification
+
+
+
+
+ity. Accommodative equilibria can be supported for lower  . When bp  0.9, a high value, no
+equilibria has an HHI  close to 1 for any   0.5.
+   Figure 7(a) presents a similar figure for -homotopy paths for different level of bp (the
+bp = 0 plot matches BDK1 Figure 2, Panel A), with the other parameters at their illustrative
+values, including  = 1. Moving from left to right in the figure is associated with larger LBD
+effects. For all  and for all bp , there is an accommodative equilibrium (HHI  = 0.5) (i.e.,
+for each bp there is a line that follows the red line in the figure), while, for bp = 0 and   0.8,
+there are also equilibria where exit occurs and the SELPM equilibrium correspondence has
+(in this dimension) two disconnected loops. As bp increases, the geometry changes. The loops
+with the highest HHI  are eliminated as soon as bp  0.05, and the loops covering lower
+values of HHI  contract to cover a smaller range of , disappearing entirely for bp > 0.3 so
+that, for all , only a unique accommodative equilibrium exists.
+   Figure 7(b) classifies the equilibria into accommodative, AELPM and non-AELPM SELPM
+equilibria, where the latter two groups are also broken down into whether the equilibrium
+
+
+
+
+                                               22
+meets BDK2's definition of an aggressive equilibrium.23 Appendix C.2 shows a similar classi-
+fication for the  -homotopy equilibria, and two patterns hold in both plots. First, all of the
+equilibria are either accommodative or SELPM (i.e., for these parameters the classificiation
+is exhaustive). In contrast, there are equilibria that are neither accommodative nor aggres-
+sive (i.e., some are unclassified using the aggressive/accommodative classification). Second,
+AELPM equilibria tend to have lower HHI  values than non-AELPM SELPM equilibria, a
+result which is worth briefly explaining. In equilibria where duopoly prices are exceptionally
+low, monopoly is very likely to result (HHI  ) but it is also possible that firms will want to
+exit in symmetric states with low know-how. In this case, exit may be followed by re-entry,
+because both firms could leave at the same time, and these equilibria will not be AELPM,
+but can be SELPM.
+       If all equilibria are accommodative or SELPM, a claim consistent with our classification of
+the homotopy equilibria, then our recursive algorithm can prove whether an accommodative
+equilibrium is the unique equilibrium. Figure 8 shows the results of applying the algorithm
+for a grid of values, in steps of 0.05, of (,  ) for different levels of bp . The only gridpoints
+for which neither accommodative nor SELPM equilibria exist are ( = 1,   0.65), where
+there is little product differentiation and no LBD, so that firms always have high costs. For
+these parameters, equilibrium profits are low in every state and there can be exit even in state
+(M, M ).
+       For the remaining combinations of parameters, there is a clear pattern. For bp = 0,
+accommodative and SELPM equilibria co-exist over a wide range of the parameter space.
+Accommodative equilibria are unique only when there is a lot of product differentiation or
+LBD is limited (and differentiation is not too low).24 As bp increases, the range of parameters
+with a unique accommodative equilibrium expands, whereas the range that supports SELPM
+equilibria shrinks. The changes are most dramatic for low : for example, when  = 0 (costs
+fall from 10 to zero with one sale), SELPM equilibria can be supported for   1.05 with
+bp = 0, but the threshold falls to   0.85 when bp = 0.3. For the highest levels of bp , SELPM
+equilibria only exist when product differentiation is limited, and SELPM and accommodative
+  23
+     The equilibrium is aggressive if p1 (e) < p1 (e1 , e2 + 1), p2 (e) < p2 (e1 , e2 + 1), and 2 (e) < 2 (e1 , e2 + 1) for
+some state e = (e1 , e2 ) > (0, 0) with e1 > e2 , where  is the probability of continuing. Recall that AELPM
+equilibria are SELPM equilibria where any exit from duopoly results in permanent monopoly.
+  24
+     See Appendix B for a discussion of the evidence that there is only ever a single accommodative equilibrium.
+
+
+                                                           23
+     Figure 8: Extended BDK Model: Classification of the Types of Equilibria that Exist for (,  ) Combinations. Shading: White
+     - neither SELPM nor accommodative equilibria exist; Light Grey - a unique accommodative equilibrium exists, no SELPM
+     equilibria exist; Dark Grey - a unique accommodative equilibrium and SELPM equilibria co-exist; Black - SELPM equilibria
+     exist, accommodative equilibria do not exist.
+
+
+
+
+24
+equilibria co-exist only for a narrow range of parameters.
+
+
+4.2       Prices and Welfare
+
+We now consider what happens to equilibrium prices and welfare as bp increases. Figure 9
+presents expected long-run prices and the net present value of consumer surplus and total
+surplus for  -homotopy plots, with  = 0.75, and -homotopy plots, with  = 1. For the
+-homotopy plots, we measure welfare relative to the unique (accommodative) equilibrium
+when bp = 1 because the changes in the level of surplus caused by variation in marginal costs
+with  would otherwise dominate the figures. We also draw the welfare plots for a subset
+of values of bp in order to reduce how many times lines cross, and we distinguish between
+accommodative equilibria (solid lines) and SELPM equilibria (dashed lines).
+       Consistent with the illustrative example, when parameters support both accommodative
+and SELPM equilibria, total surplus is maximized, and long-run prices are minimized, in the
+accommodative equilibrium. BDK2 conclude that equilibria tend to be quite efficient in the
+original BDK model, and this conclusion would appear to be strengthened when we allow
+for strategic buyer behavior to eliminate non-accommodative equilibria. Consumer surplus in
+an accommodative equilibrium tends to lie between the minimum and maximum consumer
+surplus of the SELPM equilibria, which is also consistent with the example. For any  or  ,
+increasing bp tends to lower the NPV of consumer surplus in accommodative equilibria, as
+initial price competition is softened. It also tends to reduce total surplus when   0.9. On
+the other hand, when 0.9 <  < 1, total surplus can increase in bp because marginal costs
+are high, and without strategic behavior there is a reasonably high probability that no sale
+will be made when a sale would be efficient. As a strategic buyer will be more likely to buy
+in lower know-how states to reduce future costs, this inefficiency can be offset.25 When both
+ and bp are small, there are many SELPM equilibria, but, because permanent monopoly is
+likely to arise quickly in all of them, they lead to very similar expected welfare numbers.
+  25
+    For example, when  = 0.925 and bp = 0.2, the probability that the buyer chooses the outside option in
+state (1, 1) is around 0.272. When bp = 1, this probability falls to 0.241 (a 10% decrease).
+
+
+
+
+                                                   25
+     Figure 9: Extended BDK Model: Equilibrium Expected Long-Run Prices and NPV Welfare Measures on  - and -Homotopy
+     Paths for Full Range of bp , with Other Parameters at their Illustrative Values. For panels (b) and (c) surplus is measured relative
+     to surplus in the unique equilibrium with bp = 1. In panels (b), (c), (e) and (f) solid lines indicate accommodative equilibria and
+     dashed lines indicate SELPM equilibria.
+                (a) Long-Run Prices                         (b) Consumer Surplus                           (c) Total Surplus
+
+
+
+
+26
+                (d) Long-Run Prices                         (e) Consumer Surplus                           (f) Total Surplus
+5      Results for the Extended BDKS Model
+A feature of SELPM equilibria in the BDK model is that there are states where a buyer can
+guarantee long-run competition by making a particular purchase choice, providing a strong
+incentive for a strategic buyer to shift its demand even if it expects to receive a relatively
+small share of future surplus. We now consider the BDKS model, where there is no entry or
+exit, know-how can depreciate stochastically and a single purchase can never guarantee that
+competition will be sustained permanently. We find that, contrary to what one might expect,
+strategic buyer behavior eliminates multiplicity even more dramatically in this model.
+
+
+5.1     Differences Between the BDKS and BDK Models
+
+In the BDKS model there are always two active firms, with no entry or exit decisions. Once
+the buyer has made its purchase choice, which, unlike the BDK model, does not include an
+option not to purchase, know-how evolves according to
+
+
+                     ei,t+1 = min(M, max(ei,t +           qi,t          -        fi,t    , 1))
+                                                    1 if i makes sale       1 if i forgets
+
+                                                                 indicators
+
+
+where fi,t is equal to one with probability (ei ) = 1 - (1 -  )ei where   [0, 1] parameterizes
+the forgetting rate.  is assumed to be equal to 1, with (,  ) as the main parameters of
+interest. A central insight of the BDKS paper is that, because forgetting can move a firm
+up its cost curve, an increase in the rate of forgetting can have a quite different effect on
+equilibrium strategies than weaker learning-by-doing.
+
+
+5.2     BDKS Equilibria for Illustrative Parameters
+
+Table 2 reports strategies for a subset of states for three equilibria identified when bp = 0,
+ = 0.75 (facilitating comparison with our BDK example) and  = 0.0275. We will use
+these parameters in some of our discussion below.26 The table also reports the state-specific
+  26
+    Appendix C will report some corresponding analysis for  = 0.85 and  = 0.0275 which is one of the
+parameter values that BDKS focus on in their analysis. For these parameters there are two equilibria, which
+is unusual, and one of them is characterized as "flat with well", in the sense that the pricing functions are
+
+
+
+                                                     27
+               Table 2: Equilibria in the BDKS Model for  = 0.0275,  = 0.75 , bp = 0.
+
+                                             Sideways Trench           Sideways Trench          Diagonal Trench
+                                           HHI  = 0.5000260          HHI  = 0.5000259         HHI  = 0.5209345
+ e1     e2    c1     c2     1       2        p1         p2             p1         p2            p1         p2
+  1      1    10     10    0.028   0.028   -4.12      -4.12          -4.10      -4.10         -3.25      -3.25
+  2      1   7.50    10    0.054   0.028    4.86      7.52           4.86       7.52          5.05        7.65
+  2      2   7.50    7.5   0.054   0.054   2.87       2.87           2.87       2.87           0.21       0.21
+  3      1   6.34    10    0.080   0.028    6.22      8.87           6.22       8.87          6.61        8.96
+  3      2   6.34    7.5   0.080   0.054   4.13       5.38           4.13       5.38           3.84       5.81
+  3      3   6.34   6.34   0.080   0.080   4.61       4.61           4.61       4.61           1.34       1.34
+  4      1   5.63    10    0.106   0.028    6.31      8.91           6.31       8.91          6.72        8.83
+  4      2   5.63   7.50   0.106   0.054   4.65       6.01           4.65       6.01           5.29       7.01
+  4      3   5.63   6.34   0.106   0.080   4.71       5.25           4.71       5.25           3.63       5.35
+  4      4   5.63   5.63   0.106   0.106   4.93       4.93           4.94       4.94           1.67       1.67
+ 10      1   3.85    10    0.243   0.028    6.07      8.58           6.07       8.58           6.20       8.04
+ 10      2   3.85    7.5   0.243   0.054   4.91       6.05           4.91       6.05           5.59       6.39
+ 10      3   3.85   6.34   0.243   0.080   5.15       5.83           5.15       5.83           5.69       6.27
+ 10      8   3.85   4.22   0.243   0.200   4.99       5.13           4.99       5.13           4.35       5.73
+ 10      9   3.85   4.02   0.243   0.222   5.01       5.07           5.01       5.07           3.15       4.41
+ 10     10   3.85   3.85   0.243   0.243   5.04       5.04           5.04       5.04           2.44       2.44
+ 29      1   3.25    10    0.555   0.028    5.90      8.37           5.90       8.37           5.60       7.51
+ 29      2   3.25    7.5   0.555   0.054   4.81       5.79           4.81       5.79           5.06       5.66
+ 30      1   3.25    10    0.567   0.028    5.90      8.37           5.90       8.37           5.66       7.60
+ 30      2   3.25    7.5   0.567   0.054   4.81       5.79           4.81       5.79           5.07       5.72
+Notes: ci , pi , i are the marginal costs, equilibrium price and probability of forgetting for firm i. HHI 
+is the expected long-run value of the HHI.
+
+
+probabilities that a firm forgets (). Firms set negative prices in state (1,1) in all of the
+equilibria as they compete to get an advantage. The equilibria differ in strategies (and values)
+in all states, rather than just in a subset of states with low know-how, because, for  > 0,
+there is always the possibility that the game will eventually transition to any other state in
+any equilibrium. The same logic implies that there are no absorbing states.
+      The first two equilibria, which have very similar prices except in state (1, 1), are charac-
+terized by a "sideways trench" where the price of the leading firm drops when its rival moves
+from ej = 1 to ej = 2, but then, if the laggard gains additional know-how, the leader's price
+increases even though the laggard's costs are falling. In the third equilibrium, the firms set
+low prices when they are symmetric (i.e., when a sale may cause leadership to switch from
+one firm to the other) and we describe this equilibrium as a "diagonal trench". Despite the
+relatively flat across the know-how space except that the firms set much lower prices in state (1,1).
+
+
+
+                                                      28
+differences in the strategies, each of the equilibria has an unconcentrated market structure in
+the long-run.27
+       Figure 10(a) and (b) shows the HHI  and P  values implied by the equilibria on bp -
+homotopy paths from the baseline equilibria. The diagonal trench and one of the sideways
+trench equilibria are connected on a single path which does not pass bp = 0.068. On the
+other hand, the path from the other sideways trench equilibrium continues to bp = 1, with
+HHI  remaining very close to 0.5. In contrast to the BDK model, P  varies as bp increases
+as equilibrium price levels in all states, and the probability that the game is in a particular
+state, change continuously.
+       Figure 10(d) and (e) shows how firm 1's demand and its incentives change in state (3,1),
+holding seller prices in all states fixed at their bp = 0 equilibrium values.28 As the sideways
+trench equilibria are so similar, we only show one demand picture. In both cases, there is a
+noticeable shift of demand away from firm 1 as bp rises, and they are larger than the shifts in
+the Mid-HHI and accommodative equilibria in our BDK example. For bp = 0 the advantage-
+denying incentives in all of the equilibria are large relative to the advantage-building incentives,
+and they fall significantly as bp rises.29 On the other hand, and unlike in our BDK example,
+the advantage-building incentives increase for low values of bp .30 The decrease in demand and
+the increase in the advantage-building incentive both contribute to the initial decrease in firm
+1's equilibrium price as bp rises (Figure 10(c)).
+  27
+     In the BDK model, for all of the equilibria that we consider in this paper, the long-run HHI is either 0.5
+or 1, and HHI  is equal to the weighted average of these outcomes. In the BDKS model all states have
+positive probability in the long-run when  > 0.
+  28
+     Even though buyers do not have the option to purchase in the BDKS model, we continue to define the
+advantage-building incentives as the difference between firm 1's continuation values when firm 1 makes a sale
+and the continuation value if there was to be no sale, and the advantage-denying incentive as the difference
+between firm 1's continuation value if there was to be no sale and the value if firm 2 makes the sale.
+  29
+     While it is obviously not straightforward to compare the incentives across two different models, it is
+noticeable that the level of the advantage-denying incentive when bp = 0 is lower in these equilibria than
+in the High-HHI equilibrium of the BDK model, reflecting the fact that, in the BDKS model, there is no
+possibility of firm 1 gaining a permanent monopoly position.
+  30
+     The most obvious intuition for this result is that the probability that a strategic buyer will buy from the
+laggard is decreasing when the leader has more know-how, because the buyer will expect it is more likely
+to want to buy from the leader in future periods, and this may make the accumulation of know-how more
+valuable for the leader as bp increases. On the other hand, once buyers are quite strategic, the probability
+that the leader will be able to maintain a significant advantage will fall, decreasing the advantage-building
+incentive.
+
+
+
+
+                                                      29
+     Figure 10: Extended BDKS Model: Equilibrium Expected Long-Run HHI and Prices, Inverse Demand and Dynamic Incentives
+     for Seller 1 as a Function of bp For Illustrative Parameters. ST = Sideways Trench (2 equilibria, indistinguishable on figure)
+     and DT = Diagonal Trench. AB=Advantage-Building and AD=Advantage-Denying Incentives. Panels (d) and (e) hold seller
+     strategies fixed at their baseline (bp = 0) values.
+       (a) Expected Long-Run HHI (HHI  )           (b) Expected Long-Run Price (P  )            (c) Equilibrium Prices in (3,1)
+
+
+
+
+30
+       (d) Inverse Demand for Firm 1 in (3,1)                                                    (e) Firm 1 Incentives in (3,1)
+               Figure 11: Extended BDKS Model: Number of Equilibria for bp = 0
+
+
+
+
+5.3       Existence of Multiple Equilibria in the Extended BDKS Model
+
+As there are no absorbing terminal states when  > 0, it is not possible to use a recursive
+algorithm to establish whether equilibria of a particular type exist.31 We therefore follow
+BDKS in identifying the set of equilibria by using a sequence of  - and -homotopies to criss-
+cross the parameter space for different discrete values of bp . We also check that our results
+are consistent with bp -homotopies that begin from multiple equilibria identified when bp = 0.
+The details of our implementation of the homotopy algorithm are given in Appendix A.
+       Figure 11 shows the number of equilibria that we identify when bp = 0 for different (,
+ ). Even though the gridpoints may not be exactly the same, the figure is almost exactly
+identical to BDKS's Figure 2 except in a small area where  > 0.97 and  is around 0.04,
+where we identify some additional equilibria. There are multiple equilibria for a range of
+values of  when  lies between 0.02 and 0.15, values that imply probabilities of forgetting
+when ei = m = 15 of 0.26 and 0.91 respectively. When the probability of forgetting is above
+0.5, it is not possible, even for a strategic monopsonist, to maintain both firms at the bottom
+of their learning curves for a sustained period.
+  31
+    If  = 0, backwards induction can be used to prove uniqueness of an equilibrium. The argument is similar
+to the one that we describe for accommodative equilibria in the BDK model in Appendix B, but it is simplified
+because one firm must make a sale.
+
+
+
+                                                     31
+                Figure 12: Extended BDKS Model: Number of Equilibria for bp > 0
+                    (a) bp = 0.01                                       (b) bp = 0.05
+
+
+
+
+                     (c) bp = 0.1                                       (d) bp = 0.2
+
+
+
+
+      Figure 12 show the number of equilibria for the same gridpoints for bp equal to 0.01, 0.05,
+0.1 and 0.2. We find no multiplicity when bp = 1, so we do not show that figure. While there
+are a few parameters that have more equilibria when bp = 0.05 than when bp = 0, the general
+pattern is that multiplicity is eliminated quite rapidly as bp rises. When bp = 0.1 multiplicity
+is common only in a small sliver of the parameter space which is associated with parameters
+that are quite extreme in the sense they imply dramatic LBD ( = 0.2 implies that c(1) = 10
+and c(2) = 2) and a high probability of forgetting (if  = 0.1, a firm with ei = 5 forgets with
+probability 0.41).32 For bp = 0.2 we only find multiplicity for some extremely high values of 
+ 32
+      We also identify a few gridpoints with multiplicity around  = 0.1 and  = 0.92, and  = 0.97 and  = 0.35.
+
+
+                                                      32
+where it is unlikely that a firm will be able to get more than one step down the cost curve.
+Appendix C.4 presents two bp -homotopy plots that are consistent with the typical elimination
+of equilibria as bp rises and the existence of examples where the number of equilibria can
+increase for low bp .
+
+
+5.4        Market Structure, Price and Welfare
+
+Figure 13 shows how expected long-run market concentration and average prices, and the
+NPV of consumer and total surplus, measured relative to surplus when bp = 1, for a game
+starting at (1,1), vary with  and bp , based on  -homotopies, holding  fixed at 0.75. Similar
+figures, but with  varying rather than  (with  held fixed at 0.05, as the graphical results
+are clearer than with  = 0.0275) are presented in Appendix C.5.
+       Consistent with our results for the number of equilibria, the folds and loops in the homotopy
+paths that exist for low  when bp = 0 are eliminated as bp rises, so that there is a unique
+equilibrium for all  for bp  0.1. For  < 0.6, increases in bp are associated with lower long-run
+market concentration, consistent with the pattern identified in the BDK model that strategic
+buyers spread purchases to preserve long-run competition. However, whereas in the BDK
+model lower long-run concentration is associated with lower long-run prices, the possibility of
+forgetting means that spreading sales across sellers may raise long-run production costs. This
+leads to long-run prices being higher when bp = 1 than for some lower bp values when  is
+between 0.03 and 0.1, but the broad pattern is that more strategic buyer behavior tends to
+lower long-run prices as competition is preserved.
+       The feature that competition to defend or attain an advantage can last indefinitely in the
+BDKS model also affects the welfare comparisons. In the welfare plots we show a smaller
+number of bp lines to avoid clutter, and we compare surplus relative to the level when bp = 1.
+For low values of  , such as  = 0.0275, where there are multiple equilibria, the effect of raising
+bp on surplus depends on which equilibrium is considered. This was also true in the BDK
+model. Focusing on higher values of bp , such as 0.1, where there is always a single equilibrium
+for the parameters shown, increasing bp tends to lower consumer surplus and total surplus for
+ < 0.6, although we note that the comparison is unclear around  = 0.2.33
+  33
+       The reduction in total surplus when bp increases is explained by the lack of an outside option, which
+
+
+                                                      33
+Figure 13: Extended BDKS Model: Equilibrium Expected Long-Run HHI, Long-Run Average
+Prices and NPV Welfare with  = 0.75. In panels (c) and (d) surplus is measured relative to
+the surplus in the unique equilibrium when bp = 1.
+   (a) Expected Long-Run HHI (HHI  )               (b) Long-Run Expected Prices (P  )
+
+
+
+
+        (c) NPV Consumer Surplus                          (d) NPV Total Surplus
+
+
+
+
+                                           34
+    For  > 0.6, patterns look different, because forgetting is rapid and marginal costs can
+only be kept low if purchases are focused on the same seller.34 Therefore more strategic buyer
+behavior results in higher concentration, lower long-run prices and higher surplus.
+    As an aside, even though the lines in all of the figures intersect around  = 0.6, it is not
+the case that seller strategies are identical for different bp . For example, for low values of bp ,
+the equilibrium involves firms setting low prices when their states are symmetric (a narrow
+diagonal trench), whereas for higher values of bp there is there is a range of states where firms
+have different levels of experience but prices are very low. However, because the probability
+of forgetting is very high, the game will almost certainly be played in states where both firms
+have no or very low know-how, and for these states equilibrium prices are similar, leading to
+similar values of the outcome measures.
+
+
+
+6     Conclusion
+We have examined how equilibrium behavior and market outcomes change in well-known
+models where firms can benefit from learning-by-doing (LBD) when buyers partially internalize
+how their purchase decisions affect future buyer surplus. Our examination is motivated by the
+fact that most industries where LBD has been documented have at least some repeat buyers
+who we would expect to be forward-looking, whereas the existing literature has focused on
+the cases of short-lived atomistic buyers and monopsony.
+    The literature that has assumed that buyers are atomistic has emphasized that the ex-
+istence of multiple equilibria is the norm rather than the exception, and that it is common
+for equilibria where competition tends to persist to coexist with equilibria where the industry
+develops to have a highly concentrated market structure. We find that even moderate degrees
+of forward-looking buyer behavior eliminate the multiplicity of equilibria for many parameter
+values, and that it is equilibria where competition is more likely to be sustained in the long-run
+that survive. As a result, strategic buyer behavior tends to lower prices in the long-run, even
+though the NPV of consumer surplus can be lowered as the incentive of firms to try to gain
+implies that a strategic buyer will not increase the number of sales, and by the increase in long-run production
+costs when competition is preserved.
+  34
+     For example, the probability that the firm forgets when it has acquired one level of know-how (ei = 2) is
+0.84 when  = 0.6.
+
+
+                                                      35
+an initial advantage is weakened.
+    We interpret our results as having at least two encouraging implications. One interpre-
+tation of the existing literature would be that, left to themselves, industries where firms can
+benefit from LBD might tend to tip towards inefficient dominance by a single firm, even when
+the underlying demand and cost structure could also support long-run competition. Our anal-
+ysis suggests that this may be unlikely to happen in markets with even moderate buyer-side
+concentration. The existence of multiple equilibria also provides a well-known challenge, and
+often a deterrent, to conducting empirical and applied research using dynamic games. Our
+finding that equilibria with strategic buyers are typically unique, which is confirmed using a
+new approach in the context of the BDK model, suggests that adding strategic buyers may
+be a way to reduce multiplicity concerns, while also increasing the realism of these models.
+    An important direction for future research will be to identify whether these encouraging
+results are robust to including additional realistic extensions. For example, in most of the
+markets where strategic buyers are relevant, buyers may be asymmetric in their size or tastes,
+buyers and sellers may also be able to write contracts with multi-period options35 , or prices
+may be set by some combination of a procurement auction and subsequent negotiation with
+the preferred bidder. It may be impractical to use homotopy methods to exhaustively search
+for multiple equilibria in models that include these features, making the types of recursive
+methodology, which we use in this paper to confirm the homotopy results, even more useful.
+
+
+
+
+  35
+     One reason for preferring a model without commitment is that even if a buyer and seller sign a contract
+covering multiple periods when there is competition, there is some risk of ex-post opportunism by a seller that
+becomes a monopolist if there are non-contractible elements that firms care about.
+
+
+                                                      36
+References
+Alchian, A. (1963): "Reliability of Progress Curves in Airframe Production," Econometrica,
+ 31(4), 679­693.
+
+Anton, J. J., G. Biglaiser, and N. Vettas (2014): "Dynamic Price Competition with
+ Capacity Constraints and a Strategic Buyer," International Economic Review, 55(3), 943­
+ 958.
+
+Asker, J., C. Fershtman, J. Jeon, and A. Pakes (forthcoming): "A Computational
+ Framework for Analyzing Dynamic Procurement Auctions: The Market Impact of Informa-
+ tion Sharing," RAND Journal of Economics.
+
+Benkard, C. L. (2000): "Learning and Forgetting: The Dynamics of Aircraft Production,"
+ American Economic Review, 90(4), 1034­1054.
+
+        (2004): "A Dynamic Analysis of the Market for Wide-Bodied Commercial Aircraft,"
+  Review of Economic Studies, 71(3), 581­611.
+
+Besanko, D., U. Doraszelski, and Y. Kryukov (2014): "The Economics of Predation:
+ What Drives Pricing When There is Learning-by-Doing?," American Economic Review,
+ 104(3), 868­97.
+
+        (2019): "How Efficient is Dynamic Competition? The Case of Price as Investment,"
+  American Economic Review, 109(9), 3339­64.
+
+Besanko, D., U. Doraszelski, Y. Kryukov, and M. Satterthwaite (2010):
+ "Learning-by-Doing, Organizational Forgetting, and Industry Dynamics," Econometrica,
+ 78(2), 453­508.
+
+Board, S., and A. Skrzypacz (2016): "Revenue Management with Forward-Looking Buy-
+ ers," Journal of Political Economy, 124(4), 1046­1087.
+
+Cabral, L. M., and M. H. Riordan (1994): "The Learning Curve, Market Dominance,
+ and Predatory Pricing," Econometrica, 62(5), 1115­1115.
+
+Chen, Y., V. F. Farias, and N. Trichakis (2019): "On the Efficacy of Static Prices for
+ Revenue Management in the Face of Strategic Customers," Management Science, 65(12),
+ 5535­5555.
+
+Dafny, L. S. (2005): "Games Hospitals Play: Entry Deterrence in Hospital Procedure
+ Markets," Journal of Economics & Management Strategy, 14(3), 513­542.
+
+Dick, A. R. (1991): "Learning-By-Doing and Dumping in the Semiconductor Industry,"
+ Journal of Law and Economics, 34(1), 133­159.
+
+Ericson, R., and A. Pakes (1995): "Markov-Perfect Industry Dynamics: A Framework
+ for Empirical Work," Review of Economic Studies, 62(1), 53­82.
+
+
+
+                                           37
+Gans, J. S., and S. P. King (2002): "Exclusionary Contracts and Competition for Large
+ Buyers," International Journal of Industrial Organization, 20(9), 1363­1381.
+
+Gaynor, M., H. Seider, and W. B. Vogt (2005): "The Volume-Outcome Effect, Scale
+ Economies, and Learning-by-Doing," American Economic Review, 95(2), 243­247.
+ ¨ rner, J., and L. Samuelson (2011): "Managing Strategic Buyers," Journal of Political
+Ho
+ Economy, 119(3), 379­425.
+
+Irwin, D. A., and P. J. Klenow (1994): "Learning-by-Doing Spillovers in the Semicon-
+  ductor Industry," Journal of Political Economy, 102(6), 1200­1227.
+
+Jerath, K., S. Netessine, and S. K. Veeraraghavan (2010): "Revenue Management
+  with Strategic Customers: Last-Minute Selling and Opaque Selling," Management Science,
+  56(3), 430­448.
+
+Kim, M. (2014): "Strategic Responses to Used Goods Markets: Airbus and Boeing," Discus-
+ sion paper, University of Oklahoma.
+
+Lewis, T. R., and H. Yildirim (2002): "Managing Dynamic Competition," American
+  Economic Review, 92(4), 779­797.
+
+Lewis, T. R., and H. Yildirim (2005): "Managing Switching Costs in Multiperiod Pro-
+  curements with Strategic Buyers," International Economic Review, 46(4), 1233­1269.
+
+Lieberman, M. B. (1984): "The Learning Curve and Pricing in the Chemical Processing
+  Industries," RAND Journal of Economics, 15(2), 213­228.
+
+          (1987): "Patents, Learning by Doing, and Market Structure in the Chemical Pro-
+  cessing Industries," International Journal of Industrial Organization, 5(3), 257­276.
+
+Loertscher, S., and L. M. Marx (2019): "Merger Review for Markets with Buyer Power,"
+ Journal of Political Economy, 127(6), 2967­3017.
+
+Maskin, E., and J. Tirole (2001): "Markov Perfect Equilibrium: I. Observable Actions,"
+ Journal of Economic Theory, 100(2), 191­219.
+
+Pakes, A., and P. McGuire (1994): "Computing Markov-Perfect Nash Equilibria: Numeri-
+  cal Implications of a Dynamic Differentiated Product Model," RAND Journal of Economics,
+  25(4), 555­589.
+
+Saini, V. (2012): "Endogenous Asymmetry in a Dynamic Procurement Auction," RAND
+  Journal of Economics, 43(4), 726­760.
+
+Sweeting, A., J. W. Roberts, and C. Gedge (2020): "A Model of Dynamic Limit
+ Pricing with an Application to the Airline Industry," Journal of Political Economy, 128(3),
+ 1148­1193.
+
+Sweeting, A., X. Tao, and X. Yao (2019): "Dynamic Games with Asymmetric Informa-
+ tion: Implications for Mergers," Discussion paper, University of Maryland.
+
+                                            38
+Thompson, P. (2001): "How Much Did the Liberty Shipbuilders Learn? New Evidence for
+ an Old Case Study," Journal of Political Economy, 109(1), 103­137.
+
+Thornton, R. A., and P. Thompson (2001): "Learning from Experience and Learning
+ from Others: An Exploration of Learning and Spillovers in Wartime Shipbuilding," Amer-
+ ican Economic Review, 91(5), 1350­1368.
+
+Zimmerman, M. B. (1982): "Learning Effects and the Commercialization of New Energy
+  Technologies: The Case of Nuclear Power," Bell Journal of Economics, 13(2), 297­310.
+
+
+
+
+                                          39
+

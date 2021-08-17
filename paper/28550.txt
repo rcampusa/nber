@@ -1,0 +1,2601 @@
+                              NBER WORKING PAPER SERIES
+
+
+
+
+                            CEO STRESS, AGING, AND DEATH
+
+                                      Mark Borgschulte
+                                       Marius Guenzel
+                                          Canyao Liu
+                                      Ulrike Malmendier
+
+                                      Working Paper 28550
+                              http://www.nber.org/papers/w28550
+
+
+                     NATIONAL BUREAU OF ECONOMIC RESEARCH
+                              1050 Massachusetts Avenue
+                                Cambridge, MA 02138
+                                    March 2021
+
+
+
+
+We thank Martijn Cremers, Allen Ferrell, Kevin J. Murphy, and Emmanuel Saez for sharing their
+data. We thank Grigory Antipov, Moez Baccouche, Sid-Ahmed Berrani, and Jean-Luc Dugelay
+for sharing their age estimation software. We also thank Tania Babina, Xavier Gabaix, Kevin J.
+Murphy, Christopher Parsons, as well as seminar and conference participants at the 2018 briq
+Workshop on Skills, Preferences, and Educational Inequality, University of Bonn; the 2018
+Berkeley-Stanford Joint Behavioral Economics Mini-Conference; the 2019 NBER Organizational
+Economics Fall Conference; the 2019 Finance, Organizations and Markets (FOM) Conference;
+the 2020 American Finance Association Annual Meeting; Berkeley Haas; Yale SOM; the
+University of Illinois at Chicago; the University of Minnesota; and¸the University of Illinois at
+Urbana-Champaign for helpful comments and suggestions. The views expressed herein are those
+of the authors and do not necessarily reflect the views of the National Bureau of Economic
+Research.
+
+NBER working papers are circulated for discussion and comment purposes. They have not been
+peer-reviewed or been subject to the review by the NBER Board of Directors that accompanies
+official NBER publications.
+
+© 2021 by Mark Borgschulte, Marius Guenzel, Canyao Liu, and Ulrike Malmendier. All rights
+reserved. Short sections of text, not to exceed two paragraphs, may be quoted without explicit
+permission provided that full credit, including © notice, is given to the source.
+CEO Stress, Aging, and Death
+Mark Borgschulte, Marius Guenzel, Canyao Liu, and Ulrike Malmendier
+NBER Working Paper No. 28550
+March 2021
+JEL No. G01,G3,I10,J01
+
+                                          ABSTRACT
+
+We estimate the long-term effects of experiencing high levels of job demands on the mortality
+and aging of CEOs. The estimation exploits variation in takeover protection and industry crises.
+First, using hand-collected data on the dates of birth and death for 1,605 CEOs of large, publicly-
+listed U.S. firms, we estimate the resulting changes in mortality. The hazard estimates indicate
+that CEOs' lifespan increases by two years when insulated from market discipline via anti-
+takeover laws, and decreases by 1.5 years in response to an industry-wide downturn. Second, we
+apply neural-network based machine-learning techniques to assess visible signs of aging in
+pictures of CEOs. We estimate that exposure to a distress shock during the Great Recession
+increases CEOs' apparent age by one year over the next decade. Our findings imply significant
+health costs of managerial stress, also relative to known health risks.
+
+Mark Borgschulte                                 Canyao Liu
+UIUC Economics                                   Yale School of Management
+214 David Kinley Hall                            165 Whitney Avenue
+1407 W Gregory Dr                                New Haven, CT 06511
+Urbana, IL 61801                                 canyao.liu@yale.edu
+markborg@illinois.edu
+                                                 Ulrike Malmendier
+Marius Guenzel                                   Department of Economics
+The Wharton School                               549 Evans Hall # 3880 University
+ University of Pennsylvania                      of California, Berkeley Berkeley,
+Steinberg Hall-Dietrich Hall                     CA 94720-3880
+3620 Locust Walk                                 and NBER
+Philadelphia, PA 19104                           ulrike@econ.berkeley.edu
+mguenzel@wharton.upenn.edu
+                                         1.   INTRODUCTION
+
+Job demands and work-related stress are increasingly recognized to be key determinants of
+population health and well-being.1 As Kaplan and Schulhofer-Wohl (2018) document, the
+amount of stress experienced at work has steadily grown since at least the 1950s, even as
+shifts in the composition of occupations have reduced job-related physical pain and tiredness
+for the average worker. Health researchers argue that stress, and the damage it causes, is the
+mechanism underlying many health disparities (Cutler et al. 2006, Pickett and Wilkinson
+2015, Puterman et al. 2016, Snyder-Mackler et al. 2020).
+    Yet, there is little quasi-experimental evidence that links job demands and stressors at
+work directly to health outcomes. While stress arising from social hierarchies, especially
+in the workplace, has been proposed as an explanation for the strong relationship between
+socioeconomic status and life expectancy, causal evidence on, for example, the effect of
+promotions is limited and reaches mixed conclusions (Boyce and Oswald 2012, Anderson
+and Marmot 2012, Johnston and Lee 2013).
+    A key reason for the lack of causal evidence is that it is challenging to disentangle the
+health effects of job stressors from those of income losses and financial hardship (Smith
+1999). In this paper, we overcome these identification hurdles by focusing on CEOs of large
+publicly traded companies. CEOs in this sample are wealthy and unlikely to be affected by
+financial hardships even if they lost their job. Thus, the setting of top corporate jobs allows
+us to isolate direct effects on health from indirect effects due to financial constraints.
+    The CEO position is a suitable candidate to analyze work-related stress as CEOs work
+long hours, make high-stakes decisions such as layoffs or plant closures, and face uncertainty
+in times of crisis (Bandiera et al. 2020, Porter and Nohria 2018). They are closely moni-
+tored and criticized when their firm is underperforming, and media frequently reports on
+"overworked [and] overstressed" CEOs.2 Needless to say, lower-ranked and non-corporate
+position might entail significantly higher levels of stress. (We can think of "life-or-death"
+jobs, such as emergency room doctors and airline pilots, but also of minimum-wage and
+temporary jobs with rigid schedules, such as delivery drivers.) Our analysis does not speak
+
+   1  See, e. g., Marmot (2005) and Ganster and Rosen (2013). A vast literature in psychology, medicine, and
+biology associates chronic stress with changes in hormone levels, brain function, cardiovascular health, DNA,
+and deleterious health outcomes (McEwen 1998, Epel et al. 2004, Sapolsky 2005).
+    2 See CNN's Route to the Top segment (cnn.com/2010/business/03/12/ceo.health.warning/index).
+
+Cf. also Harvard Business Review on "How Top CEOs Cope with Constant Stress" (hbr.org/2011/04/how-
+top-ceos-cope-with-constan) and expert psychologists offering "Strategies for CEOs to reduce stress"
+(vistage.com/research-center/personal-development/20200402-ceo-stress).
+
+                                                     1
+to the question of which type of occupations come with the highest personal cost. Instead,
+it exploits plausibly exogenous variation in job demands within the CEO group to help
+establish and quantify the influence of job demands on health outcomes.
+    That said, the CEO context is of interest in its own right for at least two reasons.
+First, CEOs bear the ultimate responsibility for the success of the firm and satisfaction of
+employees. Given their overarching importance within their firms, it matters how incentives
+and performance affect CEOs personally. Second, the health implications of CEOs' job
+demands affect their ability to stay on the job and, if anticipated, their willingness to
+select into the CEO job. Our analysis might thus speak the prevalence of certain CEO
+characteristics and possible feedback effects: Are aspiring CEOs (over-)confident about their
+health? Are women vastly underrepresented in the C-suite not only because of discrimination
+but also because they (correctly) anticipate the health costs of assuming such positions?
+    We assemble new measures of health outcomes to investigate the link between CEO
+stress and health. By stress, we do not mean a biomedical analysis in the sense of measuring
+adrenaline or cortisol levels.3 Instead, building on the popular notion of stress, we exploit
+periods of industry-wide distress and variation in the intensity of CEO monitoring to capture
+variation in work-related stress. We estimate the effect on CEOs' life expectancy and
+aging patterns. Our analysis uses new data on the lifespan of CEOs and a new data set of
+photographs of CEOs' faces, combined with recent visual machine learning (ML) techniques
+to estimate the effects on visible signs of aging. The ML techniques are a promising avenue
+for the assessment of work-induced strains in broader samples and, to the best of our
+knowledge, we are the first to introduce them into the economic literature. Our application
+illustrates their potential for the study of health and aging to complement standard measures
+based on mortality, hospital admissions, or survey responses.
+    Our analysis has three main parts. In the first part, we relate variation in the intensity of
+CEO monitoring due to corporate-governance legislation to CEO mortality. In the second
+part, we exploit variation in job demands due to industry-level distress shocks, and also study
+the effect on CEO mortality. In the third part, we continue to exploit industry-level distress
+shocks, here from the Great Recession, and relate them to visible signs of accelerated aging,
+identified by neural-network based ML estimations.
+    In the first part of the analysis, the source of identifying variation is the staggered passage
+
+   3 Stress arises from experiencing demands without sufficient resources to cope (Lazarus and Folkman
+1984). Biomedically, changes in hormones and other bodily processes due to stress can cause long-term
+damage and accelerate aging (Brondolo et al. 2017, Franceschi et al. 2018, Kennedy et al. 2014).
+
+                                                  2
+of anti-takeover laws across U.S. states in the mid-1980s. The laws shielded CEOs from
+market discipline by making hostile takeovers more difficult. Prior research has documented
+that they reduced CEOs' job demands and allowed them to "enjoy the quiet life" (Bertrand
+and Mullainathan 2003). For example, CEOs became less tough in wage negotiations, and
+their rate of plant closures as well as plant creations decreased. The prevailing view in law
+and economics at the time of the passage of the laws was that the "continuous threat of
+takeover" is an important means to counteract lagging managerial performance (Easterbrook
+and Fischel 1981).4 While some later studies question whether the passage of anti-takeover
+laws in fact reduced hostile takeover activity (e.g. Cain et al. 2017), it arguably constituted a
+significant shift in managers' perception of their job environment.
+    For this analysis, we extend the CEO data from Gibbons and Murphy (1992) and merge
+it with hand-collected data on the exact dates of birth and death of more than 1,600 CEOs of
+large U.S. firms. We restrict all analyses to CEOs appointed before the enactment of the anti-
+takeover laws to address the concern that their passage altered the selection of CEOs. Using
+a hazard regression model and controlling for CEO age, time trends, industry affiliation, and
+firm location, we find that anti-takeover laws significantly increase the life expectancy of
+incumbent CEOs. One additional year under lenient governance lowers mortality rates by
+four to five percent for an average CEO in the sample. Non-linear specifications indicate life
+expectancy gains as large as nine percent per year in the initial years of lenient governance,
+with incremental effects falling to zero within five years of initial exposure.
+    These results are robust to an array of alternative specifications, including models
+with CEO birth-cohort and appointment-year fixed effects, and alternative subsampling
+and classifications of anti-takeover laws that account for other firm or state anti-takeover
+provisions, exclude lobbying and opt-out firms, or cut data differently based on firms'
+industry affiliation or state of incorporation (cf. Cain et al. 2017; Karpoff and Wittry 2018).
+    The estimated effect sizes are large. For a typical CEO, the effect of the anti-takeover
+laws is equivalent to making the CEO two years younger. The effect size is even larger if
+we use life tables instead of the estimated CEO age effects for the comparison of takeover
+protection and increasing age in terms of mortality hazard. We can also compare the
+estimated mortality effects to known health threats. For example, smoking until age 30 is
+associated with a reduction in longevity by roughly one year, and lifelong smoking with a
+   4  Other experts at the time made similar arguments. Scharfstein (1988) develops a formal model in which
+the threat of a takeover disciplines management, and then-U.S. Supreme Court Justice Byron White's opinion
+in Edgar vs. MITE emphasizes "[t]he incentive the tender offer mechanism provides incumbent management
+to perform well."
+
+                                                    3
+reduction by ten years and more (General 2014, Jha et al. 2013).
+    We find no evidence of a compensating differential in the form of lower pay for CEOs
+who are protected from hostile takeovers.5 This may indicate that not all parties fully
+account for the health implications of job demands, though we note that prior literature has
+generally struggled to find evidence of compensating differentials outside of select settings
+and carefully designed experiments (e. g., Mas and Pallais 2017; Lavetti 2020).
+    Consistent with anti-takeover laws changing CEOs' perceptions of job demands, we
+find that protected CEOs remain on the job for longer. However, the increase in longevity
+estimated before is unlikely to arise from prolonged tenure because our nonlinear estimates
+imply that prolonged exposure (resulting from prolonged tenure) does not lead to incremental
+survival gains. We also note that our estimations that use an indicator for anti-takeover
+law exposure imply similar effect sizes as those which allow for an endogenous length of
+exposure. Nevertheless, we verify that our estimates are robust to using CEOs' predicted
+rather than actual anti-takever law exposure, where we predict exposure using only variables
+realized before the passage of the laws, such as CEO age and pre-law tenure, thereby purging
+the prediction of any endogeneity due to the laws themselves.
+    In the second part of the paper, we consider industry distress shocks. Typically defined
+based on a 30% median firm stock-price decline over a two-year horizon, industry shocks
+have been used to study effects on, e. g., market concentration, creditor recoveries, and
+employee exit (Opler and Titman 1994, Acharya et al. 2007, Babina 2020). In our analyses,
+they constitute a separate and oppositely-signed change in job demands compared to anti-
+takeover law passage. About 40% of CEOs in our sample experience at least one such
+industry-wide downturn during their tenure. We find that distress exposure significantly
+increases a CEO's mortality risk. The estimated mortality effect is equivalent to increasing
+age by 1.5 years, and comparable to serving three fewer years under lenient monitoring.
+    In the final part of the paper, we document more immediate health implications of
+industry crises in the form of visible signs of aging in the faces of CEOs. We utilize
+machine-learning algorithms designed to estimate a person's apparent age, i. e., how old
+a person looks rather than a person's biological age, from Antipov et al. (2016). The
+software, trained on more than 250,000 pictures, is the winner of the 2016 ChaLearn
+Looking At People competition in the apparent-age estimation track, roughly comparable to
+the certification effect of a first-tier publication in other academic fields.
+
+   5 The analysis of pay builds on Bertrand and Mullainathan (1998) and predictions in Edmans and Gabaix's
+(2011) CEO market model.
+
+                                                    4
+    We collect a sample of 3,086 pictures of the 2006 Fortune 500 CEOs from different
+points during their tenure to estimate differential apparent aging in response to industry-
+level exposure to the financial crisis. Using a difference-in-differences design, we estimate
+that CEOs look about one year older in post-crisis years if their industry experienced a
+severe decline in 2007-2008 relative to CEOs in other industries. The estimated difference
+between distressed and non-distressed CEOs increases over time and amounts to 1.178
+years for pictures taken five years and more after the onset of the crisis. We include a
+detailed description of the procedure and examine issues that have been shown to impact
+the use of visual machine learning in other settings (Wang and Kosinski 2018, Dotsch et al.
+2016, Ag¨ uera y Arcas et al. 2018). To the best of our knowledge, this represents the first
+application of visual machine learning to a quasi-experimental research design.
+    Our paper adds to several strands of literature. A recent literature sheds light on CEOs'
+demanding job and time requirements. Bandiera et al. (2020) obtain weekly diaries of 1,114
+CEOs of manufacturing firms and document long hours that often include six- and seven-day
+workweeks. Porter and Nohria (2018) record an even more intense schedule for 27 CEOs of
+multi-billion dollar firms. Bandiera et al. (2018) document that professional CEOs' job is
+especially taxing as they work longer hours and consume less leisure than family CEOs.
+    Few papers explicitly study health outcomes among CEOs. Bennedsen et al. (2020)
+study the negative effect of CEO hospitalizations on firm performance. Keloharju et al.
+(2020) find that corporate boards in Scandinavia factor CEO health into CEO appointment
+and retention decisions. None of these papers, however, examines the effect of CEO job
+demands on CEOs' health trajectories. To the best of our knowledge, we are the first to
+explore quasi-random variations to establish significant costs for CEOs, both in terms of the
+mortality and in terms of visible aging. The only prior work on executives' health outcomes
+is Yen and Benham (1986), who calculate the age-adjusted mortality rates of 125 executives
+in the banking industry and compare them with those in other industries. Our significantly
+larger sample and quasi-experimental design allows to control for industry-specific selection
+into job environments, and to implement a rigorous survival analysis.
+    Second, our paper contributes novel evidence to the literature on the health effects
+of stress, socioeconomic status, and financial insecurity. In health and labor economics,
+stress has been proposed as an explanation for the association between job loss and higher
+mortality (Sullivan and Von Wachter 2009); the health benefits of the EITC (Evans and
+Garthwaite 2014), unemployment insurance (Kuka 2020), and access to health care (Koijen
+and Van Nieuwerburgh 2020); and early-life health disparities (Camacho 2008, Black et al.
+
+                                             5
+2016). Stress is also implicated in the intergenerational persistence of poverty (Aizer et al.
+2016, Persson and Rossin-Slater 2018, East et al. 2017). To the best of our knowledge, the
+only paper that relates quasi-random increases in job demands directly to health outcomes is
+Hummels et al. (2016), who document the negative impact of trade shocks on workers' stress,
+injury, and illness. Turning from the general or poorer populations to wealthier populations,
+income appears to play a small role in health disparities among the already-wealthy, while
+social factors, such as the prestige associated with a Nobel prize or a political election may
+be protective (Rablen and Oswald 2008; Cesarini et al. 2016; Borgschulte and Vogler 2019).
+    Third, we add to the corporate-governance literature on the impact of anti-takeover
+laws on firm productivity starting from Bertrand and Mullainathan (2003). Giroud and
+Mueller (2010) show that the effect of business combination (BC) laws on performance
+is concentrated in non-competitive industries. After the adoption of BC laws, managers
+undertake value-destroying actions that reduce their firms' risk of distress (Gormley and
+Matsa 2016), patent count and quality decrease (Atanassov 2013), and managers reduce
+their stock ownership (Cheng et al. 2004). The mechanisms suggested in these papers work
+through incentives; we are the first to quantify their long-term health consequences.
+    Finally, we contribute to the literature on industry shocks and financial distress. Prior
+work has documented their economic and financial consequences for firm performance
+(Opler and Titman 1994), creditors (Acharya et al. 2007), brain drain and entrepreneurship
+(Babina 2020), and CEO pay and turnover (Bertrand and Mullainathan 2001, Garvey and
+Milbourn 2006, Jenter and Lewellen 2015). Related to our setting, Engelberg and Parsons
+(2016) document a link between stock-market crashes and hospital admissions, especially
+for anxiety and panic disorders. Our paper offers complementary evidence that distress
+experiences impose long-term health costs, even for successful and wealthy individuals.
+    In the remainder of the paper, Section 2 describes the data and discusses the identifying
+variation. We present the results pertaining to life expectancy and exposure to anti-takeover
+laws in Section 3, and exposure to industry-wide distress shocks in Section 4. Section 5
+presents the results on apparent aging and distress shocks. Section 6 concludes.
+
+              2.   CEO DATASETS AND VARIATION IN CEO JOB DEMANDS
+
+                         2.1. CEO Data for Longevity Analyses
+The initial dataset consists of the universe of CEOs included in the Forbes Executive
+Compensation Surveys from 1975 to 1991, which extends the data in Gibbons and Murphy
+
+
+                                              6
+(1992).6 These surveys are derived from corporate proxy statements and include the
+executives serving in the largest U.S. firms. We choose 1975 as the start year given the
+timing of anti-takeover laws (see Section 2.3), in line with prior studies,7 but will consider a
+more recent sample for the visible aging analysis later. We include all firms with a PERMNO
+identifier in CRSP. The initial sample comprises 2,720 CEOs employed by 1,501 firms.
+    We manually search for (i) the exact dates of CEOs' birth, (ii) whether a CEO has died,
+and (iii) the date of death if the CEO has passed away. All CEOs who did not pass away by
+the cutoff date of October 1st, 2017 are treated as censored. Our main source of birth and
+death information is Ancestry.com, which links historical birth and death records from the
+U.S. Census, the Social Security Death Index, birth certificates, and other historical sources.
+To ensure that we have identified the correct person, we validate Ancestry's information with
+online and newspapers searches, e. g., on birth place, elementary school, or city of residence.
+Identifying a person as alive turns out to be more difficult as there is little coverage of retired
+CEOs. We classify a CEO as alive whenever recent sources confirm their alive status, such
+as newspaper articles or websites that list the CEO as a board member, sponsor, donor,
+or chairman or chairwoman of an organization or event.8 We obtain the birth and death
+information for 2,361 CEOs from 1,352 firms in the post-1975 sample, implying a finding
+rate of 87%. We test and confirm that the availability of birth and death information is not
+correlated with incorporation in a state that passed a BC law.9
+    To measure CEOs' exposure to anti-takeover laws, we identify the historical states of
+incorporation during CEOs' tenure. Since CRSP/Compustat backfills the current state of
+incorporation, we access its historical Comphist and Compustat Snapshot data as well as
+incorporation data recorded at issuances and merger events in the SDC database. In case
+of discrepancies, we use firms' 10-Ks and other SEC filings, legal documents, and news
+articles to identify the correct historical state of incorporation. Overall, we correct the state
+of incorporation in 169 cases (6.7%) of the initial sample with state-of-incorporation infor-
+mation (2,514 CEOs). Out of the sample of 2,361 CEOs with birth and death information,
+   6  We are very grateful to Kevin J. Murphy for providing the data.
+   7  Bertrand and Mullainathan (2003), Giroud and Mueller (2010), Gormley and Matsa (2016) all start their
+sample in the mid-1970s. Our results are robust to varying the start year, cf. Section 3.5 and Appendix B.
+    8 We use sources dated 01/2010 or later to infer alive status since recent coverage of a retired CEO makes
+
+it very likely that news outlets would also have reported their passing (by October 1st, 2017), had it occurred.
+Our results are robust to ending our sample in 2010 (Section 3.5 and Appendix B) and to restricting the sample
+period for CEOs classified as alive as of 10/2017 to end in 01/2010.
+    9 We estimate I (Found ) =  +  × I (BC State )+  +  +  , where  represents state-of-headquarters
+                            i     0    1             i     j    k    i         j
+fixed effects and k FF49-industry fixed effects on the sample with available state-of-incorporation information
+(2,514 out of the initial sample of 2,720 CEOs). We obtain 1 = 0.0142 ( p = 0.627).
+
+                                                       7
+we are able to identify the historical state of incorporation for 2,209 CEOs.
+    We collect tenure information for all sample CEOs to fill the gaps and correct mis-
+recorded data in the Forbes Executive Compensation Surveys. We use Execucomp, online
+searches, and especially the New York Times Business People section, which frequently
+reports on executive changes in our sample firms. When the exact month of a CEO transition
+is missing, we use the "mid-year convention" motivated by the relatively uniform distribu-
+tion of CEO starting months in Execucomp (Eisfeldt and Kuhnen 2013). We further restrict
+the sample to CEOs whose firm was included in CRSP during the time of their tenure (1,900
+CEOs).10 Finally, we address selection concerns revolving around CEO "types" responding
+to the more lenient BC law governance. For example, it would confound the analysis if less
+resilient managers, i. e., those more prone to health ailments, became more likely to seek
+the CEO position. To alleviate such concerns, we focus on CEOs appointed prior to the
+enactment of the business combination laws as our main sample (1,605 CEOs). That said,
+our results are robust to being estimated on the enlarged sample of 1,900 CEOs.
+
+                         2.2. CEO Data for Apparent Aging Analysis
+To study visible signs of aging in CEOs' faces, we collect pictures of CEOs of the 1,000
+firms included in the 2006 Fortune 500 list. This analysis uses a more recent sample since
+picture availability and quality have substantially improved over time. We focus on the 2006
+CEO cohort to exploit differential exposure to industry shocks during the Great Recession.
+    We search for five pictures from the beginning of a CEO's tenure and two additional
+pictures every four years after that. The main challenge is finding dated pictures in order
+to compare CEOs' apparent age to their true age. In addition, we aim for pictures that are
+taken in daily life, such as at social events or conferences, rather than posed pictures. The
+most useful source given these criteria is gettyimages.com, followed by Google Images. We
+are able to find at least two pictures from different points in time during or after their tenure
+for 463 CEOs, of whom 452 are male and 447 are White,11 for a total of 3,086 pictures.
+
+                          2.3. Variation in CEO Job Demands
+We exploit two sources of variation in CEO job demands, the passage of state-level anti-
+takeover laws and industry-wide distress shocks.
+
+  10  Relative to the previously mentioned restriction to firms with a PERMNO in CRSP, we drop CEOs who
+served, for instance, before their firm went public.
+   11 Among the sixteen non-White CEOs, seven are African-American, two are Hispanic or Latinx, and seven
+
+are Asian (including Indian). We collect this information through Google searches and Wikipedia.
+
+                                                   8
+     Anti-takeover Laws. Anti-takeover statutes increase the hurdles for hostile takeovers.
+After the first-generation anti-takeover laws were struck down by courts in the 1970s and
+early 1980s, states started passing second-generation laws in the mid-1980s (cf. Cheng et al.
+2004, Cain et al. 2017). The statutes included Business Combination (BC) laws, Control
+Share Acquisition, Fair Price, and Directors' Duties laws, and Poison Pills. We follow prior
+literature and first focus on BC laws as the most potent type of statutes, but will return to the
+other types of laws later (in Section 3.5). BC laws significantly reduced the threat of hostile
+takeovers by imposing a moratorium on large shareholder conducting certain transactions
+with the firm, usually for a period of three to five years.
+
+
+
+
+F IGURE 1.--Introduction of Business Combination laws over time. Notes: This figure visualizes the
+distribution of business combination law enactments over time. In total, thirty-three states passed a
+BC law between 1985 and 1997. The map omits the states of Alaska and Hawaii, which never passed
+a BC law.
+
+    Figure 1 visualizes the staggered introduction of BC laws across states.12 The map
+illustrates the variation across both time and states as a source of identification: 33 states
+passed a BC law between 1985 and 1997, with most laws being passed in 1987-1989. An
+advantage of using anti-takeover laws as identifying variation is that these laws applied
+based on the state of incorporation, not the state of firms' headquarters or operation. The
+frequent discrepancies between firms' location and state of incorporation enables us to
+assess the impact of the laws while controlling for shocks to the local economy.
+       Industry-Wide Distress Shocks. Distress shocks induce a shift in job demands in the
+  12 Appendix-Figure B.1 contains a similar map based on the earliest enactment of any of the five types of
+second-generation anti-takeover laws listed above.
+
+                                                    9
+opposite direction than anti-takeover laws, and are of a less permanent nature. Thus, they
+constitute a useful alternative approach to analyzing the health consequences of a CEO's
+job demands. In the spirit of Opler and Titman (1994), Babina (2020), and Acharya et al.
+(2007), we define an industry as distressed in year t if the median firm's two-year stock return
+(forward-looking) is less than -30%. As in Babina (2020), we generate the annual industries-
+in-distress panel (i) restricting to single-segment CRSP/Compustat firms, i. e., dropping
+firms with multiple reported segments in the Compustat Business Segment Database, (ii)
+dropping firms if the reported single segment sales differ from those in Compustat by more
+than 5%, (iii) restricting to firms with sales of at least $20 million, and (iv) excluding
+industry-years with fewer than four firms.13 Following prior work, we use 3-digit SIC
+classes to measure industry affiliation and, as with state of incorporation, rely on historical
+SIC codes for the firms in our sample.
+
+                                   2.4. Summary Statistics
+Table I presents the summary statistics of our main sample for the longevity analyses,
+consisting of 1,605 CEOs. (All variables are defined in Appendix A.) The median CEO
+in our sample was born in 1925, became CEO at age 52, and served as CEO for nine
+years. There is relatively large heterogeneity in tenure, with an interdecile range of 17 years.
+Non-integer values result from CEOs not starting or ending their tenure or stepping down at
+the end of the year. 71% of our CEOs have passed away by the censoring date (October 1st,
+2017). The median CEO died at age 83, and passed away in 2006. Conditional on being
+shielded by a BC law, the median CEO serves 4.4 years under the BC law regime. BC law
+experience is calculated at (up to) daily precision levels and, similar to tenure, can take
+non-integer values. For example, Delaware's BC law was adopted on 2/2/1988. A CEO's
+BC exposure in 1988 would then be calculated as BCi,1988 = 365-doy(2/2/1988)
+                                                                        365       = 0.92. 40%
+of CEOs experience industry-wide distress during their tenure.
+    We provide additional summary statistics in Appendix-Table B.1. Panel A splits the
+sample into CEOs with no BC exposure (N = 980), with positive but below-median exposure
+(N = 320), and with higher exposure (N = 305). Some of the observed differences across
+sub-groups are suggestive of the effects we have in mind. For example, 82% of CEOs
+without BC exposure have passed away, but only 68% (38%) of CEOs with below-median
+(higher) exposure. However, it is also the case that fewer CEOs from the beginning of
+
+  13 Sections 4 and 5 also discuss more restrictive distress definitions, exploring specific recession periods or
+using industry returns in conjunction with sales growth.
+
+                                                      10
+our sample--who are more likely to have passed away, including at higher ages--became
+protected by the laws during their tenure, as BC laws were only introduced starting in
+1985. In Section 3.2, we will discuss cohort-specific splits that directly account for such
+differences. Panel B provides information on the most common Fama and French (1997)
+49 industries and most common states of incorporation. CEOs are frequently employed by
+firms in the banking, utilities, and retail industry. Across BC exposure sub-groups, there are
+only few differences in industry frequencies. We note that we include industry fixed effects
+in all analyses. Consistent with prior literature, the most common state of incorporation is
+Delaware in all CEO sub-groups. Other common states include New York and Ohio.
+
+                3. CORPORATE MONITORING AND LIFE EXPECTANCY
+                                 3.1. Empirical Strategy
+Our main analysis uses the Cox (1972) proportional hazards model to estimate the effect of
+variation in job demands on longevity. CEOs enter the analysis ("become at risk") in the
+year they are appointed, and they exit at death (or the censoring date). We capture variation
+in CEOs' exposure to more lenient governance through the passage of BC laws in two ways.
+First, we use an indicator of exposure to the BC law treatment and estimate
+                      (t |BCi,t , Xi,t ) = 0 (t ) exp( I (BCi,t ) +  Xi,t ),                (1)
+where Xi,t is a vector of control variables. In our main specifications, it includes time trends
+(or fixed effects), CEO age, firm location and industry effects. We later present robustness
+specifications with birth-cohort or appointment-year fixed effects, to account for the fact the
+BC laws disproportionally affected more recent CEO cohorts. I (BCi,t ) is an indicator equal
+to 1 if CEO i has been exposed to a BC law by year t . The proportional hazard framework
+assumes that mortality risk shifts permanently at the passage of a BC law for an exposed
+CEO. Below, we investigate departures from the proportional hazard assumption by allowing
+for a non-linear effect. Note that, when a CEO steps down, the value of the BC law indicator
+remains constant from then on at its value at departure.
+    Second, to capture intensity of exposure, we replace the indicator I (BCi,t ) with a measure
+BCi,t that counts the exposure length in years until year t :
+                       (t |BCi,t , Xi,t ) = 0 (t ) exp( BCi,t +  Xi,t ).                    (2)
+    We also implement two refined measures of exposure length. First, we refine the linear
+dose-response function represented by BCi,t and separate the effects of initial and later years
+of exposure to lenient governance on survival rates. This refinement accounts, for example,
+
+
+                                               11
+for CEOs adapting to the new business environment and exhausting their opportunities to
+adjust their activities. The second refinement addresses the concerns that a CEO's remaining
+tenure after BC law passage might (a) reflect unobserved CEO characteristics and (b) be
+affected by the introduction of the laws. Directly controlling for realized tenure would
+introduce endogeneity, and the estimates would suffer from the "bad control" problem
+(Angrist and Pischke 2008).14 Instead, we estimate a hazard model using a CEO's predicted,
+rather than true, length of exposure, where the prediction model only uses information from
+prior to the BC law passage. Additionally, we test the robustness of our results to estimating
+simple linear probability models instead of the hazard model.
+
+              3.2. Within-Cohort Comparisons of Means and Graphical Evidence
+Before presenting the main results, we provide simple within-cohort comparisons of means
+as well as graphical evidence on the mortality effects of variation in governance regimes.
+    Table II presents the proportions of deaths as well as the average age at death, conditional
+on having passed away, in a two-way split by CEOs' birth cohort and BC law exposure.15
+The table reveals that, for all but the tail cohorts, CEOs with BC law exposure have lower
+mortality than those with no exposure. Furthermore, across all cohorts, the average age
+at death is higher for CEOs with BC law exposure. The average age difference, weighted
+by the total number of deaths in each cohort, is 3.76 years. Hence, the raw means reveal a
+sizeable and systematic difference between CEOs with and without anti-takeover protection.
+    Figure 2 plots the Kaplan-Meier survival graphs, also split by cohorts and by exposure.
+The non-parametric estimator discretizes time into intervals t1 , ..., tJ , and is defined as
+         f
+KMj   = r jj , where f j is the number of spells ending at time t j and r j is the number of spells
+that are at risk at the beginning of time t j . In the plots, the vertical axes show the survival
+rate, and the horizontal axes the time elapsed (in years) since becoming CEO.
+    Panel (a) compares the survival of CEOs who became CEO in the 1970s and were never
+shielded by a BC law, those who became CEO in the 1980s and were never shielded by a
+BC law, and those who became CEO in the 1980s and were eventually insulated by BC law
+protection during their tenure.16 Two results emerge. First, the survival patterns of the 1970s
+
+  14  While the estimates remain similar with the tenure control, including the effect being concentrated in the
+early years of treatment, it is unclear how to sign the resulting bias. We thus follow the general recommendation
+to exclude the "bad controls" from the estimation.
+   15 We thank our discussant, Kevin J. Murphy, for suggesting this table.
+   16 For the 1970s cohorts, maximal elapsed time since our sample start is t = 47.75 (time elapsed between
+
+1/1/1970 and the censoring date, 10/1/2017). Similarly, for the 1980s cohorts, maximal elapsed time is
+t = 37.75. We restrict the graph to periods when at least 30 CEOs in either cohort group are uncensored,
+
+                                                      12
+                                          (a) By cohort
+
+
+
+
+                   (b) By state                            (c) By years under BC law
+
+
+
+
+F IGURE 2.--Kaplan-Meier survival estimates. Notes: This figure shows Kaplan-Meier survival plots.
+The vertical axis shows the fraction of CEOs who are still alive. The horizontal axis reflects time
+elapsed (in years) since a person became CEO. Panel (a) compares the survival of CEOs starting
+in the 1970s who never served under a BC law (light blue) to those who became CEO in the 1980s
+and never served under a BC law (dark blue) and those who became CEO in the 1980s and were
+eventually exposed to a BC law (orange). Panel (b) splits the CEOs from Panel (a) based on whether
+their state never passed a BC law (light blue), passed a BC law after the CEO stepped down (dark
+blue), or passed a BC while in office. Panel (c) zooms in on CEOs with BC exposure, and plots
+survival separately for CEOs with positive but at most two years of BC exposure (orange), with two
+to median exposure (red), and with above-median exposure (brown). Survival estimates in Panel (b)
+are adjusted to the 12 years median tenure of CEOs with BC exposure.
+
+
+and 1980s cohorts without BC exposure are remarkably similar, allaying concerns that our
+results pick up general changes in survival patterns between the 1970s and 1980s. Second,
+consistent with our hypothesis, the survival line for the 1980s cohorts with BC exposure is
+visibly right-shifted compared to the No-BC-cohorts. For example, 20 years after a CEO's
+appointment, about 25 percent of CEOs in the 1980s cohorts without BC exposure have
+
+
+
+                                               13
+died, whereas it takes closer to 30 years for CEOs in the 1980s cohorts with BC exposure.
+     One possibility is that the patterns in Panel (a) might pick up systematic differences
+between BC and non-BC states--despite the fact that these laws apply based on state of
+incorporation as opposed to firms' location. To examine this graphically, Panel (b) reshuffles
+CEOs in Panel (a)'s No-BC-cohorts, grouping them instead by whether their state eventually
+enacted a BC law after the CEO stepped down (dark blue) or not (light blue). The survival
+lines for these groups are virtually identical, and only CEOs in BC states with BC exposure
+(orange) show a more beneficial survival curve. Thus, there is no evidence of BC states
+being inherently different prior to BC enactment. We also note that all our results will
+include location fixed effects and are robust to using state of incorporation fixed effects.
+     Panel (c) zooms in on the CEO group with BC exposure and explores potential non-
+linearities in the insulating effect of more lenient governance on lifespan. Specifically, we
+plot survival rates separately for three sub-groups, formed as (i) at most two years of BC
+exposure, (ii) more than two years of but at most the median BC exposure (4.4 years), and
+(iii) more than median BC exposure. We adjust the estimated survival functions to a tenure
+of 12 years, which is the median tenure of CEOs with BC exposure to ensure that we do
+not conflate the independent effect of tenure with the direct effects of corporate governance.
+Comparing CEOs with low BC exposure up to 2 years to those with more exposure, we
+observe higher (right-shifted) survival rates for the latter groups. However, there is no
+further rightward shift comparing CEOs with medium and high BC exposure. This suggests
+that the health benefits from insulation against takeover threats increase initially, but the
+incremental effects might taper off eventually.
+     The comparisons of means and survival plots offer first evidence that serving under more
+stringent corporate governance is associated with adverse consequences in terms of life
+expectancy. Our hazard model based analysis below formalizes the observed patterns.
+
+                     3.3. Main Results on Business Combination Laws
+Table III shows the hazard model results on the relationship between BC laws and CEOs'
+mortality rates, based on our main estimating equations (1) and (2). In Columns (1) through
+(3), we summarize the total effect of the BC laws with the indicator I (BCi,t ) for CEO i having
+been exposed to a BC law by time t . These estimates are akin to the group-level divergence
+in survival reported in Figure 2(a). In Columns (4) through (6), we estimate a linear (in
+hazards) effect in years of exposure to more lenient corporate governance. All regressions
+
+explaining the slightly differential ends of the survival lines (after 36 and 45 years, respectively).
+
+                                                       14
+control for a CEO's age and include firm location fixed effects. Following Gormley and
+Matsa (2016), we assign location fixed effects based on headquarters as most firms' main
+operations are in the state of its headquarters. These fixed effects thus absorb state-level
+characteristics, such as general business conditions, pollution, and eating habits, to the extent
+that these are time-invariant. In robustness checks, we verify that our main results remain
+unaffected when we instead include state of incorporation fixed effects (cf. Section 3.5). In
+the specifications of columns (1) and (4), we include linear controls for time trends and CEO
+age; in columns (2) and (5), we add industry fixed effects, using the Fama and French (1997)
+classification of firms into 49 industries; and in columns (3) and (6), we include year fixed
+effects instead of the linear time controls. To address any concerns regarding the use of fixed
+effects in non-linear models, we also estimate the model with only linear age and linear year
+as controls, with very similar results.17 All coefficients are shown as hazard ratios so that a
+coefficient smaller than one indicates that the risk of failure (death) decreases with positive
+values of that variable. We cluster standard errors at the state-of-incorporation level, given
+that the BC laws applied based on the state of incorporation (Abadie, Athey, Imbens, and
+Wooldridge 2017). As pointed out in Section 2.1, we restrict the sample to CEOs who were
+appointed prior to the enactment of a BC law to alleviate selection concerns.
+    In the specification of columns (1) and (4), the estimated hazard ratio on the BC indicator
+is 0.764, and the ratio on the BC law exposure is 0.955, both significant at 1%. The indicator
+captures the total effect of BC exposure, while the cumulative exposure measure is the
+effect of an additional year of exposure: a one-year increase in exposure to more lenient
+governance is estimated to reduce a CEO's mortality risk by 4.5%. For a CEO with a typical
+BC law exposure, both measures imply very similar effects on longevity.18
+    The results do not change when we make comparisons within industry or include a more
+flexible control for time. The inclusion of industry fixed effects in columns (2) and (5)
+addresses the possibility that certain industries are differentially incorporated in BC-law
+states. The resulting estimates of the hazard ratio on BC law exposure are almost unchanged,
+0.769 and 0.958, both significant at 1%. Similarly, year fixed effects in column (3) and (6),
+instead of the linear time control, have virtually no effect on the estimates.
+    Turning to the interpretation of the control variables, the linear time control is close
+to one and insignificant, suggesting no general time trends in the survival of CEOs over
+  17 Estimates are 0.776 for I (BC) and 0.955 for BC, which are very close to the estimates in the Table III.
+  18 The cumulative measure estimates a 17-18% shift in the mortality hazard associated with the median
+BC exposure of 4.4 years (exp(4.4 × ln(0.955)) = 0.817), very close to the 22-24% shift estimated in the BC
+indicator measure.
+
+                                                    15
+the sample period. The effect of Age is significantly positive, reflecting that older people
+have a higher estimated risk of dying.19 One potential concern is that the treatment group
+is younger on average and is more likely to still be alive, and that the model may have
+difficulty separating the effect of age from treatment in older age ranges. To address this,
+we test and confirm the robustness of our results to including birth-year fixed effects, CEO
+appointment-year fixed effects, and age-cohort interactions (see Section 3.5 for details) and,
+alternatively, higher-order age terms. Across these robustness tests, the estimated hazard
+coefficients remain significant and are remarkable stable in magnitude.
+    Economic Significance. One way to evaluate the magnitude of the estimated effect on
+longevity is relative to other predictors of CEO life expectancy in our hazard model, in
+particular CEO age. This "in-sample" approach has the advantage that it is directly based on
+data from the sample CEOs. The estimated effect of age on death hazard from column (3) is
+1.124, i. e., a 12.4% increase per year of age. This means that the life-extending effects of
+BC law protection corresponds to the effect of a two-year shift in CEO age.20
+    Alternatively, we can compare our estimated hazard with mortality statistics of the
+general U.S. population, acknowledging that statistics derived for high SES groups would
+be ideal. For example, at age 57 (the median CEO age in our sample), the one-year mortality
+rate of a male American born in 1925 (the median birth year in our sample) is 1.366%
+(Human Mortality Database 2019). The median exposure to lenient governance of 4.4 years
+pushes this rate down to 1.119%, which is roughly the mortality rate of a male born in 1925
+at age 54, i. e., when three years younger. The implied three- year gain in remaining life
+expectancy is in fact close to the difference in age at death using the simple within-cohort
+comparison of treated and non-treated CEOs in Table II for the 1921-1925 cohort.
+    Yet another benchmark for comparison are other known health threats. For example,
+smoking until age 30 is associated with a reduction in longevity by roughly one year (Jha
+et al. 2013). The gain in life expectancy from BC law exposure is thus twice as large as the
+gain from not smoking in the first three decades of one's life.
+    In sum, these results lend strong support to the hypothesis that changes in job demands
+arising from more lenient corporate governance have significant effects on a CEO's health.
+
+
+
+  19  We note that the Gompertz (1825) "law of mortality," i. e., the empirical regularity that the risk of dying
+follows a geometric increase after middle age, motivates a linear age term (Olshansky and Carnes 1997).
+   20 Using equation (1) from the Cox (1972) estimation to calculate how much older a CEO needs to be to
+                                                      1
+offset the estimated BC effect of 0.777, we solve ( 1.124 )x = 0.777 and obtain x = 2.16.
+
+                                                      16
+                                   3.4. Alternative Specifications
+Nonlinear Effects. The survival plots in Figure 2(b) suggested that the incremental effects of
+a more lenient governance regime on survival rates diminish over time. The first few years
+of BC law exposure appear to have the largest effect, possibly because CEOs adapt to the
+new business environment and exhaust their opportunities to adjust their activities.
+    To examine this possibility empirically, we estimate a modified version of (2) where
+we split the cumulative BC exposure variable into below- and above-median exposure,
+   (min - p50)       ( p51- max)
+BCi,t          and BCi,t         , with above-median exposure variable picking up incremental
+exposure, in addition to initial exposure.21
+    Columns (1) to (3) in Table IV present the results, with controls and fixed effects as before.
+Across columns, the hazard ratio on below-median BC exposure is strongly significant (at
+1%) and ranges from 0.908 to 0.916. These estimates imply that initial insulation from
+market discipline yields substantial reductions in mortality risk, corresponding to a 9%
+higher survival rate. By contrast, the coefficient on above-median BC exposure is close to
+one and insignificant. Thus, in line with the survival plots, the estimated survival gains are
+concentrated in the first few years of exposure to reduced monitoring.
+    Predicted Length of Exposure. Our second alternative specification uses CEOs' predicted
+rather than true BC-law exposure. This estimation purges the per-year estimates of possible
+endogeneity in the length of exposure. We note that this concern does not apply to the
+indicator strategy, and thus the endogeneity concern does not threaten our main findings in
+Table III, but merely the magnitude of the per-year estimates. We proceed in three steps.
+First, we estimate a prediction model for CEO tenure; we then construct predicted BC
+exposure; and finally we re-estimate the hazard regressions using predicted BC exposure as
+the independent variable.
+    We first predict for every CEO-year, including years after the passage of a BC law:
+                                            RemainTenurei,t = Xi,t A + ei,t .                                                  (3)
+The control variables are an age cubic, tenure cubic, the CEO's cumulative exposure to
+the BC law until year t , BCi,t , and fixed effects for industry, year, headquarters state, birth
+year, and tenure start-year. Denoting as t  the year when the BC law is passed, we use the
+predicted remaining tenure at t  from equation (3) to construct CEOs' predicted exposure to
+
+
+  21                                                                                        (min - p50)
+       For example, for a CEO with a current BC exposure of four years, BCi,t                             would take the value 4,
+        ( p51- max)                                                         (min - p50)                               ( p51- max)
+and   BCi,t           the value 0. In the following      year (t + 1), BCi,t +1         would be   set to 4.4, and BCi,t +1         to
+                         (min - p50)                             ( p51- max)
+0.6. In year t + 2,    BCi,t +2        remains at 4.4,   and BCi,t +2        increases to 1.6.
+
+                                                                 17
+BC laws,                 
+                      BCi = I (BCLawPasseds(i),t ) × RemainTenurei,t  ,                       (4)
+where I (BCLawPasseds(i),t ) = 1 for CEO i in state s(i) at t  t  . RemainTenurei,t  is
+backward-looking, i. e., constructed using information from years up to t  .
+    Using this variable, we construct a CEO's predicted cumulative BC exposure until year t ,
+BCi,t as (i) BCi,t = 0 t in the control group; (ii) BCi,t = 0 t < t  if not yet treated; and (iii)
+                        
+BCi,t = min{k + 1, BCi } for each year t following t  , with t = t  + k. Note that k is allowed
+to be fractional if the BC law goes into effect in the middle of the year.
+    We then use the predicted cumulative exposure in the following hazard estimations:
+                         (t |BCi,t , Xi,t ) = 0 (t ) exp{ BCi,t +  Xi,t }                     (5)
+    Columns (4) to (6) in Table IV present the results, with controls and fixed effects as in
+Table III. Since this approach involves a generated regressor, we use the block bootstrap
+method (a block is a state of incorporation cluster) with 500 iterations for the standard errors.
+    The results corroborate our baseline findings. Predicted BC exposure is estimated to
+significantly affect CEOs' mortality rates. The estimated hazard ratios range from 0.943 to
+0.952 and are very similar to those in Table III. While the bootstrapped standard errors are
+larger than those in Table III, the coefficient of interest remains significant in all columns,
+either at 1% or 5%. A regression of true BC exposure on predicted exposure yields a
+coefficient of 1.21, which indicates that the prediction well approximates the true exposure.
+The estimated effects remain sizable if we divide them by 1.21. For instance, using the
+coefficient in column (3) of Table IV, exp(ln(0.952)/1.21) = 0.960. Point estimates from
+a non-linear predicted-exposure model are also similar in magnitude to those reported in
+Columns (1) to (3) of Table IV, though less precisely estimated.
+
+                                   3.5. Robustness Tests
+Our results are robust to a series of additional tests. For brevity, we only provide a brief
+overview of these tests here and present a detailed discussion in Appendix B.
+    CEO Cohorts. We estimate various alternative specifications involving cohort effects.
+These specifications address concerns arising from more recent CEOs being shielded more
+often by BC laws. Our results are virtually unchanged when we include birth-year fixed
+effects (Panel A of Appendix-Table B.2). Relatedly, the results are very similar when we
+keep the year fixed effect setup but allow the effect of age on mortality to vary across
+birth cohorts (Panel B of Appendix-Table B.2). Additionally, our results are unchanged
+when adding appointment-year fixed effects to the model (Panel C of Appendix-Table B.2),
+
+
+                                               18
+and when dropping CEOs who stepped down significantly before the passage the BC laws
+(Appendix-Figure B.2).
+    Other Specifications and Sample Choices. Our results are robust to including additional
+CEO and firm controls, in particular CEO pay and firm size measures (Panel A of Appendix-
+Table B.3), and to specifications with state of incorporation fixed effects (Panel B of
+Appendix-Table B.3). They are also robust to different censoring date choices (Appendix-
+Figure B.3).
+    Other Anti-Takeover Laws. The results are also robust to using the first-time enactment
+of any of the five second-generation anti-takeover laws as identifying variation (Appendix-
+Table B.4). This test highlights that our results should be interpreted more broadly, applying
+to different corporate governance mechanisms rather than narrowly to BC laws.
+    Karpoff­Wittry and Related Tests. All results are robust to extensive robustness checks
+proposed in Karpoff and Wittry (2018) to account for firms lobbying for the passage of BC
+laws or opting-out, as well as confounding effects of firm-level defenses and first-generation
+anti-takeover laws (Appendix-Tables B.5 and B.6). Additionally, the results are robust to
+data cuts based on state of incorporation and industry affiliation (Appendix-Table B.7).
+    Linear Probability Model. To address any concerns regarding the usage of the hazard
+model, we estimate a linear probability model (LPM) at the CEO level. The dependent
+variable is an indicator variable for whether a CEO has passed away by October 1st, 2017,
+and the main independent variable of interest is an indicator for BC exposure during a CEO's
+tenure (Appendix-Table B.8). Even though the LPM discards all time-series variation, as
+it does not take into account how soon CEOs pass away after being appointed, the results
+support the hazard analysis. The estimated coefficient on the BC exposure indicator is
+negative and significant at conventional levels, indicating that BC-protected CEOs are less
+likely to die before the censoring date. In terms of magnitudes, the effect of being protected
+by BC laws on survival likelihood corresponds to that of a two and a half year increase in
+CEO age at appointment in the LPM, similar to the hazard model.
+
+                3.6. Intermediate Outcomes: Tenure, Retirement, and Pay
+In addition to health benefits, we observe several other sources of private benefits, namely
+pay and tenure as CEO. These outcomes are of interest themselves and may also provide
+insights regarding why CEOs live longer when facing a less stressful work environment.
+    We begin with an analysis of CEO tenure. Theory does not provide a strong prediction
+as to how tenure should respond to the anti-takeover laws. On the one hand, CEOs may
+
+
+                                             19
+become entrenched and stay on the job longer. On the other hand, CEOs who reduce effort
+on the job might be fired more frequently. We estimate again the hazard model from the
+survival analysis. The results in columns (1)-(2) of Panel A in Table V indicate that BC law
+treatment, I (BC), decreases the separation hazard by 20-21 percent, but the effect halves in
+magnitude and becomes statistically insignificant after controlling for year effects (column
+3), with standard errors nearly doubling. In the specifications using the length of exposure
+variable BC (in columns 4 to 6), the estimated separation hazard falls by 4 to 9 percent.
+     Further analyses of CEOs' age at the end of their tenure suggest that increases in tenure--
+if there are any--would be driven by fewer CEOs stepping down in their 50s and early 60s.
+Appendix-Figure B.4 plots the retirement hazard separately for CEOs with and without BC
+law exposure.22 Exposure appears to lower the hazard before and increase it above age 65,
+including a long tail of tenures into the 80s and 90s. While the raw data is not as stark as
+for our longevity results, nor are the hazard estimates as robust, it is noteworthy for another
+reason: It helps rule out that the end of mandatory retirement through the amendment of the
+Age Discrimination in Employment Act (ADEA) in 1986 confounds our longevity findings.
+Although there is a large spike in retirements at ages 64 and 65, there is no association
+between retirement at these ages and exposure to the business combination laws.
+     Longer tenure (or delayed retirement) as a result of anti-takeover insulation--if there is
+any such effect-- is also unlikely to be the channel for the estimated increase in longevity. To
+begin with, prior research has found small or even beneficial effects of retirement on health
+in the general population (Hernaes et al. 2013, Insler 2014, Fitzpatrick and Moore 2018). In
+our population, a life expectancy advantage arising directly from tenure would run counter
+to the notion that the CEO job is demanding as the evidence in Bandiera et al. (2020) and
+Porter and Nohria (2018) on the intensity of CEO schedules and the constraints imposed by
+the CEO position imply. Moreover, the results in Section 3.4 on nonlinearities point to initial
+exposure effects, with prolonged exposure (from prolonged tenure) having no incremental
+impact on life expectancy. Consistent with these arguments, we find quantitatively very
+similar longevity effects of BC exposure when we focus on CEOs who leave office at or
+shortly before age 65.23
+     We next turn to CEO pay. Here, too, the theoretical prediction is unclear, as also noted by
+Bertrand and Mullainathan (1998). On the one hand, a model of compensating differentials
+  22  CEOs may continue to work after they separate, however, we find few (34 in total) cases in which a CEO
+steps down and then becomes CEO at another firm in our sample.
+   23 The finding in Appendix-Figure B.4 that a disproportional fraction of CEOs in our sample steps down
+
+near this retirement age is consistent with the evidence in Jenter and Lewellen (2015).
+
+                                                    20
+would predict a decrease in pay as CEOs' working conditions improve and imposed health
+costs are reduced. In line with such a channel, Edmans and Gabaix (2011) present a
+theoretical model of the CEO market in which lower effort--which is isomorphic to lower
+job demands--is compensated by lower pay. On the other hand, a model of skimming would
+predict that CEOs use the increase in autonomy to extract additional private benefits in the
+form of higher compensation. It is thus an empirical question as to which effect dominates
+in our specific context.
+    Before estimating the empirical relation, it is useful to first calibrate what effect size
+we would expect if compensation for health ramifications were the primary channel empiri-
+cally.24 In their meta-analysis of the literature on the value of a statistical life (VSL), Viscusi
+and Aldy (2003) report an estimate around $6.7 million (in 2000 dollars) for a person with
+income of around $26,000, and an income elasticity for the VSL of around 0.5. Applied
+to our CEO sample, this translates into a VSL of around $47.3 million.25 Given a baseline
+mortality rate of 1.366% for 60-year-olds born in 1925 (Human Mortality Database 2019), a
+reduction in mortality risk of 4.1% per year of BC exposure (column 6 in Table III) implies
+a CEO pay change between -2% and -9%, depending on whether the wage adjustment
+reflects the entire BC-induced mortality risk shift over the expected remaining lifespan or
+solely the shift over the remaining years while serving as CEO.26
+    With these calibrated effects in mind, Panel B of Table V presents the results on the rela-
+tion between CEO pay and BC law exposure. In column (1), we estimate linear regressions
+of CEO pay on the BC indicator and the same controls and fixed effects as in the hazard
+analyses. This specification excludes any post-treatment outcomes from the right-hand side
+and parallels the survival analysis. In column (2), we add the control variables used in
+Bertrand and Mullainathan (1998): tenure, firm assets, and employees. We note that these
+controls may themselves be affected by the reform and therefore absorb the effect of the
+anti-takeover laws. Finally, in column (3), we add firm fixed effects (in place of industry
+fixed effects), as in the baseline specification of Bertrand and Mullainathan (1998):
+                        ln(Payi, j,t ) = t +  j +  I (BCi,t ) +  Xi, j,t + ei, j,t .
+
+  24  We thank Xavier Gabaix for suggesting this calibration exercise.
+  25  Given an average CEO pay of $1.3 million (in 2000 dollars) in our sample, we can calculate the implied
+VSL for the average CEO as V SLCEO = exp(0.5 × (ln($1.3m) - ln($26k)) + ln($6.7m)) = $47.3m.
+   26 The calculations are based on an average length of BC exposure of 5.68 years (Table I), an average time
+
+of 24.77 years between onset of BC exposure and death, and an average annual CEO pay of $1.3 million
+in 2000 dollars). For example, if we assume that the wage adjustment reflects the mortality risk shift over
+the expected remaining lifespan, we can calculate the pay change as (-24.77/5.68) × (4.1% × 1.366% ×
+$47.3mn)/$1.3mn = -9%.
+
+                                                     21
+where i represents a CEO, j represents a firm, and t represents a calendar year.
+    We estimate a positive, albeit mostly insignificant treatment effect. The estimates
+indicate a pay increase around 4.1-8.7%. Only the estimate in column (2) is marginally
+significant. In comparing the results to the earlier work, which estimated a (more significant)
+5.4 percent pay increase, it is important to note that our analysis is conducted on a CEO-level
+sample, and restricts the sample to incumbent, pre-BC CEOs.
+    Taken together, the evidence speaks against a compensating reduction in pay, but is
+instead suggestive of additional rents (higher pay). Combined with the evidence on an
+increase in tenure, the estimates imply that lifetime compensation rises as a result of
+exposure to the laws. However, any resulting wealth increases are unlikely to explain the
+longevity results, given that the literature has found little evidence of a causal relation of
+income and life expectancy for wealthy individuals (Cesarini et al. 2016). Where evidence
+has been found of an effect of wealth on health, it appears to work through reductions in
+stress (Schwandt 2018). The apparent lack of a compensating differential also casts doubt on
+whether all parties fully account for the health implications of different governance regimes.
+
+           4.   INDUSTRY-WIDE DISTRESS SHOCKS AND LIFE EXPECTANCY
+
+Our second source of identification for variation in CEOs' job demands exploits the occur-
+rence of industry-wide distress shocks. We will utilize this source of identification both for
+an alternative approach to estimating mortality effects and for the apparent-age estimation.
+    For the mortality analysis, we continue to use the CEO sample collected for the BC
+analysis and described in Table I, which allows us to compare effect sizes across the
+two approaches. We also retain the key features of the BC law analysis, including the
+hazard specification, control variables, and primary robustness checks, albeit with a new
+independent variable: the experience of industry-wide distress shocks. As discussed in
+Section 2.4, the industry shock definition is based on observing an industry-wide 30%-
+decline in equity value over a two-year horizon. In our sample, 648 out of the 1,605 CEOs,
+or 40% of CEOs, witness at least one period of industry distress during their tenure (see
+Table I). However, fewer than twenty percent of CEOs experience two or more industry
+shocks, and fewer than ten percent experience three or more. Given that industry shocks are
+infrequent, we specify industry distress exposure as an indicator variable; any cumulative or
+incremental effects would be estimated off of very few and long-serving CEOs.
+    We use the Cox (1972) proportional hazards model to estimate a modified version of (1):
+                (t |BCi,t , Xi,t ) = 0 (t ) exp( Industry Distressi,t +  Xi,t )            (6)
+
+                                              22
+where Industry Distressi,t is an indicator equal to 1 if CEO i has experienced distress by
+year t . In addition to the controls and fixed effects from Table III, we also control for BC
+law exposure, given our evidence that these laws significantly affect a CEO's lifespan. We
+cluster standard errors at the three-digit SIC code level, at which industry shocks are defined.
+    Table VI reports the estimation results. Across specifications, the estimated hazard ratios
+of Industry Distress reveal substantial adverse effects of industry-shock exposure on CEOs'
+long-term health. The coefficient estimates are very similar across models, ranging from
+1.179 to 1.190, and are significant at the 5% or 1% level.
+    The estimated coefficients on the control variables are similar to above. The coefficients
+on Age continue to be positive, with hazard ratios ranging from 1.115 to 1.125. The hazard
+ratios on Year, in the linear time controls specifications, are again close to 1 and insignificant
+or only marginally significant, indicating no strong time trends in mortality.
+    The estimates point to meaningful effect sizes. Applying the approach from Section 3.3
+to the hazard ratio estimates from the most conservative specification in column (3), 1.179
+for Industry Distress and 1.125 for Age, we calculate that the effect of industry distress on
+mortality is equivalent to being 1.4 years older, as calculated by solving 1.125x = 1.179.
+Compared to the estimated effect size of exposure to BC laws, which corresponded to
+2.14 years in CEO age, the effect of industry distress is of similar order of magnitude but
+smaller. The smaller magnitude might reflect the more temporary nature of industry-shock
+experiences relative to variations corporate-governance regimes. Overall, both approaches
+to estimating the effect of variation in job demand on CEO mortality reveal substantial effect
+sizes, also compared to other determinants of longevity and known health risks.
+    Robustness. We present several robustness checks, with all tables relegated to Appendix
+C. First, we re-estimate equation (6) with additional CEO and firm controls (CEO pay,
+firm assets, and employees), mirroring the first robustness check of the BC analysis. The
+estimated hazard ratios become slightly larger and remain highly significant (Panel A of
+Appendix-Table C.1). In terms of economic magnitude, it is now equivalent to being 1.6
+years older.
+    Second, we re-estimate the model on an extended sample that includes the 295 CEOs
+we had dropped from the analysis as they were appointed after the introduction of BC laws.
+As shown in Panel B of Appendix-Table C.1, the estimated coefficients remain similar. The
+estimated effect here is equivalent to being 1.1 years older.
+    We have also explored specific recession periods, such as the 1987 stock-market down-
+turn or the 1981-82 recession. However, fewer than 5% of the CEOs in our sample expe-
+
+                                               23
+rienced either of these shocks so that we lack statistical power when applying the same
+methodology of comparing CEOs who did and did not experience an industry downturn in
+their firms. While the corresponding estimates indicate that CEOs who experienced these
+shocks tend to have a higher mortality hazard, they are not statistically significant. We have
+also considered a more restrictive distress definition requiring, in addition, negative industry
+sales growth, as in the robustness tests in Acharya et al. (2007), and in Opler and Titman
+(1994) and Babina (2020). This definition classifies fewer than five percent of CEOs in our
+sample as distressed and substantially increases standard errors. Nonetheless, we estimate
+similar effect sizes as above, corresponding to an age effect between 0.8 and 1.7 years.
+    We also estimate a linear probability model instead of the hazard model. As in the
+LPM of Section 3.5, the dependent variable captures whether a CEO has passed away by
+the cutoff date. The main independent variable is now an indicator that is 1 if a CEO ever
+experienced industry distress during her tenure. We include control variables and fixed
+effects as in the BC-based LPM in Appendix-Table B.8, and following the main Table
+VI again control for a CEO's BC exposure. The results in Appendix-Table C.2 show that
+industry-shock exposure is estimated to increase the likelihood of death by 3.6% to 6.2%,
+with the effect being significant at 5% in the more flexible specifications with age or birth-
+year fixed effects. The economic significance of the estimates is comparable to those in the
+hazard models. For example, the midpoint of the estimate range implies an industry-shock
+effect that corresponds to assuming the CEO position when 1.8 years older, which is similar
+to the hazard-based age comparisons above. Thus, the LPM approach corroborates the
+hazard-based findings despite it discarding the time-series variation in CEOs' lifespan.
+    Differently from the analysis of BC law exposure, we do not implement robustness
+checks using exposure length, non-linear effects, and predicted exposure. The reason is that
+the dynamics of industry shocks and selection into the sample of multi-distress-year CEOs
+complicate the implementation and interpretation of such analyses. Related evidence can be
+found in the extensive literature on the effects of industry shocks.27 In the next section, we
+focus on industry downturns generated by the Great Recession in a difference-in-difference
+research design which sidesteps issues related to dynamics and sample selection.
+    All together, the industry-shock analysis provides evidence that significant and unex-
+pected changes in the work environment and job demands of CEOs have strong effects on
+their health in terms of life expectancy.
+
+  27 See, for example, Jenter and Lewellen (2015) on CEO turnover, including during recessions; and Bertrand
+and Mullainathan (2001) and Garvey and Milbourn (2006) for the effects of industry performance on CEO pay.
+
+                                                    24
+           5. INDUSTRY-WIDE DISTRESS SHOCKS AND APPARENT AGING
+In the final step of our analysis, we move from the focus on longevity to more immediate,
+non-fatal manifestations of CEOs' health associated with demanding job environments.
+Research in medicine and biology has established links between stress and signs of visible
+aging, such as hair whitening (Zhang et al. 2020) and inflammation, which in turn accelerates
+skin aging (Heidt et al. 2014, Kim et al. 2013). We ask whether experiencing industry
+distress translates into accelerated apparent aging of CEOs.
+    We use a more recent sample of 1,000 firms in the 2006 Fortune 500 list for this analysis
+since picture availability and quality have substantially improved over time. It allows us to
+exploit CEOs' differential exposure to industry shocks during the Great Recession.
+
+                          5.1. Apparent-Age Estimation Software
+To analyze visible CEO aging, we make use of recent advances in machine learning on
+estimating people's age. Most of the earlier age estimation software focused on a person's
+biological, i. e., "true" age (Antipov, Baccouche, Berrani, and Dugelay 2016). Recent
+research has started to aim at estimating a person's apparent age, i. e., how old a person
+looks. The progress in this area has been made possible by the development of deep learning
+in convolutional neural networks (CNNs) and the increased availability of large datasets of
+facial images with associated true and apparent ages, the latter estimated by people.
+    For our analysis, we use a machine-learning based software (Antipov et al. (2016)) that
+has been specifically developed for the problem of apparent-age estimation. This software
+is the winner of the 2016 Looking At People apparent-age estimation competition. We
+provide a detailed discussion of CNNs and the training steps associated with the software
+in Appendix D and give a brief summary here. The software is based on Oxford's Visual
+Geometry Group deep convolutional neural network architecture. In a first step, it was
+trained on more than 250,000 pictures with information on people's true age using the
+Internet Movie Database and pictures from Wikipedia. In a second step, it was fine-tuned
+for apparent-age estimation using a newly available dataset of 5,613 facial pictures, each
+of which was rated by at least ten people in terms of the person's age. The addition of
+fine-tuning on this apparent age data is particularly important; this step led to the software's
+largest accuracy improvement (amounting to more than 20%) in the apparent age estimation
+of the competition data by far (see Table 2 in Antipov et al. 2016 and Appendix D).
+    Both the distribution of true ages used for training and human age estimations used for
+software fine-tuning covers people from all age groups, including elderly people. The output
+
+
+                                              25
+of the neural network is a 100 × 1 vector of probabilities associated with all apparent ages
+from 0 to 99 years. The apparent age point estimate is derived by multiplying each apparent
+age with its probability. The software also carries out an eleven-fold cross-validation,
+drawing 5,113 images for each training and 500 (non-overlapping) images for each validation
+sample. The ultimate output is the average apparent-age estimation of the eleven models.
+
+                  5.2. Apparent-Age Distribution and Summary Statistics
+We first document the estimated apparent-age distribution and provide summary statistics
+for our sample of 3,086 collected pictures, described in Section 2.2.
+    Figure 3 provides graphical evidence of the distributions and correlations of biological
+and apparent ages. Panel (a) shows that the distributions of apparent and biological ages
+largely overlap, though the apparent age distribution is somewhat shifted to the left. That is,
+on average, the software estimates CEOs to look younger than their biological age. This
+reflects that CEOs have high SES, have better access to health care, can afford healthier
+food, and live longer than the average population (see Table I, and cf. Chetty et al. 2016).
+Our results below on the effect of industry shocks on CEO aging do not rely on comparisons
+between CEOs and the general population but entail solely within-CEO comparisons.
+    Panel (b) shows a scatter plot of CEOs' apparent age against biological age, confirming
+a high correlation between the two concepts of age, but also a greater mass below than above
+the 45 -line. In this figure and in the regression analysis below, we winsorize the estimated
+apparent age variable to ensure that the outliers in age estimation do not affect the results.
+To do that, we first winsorize the top and bottom 0.5% of the difference between apparent
+and biological age, and then add this winsorized difference to the biological age.
+    Table VII provides the summary statistics for the 463 CEOs for whom we are able to
+collect at least two dated pictures. On average, we are able to find about 7 pictures of a
+CEO (conditional on finding at least two pictures). The average CEO is 56.35 years old in
+2006, and the mean pre-2006 tenure is 8 years. The majority of CEOs head firms in the
+manufacturing, transportation, communications, electricity and gas, and finance industries.
+    To illustrate the proposed channel from industry shocks to aging, we first discuss a
+specific example. James Donald was the CEO of Starbucks from April 2005 until January
+2008, when he was fired after Starbucks' stock had plunged by more than 40% over the
+preceding year. The top of Figure 4 shows two pictures of Donald: the left one was taken
+on December 8, 2004, before his appointment at Starbucks, and the right one 4.42 years
+later, on May 11, 2009, after his dismissal. Donald was 50.76 years old in the first picture,
+and 55.18 years in the second. The machine-learning based aging software predicts his age
+
+                                              26
+in the earlier picture at 53.47 years, and in the later picture as 60.45 years. Thus, for both
+pictures, the software determines that he looks older than his true age. Most importantly, the
+software estimates that he aged by 6.98 years, i. e., 2.5 years more than actual time passed.
+
+                 (a) Distribution                                  (b) Correlation
+
+
+
+
+F IGURE 3. --CEO apparent and biological age. Notes: The figure plots apparent and biological
+ages for our sample of 3,086 CEO images. Panel (b) shows CEOs' apparent-age distribution in
+blue (medium grey), and their biological-age distributions in red (light grey), with the overlapping
+areas appearing as purple (dark grey). Panel (b) shows a scatter plot of CEOs' apparent age against
+biological age. The dotted line represents the 45 -line. We winsorize the apparent age by first
+winsorizing the top and bottom 0.5% of the difference between apparent and biological age, and then
+adding this winsorized difference to the biological age.
+
+
+    Turning to the full set of 20 pictures of Donald that we are able to collect for the period
+from three years before to three years after the onset of the crisis in 2007, i. e., 2004-2010, we
+find that the mean difference between his apparent and his biological age is 0.96 years prior
+to 2007 and increases to 4.97 years from 2007 on. The bottom half of Figure 4 summarizes
+these estimates and visualizes the jump in Donald's apparent versus biological age in 2007
+as well as the continued aging effects after the crisis. The example typifies our approach,
+especially in light of Donald's struggles during his final year as Starbucks' CEO.
+    The example also points to concerns one may have regarding picture heterogeneity. For
+example, the lighting in the two pictures seems to be different, and the left picture, with
+Donald smiling into the camera, might be from a more staged setting than the right one.
+More broadly, researchers have pointed to the importance of accounting for picture context
+and facial positioning in other settings, such as in inferring people's character, attractiveness,
+or sexual orientation from facial images (Wang and Kosinski 2018, Dotsch et al. 2016,
+Ag¨uera y Arcas et al. 2018). While the image pre-processing and fine-tuning steps described
+in Appendix D help account for such image heterogeneity, we go one step further and
+
+                                                27
+F IGURE 4.--Sample pictures (James Donald, CEO of Starbucks from 2005 to 2008). Notes: The
+first two pictures show James Donald, CEO of Starbucks from 2005 to 2008. Based on data from
+Ancestry.com, Donald was born on March 5, 1954. The picture on the left was taken on December
+8, 2004, that on the right on Monday, May 11, 2009. Biological ages: 50.76 and 55.18 years,
+respectively. Apparent ages based on aging software: 53.47 and 60.45 years, respectively. The figure
+at the bottom shows how James Donald's apparent age compares to his true age over time based on
+20 pictures collected for the period from 2004 to 2010.
+
+
+manually assess all pictures along seven dimensions: logo, side face, professional, magazine,
+natural, natural lighting, and glasses. For logo, we construct an indicator variable that takes
+value 1 if there is a logo (for instance, the "gettyimages" logo) on the face in the picture.
+For side face, the indicator is 1 if the CEO in the picture shows a side face instead of front.
+For professional, the indicator takes on 1 if the CEO is in work mode, say wearing business
+clothes, and 0 if in casual mode, say wearing a short-sleeved shirt, T-shirt, etc. For magazine,
+the variable takes on 1 if the picture is from a magazine cover. For natural, the variable
+
+
+                                                28
+reflects whether the CEO expects the picture or not, i. e., whether it is natural posing or a
+photo call. For natural lighting, the variable reflects whether the lighting feels natural (with
+light from all directions) or unusual, e.g., black and white, stage lighting, etc. The variable
+glasses takes on 1 if the CEO in the picture wears glasses.
+    Controlling for all of these variables in our estimations we further alleviate concerns
+about spurious correlations between picture characteristics and changes in apparent age.
+
+                           5.3. Difference-in-Differences Analysis
+We formalize our analysis of job-induced apparent aging in a difference-in-differences
+design. Following the approach from the mortality analysis, we continue to use three-digit
+SIC codes and a 30% decline in equity value criterion to identify firms that experienced an
+industry shock during the financial crisis. This approach classifies 79 out of a total of 149
+industries as being in distress during at least one of the crisis years 2007 and 2008. Industries
+classified as distressed during these years include real estate and banking. Non-distressed
+industries include agriculture, food products, and utilities.
+     We analyze differences in visible signs of aging between CEOs whose company was in
+distress during the crisis years versus those whose company was not in distress. To account
+for CEOs departing from their job during the Great Recession, potentially introducing
+selection bias, we identify treated CEOs based on intended exposure. That is, we define the
+treatment variable, Industry Distress, as equal to 1 if the CEO's firm operates in an industry
+that was distressed in 2007, 2008, or both years, regardless of whether the CEO stepped
+down between 2006 and 2008. In particular, Industry Distress is encoded as 1 for a CEO
+departing in 2007 and whose firm's industry was distressed in 2008.28
+     We start from plotting the difference in aging trends between the two groups of CEOs in
+Figure 5. For this graphical illustration, we bin our data into nine roughly equal-sized groups
+of pictures from the beginning of the sample period to the end, t  T = {pre-2004, 2004-05,
+... post-2016}, and estimate the following difference-in-difference model:
+       Apparent Agei, j,t = 0 + 1 Biological Agei, j,t +  2,t Industry Distress j × 1t
+                                                                t T
+
+                              + 3 Xi, j,t + t +  j + i, j,t                                            (7)
+where i represents a picture, j represents a CEO, and t represents a time bin. 1t are time
+indicators, where the t th indicator is equal to 1 for pictures taken at time t . They are interacted
+with Industry Distress j , so that the interaction is 1 if the firm of CEO j shown in picture i
+  28  Regressing actual 2007-2008 industry shock exposure on intended exposure yields a coefficient of 0.92
+(F -statistic of 331.66).
+
+                                                    29
+F IGURE 5. --Differences in apparent aging between CEOs with and without industry distress
+exposure during the Great Recession. Notes: This figure depicts the estimated coefficients 2 of
+the interaction terms between the time-period indicators and the Industry Distress indicator from
+estimating equation (7), where Industry Distress is equal to 1 if the CEO's firm was exposed to
+industry-wide distress during 2007 or 2008. N denotes the number of pictures for each time period.
+We winsorize the estimated apparent age variable by first winsorizing the top and bottom 0.5% of the
+difference between apparent and biological age, and then adding this winsorized difference to the
+biological age. Observations are weighted by the inverse of the number of pictures per CEO.
+
+
+was distressed in 2007 or 2008. The vector of control variables Xi, j,t includes the number
+of industry shocks a CEO experienced before 2006 and CEO tenure until 2006. We also
+include CEO fixed effects  j and time fixed effects t . The CEO fixed effects absorb any
+time-invariant CEO facial characteristics such as facial shape. The time fixed effects absorb
+time trends, such as improving picture quality. While the aging software has been trained
+on a large number of faces and pictures of differing quality, these fixed effects tighten the
+identification further (and absorb the main effects of the time-industry shock interaction in
+the regression). We note that for either of these variables to potentially affect the estimation
+in the first place, they would have to systematically affect the software's age estimate (rather
+than introducing noise) and be correlated with industry distress experience. As discussed
+above, we additionally include extensive controls for picture setting and characteristics.
+    Figure 5 plots the estimates of vector 2 = (2,pre-2004 , ..., 2,t , ..., t ,post-2016 ), capturing
+the apparent-age differences between the treated group and the control group at the different
+points in time, after controlling for the biological age and other covariates. We see that
+the difference in apparent age between future distressed and non-distressed CEOs is small
+
+                                                 30
+and stable over time before the crisis, consistent with the notion that aging in both groups
+follows parallel pre-trends. After the onset of the Great Recession, however, the apparent-
+age difference increases markedly, first to about half a year, and then to a full year. It stays
+and stabilizes at a high level of about one year of apparent-age difference after around five
+years post-crisis. In other words, exposure to industry distress significantly accelerates aging
+over the next few years, with the apparent-age difference stabilizing at one year.
+    The large estimated difference in aging post-crisis is robust to estimating the standard
+difference-in-differences regression model:
+     Apparent Agei, j,t =0 + 1 Biological Agei, j,t + 2 Industry Distress j × 1{t >2006}
+                          + 3 Xi, j,t + t +  j + i, j,t                                     (8)
+where i represents a picture, j represents a CEO, and t represents a calendar year. We
+continue to code Industry Distress as an indicator of intended industry-distress exposure
+during the Great Recession to account for possible selection bias. The vector of control
+variables, Xi, j,t , is the same as in estimating equation 7, and t and  j capture the year
+and CEO fixed effects, respectively. The key coefficient of interest is 2 , indicating the
+difference in how old CEOs look in post-crisis years depending on whether they personally
+experienced industry shocks during 2007 to 2008.
+    Table VIII presents the regression results. In column (1), the coefficient on the inter-
+action term between Industry Distress and the post-2006 indicator, 1{t >2006} , is 0.948,
+indicating that CEOs look around one year older during and post-crisis if they experienced
+industry distress shocks between 2007 and 2008. In column (2), we add the extensive set of
+picture controls described above ("logo," "side face," "professional," "magazine," "natural,"
+"natural lighting," and "glasses"). This barely changes the coefficient on the post-treatment
+interaction term (now 0.978, significant at 5%).
+    In columns (3) and (4), we split the post-period into two sub-periods, capturing pictures
+taken between 2007 and 2011 and since 2012, respectively. Our estimates imply a distress-
+induced apparent aging effect of around 0.8 years over a five-year horizon that increases to
+about 1.2 years over longer horizons. Again, the estimated effects are very similar whether
+or not we include the additional picture controls. The fact that CEO aging effects appear to
+be permanent also ameliorates potential concerns that our results may be confounded by
+firms engaging in "picture management" or "CEO appearance management." Such efforts
+by firms could in principle affect the apparent aging estimates if they are correlated with
+distress exposure. However, by 2012, more than 50% of CEOs have departed from their
+position. Arguably, firms have little incentives or ability to manage the appearance of former
+
+                                              31
+CEOs who have stepped down.
+    We perform a series of additional tests. First, we verify that all results are similar when
+we estimate the difference-in-differences model on the non-winsorized sample (Panel A of
+Appendix-Table C.3). Second, we again explore using the more restrictive distress definition
+that requires negative industry sales growth. One advantage of focusing on the Great
+Recession period is that around 29% of the CEOs are still classified as experiencing distress
+under this more stringent definition. This is also reflected in the results, which continue to
+show economically and statistically significant aging effects (Panel B of Appendix-Table
+C.3). If anything, the estimated effect of industry distress on apparent aging is slightly larger
+under the more severe distress definition, with the differential aging coefficient increasing
+from 0.948 to 1.173 in column (1) and from 0.978 to 1.064 in column (2). Unsurprisingly
+given the results above, experiencing severe distress is also estimated to significantly affect
+aging patterns in the long run when splitting the post-period into sub-periods in columns (3)
+and (4).
+    Lastly, we verify that our results are not affected by differential finding rates of pictures
+depending on whether CEOs experienced distress during the crisis. For example, if expe-
+riencing industry distress shocks makes CEOs more likely to step down earlier, it may be
+more difficult to find recent, post-tenure pictures. Appendix-Figure C.1 depicts the average
+number of pictures per CEO we find in each year, split by whether a CEO experienced
+industry distress shocks in 2007-2008. In general, the finding rates closely follow each other
+over time, though there is a small divergence after 2015. Therefore, we repeat our analysis
+restricting our sample to the years up to 2015, as shown in Panel C of Appendix-Table C.3.
+The size and significance of the coefficients on the interaction terms remain similar across
+all columns.
+    All together, the apparent aging analysis provides additional evidence that increased
+job demands in the form of industry distress diminish the health of CEOs. Given our other
+results, the appearance of visual aging may presage a shorter lifespan for CEOs whose
+industries experienced downturns in the Great Recession.
+
+                                      6.   CONCLUSION
+
+In this paper, we assess the health consequences of being exposed to increased job demands
+and a more stressful work environment while in a high-profile CEO position. We analyze
+the consequences for CEOs' aging and mortality using two sources of variation in job
+demands, the staggered introduction of anti-takeover laws and industry-wide distress shocks.
+
+                                              32
+We document that CEOs who serve under stricter governance die significantly earlier. We
+estimate a four to five percent difference in mortality rates as result of one year of exposure
+to less stringent corporate governance. The effect is driven by the initial years of reduced
+monitoring. Incremental health benefits taper off at higher levels of exposure to more lenient
+governance. In line with these results, we observe significantly reduced life expectancy for
+CEOs who experienced periods of industry-wide distress during their tenure.
+    We then show that industry distress is also reflected in more immediate signs of adverse
+health consequences, namely faster visible aging. To the best of our knowledge, we are
+the first to collect and utilize panel data of facial images and apply machine-learning based
+apparent-age estimation software in social-science research. We implement a difference-in-
+differences design that exploits variation in industry distress exposure during the financial
+crisis. We estimate that CEOs who experienced industry distress during the 2007-2008
+financial crisis look roughly one year older than those whose industry did not suffer the
+same level of distress. Mirroring (inversely) the effect of more lenient corporate governance
+over time, the effect of distress on aging becomes slightly larger over time, increasing to
+1.178 years if we analyze pictures from 2012 and afterwards.
+    In sum, our results indicate that stricter corporate governance regimes--which are gener-
+ally viewed as desirable and welfare-improving--and financial distress impose significant
+personal health costs to CEOs. While we lack direct physical or medical measures of
+heightened stress, the evidence implies that stricter governance and economic downturns
+constitutes a substantial personal cost for CEOs in terms of their health and life expectancy.
+As such, our findings also contribute to the literature on the trade-offs between managerial
+incentives and private benefits arising from the separation of ownership and control. We
+document and quantify a previously unnoticed yet important cost--shorter life expectancy
+and faster aging of the CEOs--associated with serving under strict corporate governance.
+    Our findings suggest further avenues of investigation. One open question is whether
+managers fully account for these personal costs as they progress in their careers and how
+these costs affect selection into service as a CEO. Are there other dimensions of compensa-
+tion? Are some high-ability candidates for a Forbes-level CEO career more aware of these
+consequences than others and select out? Additionally, which jobs and hierarchy levels come
+with the largest adverse health consequences, also in light of looming financial hardships?
+    Another promising avenue is the more fine-grained identification of stressors. What
+aspects of individual job situations and which decisions tend to have the largest adverse
+health consequences, for either management or regular employees: pending layoffs and
+
+
+                                              33
+downsizing; restructurings; hostile merger attempts? Likewise, heightened workplace stress
+can also adversely affect other aspects of life, including marriage, divorce rates, parenting,
+and alcohol consumption. We leave these topics for future research.
+
+                                       REFERENCES
+  Abadie, A., S. Athey, G. W. Imbens, and J. Wooldridge (2017). When Should You Adjust
+     Standard Errors for Clustering? Working Paper, No. w24003, National Bureau of
+     Economic Research.
+  Acharya, V. V., S. T. Bharath, and A. Srinivasan (2007). Does Industry-wide Distress
+    Affect Defaulted Firms? Evidence from Creditor Recoveries. Journal of Financial
+    Economics 85(3), 787­821.
+  Ag¨
+    uera y Arcas, B., A. Todorov, and M. Mitchell (2018). Do Algorithms Reveal
+    Sexual Orientation or Just Expose Our Stereotypes? Medium. Available at:
+    https://link.medium.com/GO7FJgFgM1.
+  Aizer, A., L. Stroud, and S. Buka (2016). Maternal Stress and Child Outcomes: Evidence
+     from Siblings. Journal of Human Resources 51(3), 523­555.
+  Anderson, M. and M. Marmot (2012). The Effects of Promotions on Heart Disease:
+    Evidence from Whitehall. The Economic Journal 122(561), 555­589.
+  Angrist, J. D. and J.-S. Pischke (2008). Mostly Harmless Econometrics: An Empiricist's
+    Companion. Princeton University Press.
+  Antipov, G., M. Baccouche, S.-A. Berrani, and J.-L. Dugelay (2016). Apparent Age
+     Estimation from Face Images Combining General and Children-specialized Deep
+     Learning Models. In Proceedings of the IEEE Conference on Computer Vision and
+     Pattern Recognition Workshops, pp. 96­104.
+  Atanassov, J. (2013). Do Hostile Takeovers Stifle Innovation? Evidence from Anti-
+     takeover Legislation and Corporate Patenting. The Journal of Finance 68(3), 1097­
+     1131.
+  Babina, T. (2020). Destructive Creation at Work: How Financial Distress Spurs En-
+     trepreneurship. The Review of Financial Studies 33(9), 4061­4101.
+  Bandiera, O., R. Lemos, A. Prat, and R. Sadun (2018). Managing the Family Firm:
+     Evidence from CEOs at Work. The Review of Financial Studies 31(5), 1605­1653.
+  Bandiera, O., A. Prat, S. Hansen, and R. Sadun (2020). CEO Behavior and Firm Perfor-
+     mance. Journal of Political Economy 128(4), 1325­1369.
+  Bennedsen, M., F. Perez-Gonzalez, and D. Wolfenzon (2020). Do CEOs Matter? Evi-
+     dence from Hospitalization Events. The Journal of Finance 75(4), 1877­1911.
+  Bertrand, M. and S. Mullainathan (1998). Corporate Governance and Executive Pay:
+     Evidence from Takeover Legislation. Working Paper, No. w6830, National Bureau of
+     Economic Research.
+
+                                             34
+Bertrand, M. and S. Mullainathan (2001). Are CEOs Rewarded for Luck? The Ones
+   Without Principals Are. The Quarterly Journal of Economics 116(3), 901­932.
+Bertrand, M. and S. Mullainathan (2003). Enjoying the Quiet Life? Corporate Governance
+   and Managerial Preferences. Journal of Political Economy 111(5), 1043­1075.
+Black, S. E., P. J. Devereux, and K. G. Salvanes (2016). Does Grief Transfer across Gen-
+   erations? Bereavements during Pregnancy and Child Outcomes. American Economic
+   Journal: Applied Economics 8(1), 193­223.
+Borgschulte, M. and J. Vogler (2019). Run for Your Life? The Effect of Close Elections
+   on the Life Expectancy of Politicians. Journal of Economic Behavior & Organiza-
+   tion 167, 18­32.
+Boyce, C. J. and A. J. Oswald (2012). Do People Become Healthier after Being Promoted?
+   Health Economics 21(5), 580­596.
+Brondolo, E., K. Byer, P. Gianaros, C. Liu, A. Prather, K. Thomas, C. Woods-Giscombe,
+   L. Beatty, P. DiSandro, and G. Keita (2017). Stress and Health Disparities: Contexts,
+   Mechanisms, and Interventions among Racial/Ethnic Minority and Low Socioeco-
+   nomic Status Populations. American Psychological Association (APA) Working Group
+   Report.
+Cain, M. D., S. B. McKeon, and S. D. Solomon (2017). Do Takeover Laws Mat-
+   ter? Evidence from Five Decades of Hostile Takeovers. Journal of Financial Eco-
+   nomics 124(3), 464­485.
+Camacho, A. (2008). Stress and Birth Weight: Evidence from Terrorist Attacks. American
+   Economic Review 98(2), 511­515.
+                               ¨
+Cesarini, D., E. Lindqvist, R. Ostling, and B. Wallace (2016). Wealth, Health, and Child
+   Development: Evidence from Administrative Data on Swedish Lottery Players. The
+   Quarterly Journal of Economics 131(2), 687­738.
+Cheng, S., V. Nagar, and M. V. Rajan (2004). Identifying Control Motives in Manage-
+   rial Ownership: Evidence from Antitakeover Legislation. The Review of Financial
+   Studies 18(2), 637­672.
+Chetty, R., M. Stepner, S. Abraham, S. Lin, B. Scuderi, N. Turner, A. Bergeron, and
+   D. Cutler (2016). The Association Between Income and Life Expectancy in the United
+   States, 2001-2014. JAMA 315(16), 1750­1766.
+Cox, D. R. (1972). Regression Models and Life Tables. Journal of the Royal Statistical
+   Society: Series B 34(2), 187­202.
+Cremers, M. and A. Ferrell (2014). Thirty Years of Shareholder Rights and Firm Value.
+   The Journal of Finance 69(3), 1167­1196.
+Cutler, D., A. Deaton, and A. Lleras-Muney (2006). The Determinants of Mortality.
+   Journal of Economic Perspectives 20(3), 97­120.
+
+
+                                         35
+Dotsch, R., R. R. Hassin, and A. Todorov (2016). Statistical Learning Shapes Face
+   Evaluation. Nature Human Behaviour 1(1), 1­6.
+East, C. N., S. Miller, M. Page, and L. R. Wherry (2017). Multi-generational Impacts
+   of Childhood Access to the Safety Net: Early Life Exposure to Medicaid and the
+   Next Generations Health. Working Paper, No. w23810, National Bureau of Economic
+   Research.
+Easterbrook, F. H. and D. R. Fischel (1981). The Proper Role of a Target's Management
+   in Responding to a Tender Offer. Harvard Law Review 94(6), 1161­1204.
+Edmans, A. and X. Gabaix (2011). The Effect of Risk on the CEO Market. The Review
+  of Financial Studies 24(8), 2822­2863.
+Eisfeldt, A. L. and C. M. Kuhnen (2013). CEO Turnover in a Competitive Assignment
+    Framework. Journal of Financial Economics 109(2), 351­372.
+Engelberg, J. and C. A. Parsons (2016). Worrying about the stock market: Evidence from
+   hospital admissions. The Journal of Finance 71(3), 1227­1250.
+Epel, E. S., E. H. Blackburn, J. Lin, F. S. Dhabhar, N. E. Adler, J. D. Morrow, and R. M.
+   Cawthon (2004). Accelerated Telomere Shortening in Response to Life Stress. Pro-
+   ceedings of the National Academy of Sciences of the United States of America 101(49),
+   17312­17315.
+Evans, W. N. and C. L. Garthwaite (2014). Giving Mom a Break: The Impact of Higher
+   EITC Payments on Maternal Health. American Economic Journal: Economic Pol-
+   icy 6(2), 258­290.
+Fama, E. F. and K. R. French (1997). Industry Costs of Equity. Journal of Financial
+   Economics 43(2), 153­193.
+Fitzpatrick, M. D. and T. J. Moore (2018). The Mortality Effects of Retirement: Evidence
+    from Social Security Eligibility at Age 62. Journal of Public Economics 157, 121­
+    137.
+Franceschi, C., P. Garagnani, P. Parini, C. Giuliani, and A. Santoro (2018). Inflammaging:
+   A New Immune­Metabolic Viewpoint for Age-related Diseases. Nature Reviews
+   Endocrinology 14(10), 576­590.
+Ganster, D. C. and C. C. Rosen (2013). Work Stress and Employee Health: A Multidisci-
+   plinary Review. Journal of Management 39(5), 1085­1122.
+Garvey, G. T. and T. T. Milbourn (2006). Asymmetric Benchmarking in Compensation:
+   Executives are Rewarded for Good Luck But Not Penalized for Bad. Journal of
+   Financial Economics 82(1), 197­225.
+General, S. (2014). The Health Consequences of Smoking ­ 50 Years of Progress: A
+   Report of the Surgeon General. In US Department of Health and Human Services.
+
+
+
+                                          36
+Gibbons, R. and K. J. Murphy (1992). Optimal Incentive Contracts in the Presence
+   of Career Concerns: Theory and Evidence. Journal of Political Economy 100(3),
+   468­505.
+Giroud, X. and H. M. Mueller (2010). Does Corporate Governance Matter in Competitive
+   Industries? Journal of Financial Economics 95(3), 312­331.
+Gompers, P., J. Ishii, and A. Metrick (2003). Corporate Governance and Equity Prices.
+  The Quarterly Journal of Economics 118(1), 107­156.
+Gompertz, B. (1825). XXIV. On the Nature of the Function Expressive of the Law of Hu-
+  man Mortality, and on a New Mode of Determining the Value of Life Contingencies.
+  In a Letter to Francis Baily, Esq. FRS &c. Philosophical Transactions of the Royal
+  Society of London 115, 513­583.
+Gormley, T. A. and D. A. Matsa (2016). Playing it Safe? Managerial Preferences, Risk,
+   and Agency Conflicts. Journal of Financial Economics 122(3), 431­455.
+Heidt, T., H. B. Sager, G. Courties, P. Dutta, Y. Iwamoto, A. Zaltsman, C. von Zur Muhlen,
+   C. Bode, G. L. Fricchione, J. Denninger, et al. (2014). Chronic Variable Stress
+   Activates Hematopoietic Stem Cells. Nature Medicine 20(7), 754.
+Hernaes, E., S. Markussen, J. Piggott, and O. L. Vestad (2013). Does Retirement Age
+   Impact Mortality? Journal of Health Economics 32(3), 586­598.
+Human Mortality Database (2019). USA, 1x1 Cohort Mortality Rates. University of
+  California, Berkeley (USA), and Max Planck Institute for Demographic Research
+  (Germany).
+Hummels, D., J. Munch, and C. Xiang (2016). No Pain, No Gain: the Effects of Exports
+  on Effort, Injury, and Illness. Working Paper, No. w22365, National Bureau of
+  Economic Research.
+Insler, M. (2014). The Health Consequences of Retirement. Journal of Human Re-
+    sources 49(1), 195­233.
+Jenter, D. and K. Lewellen (2015). CEO Preferences and Acquisitions. The Journal of
+   Finance 70(6), 2813­2852.
+Jha, P., C. Ramasundarahettige, V. Landsman, B. Rostron, M. Thun, R. N. Anderson,
+   T. McAfee, and R. Peto (2013). 21st-Century Hazards of Smoking and Benefits of
+   Cessation in the United States. New England Journal of Medicine 368(4), 341­350.
+Johnston, D. W. and W.-S. Lee (2013). Extra Status and Extra Stress: Are Promotions
+   Good for Us? ILR Review 66(1), 32­54.
+Kaplan, G. and S. Schulhofer-Wohl (2018). The Changing (Dis-)Utility of Work. Journal
+   of Economic Perspectives 32(3), 239­258.
+Karpoff, J. M. and M. D. Wittry (2018). Institutional and Legal Context in Natural
+   Experiments: The Case of State Antitakeover Laws. The Journal of Finance 73(2),
+   657­714.
+
+                                          37
+Keloharju, M., S. Kn¨
+                    upfer, and J. T°
+                                   ag (2020). CEO Health and Corporate Governance.
+   Working Paper, No. 1326, Research Institute of Industrial Economics.
+Kennedy, B. K., S. L. Berger, A. Brunet, J. Campisi, A. M. Cuervo, E. S. Epel,
+   C. Franceschi, G. J. Lithgow, R. I. Morimoto, J. E. Pessin, et al. (2014). Geroscience:
+   Linking Aging to Chronic Disease. Cell 159(4), 709­713.
+Kim, S. R., Y. R. Jung, H. J. An, D. H. Kim, E. J. Jang, Y. J. Choi, K. M. Moon, M. H. Park,
+   C. H. Park, K. W. Chung, et al. (2013). Anti-Wrinkle and Anti-Inflammatory Effects
+   of Active Garlic Components and the Inhibition of MMPs via NF-B Signaling. PloS
+   One 8(9), e73877.
+Koijen, R. S. J. and S. Van Nieuwerburgh (2020). Combining Life and Health Insurance.
+   Quarterly Journal of Economics 135(2), 913­958.
+Kuka, E. (2020). Quantifying the Benefits of Social Insurance: Unemployment Insurance
+   and Health. Review of Economics and Statistics 102(3), 490­505.
+Lavetti, K. (2020). The Estimation of Compensating Wage Differentials: Lessons from
+   the Deadliest Catch. Journal of Business & Economic Statistics 38(1), 165­182.
+Lazarus, R. S. and S. Folkman (1984). Stress, Appraisal, and Coping. Springer Publishing
+   Company.
+LeCun, Y., Y. Bengio, and G. Hinton (2015). Deep Learning. Nature 521(7553), 436­444.
+Marmot, M. (2005). Status Syndrome: How Your Social Standing Directly Affects Your
+  Health. A&C Black.
+Mas, A. and A. Pallais (2017). Valuing Alternative Work Arrangements. American
+  Economic Review 107 (12), 3722­3759.
+McEwen, B. S. (1998). Protective and Damaging Effects of Stress Mediators. New
+  England Journal of Medicine 338(3), 171­179.
+Olshansky, S. J. and B. A. Carnes (1997). Ever Since Gompertz. Demography 34(1),
+   1­15.
+Opler, T. C. and S. Titman (1994). Financial Distress and Corporate Performance. The
+   Journal of Finance 49(3), 1015­1040.
+Parkhi, O. M., A. Vedaldi, and A. Zisserman (2015). Deep Face Recognition.
+Persson, P. and M. Rossin-Slater (2018). Family Ruptures, Stress, and the Mental Health
+   of the Next Generation. American Economic Review 108(4-5), 1214­1252.
+Pickett, K. E. and R. G. Wilkinson (2015). Income inequality and health: a causal review.
+   Social Science & Medicine 128, 316­326.
+Porter, M. E. and N. Nohria (2018). How CEOs Manage Time. Harvard Business Re-
+   view 96(4), 42­51.
+
+
+
+                                           38
+Puterman, E., A. Gemmill, D. Karasek, D. Weir, N. E. Adler, A. A. Prather, and E. S.
+   Epel (2016). Lifespan Adversity and Later Adulthood Telomere Length in the Nation-
+   ally Representative US Health and Retirement Study. Proceedings of the National
+   Academy of Sciences 113(42), E6335­E6342.
+Rablen, M. D. and A. J. Oswald (2008). Mortality and Immortality: The Nobel Prize
+   as an Experiment into the Effect of Status upon Longevity. Journal of Health Eco-
+   nomics 27 (6), 1462­1471.
+Sapolsky, R. M. (2005). The Influence of Social Hierarchy on Primate Health. Sci-
+   ence 308(5722), 648­652.
+Scharfstein, D. (1988). The Disciplinary Role of Takeovers. The Review of Economic
+   Studies 55(2), 185­199.
+Schwandt, H. (2018). Wealth Shocks and Health Outcomes: Evidence from Stock Market
+   Fluctuations. American Economic Journal: Applied Economics 10(4), 349­377.
+Simonyan, K. and A. Zisserman (2014). Very Deep Convolutional Networks for Large-
+   scale Image Recognition. arXiv preprint arXiv:1409.1556.
+Smith, J. P. (1999). Healthy Bodies and Thick Wallets: the Dual Relation between Health
+   and Economic Status. Journal of Economic perspectives 13(2), 145­166.
+Snyder-Mackler, N., J. R. Burger, L. Gaydosh, D. W. Belsky, G. A. Noppert, F. A. Campos,
+   A. Bartolomucci, Y. C. Yang, A. E. Aiello, A. ORand, et al. (2020). Social Determi-
+   nants of Health and Survival in Humans and Other Animals. Science 368(6493).
+Sullivan, D. and T. Von Wachter (2009). Job Displacement and Mortality: An Analysis
+   Using Administrative Data. The Quarterly Journal of Economics 124(3), 1265­1306.
+Viscusi, W. K. and J. E. Aldy (2003). The Value of a Statistical Life: A Critical Review
+   of Market Estimates throughout the World. Journal of Risk and Uncertainty 27 (1),
+   5­76.
+Wang, Y. and M. Kosinski (2018). Deep Neural Networks Are More Accurate Than
+  Humans at Detecting Sexual Orientation from Facial Images. Journal of Personality
+  and Social Psychology 114(2), 246.
+Yen, G. and L. Benham (1986). The Best of All Monopoly Profits is a Quiet Life. Journal
+   of Health Economics 5(4), 347­353.
+Zhang, B., S. Ma, I. Rachmin, M. He, P. Baral, S. Choi, W. A. Goncalves, Y. Shwartz,
+   E. M. Fast, Y. Su, L. I. Zon, A. Regev, J. D. Buenrostro, T. M. Cunha, I. M. Chiu,
+   D. E. Fisher, and Y.-C. Hsu (2020). Hyperactivation of Sympathetic Nerves Drives
+   Depletion of Delanocyte Stem Cells. Nature 577 (7792), 676­681.
+
+
+
+
+                                         39
+                                         TABLE I
+                                    S UMMARY S TATISTICSa
+
+                                                       Main CEO Sample
+                                N         Mean          SD         P10         P50        P90
+ Birth Year                   1,605       1925          8.96      1914        1925       1937
+ Dead (by October 2017)       1,605       0.71          0.45        0           1          1
+ Year of Death                1,140       2004          9.98      1989        2006       2016
+ Age at Death                 1,140       81.95         9.92      67.58       83.42      93.50
+ Age Taking Office            1,605       51.63         6.95       43          52          60
+ Year Taking Office           1,605       1977          7.21      1968        1977        1986
+ Tenure                       1,605       10.62         6.86        3         9.08         20
+ BC                           1,605        2.21         4.19        0            0        8.24
+ BC | BC>0                     625         5.68         5.05      0.54         4.41      12.37
+ Industry Distress            1,605        0.40         0.49         0          0          1
+   a Allvariables are defined at the CEO level. BC denotes years of exposure to business combination
+laws. Industry Distress is an indicator variable that equals one if a CEO experienced industry-wide
+distress during his tenure. All variables are defined in Appendix A.
+
+
+
+
+                                  TABLE II
+       M ORTALITY BY C OHORT AND B USINESS C OMBINATION L AW E XPOSUREa
+
+                               BC Exposure                               No BC Exposure
+ Birth Year            N     % Dead    Age at Death             N          % Dead Age at Death
+ Before 1915           12     100%         91.83               209         98.1%       84.87
+ 1916 - 1920           25    92.0%         88.45               248         99.2%       84.58
+ 1921 - 1925          115    82.6%         86.76               235         88.9%       82.98
+ 1926 - 1930          202    62.4%         83.96               137         70.1%       81.86
+ 1931 - 1935          134    35.6%         82.08                77         40.3%       81.97
+ 1936 - 1940           82    23.2%         77.70                39         35.9%       74.68
+ After 1941            55    23.6%         72.12                35         14.3%       71.67
+
+   a Thistable splits the sample of CEOs by cohort and BC law exposure. Each cell shows the
+percentage deceased by October 1, 2017 and the age at death conditional on having passed away.
+
+
+
+
+                                                  40
+                                    TABLE III
+            E XPOSURE TO B USINESS C OMBINATION L AWS AND M ORTALITYa
+
+   Dependent Variable: Deathi,t
+                            (1)          (2)           (3)        (4)          (5)         (6)
+   I(BC)                 0.764***     0.769***    0.777***
+                          [0.062]      [0.068]     [0.067]
+   BC                                                          0.955***    0.958***     0.959***
+                                                                [0.005]     [0.005]      [0.005]
+   Age                   1.113***     1.123***    1.124***     1.111***    1.121***     1.122***
+                          [0.006]      [0.005]     [0.004]      [0.007]     [0.005]      [0.005]
+   Year                    1.005        1.002                    1.005       1.001
+                          [0.004]      [0.005]                  [0.004]     [0.004]
+   Location FE (HQ)          Y           Y             Y           Y           Y            Y
+   FF49 FE                               Y             Y                       Y            Y
+   Year FE                                             Y                                    Y
+   Number of CEOs         1,605         1,605      1,605         1,605       1,605        1,605
+   Observations           50,530       50,530      50,530       50,530      50,530       50,530
+
+   a Thistable shows hazard ratios estimated from a Cox (1972) proportional hazards model. The
+dependent variable is an indicator that equals one if the CEO dies in a given year. The main
+independent variables are a binary indicator of BC law exposure, I (BC), in the left three columns
+and a count variable of years of exposure, BC, in the right three columns. All variables are defined in
+Appendix A. Standard errors, clustered at the state-of-incorporation level, are shown in brackets. *,
+**, and *** denote significance at the 10, 5, and 1 percent level, respectively.
+
+
+
+
+                                                  41
+                                        TABLE IV
+                      N ONLINEAR E FFECTS AND P REDICTED E XPOSUREa
+
+   Dependent Variable: Deathi,t
+                             (1)          (2)           (3)         (4)          (5)          (6)
+       (min - p50)
+   BC                     0.908***     0.913***     0.916***
+                           [0.021]      [0.024]      [0.023]
+   BC( p51- max)            0.992        0.993        0.992
+                           [0.015]      [0.017]      [0.017]
+   BC                                                            0.943***     0.951**      0.952**
+                                                                  [0.018]     [0.023]      [0.023]
+   Age                    1.111***     1.122***     1.122***     1.110***     1.120***     1.120***
+                           [0.010]      [0.009]      [0.009]      [0.007]      [0.005]      [0.005]
+   Year                     1.005        1.001                    1.007*        1.004
+                           [0.006]      [0.007]                   [0.004]      [0.004]
+   Location FE (HQ)           Y            Y            Y            Y            Y            Y
+   FF49 FE                                 Y            Y                         Y            Y
+   Year FE                                              Y                                      Y
+   Number of CEOs          1,605         1,605       1,605         1,605        1,605        1,605
+   Observations            50,530       50,530       50,530       50,530       50,530       50,530
+
+   a This
+        table shows hazard ratios estimated from a Cox (1972) proportional hazards model. The
+dependent variable is an indicator that equals one if the CEO dies in a given year. The main
+independent variable in the left three columns is BC, a count variable of years of predicted cumulative
+                                                                                               (min - p50)
+exposure to a BC law. The main independent variables in the right three columns are BCi,t
+        ( p51- max)
+and BCi,t        , which capture BC law exposure up to the sample median and incremental exposure
+above the median, respectively. All variables are defined in Appendix A. For the left three columns,
+we present bootstrapped standard errors, using the block bootstrap method with 500 iterations, in
+brackets. For the right three columns, we present standard errors clustered at the state-of-incorporation
+level, in brackets. *, **, and *** denote significance at the 10, 5, and 1 percent level, respectively.
+
+
+
+
+                                                   42
+                                    TABLE V
+             B USINESS C OMBINATION L AWS , R ETIREMENT, AND CEO PAYa
+                                       Panel A: Business Combination Laws and Retirement
+     Dependent Variable: CEO Departurei,t
+                               (1)              (2)            (3)             (4)      (5)             (6)
+     I(BC)                  0.788***         0.801***         0.911
+                             [0.055]          [0.054]        [0.097]
+     BC                                                                    0.910***   0.907***        0.957**
+                                                                            [0.019]    [0.019]        [0.020]
+     Age                    1.100***         1.105***    1.104***          1.100***   1.107***       1.104***
+                             [0.010]          [0.011]     [0.012]           [0.011]    [0.012]        [0.012]
+     Year                   1.069***         1.072***                      1.096***   1.100***
+                             [0.008]          [0.008]                       [0.015]    [0.015]
+     Location FE (HQ)           Y               Y              Y               Y         Y              Y
+     FF49 FE                                    Y              Y                         Y              Y
+     Year FE                                                   Y                                        Y
+     Number of CEOs          1,575            1,575           1,575          1,575      1,575         1,575
+     Observations            49,556           49,556         49,556          49,556    49,556         49,556
+                                        Panel B: Business Combination Laws and CEO Pay
+     Dependent Variable: ln(Payi,t )
+                                        (1)                            (2)                      (3)
+     I(BC)                            0.086                          0.087*                    0.041
+                                     [0.058]                         [0.047]                  [0.051]
+     Age Controls                        Y                             Y                         Y
+     Tenure Controls                                                   Y                         Y
+     Firm Characteristics                                              Y                         Y
+     Location FE (HQ)                    Y                             Y
+     FF49 FE                             Y                             Y
+     Year FE                             Y                             Y                         Y
+     Firm FE                                                                                     Y
+     Number of CEOs                    1,553                         1,553                    1,553
+     Observations                      17,719                        17,719                   17,719
+   a Panel A shows hazard ratios estimated from a Cox (1972) proportional hazards model. The
+dependent variable is an indicator that equals one if the CEO leaves their position in a given year.
+Panel B shows OLS estimates. The dependent variable is the logarithm of a CEO's total pay in a
+given year. In column (1), "Age Controls" includes linear age, and in columns (2) and (3) "Age
+Controls" includes linear and quadratic age. "Tenure Controls" includes linear and quadratic tenure.
+"Firm Characteristics" includes logarithms of asset size and the number of employees. Standard
+errors, clustered at the state-of-incorporation level, are shown in brackets. *, **, and *** denote
+significance at the 10, 5, and 1 percent level, respectively.
+
+
+
+
+                                                        43
+                                            TABLE VI
+                           I NDUSTRY D ISTRESS AND M ORTALITYa
+
+       Dependent Variable: Deathi,t
+                                         (1)                 (2)                  (3)
+       Industry Distress              1.189***            1.190**              1.179**
+                                       [0.076]             [0.083]              [0.084]
+       Age                            1.115***            1.124***             1.125***
+                                       [0.006]             [0.007]              [0.007]
+       Year                            1.010*               1.007
+                                       [0.006]             [0.006]
+       BC Exposure Control                Y                   Y                    Y
+       Location FE (HQ)                   Y                   Y                    Y
+       FF49 FE                                                Y                    Y
+       Year FE                                                                     Y
+       Number of CEOs                   1,605                1,605               1,605
+       Observations                    50,530               50,530              50,530
+
+   a Thistable shows hazard ratios estimated from a Cox (1972) proportional hazards model. The
+dependent variable is an indicator that equals one if the CEO dies in a given year. The main
+independent variable Industry Distress is an indicator of a CEO's exposure to industry distress
+shocks. All variables are defined in Appendix A. Standard errors, clustered at the industry level, are
+shown in brackets. *, **, and *** denote significance at the 10, 5, and 1 percent level, respectively.
+
+
+
+
+                                                 44
+                                     TABLE VII
+                 S UMMARY S TATISTICS FOR A PPARENT AGING A NALYSISa
+                                                         Panel A: CEO Characteristics
+                                         N         Mean         SD         P10       P50        P90
+ Biological Age in 2006                  463       55.54        6.55       47        56         63
+ Industry Distress (2007-2008)           463       0.65         0.48       0         1          1
+ Industry Distress (Pre-2006)            463       0.54         1.13       0         0          2
+ Tenure (Pre-2006)                       463       8.00         7.73       2         6          17
+ No. of Pictures per CEO                 463       7.35         4.51       3         6          13
+                                                         Panel B: Industry Distribution
+ Industry (Number of CEOs)               Manufacturing (180)        Finance, Insur, Real Estate (65)
+                                             Retail (53)           Services (44)         Others (50)
+                                           Trans.; Commns.; Elec., Gas, and Sanitary Services (71)
+    a Summary  statistics of CEOs with at least two pictures from different times during their tenure.
+Industry Distress during 2007-2008 is an indicator for distress exposure during these years. Industry
+Distress pre-2006 counts the number of industry distress experiences prior to 2006.
+
+
+
+                                          TABLE VIII
+                             I NDUSTRY D ISTRESS AND CEO AGINGa
+        Dependent Variable: Apparent Agei, j,t
+                                                  (1)          (2)         (3)           (4)
+        Industry Distress × 1{t >2006}           0.948*      0.978**
+                                                [0.484]      [0.478]
+        Industry Distress × 1{2006<t <2012}                                0.790        0.799
+                                                                          [0.533]      [0.525]
+        Industry Distress × 1{t 2012}                                    1.178**      1.193**
+                                                                          [0.547]      [0.538]
+        Biological Age                         0.915***      0.910***    0.943***     0.938***
+                                                [0.092]       [0.092]     [0.094]      [0.093]
+        CEO FE                                    Y             Y           Y            Y
+        Year FE                                   Y             Y           Y            Y
+        Picture Controls                                        Y                        Y
+        Number of CEOs                            463          463         463           463
+        Observations                             3,086        3,086       3,086         3,086
+   a This table shows OLS estimates of the effect of industry distress exposure during the Great
+Recession on CEO apparent age. We winsorize the estimated apparent age by first winsorizing the
+top and bottom 0.5% of the difference between apparent and biological age and then adding this
+winsorized difference to the biological age. We weight observations by the inverse of the number of
+pictures per CEO. Standard errors, clustered at the industry level, are shown in brackets. *, **, and
+*** denote significance at the 10, 5, and 1 percent level, respectively.
+
+
+
+                                                        45
+                               ONLINE APPENDIX
+                        APPENDIX A VARIABLE DEFINITIONS
+
+Variable Name          Definition
+Birth Year             CEO's year of birth
+Dead (by Oct. 2017)    Indicator for whether a CEO has passed away by October 1st, 2017
+Year of Death          CEO's year of death, calculated up to monthly level (e.g. 2010.5 for a person
+                       who dies on 6/30/2010)
+Age Taking Office      CEO's age when appointed as CEO
+Year Taking Office     Year in which a CEO is appointed
+Agei,t                 CEO i's age in year t
+Tenurei,t              CEO i's cumulative tenure (in years) at time t
+I (BCi,t )             Indicator equal to 1 if CEO i is insulated by a BC law in year t ; remains at 1 in
+                       all subsequent years  > t , including after CEO departure.
+BCi,t                  CEO i's cumulative exposure to a BC law during tenure up to time t (in years);
+                       remains constant after CEO departure.
+    (min - p50)
+BCi,t                  CEO i's below-median (4.4 years) cumulative BC law exposure during tenure
+                       up to time t (in years); remains constant after CEO departure.
+    ( p51- max)
+BCi,t                  CEO i's above-median (4.4 years) cumulative BC law exposure during tenure
+                       up to time t (in years); remains constant after CEO departure.
+I (FLi,t )             Indicator equal to 1 if CEO i is insulated by the first-time enactment of a 2nd
+                       generation anti-takeover law (FL) in year t ; constant after CEO departure.
+FLi,t                  CEO i's cumulative exposure to the first-time enactment of a 2nd generation
+                       anti-takeover law (FL) during tenure up to time t (in years); constant after
+                       CEO departure.
+Industry Distressi,t   Indicator equal to 1 if CEO i is exposed to an industry shock by year t . Industry
+                       shock is defined as median two-year stock return (forward-looking) of firms in
+                       the same industry below -30%. As in Babina (2020), we (i) use SIC3 industry
+                       classes, (ii) restrict to single-segment CRSP/Compustat firms, i. e., drop firms
+                       with multiple segments in the Compustat Business Segment Database (CBSD),
+                       (iii) drop firms if the reported single-segment sales differ from those in
+                       Compustat by more than 5%, (iv) restrict to firms with sales of at least $20m,
+                       and (v) exclude industry-years with fewer than four firms. We use firms' modal
+                       SIC across CRSP, Compustat, and CBSD, and the latter in case of a tie.
+Yeari,t                Year of a subspell; used in hazard models when linearly controlling for time.
+Payi,t                 CEO i's total pay in year t (from Gibbons and Murphy 1992)
+Assets j,t             Firm j's total assets in year t (from Compustat); missing data is interpolated.
+Employees j,t          Firm j's total number of employees in year t (from Compustat); missing data is
+                       interpolated.
+
+
+                                               46
+            APPENDIX B CORPORATE MONITORING: ROBUSTNESS TESTS
+
+This appendix presents the robustness tests of the relation between anti-takeover laws and
+CEOs' life expectancy referenced in Section 3.5.
+
+CEO Cohorts
+
+We implement a series of robustness tests addressing possible cohort effects, in light of
+the fact that BC laws disproportionately protected more recent CEOs who are younger on
+average. First, Panel A of Appendix-Table B.2 directly includes CEO birth-year fixed effects.
+Coefficients and levels of significance are very similar in all specifications, whether using
+the BC indicator, linear, or non-linear BC variables. Next, Panel B of Appendix-Table B.2
+reverts to year fixed effects, but allows the effect of age on mortality to be cohort-specific:
+we sort CEOs into quintiles based on birth year, and allow for separate age estimates. While
+there are small differences in age effects across CEO cohorts, the three BC law variables
+are barely affected and remain statistically and economically significant. We also consider
+CEO cohorts based on the year of their appointment to the top position. In Panel C of
+Appendix-Table B.2, we augment the main models with appointment-year fixed effects.
+The BC law estimates are virtually unaffected. Finally, we consider estimation subsamples
+with later start years or earlier end years. In Appendix-Figure B.2, we move forward the
+starting year of the sample one year at a time. The results are stable across the different
+sample year cutoffs. We then vary the censoring date for defining the death or alive status
+of the CEOs to address the concern that CEOs with information in more recent years may
+have characteristics that are correlated with longevity. Appendix-Figure B.3 shows that the
+estimated coefficients for both I (BC) and BC remain stable with different censoring years.
+
+Additional CEO and Firm Controls
+
+Panel A of Appendix-Table B.3 contains the results when we include CEO pay (from
+Gibbons and Murphy 1992) and firm size (assets and employees from CRSP and Compustat)
+as additional control variables. Our main specification excludes these variables as they may
+themselves be affected by the passage of the BC laws.29 We linearly interpolate any missing
+data. (Nonetheless, the number of observations decreases, as there are observations where
+data on one of the three additional controls is missing in all years.) Two findings emerge.
+First, the coefficients on the BC law exposure variables are very similar to those in Table III
+  29   See Section 3.6 for how CEO pay responds to BC laws.
+
+                                                   47
+and remain significant at 1%. Second, in none of the specifications, any of the additional
+control variables is significant. This might reflect endogenous selection on observables. The
+(non-)results on pay and size are also in line with the notion that income in the very upper
+tail of the distribution is no longer correlated with health outcomes (Chetty et al. 2016).
+     As another variation in firm-level controls, we use fixed effects for state of incorporation
+instead of headquarters state. The results (in Panel B of Appendix-Table B.3) are barely
+affected.
+
+First-Time Enactment of Second-Generation Anti-Takeover Laws
+
+Our main analysis exploits the enactment of BC laws as they have been shown to create sub-
+stantial conflicts of interest between managers and shareholders (Bertrand and Mullainathan
+2003, Gormley and Matsa 2016). Some researchers have questioned whether BC laws were
+the most important legal development impacting corporate governance at the time (see the
+discussion in Cain et al. (2017) and Karpoff and Wittry (2018)). Here, we replicate our
+analyses for other anti-takeover legislation from the 1980s that induced plausibly exogenous
+variation in corporate monitoring intensity.
+    In addition to BC laws, four other types of anti-takeover laws were passed by individual
+states since the 1980s: (1) Control Share Acquisition laws prohibited acquirers of large
+equity stakes from using their voting rights, making it more difficult for hostile acquirers to
+gain control. (2) Fair Price laws required acquirers to pay a fair price for shares acquired
+in a takeover attempt. Fair could mean, for example, the highest price paid by the acquirer
+for shares of the target within the last 24 months (cf. Cheng, Nagar, and Rajan 2004). (3)
+Directors' Duties laws extended the board members' duties to incorporate the interests of
+non-investor stakeholders, even if not necessarily maximizing shareholder value. (4) Poison
+Pill laws guaranteed that the firms had the right to use poison pill takeover defenses. We
+refer to the first of these five laws (including BC laws) passed by a state as the First Law (FL).
+Anti-takeover law exposure is similar when jointly looking at all five second-generation
+laws. For example, conditional on any FL exposure, the median CEO experiences 4.45
+years, close to the 4.41 years in the BC-based analysis.
+    Appendix-Figure B.1 visualizes the FL enactment by states over time.
+    Appendix-Table B.4 re-estimates Table III using FL enactment as identifying variation.
+We limit the sample to the 1,510 CEOs who are appointed in years prior to the FL enactment
+of any of the five second-generation anti-takeover laws. Consistent with our main findings,
+we estimate a significant increase in longevity for CEOs under less stringent governance
+
+                                               48
+regimes. The estimated effect sizes are very similar to our main specification using BC laws.
+For example, for the specifications in Panel A based on cumulative law exposure, the hazard
+ratios range from 0.955 to 0.957, compared to 0.955-0.959 in Table III. As Panel B shows,
+the FL results are also robust to including the additional CEO and firm level controls from
+Panel A of Appendix-Table B.3.
+
+Institutional and Legal Context of the Anti-Takeover Laws
+
+Karpoff and Wittry (2018) propose several robustness tests to address endogenous firm
+responses to anti-takeover laws, which we implement in Appendix-Table B.5. For all sample
+restrictions, we follow the procedure suggested in Karpoff and Wittry (2018): In Panel A,
+we remove the 46 firms identified by these authors as having lobbied for the passage of
+the second-generation laws. In Panel B, we use Institutional Shareholder Services (ISS)
+Governance (formerly, RiskMetrics) data from 1990 to 2017 to identify firms that opted
+out of coverage by the laws and exclude them from the analysis. In Panel C, we exclude
+firm-years in which firms had adopted firm-level anti-takeover defenses. We identify firms
+with firm-level defenses combining ISS data with data provided to us by Cremers and Ferrell
+(2014), which extends the Gompers et al. (2003) G-index backwards to 1977-1989. We back
+out whether firms used firm-level defenses in 1977-1989 by "subtracting" the state-wide
+laws from the G-index, which combines firm- and state-level defenses. Firm-level defenses
+include Golden Parachutes and Cumulative Voting (cf. Gompers et al. (2003) for details).
+    In all subsamples, the hazard ratio on BC exposure remains significant at 1%, both when
+using the indicator and the count variable for BC experience. In addition, the hazard ratio
+estimates are nearly unchanged, ranging from 0.752 (Panel A, column 1) to 0.806 (Panel B,
+column 3) for the indicator version, and from 0.954 (Panel C, column 4) to 0.960 (Panel A,
+column 3; Panel B, columns 5 and 6) for the count version.
+    Karpoff and Wittry (2018) also point to possible confounding effects of first-generation
+anti-takeover laws. They raise the concern that firms without BC exposure might experience
+lenient governance before 1982 because first-generation anti-takeover laws effectively lost
+their effect only starting from June 1982 after the Edgar v. MITE ruling.
+    We address this concern in Appendix-Table B.6 through three cuts of the data. In
+subsample A, we drop all CEO-years prior to 1982, i. e., we restrict the sample to years from
+1982 onward (albeit including the post-1982 years for CEOs who stepped down prior to
+1982). In subsample B, we drop all CEOs who stepped down prior to 1982, i. e., we restrict
+
+
+                                             49
+the sample to CEOs who served during the "post-first-law period" (including CEO-years
+prior to 1982). Note that in terms of number of CEOs remaining, subsample B is more
+restrictive than subsample A. In subsample C, we restrict the sample to CEOs who began
+their tenure in or after 1982, i. e., subsample C is a subset of subsample B. In all subsamples,
+we continue to estimate hazard ratios substantially below one for both the indicator and
+cumulative BC exposure variables, similar in size to those in the main table. The coefficients
+remain significant at 1% in subsamples A and B as well as in the most restrictive subsample
+C when using the indicator BC variable. In the latter sample, we lose statistical power when
+using the cumulative BC exposure (standard errors quintuple), though the point estimate
+remains similar.
+    Finally, in a last set of robustness checks, we move beyond the tests suggested in
+Karpoff and Wittry (2018) and create sub-samples based on firms' state of incorporation and
+industry affiliation, inspired by similar robustness checks in Giroud and Mueller (2010) and
+Gormley and Matsa (2016). In Appendix-Table B.7, we exclude firms that are incorporated
+in Delaware or in New York, the two most common states of incorporation in our sample
+(Panel A); firms in the Banking industry (Panel B); or firms in the Utilities industry (Panel
+C). In all three panels, the hazard ratio estimates on binary and cumulative BC exposure are
+barely affected by these data cuts.
+
+Linear Probability Model
+
+To address any potential concerns about the hazard model, we also estimate a linear proba-
+bility model, using the same 1,605 CEOs as in the hazard analysis:
+                       Yi, j,k,m,t = 0 + 1 Xi +  j + k + m + t + i, j,k,m,t
+
+where i represents a CEO, j represents a headquarters state, k represents an industry, m
+represents tenure-start age, and t either represents tenure-start year or birth year. The
+dependent variable Yi, j,k,m,t is an indicator variable that takes value one if the CEO has died
+by October 1st, 2017. The main independent variable of interest, Xi , is an indicator variable
+that takes value one if the CEO has ever been protected by a BC law and zero otherwise.
+    The results are shown in Appendix-Table B.8. In column (1), we linearly control for
+tenure-start age, and also include tenure-start year, industry, and headquarters-state fixed
+effects.30 In column (2), we add tenure-start age fixed effects instead of the linear term.
+
+  30Since this analysis no longer uses CEO-year data, the industry classification is from the last year of a
+CEO's tenure.
+
+                                                    50
+In column (3), we include birth-year fixed effects instead of tenure start-year fixed effects.
+All specifications are constructed to map closely to the specifications in the hazard model
+analysis. In all three columns, the estimated coefficients on the BC experience indicator are
+similar, ranging from -0.063 to -0.069, statistically significant at conventional levels. To
+interpret the economic magnitude of these estimates, we compare them to the coefficient on
+the linear age term in column (1): the effect of being protected by BC laws corresponds to
+that of assuming the CEO position when two and a half years younger (0.063/0.027 = 2.56).
+Hence, the age-based effect size comparisons are very close to those estimated in the hazard
+model.
+
+
+
+
+A PPENDIX -F IGURE B.1. --First-time introduction of second-generation anti-takeover laws over
+time. Notes: This figure visualizes the distribution of first-time enactments of any of the five most
+common second-generation anti-takeover laws over time, i. e., business combination (BC), fair price
+(FP), control share acquisition (CSA), poison pills (PP), and directors' duties (DD) laws. The graph
+omits the states of Alaska and Hawaii. Alaska did not adopt any second-generation anti-takeover
+laws. Hawaii adopted a CSA law on 4/23/1985, and DD and PP laws on 6/7/1988.
+
+
+
+
+                                                 51
+A PPENDIX -F IGURE B.2.--Estimated effect of the BC law exposure when varying the sample cutoff
+year. Notes: This figure shows the estimated coefficients on the BC indicator variable I (BC) when
+using the specification from Table III, column 3, but varying the sample. In the main sample, CEOs
+end their tenure in or later than 1975. We vary this cutoff year from 1975 to 1985, when the first BC
+law ever was passed. The blue (dark) bars are the number of CEOs in the sample. When the cutoff
+year is 1975 (our main sample), the number is 1,605 and the estimated coefficient is the same as
+shown in Table III, Column (3).
+
+
+
+
+A PPENDIX -F IGURE B.3.--Estimated effect of the BC law exposure when varying the censoring
+year. Notes: This figure shows the estimated coefficients on the BC indicator variable I (BC) and
+the cumulative BC variable BC when using the specifications from Table III, columns 3 and 6, but
+varying the censoring date defining death or alive status. In the main analysis, the cutoff date is Oct. 1,
+2017, i. e., CEOs who did not pass away before this date are treated as censored. The alternative
+censoring dates are Dec. 31, 2010; Dec. 31, 2011; ...; Dec. 31, 2016; and Oct. 1, 2017. The number
+of CEOs in the sample remains unchanged when varying the cutoff, i.e. N = 1, 605.
+
+
+
+                                                   52
+A PPENDIX -F IGURE B.4. --Proportion of CEOs stepping down by age. Notes: This figure depicts
+the proportion of CEOs stepping down at each age, split by whether or not a CEO was exposed to a
+business combination (BC) law. The vertical dashed line indicates age 65.
+
+
+
+
+                                              53
+                                                                    APPENDIX-TABLE B.1
+                                                         A DDITIONAL S UMMARY S TATISTICSa
+                                                      Panel A: Summary Statistics for Different CEO Sub-Groups
+
+
+                                   No BC Exposure (N =980)                    Below-Median BC Exposure (N =320)         Above-Median BC Exposure (N =305)
+                           Mean        SD     P10       P50         P90     Mean      SD       P10     P50        P90   Mean    SD     P10     P50     P90
+      Birth Year           1922       8.48    1913     1921     1934        1927      6.90    1921     1926    1938     1933    6.51   1926    1933    1942
+      Dead (by 10/2017)    0.82        0.38     0        1         1        0.68      0.47      0        1       1      0.38    0.49     0        0      1
+      Year of Death        2002       10.24   1987     2003     2015        2008      8.05   1994.08   2010    2016     2009    7.05   1997    2012    2017
+      Age at Death         82.30      10.10   68.00    83.83    94.00       81.89     9.52    68.00    84.17   92.42    79.64   9.13   66.83   81.17   90.42
+      Age Tak. Office      52.88       6.69    44        53       61        51.47     6.94     42        52      60     47.79   6.34     40      48     56
+      Year Tak. Office     1975        7.08   1966     1974     1984        1979      6.60    1971     1980    1986     1981    5.89   1972    1982    1987
+      Tenure                8.70       5.72     2       7.50      16        10.83     6.48      4       9.04   20.08    16.54   7.21    8.42   15.08   27.33
+      BC                    0.00       0.00     0         0      0.00        1.93     1.24     0.5      1.86    3.82     9.61   4.52    5.41    8.33   14.74
+54
+
+
+
+
+                                                      Panel B: Most Common Industries and Incorporation States
+
+                                                              All         No BC          p50 BC         > p50 BC
+      Top 5 FF49 Industries                               Banking         Banking        Banking         Banking
+                                                          Utilities       Utilities      Utilities       Utilities
+                                                           Retail          Retail         Chem.           Retail
+                                                           Petrol.         Trans.         Retail          Insur.
+                                                           Trans.          Petrol.        Insur.          Petrol.
+
+      Top 3 States of Incorporation                           DE            DE              DE               DE
+                                                              NY            NY              NY               NY
+                                                              OH            OH             NJ/OH             PA
+        a This table presents additional summary statistics for our main sample covering 1,605 CEOs, with splits based on CEOs' exposure to BC laws. All
+     variables are defined in Appendix A.
+                                                       APPENDIX-TABLE B.2
+                                           B USINESS C OMBINATION L AWS AND M ORTALITY ­
+              CEO B IRTH -Y EAR F IXED E FFECTS , AGE -B Y-C OHORT C ONTROLS , AND A PPOINTMENT-Y EAR F IXED E FFECTSa
+      Dependent Variable: Deathi,t
+                                               (1)         (2)          (3)            (4)          (5)          (6)            (7)          (8)          (9)
+                                                 Panel A: Birth Year FE             Panel B: Age-By-Cohort Controls           Panel C: Appointment Year FE
+      I(BC)                                 0.772**                                  0.794**                                  0.774**
+                                            [0.089]                                  [0.086]                                  [0.077]
+      BC                                                0.958***                                 0.965***                                 0.956**
+                                                         [0.007]                                  [0.006]                                 [0.006]
+      BC(min - p50)                                                  0.918**                                  0.923**                                 0.910**
+                                                                      [0.033]                                 [0.029]                                  [0.026]
+      BC( p51- max)                                                    0.989                                   0.997                                    0.990
+                                                                      [0.018]                                 [0.018]                                  [0.017]
+      Age                                  1.130***     1.128***     1.129***                                                1.127***     1.124***    1.123***
+                                            [0.006]      [0.005]      [0.006]                                                 [0.005]      [0.006]     [0.005]
+      Age × Birth Cohort 1 (oldest)                                                 1.095***     1.092***    1.093***
+                                                                                     [0.011]      [0.011]     [0.011]
+      Age × Birth Cohort 2                                                          1.094***     1.090***    1.091***
+55
+
+
+
+
+                                                                                     [0.011]      [0.010]     [0.011]
+      Age × Birth Cohort 3                                                          1.092***     1.088***    1.089***
+                                                                                     [0.012]      [0.011]     [0.012]
+      Age × Birth Cohort 4                                                          1.088***     1.085***    1.086***
+                                                                                     [0.014]      [0.013]     [0.013]
+      Age × Birth Cohort 5 (youngest)                                               1.082***     1.079***    1.081***
+                                                                                     [0.014]      [0.013]     [0.013]
+      Location FE (HQ)                         Y            Y           Y               Y            Y           Y               Y            Y           Y
+      FF49 FE                                  Y            Y           Y               Y            Y           Y               Y            Y           Y
+      Year FE                                                                           Y            Y           Y               Y            Y           Y
+      Birth Year FE                            Y            Y           Y
+      CEO Appointment Year FE                                                                                                    Y            Y           Y
+      Number of CEOs                         1,605       1,605        1,605          1,605        1,605        1,605          1,605        1,605        1,605
+      Observations                           50,530      50,530       50,530         50,530       50,530       50,530         50,530       50,530       50,530
+        a Columns  (1), (4), and (7) show re-estimates of the regressions from column (3) of Table III. Columns (2), (5), and (8) show re-estimates of the
+     regressions from column (6) of Table III, and column (3), (6), and (9) show re-estimates of the regression from column (3) of Table IV. Regressions in
+     Panel A include birth-year fixed effects instead of year fixed effects. Regressions in Panel B allow for birth cohort-specific age effects. Birth cohorts are
+     defined by sorting CEOs into quintiles by birth year. Regressions in Panel C add CEO appointment year fixed effects. Standard errors, clustered at the
+     state-of-incorporation level, are shown in brackets. *, **, and *** denote significance at the 10, 5, and 1 percent level, respectively.
+                               APPENDIX-TABLE B.3
+                   B USINESS C OMBINATION L AWS AND M ORTALITY ­
+         A DDITIONAL C ONTROLS AND S TATE - OF -I NCORPORATION F IXED E FFECTSa
+ Dependent Variable: Deathi,t
+                               (1)         (2)            (3)        (4)          (5)          (6)
+                                                  Panel A: Additional Controls
+ I(BC)                     0.770***     0.786***     0.799***
+                            [0.056]      [0.068]      [0.066]
+ BC                                                               0.956***     0.961***     0.962***
+                                                                   [0.007]      [0.007]      [0.007]
+ ln(Pay)                     0.986        1.008          1.003      0.977        0.988        0.985
+                            [0.035]      [0.040]        [0.040]    [0.043]      [0.048]      [0.048]
+ ln(Assets)                  1.015        0.968          0.960      1.023        0.986        0.979
+                            [0.026]      [0.041]        [0.040]    [0.024]      [0.036]      [0.034]
+ ln(Employees)               0.990        1.017          1.023      0.988        1.008        1.012
+                            [0.021]      [0.039]        [0.038]    [0.021]      [0.037]      [0.038]
+ Location FE (HQ)              Y            Y             Y           Y            Y            Y
+ Number of CEOs             1,503        1,503          1,503      1,503         1,503       1,503
+ Observations               49,052       49,052         49,052     49,052        49,052      49,052
+                                        Panel B: State-of-Incorporation Fixed Effects
+ I(BC)                     0.767***     0.760***     0.768***
+                            [0.064]      [0.067]      [0.066]
+ BC                                                               0.953***     0.955***     0.956***
+                                                                   [0.007]      [0.007]      [0.007]
+ Location FE (Incorp.)         Y            Y             Y           Y            Y            Y
+ Number of CEOs             1,605        1,605          1,605      1,605         1,605       1,605
+ Observations               50,530       50,530         50,530     50,530        50,530      50,530
+ Year (Linear Control)         Y            Y                         Y            Y
+ Age (Linear Control)          Y            Y             Y           Y            Y            Y
+ FF49 FE                                    Y             Y                        Y            Y
+ Year FE                                                  Y                                     Y
+      a Panel A reports hazard ratios estimated as in Table III, with additional controls for CEO
+pay, assets, and employees. Panel B reports hazard ratios estimated as in Table III, but including
+state-of-incorporation fixed effects instead of state-of-headquarters fixed effects. Controls and fixed
+effects (in addition to location fixed effects based on state-of-headquarters or state-of-incorporation)
+for both panels are indicated at the bottom of the table. All variables are defined in Appendix A.
+Standard errors, clustered at the state-of-incorporation level, are shown in brackets. *, **, and ***
+denote significance at the 10, 5, and 1 percent level, respectively.
+
+
+
+
+                                                   56
+                                APPENDIX-TABLE B.4
+      F IRST-T IME S ECOND -G ENERATION A NTI -TAKEOVER L AWS AND M ORTALITYa
+ Dependent Variable: Deathi,t
+                              (1)          (2)            (3)       (4)           (5)        (6)
+                                                   Panel A: Baseline Results
+ I(FL)                     0.802***    0.802***      0.807***
+                            [0.053]     [0.061]       [0.061]
+ FL                                                               0.955***     0.957***   0.957***
+                                                                   [0.006]      [0.006]    [0.006]
+ Number of CEOs             1,510        1,510          1,510      1,510         1,510     1,510
+ Observations               47,994       47,994         47,994     47,994        47,994    47,994
+                                                  Panel B: Additional Controls
+ I(FL)                     0.827***     0.844**       0.855**
+                            [0.051]     [0.059]       [0.058]
+ FL                                                               0.957***     0.961***   0.962***
+                                                                   [0.008]      [0.007]    [0.008]
+ ln(Pay)                     0.977       1.005           1.000      0.984        1.001      0.998
+                            [0.036]     [0.037]         [0.037]    [0.042]      [0.045]    [0.045]
+ ln(Assets)                  1.014       0.944          0.937*      1.026        0.976      0.970
+                            [0.026]     [0.035]         [0.033]    [0.025]      [0.032]    [0.031]
+ ln(Employees)               0.995       1.045           1.050      0.987        1.019      1.022
+                            [0.020]     [0.036]         [0.036]    [0.019]      [0.036]    [0.037]
+ Number of CEOs             1,464        1,464          1,464      1,464         1,464     1,464
+ Observations               46,660       46,660         46,660     46,660        46,660    46,660
+ Year (Linear Control)         Y           Y                         Y             Y
+ Age (Linear Control)          Y           Y              Y          Y             Y          Y
+ Location FE (HQ)              Y           Y              Y          Y             Y          Y
+ FF49 FE                                   Y              Y                        Y          Y
+ Year FE                                                  Y                                   Y
+    a Thistable reports hazard ratios estimated as in Table III, but using the first-time introduction
+of any of the five most common second-generation anti-takeover laws as measure of lenient
+governance. The sample is restricted to CEOs appointed prior to the introduction of the anti-
+takeover law(s). Panel B adds additional controls for CEO pay, assets, and employees. Controls
+and fixed effects for both panels are indicated at the bottom of the table. All variables are defined
+in Appendix A. Standard errors, clustered at the state-of-incorporation level, are shown in brackets.
+*, **, and *** denote significance at the 10, 5, and 1 percent level, respectively.
+
+
+
+
+                                                   57
+                                      APPENDIX-TABLE B.5
+      E XCLUDING L OBBYING F IRMS , O PT-O UT F IRMS , AND F IRM -Y EARS WITH
+                           F IRM -L EVEL D EFENSESa
+ Dependent Variable: Deathi,t
+                              (1)          (2)           (3)          (4)          (5)          (6)
+                                             Panel A: Excluding Lobbying Firms
+ I(BC)                     0.752***     0.756***     0.762***
+                            [0.067]      [0.069]      [0.069]
+ BC                                                               0.955***     0.958***     0.959***
+                                                                   [0.006]      [0.007]      [0.007]
+ Number of CEOs              1,530        1,530         1,530      1,530         1,530        1,530
+ Observations               48,106       48,106         48,106     48,106        48,106       48,106
+                                                Panel B: Excluding Opt-out Firms
+ I(BC)                     0.784***     0.797***     0.806***
+                            [0.064]      [0.065]      [0.064]
+ BC                                                               0.956***     0.960***     0.960***
+                                                                   [0.006]      [0.006]      [0.006]
+ Number of CEOs              1,532        1,532         1,532      1,532         1,532        1,532
+ Observations               48,180       48,180         48,180     48,180        48,180       48,180
+                                           Panel C: Excluding Firm-level Defenses
+ I(BC)                     0.762***     0.765***     0.774***
+                            [0.060]      [0.066]      [0.067]
+ BC                                                               0.954***     0.957***     0.957***
+                                                                   [0.005]      [0.005]      [0.005]
+ Number of CEOs              1,599        1,599         1,599      1,599         1,599        1,599
+ Observations               43,417       43,417         43,417     43,417        43,417       43,417
+ Year (Linear Control)         Y            Y                         Y            Y
+ Age (Linear Control)          Y            Y             Y           Y            Y            Y
+ Location FE (HQ)              Y            Y             Y           Y            Y            Y
+ FF49 FE                                    Y             Y                        Y            Y
+ Year FE                                                  Y                                     Y
+   a This table reports hazard ratios estimated as in Table III, but with additional sample restrictions.
+
+In Panel A, we exclude 46 firms that Karpoff and Wittry (2018) identify as firms that lobbied
+for the enactment of the second-generation anti-takeover laws. In Panel B, we exclude 61 firms
+that opted out of the second-generation anti-takeover laws, based on data from the Institutional
+Shareholder Services (ISS) Governance database. In Panel C, we exclude firm-years in which firms
+used firm-level defenses as identified from the the ISS data and data from Cremers and Ferrell
+(2014). Controls and fixed effects for all three panels are indicated at the bottom of the table.
+All variables are defined in Appendix A. Standard errors, clustered at the state-of-incorporation
+level, are shown in brackets. *, **, and *** denote significance at the 10, 5, and 1 percent level,
+respectively.
+
+                                                   58
+                                      APPENDIX-TABLE B.6
+    R ESTRICTION TO Y EARS A FTER            THE   E ND OF THE F IRST-G ENERATION L AWSa
+ Dependent Variable: Deathi,t
+                            (1)             (2)           (3)          (4)         (5)          (6)
+                              Subsample A:                 Subsample B:             Subsample C:
+                             Drop CEO-years             Drop CEOs stepping          CEOs starting
+                                pre-1982                  down pre-1982            in or after 1982
+
+
+ I(BC)                   0.766***                       0.803***                0.659***
+                         [0.063]                         [0.059]                 [0.059]
+ BC                                     0.957***                   0.960***                    0.965
+                                         [0.005]                    [0.006]                   [0.027]
+ Age                    1.124***        1.122***        1.128***   1.124***     1.132***     1.125***
+                         [0.005]         [0.006]         [0.006]    [0.006]      [0.015]      [0.020]
+
+ Location FE (HQ)           Y               Y              Y           Y            Y            Y
+ FF49 FE                    Y               Y              Y           Y            Y            Y
+ Year FE                    Y               Y              Y           Y            Y            Y
+ Number of CEOs           1,573          1,573           1,231       1,231        477          477
+ Observations             40,834         40,834          39,623      39,623      13,562       13,562
+    a This table re-estimates columns (3) and (6) of Table III with the sample restricted to the period
+when the first-generation anti-takeover laws lost their effect (in June 1982 after the Edgar v. MITE
+ruling). In subsample A, we drop all CEO-years prior to 1982, i. e., we restrict the sample to years
+from 1982 onward (albeit including the post-1982 years for CEOs who stepped down prior to 1982).
+In subsample B, we drop all CEOs who stepped down prior to 1982, i. e., we restrict the sample
+to CEOs who served during the "post-first-law period" (including CEO-years prior to 1982). Note
+that in terms of number of CEOs remaining, subsample B is more restrictive than subsample A. In
+subsample C, we restrict the sample to CEOs who began their tenure in or after 1982, i. e., subsample
+C is a subset of subsample B. All variables are defined in Appendix A. Standard errors, clustered at
+the state-of-incorporation level, are shown in brackets. *, **, and *** denote significance at the 10, 5,
+and 1 percent level, respectively.
+
+
+
+
+                                                   59
+                                      APPENDIX-TABLE B.7
+       E XCLUDING DE OR NY I NCORPORATED , BANKING , OR U TILITY F IRMSa
+ Dependent Variable: Deathi,t
+                               (1)          (2)            (3)        (4)            (5)        (6)
+                                                Panel A: Excluding DE/NY Firms
+ I(BC)                     0.707***     0.679***       0.688***
+                            [0.079]      [0.085]        [0.086]
+ BC                                                                0.958***     0.958**      0.962**
+                                                                    [0.016]     [0.019]      [0.019]
+ Number of CEOs               738          738             738       738          738          738
+ Observations                22,103       22,103          22,103    22,103       22,103       22,103
+                                              Panel B: Excluding Banking Firms
+ I(BC)                     0.727***     0.717***       0.726***
+                            [0.056]      [0.060]        [0.060]
+ BC                                                                0.942***    0.944***     0.945***
+                                                                    [0.007]     [0.007]      [0.007]
+ Number of CEOs               1,328        1,328          1,328     1,328        1,328        1,328
+ Observations                42,322       42,322          42,322    42,322       42,322       42,322
+                                                  Panel C: Excluding Utility Firms
+ I(BC)                     0.777***     0.785***       0.794***
+                            [0.056]      [0.061]        [0.061]
+ BC                                                                0.957***    0.961***     0.962***
+                                                                    [0.005]     [0.004]      [0.005]
+ Number of CEOs               1,422        1,422          1,422     1,422        1,422        1,422
+ Observations                45,017       45,017          45,017    45,017       45,017       45,017
+ Year (Linear Control)         Y            Y                          Y             Y
+ Age (Linear Control)          Y            Y               Y          Y             Y           Y
+ Location FE (HQ)              Y            Y               Y          Y             Y           Y
+ FF49 FE                                    Y               Y                        Y           Y
+ Year FE                                                    Y                                    Y
+    a This table reports hazard ratios estimated as in Table III with the sample restricted by states of
+incorporation or industries. In Panel A, we exclude firms that are incorporated in Delaware or New
+York (the two most common states of incorporation in our sample, see Table I). In Panel B, we
+exclude firms that are classified as "Banking" firms in the Fama-French 49 industry classification.
+In Panel C, we exclude firms that are classified as "Utilities" firms in the Fama-French 49 industry
+classification. Controls and fixed effects for all three panels are indicated at the bottom of the table.
+All variables are defined in Appendix A. Standard errors, clustered at the state-of-incorporation
+level, are shown in brackets. *, **, and *** denote significance at the 10, 5, and 1 percent level,
+respectively.
+
+
+
+
+                                                     60
+                             APPENDIX-TABLE B.8
+             L INEAR P ROBABILITY M ODEL AT THE CEO L EVELa
+ Dependent Variable: Deathi
+                                 (1)                  (2)                (3)
+ BC Treatment                 -0.069***            -0.068**            -0.063*
+                                [0.024]             [0.026]             [0.031]
+ Tenure Start Age             0.027***
+                                [0.002]
+ Location FE (HQ)                Y                    Y                   Y
+ FF49 FE                         Y                    Y                   Y
+ Tenure Start Year FE            Y                    Y
+ Tenure Start Age FE                                  Y                   Y
+ Birth Year FE                                                            Y
+ Observations                   1,605               1,605               1,605
+    a This table reports regression results of a linear probability model at the CEO
+level instead of a hazard model. Each observation represents one CEO in our dataset.
+The dependent variable is an indicator that is one if the CEO passed away by October
+1st, 2017, and zero otherwise. "BC Treatment" is an indicator variable that is one
+if the CEO has ever been protected by a BC law and zero otherwise. Fixed effects
+are indicated at the bottom of the table. Standard errors, clustered at the state-of-
+incorporation level, are shown in brackets. *, **, and *** denote significance at the
+10, 5, and 1 percent level, respectively.
+
+
+
+
+                                          61
+    APPENDIX C INDUSTRY-WIDE DISTRESS SHOCKS: ROBUSTNESS TESTS
+
+This appendix contains all robustness figures and tables on industry-wide distress shocks.
+
+
+
+
+A PPENDIX -F IGURE C.1.--Average number of pictures per CEO across years. Notes: This figure
+depicts the average number of pictures per CEO we are able to collect each year for the group of
+CEOs that experienced industry shocks during 2007-2008 and the group that did not. The two black
+vertical lines indicate the years 2006 and 2008.
+
+
+
+
+                                              62
+                                     APPENDIX-TABLE C.1
+                           I NDUSTRY D ISTRESS AND M ORTALITY ­
+                             A DDITIONAL C ONTROLS AND CEO Sa
+ Dependent Variable: Deathi,t
+                             (1)         (2)           (3)            (4)         (5)          (6)
+                            Panel A: Additional Controls               Panel B: Additional CEOs
+
+
+ Industry Distress       1.188***     1.219***    1.207***         1.130**     1.147**     1.138**
+                          [0.076]      [0.085]     [0.085]          [0.065]     [0.065]     [0.065]
+ Age                     1.115***     1.125***    1.125***         1.118***    1.125***    1.126***
+                          [0.006]      [0.006]     [0.006]          [0.006]     [0.007]     [0.007]
+ Year                      1.008        1.008                        1.009       1.007
+                          [0.006]      [0.007]                      [0.006]     [0.006]
+ ln(Pay)                   0.987        1.020       1.015
+                          [0.036]      [0.045]     [0.045]
+ ln(Assets)                1.010        0.950       0.944
+                          [0.032]      [0.048]     [0.048]
+ ln(Employees)             0.990        1.028       1.033
+                          [0.035]      [0.057]     [0.058]
+ BC Exposure Control         Y            Y           Y                Y           Y           Y
+ Location FE (HQ)            Y            Y           Y                Y           Y           Y
+ FF49 FE                                  Y           Y                            Y           Y
+ Year FE                                              Y                                        Y
+ Number of CEOs            1,553       1,553       1,553            1,900        1,900       1,900
+ Observations              49,052      49,052      49,052           58,034       58,034      58,034
+   a Panel A reports hazard ratios estimated as in Table VI but with additional controls for CEO pay,
+assets, and employees. Panel B reports hazard ratios estimated as in Table VI but using an extended
+sample that includes CEOs who were appointed after the passage of anti-takeover laws. All variables
+are defined in Appendix A. Standard errors, clustered at the state-of-incorporation level, are shown in
+brackets. *, **, and *** denote significance at the 10, 5, and 1 percent level, respectively.
+
+
+
+
+                                                  63
+                                APPENDIX-TABLE C.2
+              L INEAR P ROBABILITY M ODEL AT THE CEO L EVELa
+ Dependent Variable: Deathi
+                                 (1)                   (2)                    (3)
+ Industry Distress              0.036                0.056**                0.062**
+                               [0.025]               [0.026]                [0.025]
+ BC Treatment                 -0.074**              -0.076**               -0.073**
+                               [0.029]               [0.030]                [0.029]
+ Tenure Start Age             0.027***
+                               [0.002]
+ Location FE (HQ)                 Y                     Y                      Y
+ FF49 FE                          Y                     Y                      Y
+ Tenure Start Year FE             Y                     Y
+ Tenure Start Age FE                                    Y                      Y
+ Birth Year FE                                                                 Y
+ Observations                   1,605                 1,605                  1,605
+   a This  table reports the regression results of a a linear probability model at the CEO
+level instead of a hazard model. Each observation represents one CEO in our dataset. The
+dependent variable is an indicator that is one if the CEO has passed away by October 1st,
+2017, and zero otherwise. "Industry Distress" is an indicator variable that is one if the
+CEO has ever experienced industry distress. "BC Treatment" is an indicator variable that
+is one if the CEO has ever been protected by a BC law and zero otherwise. Fixed effects
+are indicated at the bottom of the table. Standard errors, clustered at the industry level,
+are shown in brackets. *, **, and *** denote significance at the 10, 5, and 1 percent level,
+respectively.
+
+
+
+
+                                             64
+                                                                             APPENDIX-TABLE C.3
+                                                      I NDUSTRY D ISTRESS AND CEO AGING ­
+                         N O W INSORIZATION , M ORE R ESTRICTIVE I NDUSTRY D ISTRESS D EFINITION ,                                 AND     P RE -2016 S AMPLEa
+      Dependent Variable: Apparent Agei, j,t
+                                               (1)       (2)        (3)        (4)        (5)           (6)          (7)            (8)          (9)       (10)       (11)       (12)
+                                                            Panel A:                                        Panel B:                                          Panel C:
+                                                         Not Winsorized                          Restrictive Distress Definition                          Pre-2016 Sample
+
+
+      Industry Distress × 1{t >2006}        0.940*     0.978**                          1.173**       1.064**                                  0.816*    0.839*
+                                            [0.496]    [0.491]                          [0.469]       [0.463]                                  [0.487]   [0.485]
+      Industry Distress × 1{2006<t <2012}                           0.807      0.841                              1.102**      1.007*                                 0.604      0.622
+                                                                   [0.536]    [0.531]                             [0.504]      [0.510]                               [0.535]    [0.525]
+      Industry Distress × 1{t 2012}                                1.135*    1.178**                             1.261**      1.135**                                1.323**    1.360**
+                                                                   [0.576]    [0.564]                             [0.563]      [0.551]                               [0.566]    [0.568]
+      Biological Age                        0.912***   0.908***   0.944***   0.940***   1.272***     1.274***    1.268***     1.269***        0.952***   0.943***   0.983***   0.974***
+                                             [0.093]    [0.093]    [0.095]    [0.095]    [0.021]      [0.022]     [0.027]      [0.028]         [0.095]    [0.096]    [0.094]    [0.093]
+65
+
+
+
+
+      CEO FE                                   Y          Y          Y          Y          Y             Y           Y              Y            Y          Y          Y          Y
+      Year FE                                  Y          Y          Y          Y          Y             Y           Y              Y            Y          Y          Y          Y
+      Picture Controls                                    Y                     Y                        Y                          Y                       Y                     Y
+      Number of CEOs                          463        463        463        463        463           463         463             463         463        463        463        463
+      Observations                           3,086      3,086      3,086      3,086      3,086         3,086       3,086           3,086       3,086      3,086      3,086      3,086
+       a PanelA shows OLS estimates of the effect of industry distress exposure during the Great Recession on CEO apparent age without winsorizing
+     apparent age. Panel B uses a more restrictive industry distress definition requiring negative industry sales growth in addition to the 30%-equity-
+     decline criterion, as in the robustness tests in Acharya et al. (2007), and in Opler and Titman (1994) and Babina (2020). Panel C restricts the
+     sample to only pictures taken prior to 2016. In all the three panels, we weight observations by the inverse of the number of pictures collected per
+     CEO. Standard errors, clustered at the industry level, are shown in brackets. *, **, and *** denote significance at the 10, 5, and 1 percent level,
+     respectively.
+                           APPENDIX D APPARENT-AGE ESTIMATION
+
+Our goal is to trace visible signs of aging in CEOs' faces. That is, we are interested in
+how old a person looks, which is referred to as the person's apparent age. By contrast,
+biological age describes how old a person is (time elapsed since birth) and will in general
+differ from a person's apparent age. To implement this analysis, we use machine learning
+based software by Antipov et al. (2016), henceforth referred to as the ABBD software. This
+software was specifically developed for the purpose of apparent-age estimation, and it was
+the winning solution of the second edition of the ChaLearn Looking At People competition
+in the apparent-age estimation track.
+    At the core of ABBD's apparent-age estimation tool is the training of a convolutional
+neural network (CNN). A CNN is a special class of neural networks that is particularly
+useful for image recognition and computer vision problems. A neural network is a system
+that learns to perform a task by studying training data.31 It is architectured with three classes
+of layers: input, output, and hidden layers. The input layer receives the external data being
+evaluated, and the output data contains the network's response to the input. The in-between
+layers are the hidden layers, which abstractly determine intermediate features about the
+data. A CNN is a neural network in which some of the hidden layers employ the method
+of convolution, i. e., of transforming the input by sliding (or, convolving) over it, to detect
+patterns (such as edges or corners), which are then passed on to the next layer.
+    Appendix-Figure D.1 provides a simplified example of how convolution works in CNNs.
+Here, the fictional input is a shape that is roughly recognizable as a face (numbers between
+-1 and 1 determine pixel color). The filter matrix slides over the input and produces the
+output as the sum of element-wise matrix multiplication of 3x3 pixel regions with the filter
+matrix. As can be seen in the convoluted output, this specific filter matrix identifies right
+vertical edges. Convolutional layers further along in a system may be able to detect more
+advanced patterns such as, in our application, eyes or wrinkles.
+    CNNs have become widely popular over the past ten to twenty years, with numerous
+applications, in particular to image recognition and classification. In an influential article
+on deep learning32 published in Nature, LeCun et al. (2015) summarize that CNNs have
+"brought about a revolution in computer vision" and "breakthroughs in processing images,
+video, speech and audio," and they are "now the dominant approach for almost all recognition
+and detection tasks."
+  31   The task is referred to as supervised learning if the data is labeled (annotated), as is our training data.
+  32   A neural network is considered deep if it has multiple hidden layers.
+
+                                                        66
+A PPENDIX -F IGURE D.1.--Simplified example of convolution. Notes. This figure shows a simplified
+example of convolution. The fictional input image (left) is roughly recognizable as a face. Each cell
+(pixel) is encoded with a number that determines its color (between -1.0-black and +1.0-white). The
+output image (right) is obtained through convolution. The 3 × 3 filter matrix (center) slides over each
+possible 3 × 3 region in the input image and outputs the sum of element-wise matrix multiplication
+of these 3x3 image regions and the filter matrix. Example inspired by material by Jeremy Howard
+(youtube.com/watch?v=V2h3IOBDvrA) and deeplizard (deeplizard.com/learn/video/YRhxdVk sIs).
+
+
+    ABBD's apparent-age estimation software starts from a pre-trained version of a state-of-
+the-art CNN for face recognition called VGG-16,33 and involves two key steps: training and
+fine-tuning of the CNN. In a first step, this CNN is trained on a large dataset of more than
+250,000 facial images from the IMDb (Internet Movie Database) and Wikipedia, which also
+contains information on the biological age of the person. The training step is implemented
+by minimizing the mean absolute error between predicted age and biological age. In a
+second step, the software is fine-tuned for apparent-age estimation on a unique dataset of
+5,613 facial images, which also contains information on the apparent age of the person in
+each picture. The information on people's apparent age consists of at least 10 age estimates
+(per picture) by humans, which were specifically collected for the ChaLearn Looking At
+People competition. The fine-tuning step is implemented by minimizing a metric that
+penalizes deviations from the average (human) age estimate more when the disagreement
+about the person's apparent age is low.34 Training and fine-tuning essentially mean that the
+software learns to estimate the age of the people in the two datasets using the information
+on biological and apparent age by adapting learning parameters in the hidden layers.
+
+  33  Introduced by Simonyan and Zisserman (2014), VGG-16 is a deep CNN. ABBD's software uses a
+VGG-16 version by Parkhi et al. (2015), which was trained for the purposes of face recognition (identifying
+identities from facial images) on 2.6 million images. Both works have been widely used and cited.
+                                              ^-µ)2
+  34  The metric is defined as  = 1 - exp - (x 22
+                                                    , where x
+                                                            ^ is the predicted apparent age, and µ and  are
+the image-level mean and standard deviation of across the human-based age estimates.
+
+                                                      67
+       ABBD's software and apparent-age estimation tool have a variety of notable features:
+    Age distribution in training datasets. Both the IMDb-Wikipedia data and the dataset
+employed for human-based fine-tuning include people from all age groups, and in particular
+people aged 50 and above. This ensures that the software is trained and fine-tuned on data
+that includes people with similar facial characteristics as our CEOs, such as with regard to
+baldness patterns, hair color, and wrinkle development. For reference, the CEO at the 10th
+(50th , 90th ) percentile in our dataset is 47 (56, 63) years old in 2006 (see Table VII).
+    Image pre-processing. Before feeding the pictures into the CNN for training and fine-
+tuning, ABBD "standardize" them, a process they label picture pre-processing. Specifically,
+they use existing software solutions to detect, scale, and align the face in each image, and
+resize each image to 224 × 224 pixels. Intuitively, standardizing images reduces the noise
+present when training and fine-tuning the software and improves performance (cf. Table 2
+in Antipov, Baccouche, Berrani, and Dugelay 2016). The software's performance on the
+ChaLearn Looking At People competition data improves by approximately 1% as a result of
+image-preprocessing (cf. Table 2 in Antipov, Baccouche, Berrani, and Dugelay 2016).
+    ABBD's trained software does not include image pre-processing code (and can, in fact,
+be applied to "raw images" so long as they are resized). We nonetheless replicate some
+of their pre-processing steps in order to increase the similarity between our CEO images
+and the images used for software training. We use the Python-based "face recognition"
+package35 to detect the picture region showing the CEO's face, extract the face, center it in
+the image, and resize the image to 224 × 224 pixels. Note that any remaining differences
+to ABBD's image pre-processing might increase the noise in our apparent age estimates,
+but not introduce bias as any potential systematic differences in pre-processing steps would
+need to be correlated with industry shock exposure during the Great Recession. Before
+pre-processing a picture, we make sure that the image contains only the face of the CEO. If
+a picture contains multiple faces, such as a CEO with their partner, other managers, or a
+journalist, we first manually crop the picture and keep only the portion that shows the CEO.
+    Appendix-Figure D.2 shows several examples of pre-processed facial images. Panel (a)
+shows pre-processed images used to train ABBD's software. One can see that they differ
+in terms of "tint" and background. For example, the leftmost picture has a bluish tint and
+dark background, whereas the rightmost picture has a yellowish tint and light background.
+This underscores the spectrum of image characteristics the software is "exposed" to while
+being trained for apparent-age estimation. Panel (b) shows pre-processed CEO images from
+  35   The full package documentation is at github.com/ageitgey/face recognition/blob/master/README.md.
+
+                                                   68
+our sample. Again, there are differences in terms of tint and background, so it is worth
+reiterating that these are image features that the software can learn to take into account in its
+estimation during the training stage. Furthermore, comparing images across the two panels
+illustrates that our implementation of the image pre-processing step indeed leads to similar
+results compared to ABBD's original implementation on the training datasets.
+
+                                       (a) Training sample
+
+
+
+
+                                        (b) CEO sample
+
+
+
+
+A PPENDIX -F IGURE D.2.--Examples of pre-processed images. Notes. This figure shows examples
+of pre-processed facial images. Panel (a) shows examples of images used in the training of the
+apparent-age estimation software. Panel (b) shows examples of pre-processed CEO images from our
+sample.
+
+    Accuracy gains from software fine-tuning. As described above, ABBD's software
+development includes a fine-tuning step using a dataset on human-based age estimates.
+Across all training and image pre-processing steps, the fine-tuning on this apparent age
+led to the biggest accuracy improvement on the competition data, amounting to more than
+20% (cf. Table 2 in Antipov, Baccouche, Berrani, and Dugelay 2016). This underscores the
+importance of using a software specifically trained for apparent-age estimation, rather than
+an "off-the-shelf" software solely trained on images annotated with people's biological age,
+for our study of CEO visual aging.
+     Cross-validation. Rather than training one CNN on the 5,613 training images, ABBD's
+apparent-age estimation merges eleven CNNs, which were trained using eleven-fold cross-
+validation. Cross-validation is a popular technique in prediction problems. As part of the
+training step, a portion of the data (the validation sample) is set aside for out-of-sample tests,
+i. e., tests on data the algorithm was not trained on. Moreover, instead of fixing the validation
+
+                                               69
+sample, it is common to train separate models using non-overlapping validation samples and
+to then average the results. In ABBD's implementation, each of the eleven "sub-CNNs" uses
+5,113 images for training and 500 (non-overlapping) images for validation; this corresponds
+to a near-complete partition of the full training data into equal-sized validation samples
+(5, 613/11  500). Each sub-model outputs a 100 × 1 vector of probabilities associated with
+all apparent ages between 0 and 99 years. ABBD's final solution, on which our analyses are
+based, uses the average of the probabilities across all sub-models.
+    Data augmentation. In the fine-tuning step of the software development, ABBD use
+five-times data augmentation to reduce overfitting. This is a popular technique to enlarge
+the training (or fine-tuning) sample, i. e., to allow the software to learn on more data.
+Specifically, each apparent-age annotated image is fed into the algorithm jointly with five
+modified versions: the mirrored image, a rotated image (±5 ), a horizontally shifted image
+(±5%), and a scaled image (±5%). To see the potential benefit of data augmentation in our
+application, suppose that among the fine-tuning sample of 5,613 images, people who look
+older happen to look slightly to the upper right. Including mirrored and rotated images in the
+fine-tuning step reduces the likelihood that the software may learn to associate apparent age
+with camera angle.36 In our application, data augmentation also further alleviates concerns
+about effects of slight differences in image pre-processing.
+    To match the steps during training, ABBD's final solution uses the same image modi-
+fications also on new images that are fed into the tool, i. e., it estimates different apparent
+ages for each image in our CEO sample based on the original image and modified images as
+outlined above. The final apparent age is the average across the different estimates.
+
+
+
+
+  36These specific image modifications assume that there is no intrinsic relation between apparent age and
+camera angle. This appears reasonable but highlights that data augmentation choices involve judgment.
+
+                                                   70
+

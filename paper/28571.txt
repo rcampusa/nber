@@ -1,0 +1,3539 @@
+                              NBER WORKING PAPER SERIES
+
+
+
+
+                SVARS WITH OCCASIONALLY-BINDING CONSTRAINTS
+
+                                       S. Boraan Aruoba
+                                         Marko Mlikota
+                                       Frank Schorfheide
+                                        Sergio Villalvazo
+
+                                      Working Paper 28571
+                              http://www.nber.org/papers/w28571
+
+
+                     NATIONAL BUREAU OF ECONOMIC RESEARCH
+                              1050 Massachusetts Avenue
+                                Cambridge, MA 02138
+                                    March 2021
+
+
+
+
+We are thankful for helpful comments and suggestions from Lutz Kilian, Sophocles Mavroeidis,
+Mathias Trabandt, and seminar participants at the Federal Reserve Board, Maryland, and the
+Schumpeter Seminar (Berlin). Aruoba and Schorfheide gratefully acknowledge financial
+support from the National Science Foundation under Grant SES 1851634. The views expressed
+herein are those of the authors and do not necessarily reflect the views of the National Bureau of
+Economic Research.
+
+NBER working papers are circulated for discussion and comment purposes. They have not been
+peer-reviewed or been subject to the review by the NBER Board of Directors that accompanies
+official NBER publications.
+
+© 2021 by S. Boraan Aruoba, Marko Mlikota, Frank Schorfheide, and Sergio Villalvazo. All
+rights reserved. Short sections of text, not to exceed two paragraphs, may be quoted without
+explicit permission provided that full credit, including © notice, is given to the source.
+SVARs With Occasionally-Binding Constraints
+S. Boraan Aruoba, Marko Mlikota, Frank Schorfheide, and Sergio Villalvazo
+NBER Working Paper No. 28571
+March 2021
+JEL No. C11,C22,C34,E32,E52
+
+                                          ABSTRACT
+
+We develop a structural VAR in which an occasionally-binding constraint generates censoring of
+one of the dependent variables. Once the censoring mechanism is triggered, we allow some of the
+coefficients for the remaining variables to change. We show that a necessary condition for a
+unique reduced form is that regression functions for the non-censored variables are continuous at
+the censoring point and that parameters satisfy some mild restrictions. In our application the
+censored variable is a nominal interest rate constrained by an effective lower bound (ELB).
+According to our estimates based on U.S. data, once the ELB becomes binding, the coefficients in
+the inflation equation change significantly, which translates into a change of the inflation
+responses to (unconventional) monetary policy and demand shocks. Our results suggest that the
+presence of the ELB is indeed empirically relevant for the propagation of shocks. We also obtain
+a shadow interest rate that shows a significant accommodation in the early parts of the Great
+Recession, followed by a mild and steady accommodation until liftoff in 2016.
+
+S. Boraan Aruoba                                Frank Schorfheide
+Department of Economics                         University of Pennsylvania
+University of Maryland                          Department of Economics
+3105 Tydings Hall                               The Ronald O. Perelman Center for
+College Park, MD 20742-7211                     Political Science and Economics
+aruoba@econ.umd.edu                             133 South 36th Street
+                                                Philadelphia, PA 19104-6297
+Marko Mlikota                                   and NBER
+University of Pennsylvania                      schorf@ssc.upenn.edu
+Department of Economics
+The Ronald O. Perelman Center for               Sergio Villalvazo
+Political Science and Economics                 University of Pennsylvania
+133 South 36th Street                           Department of Economics
+Philadelphia, PA 19104-6297                     The Ronald O. Perelman Center for
+mlikota@sas.upenn.edu                           Political Science and Economics
+                                                133 South 36th Street
+                                                Philadelphia, PA 19104-6297
+                                                vsergio@sas.upenn.edu
+
+
+
+
+Replication files are available from Frank Schorfheide's website at https://web.sas.upenn.edu/schorf/
+This Version: March 10, 2021                                                                             1
+
+
+1       Introduction
+
+Dynamic stochastic general equilibrium (DSGE) models are widely used in central banks, by
+regulators, and in academia to study the effects of monetary and macroprudential policies and
+the propagation of shocks in the macro economy. The most recent vintage of these models
+involves occasionally-binding constraints arising from, for instance, an effective lower bound
+(ELB) on nominal interest rates. Agents' decision rules in these models typically exhibit
+"kinks," meaning the elasticity of the choice variables, say output or prices, with respect
+to the underlying state variables changes drastically when the constraint becomes binding.
+We used this observation in Aruoba, Cuba-Borda, Higa-Flores, Schorfheide, and Villalvazo
+(2021), henceforth ACHSV, to approximate such decision rules through piecewise-linear and
+continuous (PLC) functions. The model solution has the form of a vector autoregression
+(VAR) with a censored dependent variable and regime switching coefficients. The regime
+shift is endogenous and it is linked to the censoring mechanism. For instance, in a model
+with an ELB constraint, the VAR coefficients switch once the interest rate reaches the lower
+bound.
+
+    Our paper develops a structural VAR (SVAR) that mimics the PLC-DSGE model solu-
+tion, but can be used independently of an optimization-based structural model to study the
+propagation of shocks in settings where an observable is subject to an occasionally-binding
+constraint. Throughout this paper, we focus on an application that features nominal in-
+terest rates that are constrained by an ELB.1 An important empirical question is whether
+the propagation of shocks works differently when the economy reaches the ELB because
+interest rates no longer can fall in response to adverse shocks and agents may adjust their
+behavior in light of the constraint. In densely parameterized models such as time-varying
+coefficient structural VARs (TVC-SVARs), these effects are empirically difficult to measure
+because for many countries we only have a few years of ELB observations available. This
+makes it challenging to obtain precise estimates. Our proposed model is able to avoid this
+problem because the coefficient shift that takes place once the constrained becomes binding
+is controlled by a low-dimensional vector of additional parameters.
+
+    1
+     We use the concept of effective instead of zero lower bound (ZLB). In a DSGE model that explicitly
+models money demand, such as the one in Aruoba and Schorfheide (2011), an interest rate less than zero
+means a monetary equilibrium ceases to exist. One can generalize these models to include storage cost
+of physical money and allow for the interest rate to go below zero. In fact the Bank of Japan and the
+European Central Bank, among other central banks, have been able to reduce their policy rates below zero.
+Nonetheless, it remains plausible to assume that there is a bound beyond which it becomes very difficult to
+lower interest rates further and this is what the literature considers to be the ELB.
+This Version: March 10, 2021                                                                                      2
+
+
+      There is a small, but growing literature on multivariate time series models with a censored
+interest rate variable, including Iwata and Wu (2006), Ikeda, Li, Mavroeidis, and Zanetti
+(2020), Mavroeidis (2020), Carriero, Clark, Marcellino, and Mertens (2021) and Johannsen
+                                                                            
+and Mertens (2021). All of these models distinguish between a shadow rate, y1 ,t in our
+                                                   
+notation, and the actual interest rate y1,t = max{y1,t , c}. The models differ, however, in
+terms of assumptions about the extent to which model coefficients are allowed to change
+when the economy reaches the ELB.
+
+      The key departure of our paper from the existing literature is the assumption that the
+coefficients that characterize the behavior of the private-sector variables y2,t (output gap and
+inflation in our application) as a function of lagged dependent variables and current structural
+shocks are allowed to switch once the ELB becomes binding. We define the endogenous
+regime indicator variable st = I{y1,t > c}. The regime-dependency of the coefficients is akin
+to capturing nonlinearities in decision rules that arise in DSGE model with occasionally-
+binding constraints.
+
+      The specification of a dynamic multivariate model with censoring and regime-dependent
+coefficients faces two challenges: parsimony and the existence of a unique reduced form. We
+show in this paper that these challenges are closely connected. The existence of a unique
+reduced form is referred to in the literature on censored simultaneous equations models as
+coherency and completeness; see Mavroeidis (2020). In every period t we can compute two
+hypothetical values for yt = [y1,t , y2,t ] : one is based on the st = 1 coefficients and the other
+one is based on the st = 0 coefficients. For yt to be uniquely determined, it is necessary
+that only one of these two values has the property that the indicator function I{y1,t > c}
+coincides with the st that was used to compute yt . Typically, this uniqueness cannot be
+                                                                                2
+achieved without restricting the domain of the innovations                 t.
+
+      We prove three theoretical results. (i) To obtain uniqueness without domain restrictions
+for       t,   it is necessary that the reduced-form regression functions are continuous whenever
+st switches between 0 and 1. The continuity requirement automatically imposes parsimony.
+We show that in a VAR with an n-dimensional vector yt , the restriction reduces the number
+of free coefficients for the second regime from (n - 1) × k , where k is the number of regressors
+in each private-sector equation to n - 1. (ii) Continuity is not sufficient for uniqueness
+without further coefficient restrictions. We provide a set of parameter restrictions for our
+SVAR specification that are necessary and sufficient to obtain uniqueness for all                         t.   (iii)
+
+      2
+          In a VAR setting, the domain restriction would also be dependent on the lagged values of yt .
+This Version: March 10, 2021                                                                     3
+
+
+We show that once continuity is imposed, the private sector equations can be rewritten as a
+                                                                     
+simultaneous relationship between y1,t , y2,t , and the shadow rate y1,t with constant coefficients
+on current and lagged variables. Thus, in our application the piecewise-linear private-sector
+regression functions can be re-interpreted as agents reacting to a linear combination of the
+                                               
+actual interest rate y1,t and the shadow rate y1,t . Results (i) and (iii) are new. Conditional
+on having established (iii), it can be shown that (ii) reproduces a result in Mavroeidis (2020).
+
+   There is a debate in the literature whether lags of the censored interest rate y1t or the
+             
+shadow rate y1t should appear in the conditional mean function. While this does not matter
+for the aforementioned theoretical results, it affects the estimation and identification of the
+model. In the DSGE model literature, authors often use lagged actual interest rates in the
+specification of the monetary policy rule, e.g., ACHSV, which means that the lagged actual
+interest rate becomes a state variable for private-sector decisions. This is the approach we
+follow in the empirical analysis.
+
+   Our empirical model also allows for stochastic volatility in the structural shocks. We use
+a bootstrap particle filter (BSPF) to integrate out the latent volatility from the likelihood
+function. We combine the likelihood function with a prior distribution and conduct Bayesian
+inference. Due to the presence of censoring, cross-regime coefficient restrictions, and stochas-
+tic volatility, the posterior distribution of the model parameters is non-standard. We use a
+sequential Monte Carlo (SMC) algorithm to draw from the posterior distribution; see Herbst
+and Schorfheide (2014, 2015) for DSGE applications and Bognanni and Herbst (2018) for
+an application to an SVAR with exogenous regime switches. Because the likelihood function
+inside the posterior sampler is evaluated using the BSPF, the resulting algorithm belongs to
+the SMC2 family, studied by Chopin, Jacob, and Papaspiliopoulos (2013).
+
+   Abstracting from the nonlinearities generated by the censoring of the nominal interest
+rates, piecewise-linear regression equations for private-sector variables, and stochastic volatil-
+ity, the specification of the SVAR follows the three-variable model estimated in Baumeister
+and Hamilton (2018), henceforth BH. While the prior distribution for the VAR coefficients
+is not identical to the one used by BH, the elicitation for the coefficients that describe the
+contemporaneous interaction between output, inflation, and interest rates follows a similar
+logic. The prior combines beliefs about aggregate demand and supply elasticities formed
+based on a simple New Keynesian DSGE model with beliefs about directions of impulse
+responses. As in BH, in the absence of observations from the ELB regime, our model is only
+set-identified. However, as shown in Mavroeidis (2020), the ELB regime generates additional
+identifying information and in our case leads to point identification.
+This Version: March 10, 2021                                                                      4
+
+
+   We estimate our model based on quarterly U.S. data from 1984:Q1 to 2018:Q4. The
+vector yt in our empirical analysis comprises the federal funds rate as the censored vari-
+able, output gap, and inflation. Based on the inspection of the posterior distribution and a
+marginal data density (MDD) comparison between a restricted and an unrestricted specifi-
+cation, we find evidence in favor of a kink in the inflation regression function. A comparison
+of impulse responses conditional on 1999:Q1 data (the U.S. was far away from the ELB)
+and conditional on 2009:Q1 data (the U.S. was at the ELB) yields the following findings:
+a negative monetary policy shock that creates the same size response in the shadow rate
+is more inflationary at the ELB on impact. This shock also generates a slightly larger re-
+sponse of the output gap, though credible intervals conditional on the two dates overlap.
+The response of inflation to negative demand shocks differ significantly when the ELB is
+non-binding and binding: Inflation falls in the former case but it slightly rises in the latter
+case. The difference between the responses persists for about three years. The output gap
+responses for demand and supply shocks do not significantly differ at and away from the
+ELB.
+
+   Our paper is related to several strands of the literature. From a methodological perspec-
+tive, the paper most closely related to our work is Mavroeidis (2020). He also considers an
+SVAR with a censored dependent variable, or an occasionally-binding constraint, to capture
+the ELB constraint on nominal interest rates. He specifies the private sector equations as
+                                                                                    
+simultaneous relationship between the censored variable y1,t , the latent variable y1,t , and y2,t .
+As discussed above, it turns out that our model with continuity imposed on the private-sector
+regression functions is identical to his specification, except in the following dimensions: our
+empirical specification allows for heteroskedastic structural shocks, which is important for
+inference on switches in the conditional mean function. Mavroeidis' specification allows for
+                                           
+both lags of y1,t and the latent variable y1,t on the right-hand side of the VAR specification,
+whereas we stay close to the DSGE model specification in ACHSV and only use the former.
+A detailed comparison is provided in a separate subsection of our paper.
+
+   Building on an older literature on simultaneous equations models with censored depen-
+dent variables, e.g., Nelson and Olsen (1978), Gourieroux, Laffont, and Monfort (1980), and
+Blundell and Smith (1989), the emphasis in Mavroeidis (2020) is on the identifying infor-
+mation that the censoring provides for the propagation of structural shocks. Important for
+the identification is whether, in the case of the ELB application, the private-sector variables
+respond to the actual censored interest rate or the uncensored shadow interest rate. In our
+This Version: March 10, 2021                                                               5
+
+
+application, we let inflation and output gap respond to monetary policy shocks3 , even if
+the economy is at the ELB, which is similar in spirit to the censored SVAR specification
+in Mavroeidis (2020) in which agents respond to a shadow rate. The identifying informa-
+tion encoded in the censoring mechanism is implicitly exploited in our Bayesian estimation
+through the updating of the SVAR coefficients based on the likelihood function.
+
+   Our empirical application focuses on the propagation of structural shocks in the U.S.
+at and away from the ELB. In this regard, it is closely related to Debortoli, Gal´
+                                                                                 i, and
+Gambetti (2019), Ikeda, Li, Mavroeidis, and Zanetti (2020), and Johannsen and Mertens
+(2021). Debortoli, Gal´
+                      i, and Gambetti (2019) estimate an SVAR with exogenously time-
+varying coefficients (TVC-SVAR) using longer-term interest rates that do not reach the
+ELB. Based on their densely parameterized model, they do not find discernible differences
+between responses at and away from the ELB, which leads them to conclude that the ELB
+is empirically irrelevant. Our model allows for time-variation in coefficients in a much more
+parsimonious way and enables us to detect a significant change in coefficients that alters in
+particular the propagation of shocks to inflation. The analyses in Ikeda, Li, Mavroeidis, and
+Zanetti (2020) and Johannsen and Mertens (2021) focus on the propagation of monetary
+policy shocks whereas we also consider supply and demand shocks. Our results on monetary
+policy shocks are qualitatively consistent with Johannsen and Mertens (2021) who find that
+monetary accommodation during the recent ELB spell in the U.S. would have provided more
+stimulus than in other times.
+
+   The remainder of the paper is organized as follows. The specification of our SVAR
+with a censored dependent-variable and state-dependent regression functions is presented in
+Section 2. Our prior distribution for the SVAR parameters is discussed in Section 3. The
+likelihood function is derived in Section 4 and the SMC algorithm to implement the posterior
+computations is summarized in Section 5. Section 6 presents the empirical analysis and
+Section 7 concludes. Theoretical derivations and additional empirical results are relegated
+to the Online Appendix.
+
+
+
+
+   3
+       This is also the case in DGSE model solutions; see ACHSV
+This Version: March 10, 2021                                                                                6
+
+
+2        SVAR Specification
+
+We are using a structural vector autoregression (SVAR) to model the law of motion of the
+             ~t . We express the SVAR in terms of deviations from a mean µ and define4
+n × 1 vector y
+
+                                                      ~t - µ.
+                                                 yt = y
+
+There are two common ways of normalizing the coefficients of an SVAR: by setting the
+matrix of coefficients associated with the time t endogenous variables yt equal to the identity
+matrix, or by setting the matrix that governs the impact of the structural shocks                 t   equal to
+the identity matrix. We begin with the former normalization and call it the  representation:
+
+                                 yt = 1 yt-1 + . . . + p yt-p + c +          t,                            (1)
+
+where       t    N (0, D) is a vector of structural innovations and D is a diagonal matrix. Even
+though in the current specification it is not separately identifiable from µ, we keep the
+intercept c in the notation. We will use it later when we introduce regime-dependent
+private-sector behavior. Reduced-form innovations can be defined as
+
+                              ut =      t,   ut  N (0, ) where  =  D .                                     (2)
+
+Define the 1 × k vector xt = [yt-1 , . . . , yt-p , 1],  = [1 , . . . , p , c ] , and  =  so that we
+can write the VAR as
+                                               yt = xt  + t  .                                             (3)
+
+Let A = ( )-1 and multiply (3) by A to re-normalize the VAR and obtain what we call the
+A representation of the VAR:
+                                               yt A = xt B + t ,                                           (4)
+
+where B = A.
+
+    Starting point for the subsequent analysis will be a third representation, which we refer to
+as A representation. It combines a monetary policy rule written in A form with the private-
+sector equations in  form and has been used, for instance, in Del Negro and Schorfheide
+(2009). The -form of the private-sector equations resemble the decision rules in a DSGE
+model solution that are allowed to differ at and away from the ELB. This representation
+
+    4
+        The time invariant mean µ could also be replaced by a deterministic trend function µt .
+This Version: March 10, 2021                                                                             7
+
+
+also facilitates our proof of the existence of a unique reduced form; see Proposition 1 in
+Section 2.3 below.
+
+   Partition yt = [y1,t , y2,t ] and   t   = [   1,t , 2,t ],   where y1,t corresponds to the interest rate
+and   1,t   is the monetary policy shock. Moreover, partition B = [B·1 , B·2 ], where B·1 is a
+column vector that stacks the coefficients of the y1,t equation and the columns of the matrix
+B·2 stack the coefficients for the private-sector equations. Finally, partition A·1 = [A11 |A21 ],
+where we use | to indicate that the partitions are stacked. Using this notation, the monetary
+policy rule becomes
+                                  y1,t A11 + y2,t A21 = xt B·1 +           1,t .                        (5)
+
+Similarly, let  = [·1 , ·2 ] and ·2 = [12 , 22 ]. The private-sector behavior is described in
+ form:
+                                  y2,t = xt ·2 +          1,t 12   +   2,t 22 .                         (6)
+
+In the remainder of this section we will extend the specification in (5) and (6) by allowing
+for censoring of y1,t , censoring-regime-dependent coefficients for the private-sector equations,
+and stochastic volatility.
+
+
+2.1     Censoring
+
+In order to capture the ELB constraint, which we assume to be zero, we introduce censoring.
+                                                                        
+We use y
+       ~1,t to denote the desired or shadow interest rate, let y1,t = y
+                                                                      ~1,t - µ1 , and write the
+monetary policy rule as
+                                   
+                                  y1,t A11 + y2,t A21 = xt B·1 +           1,t .                        (7)
+                                                                           
+Here we replaced y1,t in (5) by y1 ,t . The relationship between y1,t and y1,t is given by
+
+
+                                                    
+                                       y1,t = max {y1,t , -µ1 }.
+
+
+                                       ~1,t - µ1 and the ELB constraint applies to the actual
+The µ1 threshold arises because y1,t = y
+and not the demeaned nominal interest rate. We will assume that both central bank and the
+                                                
+private sector react to lagged y1,t instead of y1 ,t . However, we do allow agents to react to the
+monetary policy shock when the ELB is binding. Both of these assumptions are consistent
+                                                                            
+with the DSGE model in ACHSV. Thus, (6) remains unchanged. We define yt = [y1,t , y2,t ].
+This Version: March 10, 2021                                                                                           8
+
+
+2.2      Regime-Dependent Private-Sector Behavior
+
+We will now extend the model and allow the private sector to change its behavior once the
+economy reaches the ELB. We introduce the observable regime (or ELB) indicator
+
+                                                st = I{y1,t > -µ1 }                                                  (8)
+
+and write the private-sector equations as
+
+                                            y2,t = xt ·2 (st ) + u2,t (st )                                          (9)
+
+where we define
+                                       u2,t (st ) =   1,t 12 (st )   +   2,t 22 (st ).
+
+
+Plugging the expression for y2,t from (9) into the monetary policy rule (7) leads to the 
+form of the interest rate equation:
+
+                      1
+            y1,t =       x B·1 - ·2 (st )A21 +              1,t   1 - 12 (st )A21 -        2,t 22 (st )A21   .      (10)
+                     A11 t
+
+Define
+
+                                     1
+                        ·1 ( s t ) =    B·1 - ·2 (st )A21 ,                                                         (11)
+                                    A11
+                                     1
+                       u1,t (st ) =      1,t 1 - 12 (st )A21 -                    2,t 22 (st )A21
+                                    A11
+
+such that we can write
+                                             
+                                            y1,t = xt ·1 (st ) + u1,t (st ).                                        (12)
+
+   In view of (8), for the model specification to be internally consistent, it has to be the
+                                                                                 
+case that whenever the "1" regression functions are active then y1,t = y1,t and y1,t > -µ1
+must hold. Likewise, whenever the "0" regression functions are active, it has to be the case
+                     
+that y1,t = -µ1 and y1,t  -µ1 . Given a set of parameters A·1 , B·1 , ·2 (s), ·2 (s), lagged
+values xt , and a vector of structural shocks               t   we can distinguish three cases:
+
+Case 1 ­ Uniqueness: conditional on lagged values xt and the innovation                                t   the state st ,
+                        
+the latent variable    y1,t ,   and y2,t are uniquely determined. If
+
+      xt ·1 (1) + u1,t (1) > -µ1 ,        then xt ·1 (0) + u1,t (0) > -µ1                which implies st = 1.
+This Version: March 10, 2021                                                                                 9
+
+
+Alternatively, if
+
+       xt ·1 (1) + u1,t (1)  -µ1 ,     then xt ·1 (0) + u1,t (0)  -µ1              which implies st = 0.
+
+We use E U (xt ) to denote the set of       t      values for which st is unique.
+
+Case 2 - Indeterminacy (Incompleteness): conditional on lagged values xt and the
+innovation       t,   the model is consistent with st = 0 and st = 1, which means that there are
+                         
+two possible values for y1,t and y2,t , respectively. Formally,
+
+
+xt ·1 (1) + u1,t (1) > -µ1        and xt ·1 (0) + u1,t (0)  -µ1              which implies st = 1 or st = 0.
+
+We use E I (xt ) to denote the set of      t       values for which st is not unique.
+
+Case 3 - Non-existence (Incoherency): conditional on lagged values xt and the innova-
+tion    t,   the model is neither consistent with st = 0 nor st = 1 because
+
+                        xt ·1 (1) + u1,t (1)  -µ1        and xt ·1 (0) + u1,t (0) > -µ1 .
+
+We use E N (xt ) to denote the set of          t   values for we have non-existence.
+
+    The fact that the existence and uniqueness of yt depend on the lagged endogenous vari-
+ables stacked in xt and the structural innovations                 t   is an undesirable feature of the model.
+To rule out non-existence, in general one needs to restrict the domain of the innovations                    t;
+
+see Ascari and Mavroeidis (2020); Mavroeidis (2020). We will show in the following section
+that a necessary condition for the uniqueness condition to hold for all (xt , t ) is that the
+piecewise linear private sector regression functions are continuous at the kink. Moreover, we
+provide a necessary and sufficient restriction on the VAR parameter space that guarantees
+uniqueness for all (xt , t ).
+
+
+2.3          Piecewise Linear and Continuous Regression Functions
+
+Building on ACHSV, we now impose that the private sector uses regression functions that
+are continuous at the kink. We refer to these regression functions as piecewise linear and
+continuous (PLC). Consider the monetary policy rule in  form. From (10) we deduce that
+the ELB starts to bind whenever
+
+                xt B·1 - ·2 (1)A21 = -µ1 A11 -             1,t   1 - 12 (1)A21 +     2,t 22 (1)A21 .       (13)
+This Version: March 10, 2021                                                                                   10
+
+
+Denote the j th element of the vector xj,t , j = 1, . . . , k , with the understanding that xkt = 1
+(intercept). Likewise, denote the j th rows of B·1 and ·2 by Bj 1 and j 2 , respectively. Using
+this notation, we solve (13) for x1,t to obtain
+
+                              k -1
+                                            Bj 1 - j 2 (1)A21            Bk1 - k2 (1)A21 + µ1 A11
+             x1,t = -                xj,t                            -                                        (14)
+                              j =2
+                                            B11 - 12 (1)A21                  B11 - 12 (1)A21
+                                   1 - 12 (1)A21                      22 (1)A21
+                       -    1,t                   +          2,t                   .
+                                  B11 - 12 (1)A21                  B11 - 12 (1)A21
+
+Continuity at the kink implies that
+
+                              k -1
+            x1,t 12 (1) +            xj,t j,2 (1)    + k2 (1) +          1,t 12 (1)   +   2,t 22 (1)          (15)
+                              j =2
+                                       k -1
+              = x1,t 12 (0) +                 xj,t j,2 (0)   + k2 (0) +        1,t 12 (0)   +   2,t 22 (0).
+                                       j =2
+
+
+Now plug the expression for x1,t in (14) into Equation (15) and use the continuity restrictions
+to solve for the coefficients in the s = 0 regime:
+
+                                  Bj 1 - j 2 (1)A21 
+                 j 2 (0) = j 2 (1) +                , j = 2, . . . , k - 1                                    (16)
+                                  B11 - 12 (1)A21 12
+                                  Bk1 - k2 (1)A21 + µ1 A11 
+                k2 (0) = k2 (1) +                         12
+                                       B11 - 12 (1)A21
+                                   1 - 12 (1)A21 
+                12 (0) = 12 (1) +                  
+                                  B11 - 12 (1)A21 12
+                                      22 (1)A21
+                22 (0) = 22 (1) -                   ,
+                                  B11 - 12 (1)A21 12
+
+where
+                                              12 = 12 (0) - 12 (1).
+
+
+   The unrestricted coefficient matrices are ·2 (1), ·2 (1), and                       
+                                                                 12 . The dimension of 12 is
+(n - 1) × 1. Two special cases are noteworthy. First, if 12 = 0 then the regression functions
+are strictly linear and have no kink: ·2 (0) = ·2 (1) and ·2 (0) = ·2 (1). Second, if the
+private sector does not react to the monetary policy shock, i.e., 12 (1) = 0 and 12 (0) = 0,
+then 12 = 0, which in turn implies that there is no kink in the reactions to x2,t and                          2,t :
+
+22 (0) = 22 (1) and 22 (0) = 22 (1).
+This Version: March 10, 2021                                                                          11
+
+
+2.4      PLC Regression Functions and Uniqueness
+
+The following proposition summarizes our theoretical results. First, we show that continuity
+of the regression functions is a necessary condition to achieve uniqueness without having to
+restrict the domain of        t   conditional on the lagged values xt . Second, we provide necessary
+and sufficient restrictions for the VAR parameters that ensure uniqueness for all (xt , t ).
+
+
+Proposition 1
+
+  (i) (Necessary Condition) Only if the piecewise linear private sector regression functions
+       are continuous at the kink, then uniqueness can be obtained for all (xt , t ), i.e., Pxt { t 
+       E U (xt )} = 1 for all xt .
+
+ (ii) (Necessary and Sufficient Condition) Suppose that the piecewise linear private sector
+       regression functions are continuous at the kink. If and only if
+
+                                  sign B11 - 12 (1)A21 = sign B11 - 12 (0)A21 ,
+
+       then uniqueness is obtained for all (xt , t ), i.e., Pxt { t  E U (xt )} = 1 for all xt .
+
+
+    A proof of the proposition is provided in the Online Appendix. In our estimation, we
+will impose the parameter restrictions described in Proposition 1(ii) to ensure uniqueness of
+       
+(st , y1 ,t , y2,t ) conditional on all values of (xt , t ).
+
+
+
+
+2.5      Comparison to Mavroeidis (2020)
+
+Our model is related to the censored VAR specification considered in Mavroeidis (2020). He
+writes the private-sector equations in A form, which can be stated as
+
+                  
+                 y1              ~
+                   ,t A12 + y1,t A12 + y2,t A22 = xt B·2 +        2,t ,
+                                                                                      
+                                                                          y1,t = max{y1,t , -µ1 }.
+
+
+                                                                                      
+This specification allows agents to react to a linear combination of the shadow rate y1,t and
+the actual (constrained) interest rate y1,t . Using our state-dependent notation, his private
+sector specification can be rewritten as
+
+                                     
+                                    y1,t A12 (st ) + y2,t A22 = xt B·2 (st ) +   2,t ,               (17)
+This Version: March 10, 2021                                                                            12
+
+
+where
+
+                                                               A     ~
+                                                                12 + A12 if s = 1
+                       st = I{y1,t > -µ1 },      A12 (s) =
+                                                                   A12        if s = 0
+                                                                          0              if s = 1
+     B·2 (s) = B12 | . . . |B(k-1)2 |Bk2 (s) ,   Bk2 (s) =                                          .
+                                                                µ1 (A12 (1) - A12 (0)) if s = 0
+
+Here Bj 2 , j = 1, . . . , k , is the j th row of B·2 . Note that only the last row of B·2 is regime-
+dependent. Recall that we fixed it to zero for s = 1. For s = 0 it captures that y1,t = -µ1
+in the ELB regime.5
+
+    We will refer to our model, comprising (7) and (9), as model M(·2 (s), ·2 (s)), and
+to the (restricted) Mavroeidis model, comprising (7) and (17) as model M(A12 (s)) model.
+Moreover, we denote the M(·2 (s), ·2 (s)) with PLC private sector regression functions as
+MP LC (·2 (s), ·2 (s)). The relationship between three specifications is summarized in the
+following proposition.6
+
+
+Proposition 2
+
+  (i) M(·2 (s), ·2 (s))  M(A12 (s)),
+
+ (ii) MP LC (·2 (s), ·2 (s)) = M(A12 (s)).
+
+
+    A proof of the proposition is provided in the Online Appendix. The intuition for Part (i)
+is straightforward. We started out in this paper from a very general model specification in
+which the private-sector equations are regime dependent. The possibility of private-sector
+behavior changing when the ELB becomes binding generates an additional (n - 1) × (k + n)
+coefficients, compared to a constant-coefficient VAR. The M(A12 (s)) model, on the other
+hand, only adds (n - 1) coefficients.
+
+    Part (ii) of the proposition combines two insights. First, imposing a PLC structure onto
+the private-sector equations reduces the number of additional unrestricted parameters in the
+ELB regime from (n - 1) × (k + n) to n - 1 parameters, see (16), which is the same number
+of additional parameters as in the M(A12 (s)) model. Second, with some algebra it can be
+shown that M(A12 (s)) delivers PLC regression functions for the private sector. The equality
+
+   5
+     Mavroeidis (2020) refers to the model with A    12 = 0 as kinked SVAR (KSVAR), to the model with
+~
+A12 = 0 as censored SVAR (CSVAR), and the general specification as censored and kinked SVAR (CKSVAR).
+   6
+     We are grateful to one of the referees for providing valuable conjectures that lead to Proposition 2.
+This Version: March 10, 2021                                                                              13
+
+
+of the model sets implies that PLC regression functions for the private sector can only be
+obtained if the state-dependence in the A representation of the private sector equations is
+concentrated in the reaction to shadow rate movements.
+
+   We show in the Online Appendix that by solving the locus at which the ELB becomes
+binding (13) for     1,t   instead of x1,t , the necessary and sufficient condition in Proposition 1(ii)
+can equivalently be expressed as
+
+                               sign 1 - 12 (1)A21 = sign 1 - 12 (0)A21 .
+
+Moreover, we show that the condition is equivalent to the condition stated in Proposition 1
+of Mavroeidis (2020), which in turn dates back to Gourieroux, Laffont, and Monfort (1980).
+This is unsurprising given our Proposition 2(ii).
+
+   As mentioned in the introduction, our SVAR specification allows for heteroskedastic
+structural shocks, which is important for inference on switches in the conditional mean
+                                                                                          
+function. Mavroeidis' specification allows for both lags of y1,t and the latent variable y1 ,t
+on the right-hand side of the VAR specification, whereas we stay close to the DSGE model
+specification in ACHSV and only use the former.
+
+
+2.6       Stochastic Volatility
+
+In order to make the empirical model more flexible, we allow for stochastic volatility in the
+structural innovations        t.   We replace the homoskedasticity assumption         t    N (0, D) by
+
+
+      t    N (0, Dt ),      ln Dii,t = ln Dii + i,t ,   i,t = ,i i,t-1 + i i,t ,   i,t  N (0, 1).        (18)
+
+Here Dii,t , i = 1, . . . , n are the n diagonal elements of the (diagonal) matrix Dt . For each
+variable i we obtain two additional parameters, (,i , i ) that govern the stochastic volatility
+process. The parameter ,i controls the persistence and i the variance of the stochastic
+volatility process. (2) is replaced by an equation with time-dependent covariance matrices:
+
+                 ut =  (st ) t ,      ut  N (0, t (st )) where t (st ) =  (st )Dt  (st ).                (19)
+
+Note that none of the calculations in Section 2.3 depended on the covariance matrices D and
+. Thus, the continuity restrictions in (16) and the result in Proposition 1 are not affected
+by the presence of heteroskedasticity.
+This Version: March 10, 2021                                                                         14
+
+
+2.7    Parameter Summary
+
+After allowing for regime-dependent private-sector regression functions and imposing conti-
+nuity at the kink, the parameters of the SVAR model with stochastic volatility are:
+
+                  µ , A·1 , B·1 , ·2 (1) , ·2 (1) ,                         n              n
+                                                                 12 , {Dii }i=1 , {,i , i }i=1 .   (20)
+                  n×1     n×1      k×1      k×(n-1)   n×(n-1)   1×(n-1)     n          2n
+
+
+The interest rate coefficient in A·1 is normalized to one. Moreover, the elements in the last
+rows of B·1 and ·2 (1) are fixed at zero because the level of the observables y
+                                                                              ~t is captured
+by µ. Notationally, it is convenient to keep the intercepts in the specification, because they
+are non-zero for ·2 (0) in the ELB regime.
+
+
+
+3     Prior Distribution
+
+In our subsequent empirical application we assume that y1,t corresponds to the nominal in-
+terest rate Rt , and y2,t = [zt , t ], where zt is output gap and t is inflation. We interpret the
+innovations   t   =[    R,t , D,t , S,t ]   as monetary policy, demand, and supply shocks, respectively.
+We use Bayesian techniques to estimate the SVAR with ELB censoring and piecewise-linear
+regression functions. This requires the specification of a prior distribution. Rather than
+specifying the prior directly on the unrestricted elements of the parameters listed in (20),
+we consider several transformations to facilitate the elicitation of the prior. These trans-
+formations are presented in Section 3.1. Section 3.2 summarizes the specification of our
+baseline prior. Section 3.3 discusses adjustments to the baseline prior and the treatment of
+hyperparameters.
+
+
+3.1    (Re)parameterization of the SVAR
+
+We follow Baumeister and Hamilton (2018) and specify a prior on contemporaneous interac-
+tions between interest rates, output gap, and inflation in the regime in which the ELB is not
+binding. Using the notation in (4), these interactions are summarized in the matrix A(1),
+which we partition into A(1) = [A·1 , A·2 (1)]. The first column of A(1), denoted by A·1 , is
+included in the parameter list (20) and does not depend on the state s. The remaining n - 1
+columns, collected in the matrix A·2 (1), replace the n × (n - 1) matrix ·2 (1) in (20).
+This Version: March 10, 2021                                                                           15
+
+
+   To obtain an expression for A·2 (s) as a function of ·2 (s), we solve (5) for          1,t     and plug
+the expression into (9). This yields:
+
+                y2,t = xt ·2 (s) + y1,t A11 + y2,t A21 - xt B·1 12 (s) +   2,t 22 (s).
+
+
+After re-arranging terms we obtain
+
+         -y1,t A11 12 (s) + y2,t I - A21 12 (s) = xt ·2 (s) - B·1 12 (s) +        2,t 22 (s).         (21)
+
+Let A·2 (s) = [A12 (s)|A22 (s)] and deduce that
+
+                                      -1                                                 -1
+      A12 (s) = -A11 12 (s) 22 (s)         ,     A22 (s)     = I - A21 12 (s) 22 (s)          .       (22)
+      1×(n-1)                                  (n-1)×(n-1)
+
+
+
+   We follow Baumeister and Hamilton (2018) by expressing the matrix of contemporaneous
+interactions, in our case for the non-binding regime s = 1, as a function of the parameters
+[ , z , S , D , D ] :                                              
+                                                1    -D        0
+                                                                   
+                                A(1) =  -z             1       1   .
+                                                                                                      (23)
+                                               - -D -S
+
+The parameterization of the A(1) matrix is motivated by a three-equation New Keynesian
+DSGE model. Each column corresponds to an equation, and each row to a variable. The
+"1" entries are normalizations. Recall that the observables are ordered as follows: yt =
+[Rt , zt , t ]. We interpret the first column of A(1) as a Taylor rule with output and inflation
+gap coefficients z and  , respectively.
+
+   The second column represents the Euler equation after the expectations of next period's
+inflation and output gap have been replaced by AR(1) forecasts. This creates a contempora-
+neous relationship between the output gap (being proportional to consumption), the nominal
+interest rate, and inflation. The parameter D can be interpreted as an aggregate demand
+elasticity. The third column represents the New Keynesian Phillips curve with marginal
+costs replaced by output gap and expected inflation replaced by an AR(1) forecast. The
+coefficient S can be interpreted as a supply elasticity.
+                   
+   We replace S by S = S - D and impose the following domain/sign restrictions on
+the coefficients:
+                                               
+                          0,      z  0,        S  0,         D  0,     D  0.                          (24)
+This Version: March 10, 2021                                                                      16
+
+
+The restriction of D  0 may seems counterintuitive in view of the interpretation of the
+coefficient as a demand elasticity. However, it is consistent with a DSGE model in which the
+demand equation represents a consumption Euler equation and a rise in (expected) inflation
+lowers real returns which creates an incentive to increase current-period consumption.
+
+   To facilitate the elicitation of a prior distribution, it is helpful to derive the inverse of
+A(1), which determines the contemporaneous impact of the three innovations:
+                                                                                   
+                                                          
+                                      S             (D + S
+                                                      D    )D
+                     -1
+                                                            
+               [A(1)]               
+                             + (D + S )z                    .                                   (25)
+                                                     (D + S )
+                                                      1     
+                            -( + D z )   -(D + D  ) D z - 1
+
+Here  denotes proportionality. The first row of the matrix captures the response of interest
+rates, the output gap, and inflation to a monetary policy shock         1,t .   In order for interest
+rates to rise, and output and inflation to fall in response to a contractionary monetary policy
+                         
+shock we need S  0, (D + S )  0, and D  0, all of which are implied by (24). The
+                                                                                         
+sum (D + S ) controls the relative response of output gap and inflation and the ratio D /S
+is the relative response of interest rates and inflation.
+
+   The second row of [A(1)]-1 represents the contemporaneous demand shock response.
+                                                                        
+Output gap and prices move in the same direction because we imposed D + S  0 and the
+policy rule coefficients  and z are also positive. Finally, the third row of the matrix in (25)
+determines the response to a supply shock. The directions of the inflation and output gap
+responses to a supply shock depend on the specific parameterization. For instance, assuming
+that D < 0, inflation is falling in response to the supply shock. The output response is
+given by -(D + D  ). We observe a rise in output if -D > D / .
+
+   Our prior distribution is specified over the set of parameters
+
+                        
+                                                              
+            = µ,  , z , S , D , D , B·1 , {·i (1)}n
+                                                  i=2 , 12
+                                                        
+                                                           , { Dii }n              n
+                                                                    i=1 , {,i , i }i=1 .        (26)
+This Version: March 10, 2021                                                                   17
+
+
+3.2    Distributional Assumptions
+
+Define the vector of hyperparameters  = [I ,  , d , 0 , l ,  ] . We consider a baseline
+prior of the form
+
+                                 n
+                                        
+  ~(|) = p
+  p      ~(µ|I )~
+                p()                   ~( Dii |; d )~
+                                      p            p(B·1 |D;  , 0 , l )~
+                                                                       p(,i , i )            (27)
+                                i=1
+                    n
+              ×           ~ ·i (1)|, D;  , 0 , l
+                          p                            ~(
+                                                       p                          
+                                                         12 | ), where  = ( , z , S , D , D ).
+                    i=2
+
+
+Recall that D is the diagonal matrix with elements Dii , i = 1, . . . , n. As previously noted in
+Section 2.7, the last element of the vectors B·1 and ·i (1), respectively, is set equal to zero
+and essentially excluded from the construction of the prior density.
+
+                           ~(µ|I ). We use independent normal distributions of the
+Prior for Level Parameters p
+form µi  N µi , s2
+                 i /I , i = 1, . . . , n. In the empirical application we set µi to the pre-ELB
+sample mean of yi,t computed over the period from 1984:Q1 to 2006:Q4, and si is its sample
+standard deviation. The hyperparameter I scales the prior precision of the µi s.
+                                                
+Prior for Contemporaneous Interactions p
+                                       ~( , z , S , D , D ). We assume that the
+underlying parameters are independent:
+
+                                                       
+                     ~( , z , S
+                     p          , D , D ) = p   p(z )~
+                                            ~( )~    p(S )~
+                                                          p(D )~
+                                                               p(D ).
+
+The first section of Table 1 summarizes the specification of the baseline prior for the A(1)
+coefficients. The distributions are chosen so that the sign restrictions in (24) hold. The
+priors for ( , z ) are broadly in line with priors used in the DSGE model literature.7 The
+                      
+numerical values for (S , D , -D ) are more difficult to interpret. In the empirical section
+we will plot the prior distribution of impulse responses.
+                                                                          
+Prior for Innovation Variances p     ~( Dii |; d ). We specify a prior for Dii , i = 1, . . . , n.
+Starting point is a prior for the Dii elements, which takes the form of an Inverse Gamma
+distribution that is parameterized as scaled Inverse 2 distribution with density
+
+                                      [(d /2)S ii ]d /2 -d /2-1                  -1
+               ~(Dii |S ii , d ) =
+               p                                       Dii      exp -(d /2)S ii Dii .
+                                        (d /2)
+
+
+   7
+   In a DSGE model, the monetary policy rule is typically parameterized in terms of  = (1 - )~ and
+          ~
+z = (1 - )z , where   0.8 is an interest rate smoothing coefficient.
+This Version: March 10, 2021                                                                            18
+
+
+                  Table 1: Baseline Prior Distribution for Various Coefficients
+
+                                 Param.     Distr.          P(1) P(2)
+                                            Gamma           1.5  0.5
+                                 z          Gamma           0.5  0.25
+                                   
+                                 S          Gamma           1.0  0.7
+                                 D          Gamma           1.0  0.7
+                                 -D         Gamma           0.25 0.12
+                                 ,i         Beta            0.75 0.10
+                                 i          InvGamma        0.1  4.0
+                                            Beta            0.75 0.10
+                                 0          Gamma           10.0 5.00
+                                 l          Gamma           2.00 1.00
+
+Notes: The table lists marginal distributions. P(1) and P(2) are means and standard deviations for Beta and
+Gamma distributions. The Inverse Gamma distribution is parameterized       as scaled inverse 2 distribution
+               2 2           2 -/2-1           2     2                  2
+with density p( |s ,  )  ( )           exp[-s /(2 )], where P(1) is s and P(2) is  . The density of  is
+obtained by the change of variables  =  2 . The following hyperparameters are fixed: I = , d = 4,
+and  = 16.
+
+               
+The density of Dii is obtained by a change of variable, which adds the Jacobian term
+ 
+2 Dii to the density. Here, d is a hyperparameter that controls the degrees of freedom of
+the scaled Inverse 2 distribution. We use an estimate of the variance of yt A(1) to choose
+S ii . Specifically, we fit univariate AR(p) models to the series yi,t and let s2
+                                                                                i be the estimated
+innovation variance. We use  to generate the A(1) matrix in (23) and define the matrix
+                                                                
+                                                  s2
+                                                   1   0    0
+                                                               
+                                   S = A(1)  0         s2
+                                                        2   0   A(1).
+                                             0         0    s2
+                                                             3
+
+
+The values S ii correspond to the diagonal elements of S .
+
+Prior for the Stochastic Volatility Processes p
+                                              ~(,i )~
+                                                    p(i ). We assume that the param-
+eters are independently and identically distributed across i. We use a Beta distribution for
+,i and an Inverse Gamma distribution for i . The parameterizations of these distributions
+are listed in Table 1.
+
+                                   ~(B·1 |D;  , 0 , l ). We will now specify a prior for
+Prior for Policy Rule Coefficients p
+B·1 . Let
+                           B·1 |(D,  , 0 , l )  N B ·1 ( ), P - 1
+                                                              ·1 (0 , l ) .                           (28)
+
+We set the prior mean of B11 , i.e., the coefficient on Rt-1 , equal to B 11 =  . The prior
+This Version: March 10, 2021                                                                             19
+
+
+mean for the remaining coefficients is set to zero. The k × k precision matrix P ·1 (0 , l , I ) is
+diagonal. The value associated with the coefficient of the lth lag of variable j is 0 ll s2
+                                                                                          j /D11 ,
+where sj was defined above and D11 is the innovation variance in the interest rate equation.
+Here 0 is a hyperparameter that scales the overall precision of the prior, and l determines
+how quickly the prior variance decays with lag length l. The prior precision of the last
+element of B·1 (intercept) is infinite, because we fixed it at zero.8
+
+                                      ~ ·i (1)|, D;  , 0 , l . We will now specify a
+Prior for Private-Sector Coefficients p
+prior for the k × 1 column vectors ·i (1) that stack the reduced-form coefficients for private-
+sector variable i, where i = 2, . . . , n. From (4) we deduce that the reduced-form forecast
+errors are given by
+                                                  ut = t [A(1)]-1 ,
+
+as before, the A(1) matrix is generated from . The covariance matrix of the forecast errors
+is
+                         (A, D) = [A(1)]-1 E[        t t ][A(1)]
+                                                                -1
+                                                                     = [A(1)]-1 D[A(1)]-1 .
+
+Let
+                     ·i (1) (D;  , 0 , l )  N ·i ( ), P - 1
+                                                        i (0 , l ) ,                i = 2, . . . , n.   (29)
+
+In order to impose the belief that the individual series are well approximated by AR(1)
+processes we set the prior mean vector as follows: ji ( ) =  for j = i ­ this coefficient
+interacts with yi,t-1 ­ and ji ( ) = 0 for j = i, where j = 1, . . . , k . The k × k precision
+matrix P i (0 , l , I ) is diagonal. The value associated with the coefficient of the lth lag
+of variable j is 0 ll s2
+                       j /ii , where sj was defined above. As before, the hyperparameter 0
+scales the overall precision of the prior, and l determines how quickly the prior variance
+decays with lag length l. The last element, ki (1), capturing the intercept is fixed at zero.
+
+Prior for Regression Function Differentials p(12 ). We assume that
+
+
+                                                                    1
+                                             12 |  N           0,     I .                               (30)
+                                                                    
+
+Note that for 12 = 0 the regression functions remain unchanged once the economy reaches
+the ELB.
+
+
+
+
+     8
+         In practice, we are reducing the dimension of P ·1 (0 , l , I ) to (k - 1) × (k - 1).
+This Version: March 10, 2021                                                                     20
+
+
+3.3    Adjustments to the Baseline Prior and Hyperparameters
+
+                                     ~(|) in (27). These adjustments are implemented
+We make two adjustments to the prior p
+as follows:
+                                   p(|)  p
+                                         ~(|)fu ()fs ().                                       (31)
+
+Uniqueness. We enforce the uniqueness restriction in Proposition 1 and define the indicator
+function
+                fu () = I sign B11 - 12 (1)A21 = sign B11 - 12 (0)A21             .
+
+Stationarity. We impose that the reduced form representation of the SVAR is stationary
+conditional on st = 1 and st = 0 for all t, respectively. To do so, we convert the A
+representation of the SVAR into the  representation in (1) and check that all roots of the
+                                  p
+characteristic polynomial I -     l=1   l (s)z l are outside of the unit circle for s = 1 and s = 0.
+Let fs () be the indicator function that is equal to one if the stationarity condition is satisfied
+and equal to zero otherwise.
+
+Hyperparameters. We adopt a hierarchical modeling approach and specify a prior for the
+hyperparameters as well. Giannone, Lenza, and Primiceri (2015) showed that this approach
+leads to a good empirical fit and forecasting performance for Bayesian VARs. Let p
+                                                                                 ~() be a
+properly normalized density. Then we define
+
+                                 p(, )  p
+                                        ~(|)fu ()fs ()~
+                                                      p().                                     (32)
+
+Under this construction, the conditional prior distribution remains equal to p(|), as spec-
+ified in (31). The marginal prior of  is given by
+
+                               p()  p
+                                    ~()         ~(|)fu ()fs ()d.
+                                                p                                              (33)
+
+The integral on the right-hand side re-weights the density p
+                                                           ~(). This prior specification avoids
+having to evaluate the integral as part of the posterior sampling and has the advantage that it
+down-weighs values of  under which the uniqueness and stationarity conditions are violated
+with very high probability. Prior distributions for  , 0 , and l are reported in Table 1.
+The remaining hyperparameters are fixed at I =  (we are fixing the level parameters µ),
+d = 4, and  = 16.
+This Version: March 10, 2021                                                                           21
+
+
+4     Likelihood Function
+
+We now derive the likelihood associated with the SVAR model discussed in Section 2 under
+the assumption that the uniqueness condition in Proposition 1 is satisfied. In Section 4.1 we
+first discuss how to evaluate the exact likelihood function if the innovations are homoskedas-
+tic. In Section 4.2 we show how a particle filter approximation of the likelihood function can
+be obtained for the model with heteroskedasticity.
+
+
+4.1     Homoskedasticity
+
+We factorize the likelihood function as follows
+                                         T
+                          p(Y1:T |) =         p(y1,t |Y1:t-1 , )p(y2,t |y1,t , Y1:t-1 , ),            (34)
+                                        t=1
+
+
+where Yt1 :t2 denotes the sequence yt1 , . . . , yt2 .
+
+Parameter Transformations. We begin with several parameter transformations to obtain
+the  representation of the SVAR. Based on  we can compute
+
+                                   A·1 , A·2 (1), B·1 , ·2 (1), 12 , D.
+
+
+From A(1) we obtain  (1) = [A(1)]-1 . This leads to the  form for y2,t when st = 1:
+
+                               y2,t = xt ·2 (1) +      1,t 12 (1)   +   2,t 22 (1).                   (35)
+
+We proceed by transforming the monetary policy rule so that we obtain the  form for y1,t .
+Plugging the expression for y2,t in (35) into the monetary policy rule (5) we obtain:
+
+                       1
+             y1,t =       x B·1 - ·2 (1)A21 +            1,t   1 - 12 (1)A21 -        2,t 22 (1)A21   (36)
+                      A11 t
+
+We deduce that
+
+                                  1
+                      ·1 (1) =       B·1 - ·2 (1)A21 ,            (1) =  (1)D (1).                    (37)
+                                 A11
+
+To obtain the  form for st = 0, let 12 (0) = 12 (1) + 12 and use (16) to compute ·2 (0)
+and ·2 (0). Then follow the steps in (35) to (37) to obtain (0) and (0).
+This Version: March 10, 2021                                                                               22
+
+
+Period-t Densities. We partition the covariance matrix (s) into [ij (s)] such that the
+partitions conform with yt = [y1,t , y2,t ] and define
+
+   2|1 (s) = 22 (s) - 21 (s)- 1
+                            11 (s)12 (s),              M12 (s) = - 1
+                                                                 11 (s)12 (s),        M21 (s) = M12 (s).
+
+Moreover, let
+                       u1,t (st ) = y1,t - xt ·1 (st ) u2,t (st ) = y2,t - xt ·2 (st ).
+
+   The density p(y1,t |·) is obtained as follows. If the conditions in Proposition 1 are satisfied,
+then y1,t = -µ1 whenever u1,t (1)  -xt ·1 (1) - µ1 . Thus, the distribution of y1,t is a mixture
+of a pointmass at -µ1 and a continuous distribution with support on (-µ1 , ). We write
+its density as
+
+                                         xt ·1 (1) + µ1
+ p(y1,t |·) = I{y1,t = -µ1 }FN       -                    + I{y1,t > -µ1 }pN u1,t (1); 0, 11 (1) , (38)
+                                             11 (1)
+
+where FN (·) is the cumulative distribution function of a N (0, 1) and pN (x; µ, ) is the prob-
+ability density function of a N (µ, ). The derivation of p(y2,t |y1,t , ·) is more tedious and rel-
+egated to the Online Appendix. We have to distinguish between y1,t = -µ1 and y1,t > -µ1 .
+The densities are given by
+
+                      p(y2,t |y1,t > -µ1 , ·) = pN u2,t (1); u1,t M12 (1), 2|1 (1) .                    (39)
+
+and
+
+       p(y2,t |y1,t = -µ1 , ·)                                                                          (40)
+                                                                                                   -1
+                                                    ¯u (0)|1/2 FN                xt ·1 (1) + µ1
+         = (2 )-(n-1)/2 |2|1 (0)|-1/2 |11 (0)|-1/2 |V                        -
+                                                                                     11 (1)
+                          xt ·1 (0) + µ1 + M ¯ u (0)u2,t (0)
+             ×F N     -
+                                        ¯u (0)
+                                        V
+                    1                         1 ¯ -1  ¯
+             × exp - u2,t (0)- 1
+                             2|1 (0)u2,t (0) + Vu (0)[Mu (0)u2,t (0)]
+                                                                     2
+                                                                       ,
+                    2                         2
+
+where, suppressing the regime dependence,
+
+                                  M12 -  1
+                                      2 |1                                                -1
+                    ¯u =
+                    M                                  ¯u = M12 -1 M21 + -1
+                                                  1,   V        2|1      11                    .
+                            M12 - 1
+                                2|1 M21     +   -
+                                                11
+This Version: March 10, 2021                                                                       23
+
+
+Expressions (38), (40), and (39) can be plugged into (34) to evaluate the likelihood function.
+
+
+4.2       Stochastic Volatility
+
+To incorporate stochastic volatility into the analysis we interpret the VAR as a state-space
+model with latent volatility states t = [1 , . . . , n ] . Let Yt1 :t2 and t1 :t2 denote the sequences
+yt1 , . . . , yt2 and t1 , . . . , t2 and  be the vector of model parameters. The joint density of
+observations and states is given by
+
+                                                T
+                         p(Y1:T , 1:T |) =            p(yt |t , Y1:t-1 )p(t |t-1 , ).            (41)
+                                                t=1
+
+
+The density p(t |t-1 ) is obtained from the laws of motion of the exogenously evolving volatil-
+ities in (18). The measurement equation, which depends on the current volatility state t
+and lags of the observables yt is obtained from the vector autoregressive law of motion of yt .
+
+   The likelihood function is obtained by integrating out the sequence 1:T from the joint
+density of observables and states. We do so sequentially, using a particle filter that approx-
+imates:
+                           T
+           p(Y1:T |) =              p(yt |t , Y1:t-1 , )p(t |t-1 , )p(t-1 |Y1:t-1 , )dt dt-1 .   (42)
+                          t=1
+
+
+A particle filter represents the density p(t |Y1:t , ) through a swarm of particles {tj , Wtj }M
+                                                                                               j =1
+with the property that posterior expectations E[h(t )|Y1:t , ] can be approximated by Monte
+                                     M
+Carlo averages of the form      1
+                                M    j =1   h(tj )Wtj .
+
+   We use a simple bootstrap particle filter (BSPF) which was originally proposed by Gordon
+and Salmond (1993). In order to convert the time t - 1 particle swarm {tj-1 , Wtj-1 }M
+                                                                                     j =1 into
+a time t particle swarm {tj , Wtj }M
+                                   j =1 the BSPF simulates the law-of-motion of the states in
+(18) forward by one period for each  j to obtain a      ~tj . The time t - 1 particle weights
+                                               t-1
+                                 j
+are updated based on     p(yt |s
+                               ~t , Y1:t-1 , ), which
+                                             is identical to the likelihood increment in the
+homoskedastic version of the model, except that D needs to be replaced by Dt (  ~tj ). To avoid
+a degeneracy of the particle weights, the particles can be resampled. As a by-product, the
+BSPF generates a stochastic approximation of the likelihood function that we denote by
+
+                                                    ^(Y1:T |).
+                                                    p
+This Version: March 10, 2021                                                                      24
+
+
+A detailed description of the algorithm based on the exposition in Herbst and Schorfheide
+(2015) is provided in the Online Appendix.
+
+
+4.3    Identification
+
+Based on data exclusively from regime s = 1 our SVAR is only partially identified. First,
+the s = 1 regime provides no information about 12 . Second, the number of free parameters
+in the matrices A(1) and D exceed the number of estimable non-redundant reduced-form
+covariance parameters in (1). Bayesian inference remains valid, but there exist functions of
+model parameters for which the prior distribution is not updated; see, for instance, Poirier
+(1998) and Moon and Schorfheide (2012). In turn, a thoughtful specification of the prior dis-
+tribution becomes important. The Baumeister and Hamilton (2018)-style prior is formulated
+based on parameterization that facilitates prior elicitation and imposes sign restrictions on
+some of the entries in the A(1) matrix which reduces the size of the identified set.
+
+    Mavroeidis (2020) formally shows that the transition of the economy into the s = 0
+regime generates additional identifying restrictions, which are akin to identification via het-
+eroskedasticity and provides an identification analysis for his model specifications. It is
+fairly straightforward to demonstrate that our model satisfies a necessary condition for iden-
+tification. Consider the following static example: yt A(s) =          t,   where   t    N (0, I ) and
+our D matrix is absorbed into the definition of A(s). From the s = 1 regime we can
+estimate V[y1,t |y1,t > 0], E[y2,t |y1,t ], and V[y2,t |y1,t ], which in a Gaussian framework with
+mean-zero shocks generates the usual (n + 1)/2 restrictions. From the s = 0 we can estimate
+E[y2,t |y1,t = 0] and V[y2,t |y1,t = 0], leading to an additional (n - 1) + (n - 1)n/2 restrictions.
+Whether or not these restrictions are sufficient for identification depends on the number of
+additional parameters that characterize the s = 0 distribution. In our model it is n - 1. In
+our application n = 3 and one element of A(1) is set to zero. Thus, translated into the static
+framework, we have (9 - 1) + 2 = 10 unknowns and 6 + 5 = 11 restrictions for identification,
+which implies that the necessary condition is satisfied.
+
+
+
+5     Posterior Computations via SMC
+
+Because of fairly complicated nonlinear parameter restrictions generated by the piecewise-
+linear structure of our SVAR, the posterior distribution of the parameters is non-standard.
+This Version: March 10, 2021                                                                       25
+
+
+We use a sequential Monte Carlo (SMC) sampler to generate draws from the posterior of .
+SMC techniques have emerged as an attractive alternative to MCMC methods because they
+can be easily parallelized and, properly tuned, may produce more accurate approximations
+of posterior distributions than MCMC algorithms.9
+
+   SMC combines features of classic importance sampling and modern MCMC techniques.
+The starting point is the creation of a sequence of intermediate or bridge distributions
+        N
+{n ()}n=0 that converge to the target posterior distribution, i.e., N () =  (). At any
+stage the (intermediate) posterior distribution n () is represented by a swarm of particles
+ i    i N
+{n , Wn }i=1 in the sense that the Monte Carlo average
+
+                                          N
+                             ¯ n,N = 1
+                             h                  i
+                                               Wn   i
+                                                  h(n
+                                                           a.s.
+                                                      ) - En [h(n )]                             (43)
+                                     N   i=1
+
+                                                                               i
+as N - , for each n = 0, . . . , N . We adopt the convention that the weights Wn are
+normalized to average to one. The bridge distributions are posterior distributions constructed
+from stage-n likelihood functions:
+
+                                                 pn (Y |)p()
+                                     n () =                                                      (44)
+                                                 pn (Y |)p()d
+
+with the convention that p0 (Y |) = 1, i.e., the initial particles are drawn from the prior, and
+pN (Y |) = p(Y |). We use likelihood tempering of the form
+
+                                                   n              n
+                             pn (Y |) = p(Y |)         ,   n =         .                         (45)
+                                                                  N
+
+The tuning parameter       controls the shape of the tempering schedule.
+
+   The SMC algorithm proceeds iteratively from n = 0 to n = N . Starting from stage n - 1
+           i       i    N
+particles {n -1 , Wn-1 }i=1 , each stage n of the algorithm targets the posterior n and consists
+of three steps: correction, that is, reweighting the stage n - 1 particles to reflect the density
+in iteration n; selection, that is, eliminating a highly uneven distribution of particle weights
+(degeneracy) by resampling the particles; and mutation, that is, propagating the particles
+forward using a Markov transition kernel to adapt the particle values to the stage n bridge
+density. Our implementation of the SMC algorithm follows Herbst and Schorfheide (2015)
+and is described in detail in the Online Appendix.
+   9
+     See Liu (2001), Capp´
+                         e, Moulines, and Ryden (2005), and Herbst and Schorfheide (2015) for textbook
+treatments.
+This Version: March 10, 2021                                                                      26
+
+
+     Likelihood values p(Y |) are required in the correction and mutation steps. For the
+model specification with stochastic volatility the exact likelihood function p(Y |) is replaced
+                          ^(Y |) discussed in Section 4.2. In this case, the SMC al-
+by the BSPF approximation p
+gorithm turns into an SMC2 algorithm, which has been studied in Chopin, Jacob, and
+Papaspiliopoulos (2013). Just like particle MCMC algorithms, the SMC2 algorithm gener-
+ates an approximation of the exact posterior p(|Y )  p(Y |)p() provided the stochastic
+                         ^(Y |) is unbiased, which it is for the BSPF.
+likelihood approximation p
+
+
+
+6        Empirical Analysis
+
+We now estimate a three-variable SVAR on U.S. quarterly data. y1,t is defined as the federal
+funds rate and y2,t comprises measures of output gap and inflation. The output gap is defined
+as log real GDP minus the log potential output series published by the Congressional Budget
+Office. We take inflation to be the year-over-year changes (ln Pt - ln Pt-4 ) in the personal
+consumption expenditure deflator. The three series are plotted in Figure 1. Because, unlike
+in our model, the effective federal funds rate was never exactly equal to zero when the
+economy reached the ELB, we set interest rates below 25 basis points (bp) equal to zero.
+The ELB episode is indicated by the gray band in the data plot.
+
+     The subsequent empirical analysis is based on observations from 1984:Q1 to 2018:Q4.
+We use p = 4 lags for the SVAR. The SMC2 algorithm described in Section 5 is used to
+generate draws i , i = 1, . . . , N from the posterior distribution.10 All the results presented
+subsequently are based on transformations of these draws. The parameter estimates are dis-
+cussed in Section 6.1, the estimated impulse response functions are presented in Section 6.2,
+and the implied shadow rate is discussed in Section 6.3. All credible intervals reported in
+this section are 90% equal-tail-probability credible intervals.
+
+
+6.1      Parameter and Volatility Estimates
+
+Setting aside stochastic volatility in the structural innovations, there are two sources of
+nonlinearity in our SVAR. First, the interest rate is censored. This means, even if other
+variables depend on the interest rate linearly, their dynamics will change nonlinearly as the
+
+    10
+     We use N = 10, 000 particles for Algorithm 2 and M = 100 particles for the BSPF Algorithm 1. The
+SMC algorithm uses N = 200 stages with shape parameter = 2. For the mutation we are using NM H = 3
+steps of a single-block MH algorithm.
+This Version: March 10, 2021                                                                           27
+
+
+                                               Figure 1: Data
+                                                      Interest Rate
+                            12
+                            10
+                             8
+                             6
+                             4
+                             2
+                             0
+                                 1985   1990   1995     2000   2005   2010   2015
+
+                                                      Output Gap
+                             4
+                             2
+                             0
+                             2
+                             4
+                             6
+                             8
+                                 1985   1990   1995     2000   2005   2010   2015
+
+                                                        Inflation
+                             6
+
+                             4
+
+                             2
+
+                             0
+
+                             2
+                                 1985   1990   1995     2000   2005   2010   2015
+
+
+Notes: Grey bands indicate the ELB period from 2009:Q1 to 2015:Q4, during which the federal funds rate is
+below 25bp. Vertical lines denote dates for which we compute impulse response functions, which are 1999:Q1
+and 2009:Q1.
+
+
+interest rate reaches the ELB. Second, we allow for the laws of motion of the private-sector
+variables to depend on whether or not the interest rate is at or away from the ELB. This
+feature of our SVAR specification captures the potential nonlinearity of agents' decision
+rules in DSGE models with occasionally-binding constraints; see, for instance, ACHSV. The
+second nonlinearity is captured by a non-zero 12 .
+
+    Figure 2 shows prior and posterior densities for the two elements of 12 . The prior
+This Version: March 10, 2021                                                                             28
+
+
+                             Figure 2: Kinks in the Regression Functions
+
+               Output Gap Kink 12,1                                  Inflation Kink 12,2
+
+         6                                                  6
+
+
+         4                                                  4
+
+
+         2                                                  2
+
+
+         0                                                  0
+                -0.5         0          0.5                        -0.5         0          0.5
+
+Notes: Marginal prior p(·) (dotted, red) and posterior p(·|Y ) (solid, blue) densities. Panels depict kernel
+density estimates constructed from the output of the SMC algorithm.
+
+
+densities are almost symmetric around zero.11 The posterior densities are clearly more
+concentrated than the prior densities. While the posterior for the output gap kink 12,2
+is centered around zero (the 90% credible interval ranges from -0.16 to 0.12), the posterior
+estimate of the inflation kink 12,1 is clearly negative. The 90% credible interval ranges from
+-0.52 to -0.21. These results suggest that inflation may respond to shocks differently at and
+away from the ELB, while output gap responses may be similar.
+
+    The third source of nonlinearity in our model comes from the stochastic volatility in
+the structural innovations. Figure 3 depicts the filtered volatilities for the three structural
+shocks, E[ Dii,t |Y1:t , i ], computed using 1,000 draws i from the posterior distribution, with
+M = 1, 000 particles for each draw. In general, the stochastic volatility is more pronounced
+for the monetary policy shock and the supply shock than for the demand shock. During the
+Great Recession, volatility increases for all three shocks. The timing, however, differs. The
+demand shock volatility increases by more than 50% between 2007:Q3 to 2008:Q2 during
+the initial phase of the Great Recession and then peaks in 2008:Q4. The monetary policy
+shock volatility jumps in 2008:Q1 and then again in 2008:Q4. The volatility of the supply
+shock rises more gradually and peaks in 2009:Q3.
+
+    Finally, in Table 2 we compare the log marginal data densities (MDD) of various model
+specifications. Our preferred specification is the VAR(4) with stochastic volatility and non-
+zero              
+     12 . Setting 12 = 0 reduces the log MDD by 8. The VAR(4) clearly dominates the
+
+
+  11
+       The adjustments described in Section 3.3 create a slight asymmetry.
+This Version: March 10, 2021                                                                                    29
+
+
+                                      Figure 3: Stochastic Volatility
+
+
+               1.4
+               1.2
+                 1
+               0.8
+               0.6
+               0.4
+
+                     1985     1990        1995       2000       2005       2010        2015
+
+
+
+
+               1.2
+
+                 1
+
+               0.8
+
+               0.6
+
+               0.4
+
+                     1985     1990        1995       2000       2005       2010        2015
+
+
+                 4
+
+
+                 3
+
+
+                 2
+
+
+                 1
+                     1985     1990        1995       2000       2005       2010        2015
+
+
+Notes: Posterior distribution of filtered volatilities E[ Dii,t |Y1:t , i ]: mean (solid, blue) and 90% equal-tail-
+probability credible intervals (blue shades).
+
+
+VAR(1) specifications. For both the VAR(1) and the VAR(4) the heteroskedastic version of
+the model is preferred to the homoskedastic specification.
+This Version: March 10, 2021                                                                             30
+
+
+                                  Table 2: Marginal Data Densities
+
+                   Specification                                                 MDD
+                   VAR(4), stochastic volatility (benchmark)                   -303.34
+                   VAR(4), stochastic volatility, 12 = 0                        -311.34
+                   VAR(4), homoskedastic                                        -322.92
+                   VAR(1), stochastic volatility                                -310.14
+                   VAR(1), homoskedastic                                        -346.43
+
+
+
+6.2     Responses to Shocks
+
+To study the effects of interest-rate censoring and regime-specific coefficients and to document
+the parameter uncertainty, we consider three types of impulse responses. First, we fix the
+SVAR parameters at their posterior mean values and assume that the regime s persists
+forever. Second, we keep the parameters fixed at the posterior mean, but we allow the st
+regime and hence the coefficients of the A representation to switch endogenously. Third,
+we generate bands that reflect parameter uncertainty.
+
+    In a nonlinear model like ours, impulse responses depend on lagged endogenous variables
+(and thus the date the shock hits), the size of the shock and, related, the level of volatility of
+the shocks for the duration of the impulse response. For all impulse responses, we condition
+on two specific dates: 1999:Q1 and 2009:Q1. These dates are indicated by the vertical lines
+in Figure 1. In 1999:Q1 output gap is positive, inflation is low, and the economy is far away
+from the ELB. In 2009:Q1 the economy is in the midst of the Great Recession with a large
+negative output gap, below-mean inflation, and interest rates at the ELB.
+
+    For all impulse responses we hold the level of volatility of the structural shocks constant
+throughout at the filtered value as measured on the date the initial shock hits the economy.
+Finally, we calibrate the size of the shocks as follows. First, we compute responses to
+minus-two-standard-deviation shocks for 1999:Q1. Then, for 2009:Q1, we scale the shocks
+as follows: the monetary policy shock is scaled so that the initial response of the shadow
+      
+rate y1,t in 2009:Q1 is the same as the one for 1999:Q1. Second, demand and supply shocks
+are normalized such that the maximum absolute output responses are identical in 1999:Q1
+and 2009:Q1.12
+
+  12
+      This leads to the following scaling: all shocks are -2 standard deviations in s = 1 (1999:Q1) while in
+s = 0 (2009:Q1) we have -1.39 standard deviations for the monetary policy shock, -2.23 standard deviations
+for the demand shock and -0.97 standard deviations for the supply shock.
+This Version: March 10, 2021                                                                          31
+
+
+Fixed-Regime Impulse Responses. In Figure 4 we examine impulse responses that are
+computed under the assumption that the regime st  {0, 1} is fixed, where as we explained
+above we use 1999:Q1 and 2009:Q1 as representative dates for s = 1 and s = 0, respectively.
+                                                                  
+This experiment can be interpreted as follows: the initial level y1,t is either so far above or
+below the censoring point -µ1 , that the regime does not change for the next h periods in a
+forward simulation. We also fix the parameter vector  at its posterior mean  ¯.
+
+    For the s = 0 regime, we generate impulse responses under two sets of regression func-
+tions: (i) the estimated regression functions and (ii) the s = 1 regression functions obtained
+by setting 12 = 0. In the graph, the former are labeled "s = 0" whereas the latter are
+labeled "s = 0 (linear)." We use the same scaling of shocks for these two sets of responses.
+A comparison between "s = 1" and "s = 0 (linear)" highlights the effect of the interest-rate
+censoring at the ELB, whereas a comparison between "s = 0 (linear)" and s = 0 sheds light
+on the effect of the kink in the regression functions generated by the estimated 12 .
+
+    The blue lines in Figure 4 correspond to the s = 1 responses, and are computed from
+the implied estimates of (1) and  (1). In response to a 28 basis point (bp) expansionary
+monetary policy shock the output gap rises by 30 bp and y-o-y inflation increases by 10 bp.
+The negative demand shock lowers output gap by 50 bp and inflation by 35 bp at its trough.
+In response to the fall in output and inflation, the central bank lowers nominal interest rates.
+The interest rate response is hump shaped and bottoms out at roughly -150 bp. The negative
+supply shock triggers a negative hump-shaped output-gap response with a trough at -35 bp
+and a 110 bp rise in inflation. The large increase in inflation leads the central bank to raise
+the nominal interest rate.
+    We now turn to the "s = 0 (linear)" responses (green) that solely capture the effect
+of censoring at the ELB. By construction, the interest rate does not react to the shocks.
+Nonetheless, our model generates movements in output and inflation to the monetary policy
+shock, which can be interpreted as responses to changes in the shadow rate or the effects of
+unconventional monetary policy. Mechanically, these responses are generated by the vector
+12 (st ) in (9). This vector is obtained for s = 0 from the system of equations that link the
+s = 0 regression functions to the s = 1 regression functions; see (16).13
+    The s = 0 (linear) responses of the output gap and inflation to a monetary policy shock
+are slightly larger than s = 1 responses, but very similar in shape to the non-ELB responses.
+Allowing for an estimated 12 = 0 essentially does not change the responses to a monetary
+  13
+     DSGE model solutions have the same feature: the monetary policy shock is a state variable and has an
+influence on decisions, regardless of whether or not the interest rate moves.
+This Version: March 10, 2021                                                                               32
+
+
+             Figure 4: Responses to Negative Scaled Shocks with Fixed Regimes
+
+     0.2                                                                  0.6
+                                                0
+
+     0.1
+                                                                          0.4
+                                              -0.5
+      0
+                                                                          0.2
+    -0.1
+                                               -1
+                       s=1                                                 0
+    -0.2               s=0
+                       s = 0 (linear)
+                                              -1.5
+    -0.3                                                                 -0.2
+        0         50                    100      0    50         100         0          50           100
+
+
+
+
+     0.4                                      0.2                         0.1
+
+
+                                                                           0
+     0.3                                        0
+
+                                                                         -0.1
+     0.2                                      -0.2
+                                                                         -0.2
+
+     0.1                                      -0.4
+                                                                         -0.3
+
+      0                                       -0.6                       -0.4
+       0          50                    100       0   50         100         0          50           100
+
+
+
+
+     0.2                                      0.1                         1.2
+
+    0.15                                                                   1
+                                                0
+                                                                          0.8
+     0.1
+                                              -0.1                        0.6
+    0.05
+                                              -0.2                        0.4
+      0
+                                                                          0.2
+                                              -0.3
+   -0.05                                                                   0
+
+    -0.1                                      -0.4                       -0.2
+        0         50                    100       0   50         100         0          50           100
+
+
+
+Notes: The IRFs are computed by holding the regime st fixed. The blue lines represent the IRFs under the
+s = 1 regime (no censoring); the red lines are IRFs for the s = 0 regime (censoring and estimated value of
+                                                           
+  12 ); the green lines are IRFs for the s = 0 regime with 12 = 0. The shocks are -2 standard deviation for
+the s = 1 regime and they are scaled for the s = 0 regime (see Footnote 12).
+
+
+policy shock. The responses to a supply shock are also very similar under the three scenarios.
+Only the inflation response to a demand shock exhibits substantial differences across regimes.
+This Version: March 10, 2021                                                                                     33
+
+
+Under the s = 1 regime inflation falls drastically, whereas under the s = 0 regime the inflation
+response changes sign and prices increase. s = 0 (linear) is an intermediate case in which
+inflation initially drops by 20 bp but then jumps to 10 bp before converging to zero in the
+long-run.14
+
+    Ball and Mazumder (2011) and Hall (2011) pointed out that during the Great Recession
+inflation did not fall despite a large drop in output (gap), indicating a change in the positive
+relationship between the two variables implied by the Phillips curve. This observation was
+dubbed the missing deflation puzzle. Conditional on the posterior mean estimate       ¯ we
+computed estimates of the structural shocks (plotted in the Online Appendix). From 2008:Q4
+to 2009:Q3 the demand shocks are estimated to be negative, depressing output. If the ELB
+regime parameters equaled their non-ELB regime counterparts, these shocks would have
+implied a substantial drop in inflation, just like a conventional Phillips curve, which did not
+happen. The model reconciles the empirical observation with a negative estimate of 12,2
+for inflation, which in turn delivers a rise in inflation in response to the demand shock in the
+ELB regime.
+
+Impulse Responses With Regime Shifts. We continue to keep the parameter vector 
+fixed at its posterior mean ¯, but we now allow for the regime st to evolve over the impulse
+response as the economy goes in and out of the ELB. Doing so requires simulations because
+different realizations of the structural shocks may lead to different paths for the economy,
+including differences in when it is at or away from the ELB. Using t +1 to denote the date the
+shock hits the economy, starting from the initial condition xt+1 , we iterate the SVAR forward
+to obtain two different paths for the endogenous variables. Along the baseline trajectory, in
+                                              j,0
+simulation j , we draw all innovations        i,t+h   from their respective N (0, Dii,t+1 ) distributions,
+                                                                       j,0
+not varying volatility with horizon h. We denote the resulting series yt+1:t+H . To generate
+                  j,1                    j,1          j,0                  j,1         j,0
+the shocked path yt+1:t+H , we set       1,t+1   =    1,t+1   +  and let   i,t+h   =   i,t+1   for all other (i, h).
+Here  is the size of the shock as calibrated earlier. The impulse response is defined as
+the difference between the shocked and the baseline path. The simulation is repeated for
+j = 1, . . . , M where we use M = 10, 000.
+                                                                   j,1        j,0
+    In the top three rows of Figure 5 we plot the distribution of yt+1:t+H - yt+1:t+H across
+j . The bands depict 90% credible intervals and the solid lines are means. In the absence
+of the nonlinearities triggered by the interest rate reaching the ELB, the bands collapse to
+a single line. The bottom panel of Figure 5 shows bands for the interest rate path along
+  14
+    The sign reversal of the inflation response relative to the s = 1 regime is also visible in the DSGE model
+based impulse responses reported in Figure 5 of Aruoba, Cuba-Borda, and Schorfheide (2018).
+This Version: March 10, 2021                                                                                                   34
+
+
+  Figure 5: Responses in 1999:Q1 and 2009:Q1: Flexible Regimes and Shock Uncertainty
+
+    0.4                                          0.5                                    0.6
+
+                                                   0                                    0.4
+    0.2
+                                                 -0.5                                   0.2
+     0
+                                                  -1                                      0
+   -0.2                        In 1999Q1         -1.5                                   -0.2
+                               In 2009Q1
+   -0.4                                           -2                                    -0.4
+       0             50                    100      0              50             100       0             50             100
+
+
+
+    0.4                                          0.2                                    0.1
+
+    0.3                                                                                   0
+                                                   0
+    0.2                                                                                 -0.1
+                                                 -0.2
+    0.1                                                                                 -0.2
+                                                 -0.4
+     0                                                                                  -0.3
+
+   -0.1                                          -0.6                                   -0.4
+       0             50                    100       0             50             100       0             50             100
+
+
+
+    0.2                                          0.1
+                                                                                          1
+                                                   0
+                                                                                        0.8
+    0.1
+                                                 -0.1                                   0.6
+
+                                                 -0.2                                   0.4
+     0
+                                                 -0.3                                   0.2
+
+                                                                                          0
+   -0.1                                          -0.4
+       0             50                    100       0             50             100      0              50             100
+
+
+
+     15                                            15                                     15
+
+
+
+
+     10                                            10                                     10
+
+
+
+
+      5                                             5                                      5
+
+
+
+
+      0                                             0                                      0
+       0   20   40        60       80      100       0   20   40        60   80   100       0   20   40        60   80   100
+
+
+
+
+Notes: The top three panels show the distribution of the difference between a simulated baseline trajectory
+and a trajectory in which a scaled shock is subtracted from the simulated monetary policy / demand /
+supply shock in the initial period. See Footnote 12 for the scaling of the IRFs. The bottom panels show the
+level of the interest rate under the "shocked" trajectory. Bands represent 90% credible intervals and solid
+lines are means across M = 10, 000 simulated paths.
+
+
+the "shocked" trajectories. Each time a trajectory j hits the ELB for the first time, the
+difference between the shocked path and the baseline path will start to deviate from the
+This Version: March 10, 2021                                                                             35
+
+
+fixed-regime s = 1 impulse response. Once a sufficiently large number of trajectories have
+hit the ELB, the response bands will start to fan out. Because of this cumulative effect, it
+is not necessary that the fanning out of the response bands coincides with the 5% quantiles
+of the interest rate distributions represented by the lower bounds of the shaded bands in the
+last row of Figure 5 reaching zero.
+    Qualitatively and quantitatively, the 1999:Q1 and 2009:Q1 responses look very similar
+to the s = 1 and s = 0 responses in Figure 4, respectively. All of the 1999:Q1 responses
+start out as single lines because initially the ELB is irrelevant. Some of the responses,
+in particular those to a demand shock, fan out after 25 to 50 periods. This means that
+there are a substantial number of trajectories along which interest rates are strictly positive
+(s = 1) under the baseline scenario, but hit the ELB (s = 0) at least once under the shocked
+scenario. Along these trajectories, the interest rate response reverts more quickly back to
+zero (because the interest rate drop is constrained by the ELB), and so does output gap and
+the inflation response. Visually, in Figure 5 the response along the far end (away from the
+average response) of the blue bands starts to look more similar to the mean response under
+the 2009:Q1 initial conditions.
+    The bands associated with the 2009:Q1 impulse responses fan out earlier and are typically
+wider than the ones for the 1999:Q1 responses because near the ELB the probability that
+the regimes along the shocked and unshocked trajectories differ is larger. Compared to the
+s = 0 responses in Figure 4 the 2009:Q1 IRFs are slightly tilted toward the s = 1 responses
+because under some of the simulated trajectories, the economy quickly moves away from the
+ELB. More generally, impulse responses for other dates will be somewhere in between the
+1999:Q1 and 2009:Q1 responses, depending on how close the shadow rate is to the ELB.
+Parameter Uncertainty. We will now explore the posterior uncertainty associated with
+the impulse response functions. The bands reported in Figure 6 represent 90% credible
+intervals that reflect posterior parameter uncertainty, in addition to the regime uncertainty
+we explored in Figure 5. The solid lines are pointwise medians of the impulse response
+posteriors. As in the previous figure, we compare responses based on the 1999:Q1 (blue)
+and 2009:Q1 (red) initial conditions. Figure 6 is generated by converting draws i from the
+posterior distribution into mean responses (each computed over 10, 000 simulations) to the
+three structural shocks depicted as solid lines in Figure 5.15
+  15
+     A comparison of prior and posterior impulse response bands is provided in the Online Appendix. The
+prior bands are substantially wider than the posterior bands indicating that the sample is informative about
+the propagation of shocks.Compared to the set-identified setting in BH, the ELB regime provides additional
+identifying information in our analysis.
+This Version: March 10, 2021                                                                                       36
+
+
+Figure 6: Responses in 1999:Q1 and 2009:Q1: Flexible Regimes and Parameter Uncertainty
+
+    0.4                                  0.5                                    2
+
+
+    0.2                                    0                                  1.5
+
+
+     0                                   -0.5                                   1
+
+
+   -0.2                                   -1                                  0.5
+
+
+   -0.4                                  -1.5                                   0
+                       In 1999Q1
+                       In 2009Q1
+   -0.6                                   -2                                  -0.5
+          0       50               100          0   20   40   60   80   100          0   20   40   60   80   100
+
+
+
+
+    0.6                                  0.4                                  0.2
+
+                                         0.2                                  0.1
+    0.4                                                                         0
+                                           0
+                                                                              -0.1
+    0.2                                  -0.2
+                                                                              -0.2
+                                         -0.4
+                                                                              -0.3
+     0
+                                         -0.6                                 -0.4
+
+   -0.2                                  -0.8                                 -0.5
+          0       50               100          0   20   40   60   80   100          0   20   40   60   80   100
+
+
+
+
+    0.5                                  0.2                                  1.5
+
+    0.4                                  0.1
+
+    0.3                                    0                                    1
+
+
+    0.2                                  -0.1
+
+    0.1                                  -0.2                                 0.5
+
+
+     0                                   -0.3
+
+
+   -0.1                                  -0.4                                   0
+          0       50               100          0   20   40   60   80   100          0   20   40   60   80   100
+
+
+
+Notes: See Footnote 12 for the scaling of the IRFs. Bands represent 90% credible intervals and solid lines
+are pointwise posterior medians.
+
+
+    A comparison of the 1999:Q1 and 2009:Q1 bands sheds more light on the question whether
+the propagation of shocks is different at the ELB. In regard to interest rate responses, the
+answer is a trivial yes, because it is directly constrained by the ELB. More interesting is
+the comparison for output gap and inflation. Consistent with the insignificant estimate of
+This Version: March 10, 2021                                                                37
+
+
+12,1 for the output gap equation reported in Figure 2, we see that the output gap impulse
+response bands overlap for the two sets of initial conditions. Despite the overlap, the output
+gap response to the monetary policy shock appears to be slightly stronger when the economy
+is at the ELB. Comparing the output gap responses to a supply shock across Figure 5 and
+Figure 6, reveals that there is a lot of parameter uncertainty regarding this impulse response.
+
+   The inflation responses to a demand shock and a monetary policy shock, on the other
+hand, show some differences. This difference is most pronounced for the demand shock
+where the bands do not overlap for the first three years following the shock. While for
+1999:Q1 the credible band for the inflation response is located below zero, for 2009:Q1 the
+inflation response is positive with high probability. As for the monetary policy shock, the
+unconventional expansionary monetary policy intervention at the ELB in 2009:Q1 is more
+inflationary on impact than away from the ELB in 1999:Q1, but the bands start to overlap
+in the subsequent periods.
+
+Comparison to the Literature. To sum up our headline results, we find that (i) a
+negative monetary policy shock that creates the same size response in the shadow rate, is
+more inflationary at the ELB on impact and also generates a slightly larger response of the
+output gap. (ii) Negative demand shocks cause inflation to fall when the ELB is non-binding.
+At the ELB, on the other hand, the inflation response to a negative demand shock is positive.
+This difference persists for about three years. (iii) The output gap responses for demand
+and supply shocks do not significantly differ at and away from the ELB.
+
+   The papers by Ikeda, Li, Mavroeidis, and Zanetti (2020) and Johannsen and Mertens
+(2021) focus on differences in the effectiveness of monetary policy at and away from the ELB.
+Johannsen and Mertens (2021) find that monetary accommodation during the Great Reces-
+sion would have provided more stimulus than at other times. Our results are qualitatively
+consistent with this finding: the output gap response is larger at the ELB relative to the
+response away from the ELB, though the credible sets overlap. Ikeda, Li, Mavroeidis, and
+Zanetti (2020) use a censored SVAR similar to the one in Mavroeidis (2020) and study the
+hypothesis of empirical irrelevance of the ELB using data from the U.S. and Japan. Their
+results show a similar inflation response to monetary policy on impact but a larger response
+at the ELB after two quarters and beyond, which is qualitatively similar to our results.
+Unlike us, they find a slight dampening instead of amplification of the output gap response.
+At the end, just as we do, they reject the irrelevance hypothesis.
+
+   Our results (i) and (ii) are in contrast to the results from time-varying coefficient VARs
+This Version: March 10, 2021                                                                      38
+
+
+presented in Debortoli, Gal´
+                           i, and Gambetti (2019). They do not find discernible differences
+between responses to a variety of shocks at and away from the ELB, which leads them
+to conclude that the ELB is empirically irrelevant. The densely parameterized and set-
+identified TVC-SVAR of Debortoli, Gal´
+                                     i, and Gambetti (2019) makes it difficult to detect
+changes in the propagation of shocks based on a relatively short sample of ELB observations.
+We use more identifying information and only a small number of additional parameters to
+characterize the dynamics in the ELB regime. Thus, our approach is better equipped to
+detect differences in impulse response functions. All in all, we conclude that, as predicted
+by DSGE models with an ELB constraint, the ELB is not irrelevant for the propagation
+of shocks and this effect is measurable in a parsimonious SVAR framework that allows for
+changes in the private-sector behavior at the ELB.
+
+
+6.3    Shadow Rate
+
+Our model allows us to generate a shadow rate. It is given by an estimate of the latent
+                                                                                           
+variable y1,t , which can then be adjusted to undo the effect of our re-centering: y
+                                                                                   ~1,t = y1,t + µ1 .
+                                                   
+In the Online Appendix we provide a formula for p(y1,t |y1,t = -µ1 , y2,t , xt ,  ). Because in
+                                              
+our SVAR xt depends on y1,t-1:t-p instead of y1,t-1:t-p inference on the shadow rate is static
+and does not require dynamic filtering and smoothing. The posterior median estimate,
+60% and 90% bands of the model-implied distribution of the shadow rate are plotted in
+Figure 7. The bands reflect uncertainty about the parameters  and the shocks conditional
+on (y1,t = -µ1 , y2,t , xt , ). For each parameter draw  we condition on the mean (filtered)
+volatility estimate, which is allowed to vary over time. The inference exploits the correlation
+structure implied by (0) and (0) between interest rates, on the one hand, and output gap
+and inflation on the other hand.
+
+   The estimated shadow rate drops to -2% in 2009 during the first large scale asset purchase
+intervention (QE1) of the Federal Reserve. From 2010 to 2015, during QE2, Operation Twist,
+and QE3 it hovered around -0.5%. This shows that the Federal Reserve was particularly
+aggressive in providing monetary stimulus in 2009 and reverted to a lesser but consistent
+stimulus for the rest of the ELB episode. It is also noteworthy that the slope of the shadow
+rate in early 2009 closely matches the slope in the federal funds rate just prior to the start
+of the ELB episode.
+
+   Qualitatively, the time path of the shadow rate is consistent with the time path of the
+desired interest rate (red solid line) estimated with a small-scale New Keynesian DSGE
+This Version: March 10, 2021                                                                                               39
+
+
+                                                 Figure 7: Shadow Rate
+        4
+
+                          QE1                  QE2        Twist                   QE3
+        3
+
+
+
+        2
+
+
+
+        1
+
+
+
+        0
+
+
+
+        -1
+
+
+
+        -2
+
+
+
+        -3
+             I II III IV I II III IV I II III IV I II III IV I II III IV I II III IV I II III IV I II III IV I II III IV
+               2008        2009        2010        2011        2012        2013         2014       2015         2016
+
+                                        Wu-Xia          PLC-SVAR            DSGE Model (ACS)
+
+
+Notes: Blue line outside of the ELB episode: federal funds rate. During the ELB episode: 60% (green shade)
+and 90% (blue shade) credible intervals. Black line is Wu-Xia shadow rate and red line is the desired interest
+rate from the DSGE model of Aruoba, Cuba-Borda, and Schorfheide (2018). The solid vertical line denotes
+September 2008. The yellow shading indicates the quarters when the particular Fed program was active.
+During the green shaded area, both Operation Twist and QE3 were active. The dashed-dotted vertical line
+shows January 2012, when the formal inflation target was announced. The dashed vertical line shows the
+"taper tantrum" episode in June 2013.
+
+
+in Aruoba, Cuba-Borda, and Schorfheide (2018). Quantitatively, the trough in the DSGE
+model implied shadow rate occurred about six months after the trough in the SVAR based
+shadow rate. Johannsen and Mertens (2021) produced a shadow rate based on their censored
+unobserved component model. Their shadow rate (not shown in the figure) is relatively flat
+at about -1% throughout the ELB episode and quite similar to our rate from 2010 onwards.
+
+    Finally, we provide a comparison with the yield-curve based shadow rate of Wu and Xia
+(2016). The Wu-Xia rate, rather than being based on a censored interest-rate feedback rule,
+is based on a censored affine term structure model and extracts information from yields
+on medium- and long-term bonds. Their shadow rate troughs in 2014, about five years
+after the end of the Great Recession, about a year prior to the lift-off from the ELB. We
+find this somewhat implausible in view of the narrative evidence that the most significant
+This Version: March 10, 2021                                                                    40
+
+
+interventions happened during and right after the Great Recession - which is consistent with
+our SVAR based estimates.16
+
+
+
+7        Conclusion
+
+We developed a structural VAR in which an occasionally-binding constraint generates cen-
+soring of one of the dependent variables. Once the censoring mechanism is triggered, we
+allow some of the coefficients for the remaining variables to change. By imposing that the
+regression functions are continuous at the censoring point, we can show that some mild
+parameter restrictions deliver a unique reduced form. The resulting model is more parsimo-
+nious than a time-varying-coefficient VAR and the switch in parameter values is tied to the
+censoring mechanism, which in our application is the ELB on nominal interest rates. An
+application to U.S. data provided evidence of a shift of parameters in the inflation equation
+which creates a more inflationary response to an expansionary monetary policy shock and a
+positive inflation response to a contractionary demand shock at the ELB.
+
+
+
+References
+Aruoba, S. B., P. Cuba-Borda, K. Higa-Flores, F. Schorfheide, and S. Vil-
+    lalvazo (2021): "Piecewise-Linear Approximations and Filtering for DSGE Models with
+    Occasionally-Binding Constraints," Review of Economic Dynamics, forthcoming.
+
+Aruoba, S. B., P. Cuba-Borda, and F. Schorfheide (2018): "Macroeconomic Dy-
+    namics Near the ZLB: A Tale of Two Countries," Review of Economic Studies, 85(1),
+    87­118.
+
+Aruoba, S. B., and F. Schorfheide (2011): "Sticky Prices versus Monetary Frictions:
+    An Estimation of Policy Trade-Offs," American Economic Journal: Macroeconomics, 3(1),
+    60­90.
+
+Ascari, G., and S. Mavroeidis (2020): "The Unbearable Lightness of Equilibria in a
+    Low-Interest-Rate Environment," Manuscript, Oxford University.
+
+
+    16
+    The shadow rate produced by Krippner (2015) looks even more extreme than the Wu-Xia rate, going
+down to about -6% in 2013.
+This Version: March 10, 2021                                                             41
+
+
+Ball, L., and S. Mazumder (2011): "Inflation Dynamics and the Great Recession,"
+  Brookings Papers on Economic Activity, 42(1 (Spring), 337­405.
+
+Baumeister, C., and J. D. Hamilton (2018): "Inference in structural vector autoregres-
+  sions when the identifying assumptions are not fully believed: Re-evaluating the role of
+  monetary policy in economic fluctuations," Journal of Monetary Economics, 100, 48 ­ 65.
+
+Blundell, R., and R. Smith (1989): "Estimation in a Class of Simultaneous Equation
+  Limited Dependent Variable Models," Review of Economic Studies, 56(1), 37­57.
+
+Bognanni, M., and E. Herbst (2018): "A sequential Monte Carlo approach to inference
+  in multiple-equation Markov-switching models," Journal of Applied Econometrics, 33(1),
+  126­140.
+
+    ´, O., E. Moulines, and T. Ryden (2005): Inference in Hidden Markov Models.
+Cappe
+  Springer Verlag.
+
+Carriero, A., T. E. Clark, M. Marcellino, and E. Mertens (2021): "Forecasting
+  with Shadow-Rate VARs," Manuscript, Bundesbank.
+
+Chopin, N., P. E. Jacob, and O. Papaspiliopoulos (2013): "SM C 2 : an efficient
+  algorithm for sequential analysis of state space models," Journal of the Royal Statistical
+  Society: Series B (Statistical Methodology), 75(3), 397­426.
+
+                     i, and L. Gambetti (2019): "On the Empirical (Ir)relevance
+Debortoli, D., J. Gal´
+  of the Zero Lower Bound Constraint," in NBER Macroeconomics Annual 2019, ed. by
+  M. Eichenbaum, E. Hurst, and J. Parker, vol. 34, pp. 141­170. University of Chicago
+  Press.
+
+Del Negro, M., and F. Schorfheide (2009): "Monetary Policy with Potentially Mis-
+  specified Models," American Economic Review, 99(4), 1415­1450.
+
+Giannone, D., M. Lenza, and G. Primiceri (2015): "Prior Selection for Vector Au-
+  toregressions," Review of Economic and Statistics, 97(2), 436­451.
+
+Gordon, N., and D. Salmond (1993): "A Novel Approach to Nonlinear/Non-Gaussian
+  Bayesian State Estimation," IEEE Proceedings-F, 140, 107­113.
+
+Gourieroux, C., J. J. Laffont, and A. Monfort (1980): "Coherency Conditions in
+  Simultaneous Linear Equation Models with Endogenous Switching Regimes," Economet-
+  rica, 48(3), 675­695.
+This Version: March 10, 2021                                                           42
+
+
+Hall, R. E. (2011): "The long slump," American Economic Review, 101(2), 431­69.
+
+Herbst, E., and F. Schorfheide (2014): "Sequential Monte Carlo Sampling for DSGE
+  Models," Journal of Applied Econometrics, 29(7), 1073­1098.
+
+         (2015): Bayesian Estimation of DSGE Models. Princeton University Press.
+
+Ikeda, D., S. Li, S. Mavroeidis, and F. Zanetti (2020): "Testing the Effectiveness
+  of Unconventional Monetary Policy in Japan and the United States," Manuscript, Oxford
+  University.
+
+Iwata, S., and S. Wu (2006): "Estimating Monetary Policy Effects When Interest Rates
+  Are Close to Zero," Journal of Monetary Economics, 53, 1395­1408.
+
+Johannsen, B. K., and E. Mertens (2021): "A Time-Series Model of Interest Rates
+  with the Effective Lower Bound," Journal of Money, Credit, and Banking, forthcoming.
+
+Krippner, L. (2015): Zero Lower Bound Term Structure Modeling: A Practitioner's Guide.
+  Palgrave Macmillan.
+
+Liu, J. S. (2001): Monte Carlo Strategies in Scientific Computing. Springer Verlag.
+
+Mavroeidis, S. (2020): "Identification at the Zero Lower Bound," Manuscript, Oxford
+  University.
+
+Moon, H. R., and F. Schorfheide (2012): "Bayesian and Frequentist Inference in
+  Partially-Identified Models," Econometrica, 80(2), 755­782.
+
+Nelson, F., and L. Olsen (1978): "Specification and Estimation of a Simultaneous-
+  Equations Model with Limited Dependent Variables," International Economic Review,
+  19(3), 695­709.
+
+Poirier, D. (1998): "Revising Beliefs in Nonidentified Models," Econometric Theory, 14(4),
+  483­509.
+
+Wu, J. C., and F. D. Xia (2016): "Measuring the Macroeconomic Impact of Monetary
+  Policy at the Zero Lower Bound," Journal of Money, Credit and Banking, 48(2-3), 253­
+  291.
+This Version: March 10, 2021                                            A-1
+
+
+                Online Appendix to "SVARs With
+                Occasionally-Binding Constraints"
+ S. Boragan Aruoba, Marko Mlikota, Frank Schorfheide, and Sergio Villalvazo
+
+
+This Appendix consists of the following sections:
+
+
+  A. Proofs and Theoretical Derivations
+
+  B. The Likelihood Function and Filtering
+
+  C. Sequential Monte Carlo Algorithm
+
+  D. Data Sources
+
+  E. Additional Empirical Results
+This Version: March 10, 2021                                                               A-2
+
+
+A       Proofs and Theoretical Derivations
+
+A.1     Proof of Proposition 1
+
+Lemma 1 Consider a function f (x) = 0 + 1 x and let
+
+                                       g (x) = f (x) + 0 + 1 x.
+
+Suppose that 1 = 0 and either 0 = 0 or 1 = 0, then the set
+
+
+                                   x  R sign(g (x)) = sign(f (x))
+
+
+has non-zero Lebesgue measure.
+
+
+Proof of Lemma 1. Suppose that 1 > 0. Then,
+
+                                                                          0
+                       f (x) > 0     =     0 + 1 x > 0       =      x>-     .
+                                                                          1
+
+We now distinguish two cases. (i) Suppose that (1 + 1 ) > 0. Then,
+
+                                                                                0 + 0
+           g (x) > 0     =         (0 + 0 ) + (1 + 1 )x > 0        =   x>-            .
+                                                                                1 + 1
+
+Thus,
+                                       sign(g (x)) = sign(f (x))
+
+on the interval
+
+                               0    0 + 0                   0    0 + 0
+                       min -     ,-               , max -     ,-                .         (A.1)
+                               1    1 + 1                   1    1 + 1
+
+(ii) Suppose that (1 + 1 ) < 0. Then,
+
+                                                                                0 + 0
+           g (x) > 0     =         (0 + 0 ) + (1 + 1 )x > 0        =   x<-            .
+                                                                                1 + 1
+
+Thus,
+                                       sign(g (x)) = sign(f (x))
+This Version: March 10, 2021                                                              A-3
+
+
+on the set
+
+                              0    0 + 0                     0    0 + 0
+               -, min -         ,-                   max -     ,-            , .        (A.2)
+                              1    1 + 1                     1    1 + 1
+
+The sets in (A.1) and (A.2) have non-zero Lebesgue measure. A similar calculation can be
+done for a1 < 0 to complete the proof of the lemma.
+
+We now proceed with the proof of Proposition 1.
+
+Preliminaries. We will drop the time subscripts. Because of the linearity of the s = 0 and
+s = 1 regression functions, the functions x ·1 (s = 0)+ u1 (s = 0, ) and x ·1 (s = 1)+ u1 (s =
+1, ) are continuous in (x, ). We regard x as predetermined. We begin with some algebraic
+manipulations. Recall that the shadow rate is equal to zero in the regimes s = 0 and s = 1
+if, respectively,
+
+                    x ·1 (0) + u1 (0, ) = -µ1   and x ·1 (1) + u1 (1, ) = -µ1 .         (A.3)
+
+Thus, we define the distance from the threshold value -µ1 as
+
+               (s, x, ) = x ·1 (s) + u1 (s, ) + µ1                                      (A.4)
+                           1
+                        =      x1 B11 - 12 (s)A21 + x2 B21 - 22 (s)A21
+                          A11
+                             1
+                          +       1 1 - 12 (s)A21 - 2 22 (s)A21 + µ1
+                            A11
+                           1                1
+                        =     x (s, x) +       e (s, ) + µ1 .
+                          A11              A11
+
+    We will begin by deriving a convenient relationship between (1, x, ) and (0, x, ).
+In order to capture potential discontinuities in the piecewise linear regression functions we
+introduce discrepancies  and let
+
+                                Bj 1 - j 2 (1)A21 
+              j 2 (0) = j 2 (1) +                 + j 2 , j = 2, . . . , k - 1          (A.5)
+                                B11 - 12 (1)A21 12
+                                Bk1 - k2 (1)A21 + µ1 A11 
+              k2 (0) = k2 (1) +                         12 + k2
+                                     B11 - 12 (1)A21
+                                 1 - 12 (1)A21 
+              12 (0) = 12 (1) +                   + 12
+                                B11 - 12 (1)A21 12
+                                    22 (1)A21
+              22 (0) = 22 (1) -                   + 22 .
+                                B11 - 12 (1)A21 12
+This Version: March 10, 2021                                                              A-4
+
+
+Using this notation, x (0, x) can be written as
+
+       x (0, x) = x1 B11 - 12 (0)A21 + x2 B21 - 22 (0)A21                               (A.6)
+                  = x1 B11 - 12 (0)A21
+                          k -1
+                                                       Bj,1 - j 2 (1)A21 
+                      +          xj Bj 1 - j 2 (1) +                     + j 2 A21
+                          j =2
+                                                       B11 - 12 (1)A21 12
+                                       Bk1 - k2 (1)A21 + µ1 A11 
+                      + Bk1 - k2 (1) +                         12 + k2 A21
+                                            B11 - 12 (1)A21
+                  = x1 B11 - (12 (1) + 12 )A21 + x2 B21 - 22 (1)A21
+                         B21 - 22 (1)A21                      µ1 A11
+                    -x2                  12 + 22 A21 -                   A21 ,
+                         B11 - 12 (1)A21                 B11 - 12 (1)A21 12
+
+where the second equality uses (A.5). The last equality, in slight abuse of notation, we let
+x2 be the row vector with elements xj , B21 be the column vector with elements Bj 1 , 22 be
+the matrix with rows j 2 , and 22 be the matrix with rows j 2 for j = 2, . . . , k . Using the
+definition
+                    x (1, x) = x1 B11 - 12 (1)A21 + x2 B21 - 22 (1)A21
+
+we can rewrite (A.6) as follows:
+
+                                               B21 - 22 (1)A21 
+ x (0, x) = x (1, x) - x1 12 A21 - x2                          + 22 A21                 (A.7)
+                                               B11 - 12 (1)A21 12
+                      µ1 A11
+                -                  A21
+                 B11 - 12 (1)A21 12
+                             B11 - 12 (1)A21             B21 - 22 (1)A21 
+             = x (1, x) - x1                 12 A21 - x2                   + 22 A21
+                             B11 - 12 (1)A21             B11 - 12 (1)A21 12
+                      µ1 A11
+               -                   A21
+                 B11 - 12 (1)A21 12
+                                                                               12 A21
+             = x (1, x) - x1 B11 - 12 (1)A21 + x2 B21 - 22 (1)A21
+                                                                         B11 - 12 (1)A21
+                                  µ1 A11
+               -x2 22 A21 -                     A21
+                             B11 - 12 (1)A21 12
+                                    12 A21                        µ1 A11
+             = x (1, x) 1 -                    - x2 22 A21 -                   A21 .
+                              B11 - 12 (1)A21                B11 - 12 (1)A21 12
+This Version: March 10, 2021                                                                    A-5
+
+
+   Similarly, we can derive a relationship between e (0, ) and e (1, ):
+
+e (0, )          1   1 - 12 (0)A21 -    2 22 (0)A21                                            (A.8)
+                                   1 - 12 (1)A21 
+            =    1   1 - 12 (1) +                  + 12 A21
+                                  B11 - 12 (1)A21 12
+                                 22 (1)A21
+              - 2 22 (1) -                     + 22 A21
+                              B11 - 12 (1)A21 12
+            = 1 (1 - 12 (1)A21 ) - 2 22 (1)A21
+                    1 - 12 (1)A21                 22 (1)A21
+              -1                   12 A21 + 2                  A21 - ( 1 12 +             2 22 ) A21
+                  B11 - 12 (1)A21              B11 - 12 (1)A21 12
+                                                                   12 A21
+            = e (1, ) - 1 1 - 12 (1)A21 - 2 22 (1)A21
+                                                            B11 - 12 (1)A21
+              - ( 1 12 + 2 22 ) A21
+                                   12 A21
+            = e (1, ) 1 -                      - ( 1 12 + 2 22 ) A21 .
+                             B11 - 12 (1)A21
+
+Combining (A.7) and (A.8) we get
+
+                1                                   12 A21                µ1
+(0, x, ) =          x (1, x) + e (1, ) 1 -                        -                 A21
+               A11                            B11 - 12 (1)A21       B11 - 12 (1)A21 12
+                  1
+               -     (x 22 + 1 12 + 2 22 ) A21 + µ1                                  (A.9)
+                 A11 2
+                  1              1                             12 A21
+             =       x (1, x) +     e (1, ) + µ1    1-
+                 A11            A11                      B11 - 12 (1)A21
+                  1
+               -     (x 22 + 1 12 + 2 22 ) A21 .
+                 A11
+
+Because (1, x, ) is defined as
+
+                                         1              1
+                           (1, x, ) =       x (1, x) +     e (1, ) + µ1
+                                        A11            A11
+
+we obtain
+
+                                12 A21       1
+  (0, x, ) = (1, x, ) 1 -                 -    (x 22 +              1 12   +   2 22 ) A21 .   (A.10)
+                          B11 - 12 (1)A21   A11 2
+
+Proof of Part (i). A necessary condition for uniqueness given (x, ) is
+
+                x ·1 (1) + u1 (1, ) + µ1 > 0 implies x ·1 (0) + u1 (0, ) + µ1 > 0
+                x ·1 (0) + u1 (0, ) + µ1 < 0 implies x ·1 (1) + u1 (1, ) + µ1 < 0.
+This Version: March 10, 2021                                                                                     A-6
+
+
+We will assume that A11 > 0 (otherwise inequalities will be reversed). We can write the
+condition more compactly as
+
+                                  sign (1, x, ) = sign (0, x, ) .                                              (A.11)
+
+Let x = x
+        ~, partition       = [ j,    (-j ) ],   and let    (-j )   = ~(-j ) . Notice that (s, x
+                                                                                              ~, [ j , ~(-j ) ]) is a
+linear function of   j.   Thus, we can define 0 (·) and 1 such that
+
+                                  12 A21
+            f ( j) = 1 -                    (1, x
+                                                ~, [ j , ~(-j ) ]) = 0 (~
+                                                                        x, ~(-j ) ) + 1 j .
+                            B11 - 12 (1)A21
+
+Moreover, we can define 0 (·) and 1 such that
+
+            1
+       -       x
+               ~ 22 +       1 ([ j , ~(-j ) ])12   +   2 ([ j , ~(-j ) ])22   A21 = 0 ((~
+                                                                                        x, ~(-j ) )) + 1 j .
+           A11 2
+
+We can now choose j such that 1 = 0 and a pair (~
+                                                x, ~(-j ) ) such that either 0 = 0 or 1 = 0.
+Part (i) of the proposition now follows from Lemma 1.
+
+Proof of Part (ii). Given x, let E 0 (x) denote the set of innovations for which the ELB
+becomes binding. Thus, for any  E 0 (x)
+
+                 x ·1 (0) + u1 (0, ) = -µ1                and x ·1 (1) + u1 (1, ) = -µ1 ,
+
+which implies that
+                                         (0, x, ) = (1, x, ) = 0.
+
+Now consider  E 0 (x). Setting the  terms in (A.10) to zero, we obtain
+
+                                                                          12 A21
+                           (0, x, ) = (1, x, ) 1 -                                  .                          (A.12)
+                                                                    B11 - 12 (1)A21
+
+Note that (A.11) is satisfied for every (x, ) if and only if
+
+                                                       12 A21
+                                         1-                      > 0.                                          (A.13)
+                                                 B11 - 12 (1)A21
+This Version: March 10, 2021                                                                      A-7
+
+
+Using the definition      0    1
+                     12 = 12 - 12 we can manipulate this condition as follows:
+
+
+                    B11 - 12 (1)A21 -   12 A21
+                                               >0
+                         B11 - 12 (1)A21
+                        B11 - 12 (0)A21
+                  =                      >0
+                        B11 - 12 (1)A21
+                  =    sign(B11 - 12 (0)A21 ) = sign(B11 - 12 (1)A21 ),                         (A.14)
+
+which yields the expressions in the statement in Part (ii).
+
+
+A.2     Proof of Proposition 2
+
+We drop the t subscripts throughout.
+
+
+Proposition 3 (Comparison of M(·2 (s), ·2 (s)) and M(A12 (s)))
+
+
+  (i) M(·2 (s), ·2 (s))  M(A12 (s))
+
+ (ii) MP LC (·2 (s), ·2 (s)) = M(A12 (s))
+
+
+Proof of Part (i). We combine the A-representation of the monetary policy rule (7) and
+the A-representation of the private sector equations (17) to derive the  representation of
+                                                                     
+the private sector equations and compare it with (9). Solve (7) for y1
+
+                                        1
+                                y1 =       x B·1 +    1   - y2 A21 .                            (A.15)
+                                       A11
+
+Combining (17) and (A.15) yields
+
+                   1
+                      x B·1 +    1   - y2 A21 A12 (s) + y2 A22 = x B·2 (s) +       2.
+                  A11
+
+Re-arranging terms yields
+
+                       A21 A12 (s)                           A12 (s)           A12 (s)
+            y2 A22 -                   =x    B·2 (s) - B·1             -   1           +   2.
+                          A11                                 A11               A11
+This Version: March 10, 2021                                                                               A-8
+
+
+Finally, we can solve for y2 to obtain
+
+                                                                                    -1
+                                       A12 (s)                  A21 A12 (s)
+           y2 = x      B·2 (s) - B·1                A22 -                                                (A.16)
+                                        A11                        A11
+                                                           -1                                   -1
+                      A12 (s)          A21 A12 (s)                                A21 A12 (s)
+                   -1            A22 -                          +   2       A22 -                    .
+                       A11                A11                                        A11
+
+This generates, in our notation, the matrices
+
+                                  ·2 (s),        12 (s),    22 (s).                                      (A.17)
+
+Statement (i) of the proposition follows by noting that M(·2 (s), ·2 (s)) has (n - 1) × (k + n)
+free  coefficients in regimes s = 0 and s = 1. M(A12 (s)) has (n-1)×k +n2 free  coefficients
+in the s = 1 regime, but only n - 1 additional unrestricted coefficients in the s = 0 regime.
+
+
+Proof of Part (ii). We will show that MP LC (·2 (s), ·2 (s))  M(A12 (s)) and
+MP LC (·2 (s), ·2 (s))  M(A12 (s)).
+
+Step 1: MP LC (·2 (s), ·2 (s))  M(A12 (s)). We show that the (·2 (s), ·2 (s)) regression
+functions implied by M(A12 (s)) specifications are continuous at points in the state-space in
+which the economy hits the ELB. We deduce from (7) and (17) that interest rates hit the
+ELB when
+
+                                -µ1 A11 + y2 A21 = x B·1 +                   1
+
+                           -µ1 A12 (1) + y2 A22 = x B·2 (1) +                    2.
+
+
+The second equation implies that
+
+                            y2 = µ1 A12 (1) + x B·2 (1) +               2   A- 1
+                                                                             22 .
+
+
+Thus, we obtain that the ELB is reached when
+
+                 -µ1 A11 + µ1 A12 (1) + x B·2 (1) +         2    A- 1
+                                                                  22 A21 = x B·1 +        1,
+This Version: March 10, 2021                                                                                                 A-9
+
+
+or
+
+
+           1    = -µ1 A11 + µ1 A12 (1) + x B·2 (1) +             2   A- 1
+                                                                      22 A21 - x B·1 .                                  (A.18)
+                = µ1 (-A11 + A12 (1)A- 1
+                                     22 A21 ) +
+                                                              -1
+                                                           2 A22 A21     + x (-B·1 + B·2 (1)A- 1
+                                                                                             22 A21 ).
+
+
+Note that unlike in the main paper, here we solved for                       1   instead of x1 .
+
+     Using the (s) matrices implied by the A(s) representation from (A.16), the continuity
+requirement for the (s) regression functions can be stated as
+
+                                                                                       -1
+                                         A12 (0)                A21 A12 (0)
+               0 = x       B·2 (0) - B·1                  A22 -                                                         (A.19)
+                                          A11                      A11
+                                                               -1                                           -1
+                            A12 (0)             A21 A12 (0)                                A21 A12 (0)
+                      -   1            A22 -                         +   2       A22 -
+                             A11                   A11                                        A11
+                                                                                           -1
+                                           A12 (1)               A21 A12 (1)
+                      -x     B·2 (1) - B·1                 A22 -
+                                            A11                     A11
+                                                               -1                                           -1
+                         A12 (1)             A21 A12 (1)                               A21 A12 (1)
+                      +1               A22 -                         -   2       A22 -                           ,
+                          A11                   A11                                       A11
+
+for all (x, 1 , 2 ) such that (A.18) is satisfied.
+
+     After plugging (A.18) into (A.19) to eliminate              1,   the coefficients on              2   are
+
+                                      -1                                 -1
+                     A21 A12 (0)                   A21 A12 (1)
+               A22 -                       - A22 -                                                                      (A.20)
+                        A11                           A11
+                                                          -1                                                            -1
+                A12 (0)                     A21 A12 (0)                          A12 (1)               A21 A12 (1)
+          -A- 1
+            22 A21                 A22 -                       + A- 1
+                                                                  22 A21                       A22 -
+                  A11                          A11                                A11                     A11
+         -1    -1
+      = A22 - A22 = 0.
+
+Recall that
+
+                                                                                           0                 if s = 1
+     B·2 (s) = B12 | . . . |B(k-1)2 |Bk2 (s) ,        Bk2 (s) =                                                          .
+                                                                          µ1 (A12 (1) - A12 (0)) if s = 0
+
+Using the fact that Bj 2 , j = 1, . . . , k - 1, is not state dependent, the coefficients on xj ,
+This Version: March 10, 2021                                                                                        A-10
+
+
+j = 1, . . . , k - 1 are
+
+                                                            -1                                                             -1
+                       A12 (0)                A21 A12 (0)                            A12 (1)                 A21 A12 (1)
+         Bj 2 - Bj 1                 A22 -                       - Bj 2 - Bj 1                    A22 -
+                        A11                      A11                                  A11                       A11
+                                                                        -1
+                                   A12 (0)             A21 A12 (0)
+      -(-Bj 1 +     Bj 2 A- 1
+                          22 A21 )               A22 -
+                                    A11                   A11
+                                                                        -1
+                                     A12 (1)             A21 A12 (1)
+      +(-Bj 1 + Bj 2 A- 1
+                      22 A21 )                   A22 -                                                               (A.21)
+                                      A11                   A11
+                                                                                                       -1
+                       A12 (0)                           A12 (0)                         A21 A12 (0)
+  =      Bj 2 - Bj 1           - (-Bj 1 + Bj 2 A- 1
+                                                22 A21 )                         A22 -
+                        A11                               A11                               A11
+                                                                                                            -1
+                    A12 (1)                           A12 (1)                           A21 A12 (1)
+      - Bj 2 - Bj 1         + (-Bj 1 + Bj 2 A- 1
+                                             22 A21 )                             A22 -
+                     A11                               A11                                 A11
+                                                                       -1
+                                 A12 (0)               A21 A12 (0)
+  =      Bj 2 - Bj 2 A- 1
+                      22 A21                   A22 -
+                                  A11                     A11
+                                                                            -1
+                                    A12 (1)              A21 A12 (1)
+      - Bj 2 + Bj 2 A- 1
+                     22 A21                      A22 -
+                                      A11                   A11
+  = Bj 2 A- 1        -1
+          22 - Bj 2 A22          = 0.
+This Version: March 10, 2021                                                                               A-11
+
+
+We now turn to xk = 1 and will use that Bk2 (1) = 0 and Bk2 (0) = µ1 (A12 (1) - A12 (0)).
+
+                                                                                 -1
+                                        A12 (0)                 A21 A12 (0)
+        µ1 (A12 (1) - A12 (0)) - Bk1                 A22 -
+                                         A11                       A11
+                                                       -1
+                A12 (1)                 A21 A12 (1)
+      - 0 - Bk1                   A22 -
+                 A11                       A11
+                                                       -1                                                      -1
+                  A12 (0)              A21 A12 (0)                       A12 (1)                 A21 A12 (1)
+      -(-Bk1 + 0)                A22 -                      + (-Bk1 + 0)                   A22 -
+                   A11                    A11                             A11                       A11
+                                                                              -1
+                                        A12 (0)               A21 A12 (0)
+      -µ1 (-A11 + A12 (1)A- 1
+                          22 A21 )                  A22 -
+                                         A11                     A11
+                                                                              -1
+                                        A12 (1)           A21 A12 (1)
+      +µ1 (-A11 +      A12 (1)A- 1
+                               22 A21 )             A22 -
+                                         A11                 A11
+                                                       -1
+                                 A21 A12 (0)
+  = µ1 (A12 (1) - A12 (0)) A22 -
+                                    A11
+                                                                            -1
+                                      A12 (0)              A21 A12 (0)
+      +µ1 (A11 - A12 (1)A- 1
+                         22 A21 )                 A22 -
+                                       A11                    A11
+                                                                            -1
+                                    A12 (1)             A21 A12 (1)
+      -µ1 (A11 -   A12 (1)A- 1
+                           22 A21 )               A22 -
+                                     A11                   A11
+                                                       -1
+                                 A21 A12 (0)
+  = µ1 (A12 (1) - A12 (0)) A22 -
+                                    A11
+                                                                                   -1
+                                      A21 A12 (0)                A21 A12 (0)
+      +µ1 A12 (0) - A12 (1)A-
+                            22
+                              1
+                                                       A22 -
+                                         A11                        A11
+                                                                                   -1
+                                   1 A21 A12 (1)             A21 A12 (1)
+      -µ1 A12 (1) -      A12 (1)A-
+                                 22                    A22 -
+                                        A11                     A11
+                                                                                          -1
+                                           1 A21 A12 (0)              A21 A12 (0)
+  = µ1     A12 (1)A- 1
+                   22 A22    -   A12 (1)A-
+                                         22                     A22 -
+                                                A11                      A11
+                                                                                           -1
+                                                A21 A12 (1)                 A21 A12 (1)
+      -µ1 A12 (1)A- 1              -1
+                  22 A22 - A12 (1)A22                             A22 -
+                                                   A11                         A11
+                                                                            -1
+                              A21 A12 (0)               A21 A12 (0)
+  =   µ1 A12 (1)A-
+                 22
+                   1
+                        A22 -                     A22 -
+                                 A11                       A11
+                                                                              -1
+                                A21 A12 (1)               A21 A12 (1)
+      -µ1 A12 (1)A-
+                  22
+                    1
+                          A22 -                     A22 -
+                                   A11                       A11
+  = 0.
+
+From (A.20), (A.21), and (A.22) we deduce that (A.19) holds for all (x, 1 , 2 ) such that
+(A.18) is satisfied.
+
+Step 2: MP LC (·2 (s), ·2 (s))  M(A12 (s)). Starting from a specification in MP LC (·2 (s), ·2 (s))
+This Version: March 10, 2021                                                                     A-12
+
+
+we derive the A representation and show that A22 and Bj 2 , j = 1, . . . , k - 1 are constant
+across states. Solving (7) for   1,t   and substituting the resulting expression into (9) yields:
+
+                                    
+                  y2 = x ·2 (s) + (y1 A11 + y2 A21 - x B·1 )12 (s) +       2 22 (s).
+
+
+Re-arranging terms yields
+
+                            
+                          -y1 A11 12 (s)[22 (s)]-1 + y2 I - A21 12 (s) [22 (s)]-1
+                            = x ·2 (s) - B·1 12 (s) [22 (s)]-1 +          2.
+
+
+From a comparison to (17) we obtain:
+
+                          A12 (s) = -A11 12 (s)[22 (s)]-1                                       (A.22)
+                          A22 (s) =        I - A21 12 (s) [22 (s)]-1
+                          B·2 (s) =        ·2 (s) - B·1 12 (s) [22 (s)]-1 .
+
+We now have to verify that A22 (1) = A22 (0) and that B·2 (1) = Bj 2 (0), j = 1, . . . , k - 1,
+Bk2 (1) = 0, and Bk2 (0) = µ1 (A12 (1) - A12 (0)).
+
+   Consider the continuity restriction. The ELB becomes binding when
+
+                                  -µ1 A11 + y2 A21 = x B·1 +      1.
+
+
+
+Plugging this expression into (9) yields
+
+                 y2 = x ·2 (s) + (-µ1 A11 + y2 A21 - x B·1 )12 (s) +           2 22 (s).
+
+
+Solving for y2 yields
+
+
+         y2 =   x (·2 (s) - B·1 12 (s)) - µ1 A11 12 (s) +     2 22 (s)   (I - A21 12 (s))-1 .
+This Version: March 10, 2021                                                                                A-13
+
+
+Continuity requires that y2 is the same regardless of            2   and x for s = 0 and s = 1, that is:
+
+
+           2   term :      22 (1)(I - A21 12 (1))-1                                                     (A.23)
+                           = 22 (0)(I - A21 12 (0))-1
+
+         xj term :         (j 2 (1) - Bj 1 12 (1))(I - A21 12 (1))-1
+                           = (j 2 (0) - Bj 1 12 (0))(I - A21 12 (0))-1 ,         j = 1, . . . , k - 1
+
+         xk term :         (k2 (1) - Bk1 12 (1) - µ1 A11 12 (1))(I - A21 12 (1))-1
+                           = (k2 (0) - Bk1 12 (0) - µ1 A11 12 (0))(I - A21 12 (0))-1 .
+
+Re-arranging the first equality in display (A.23) yields
+
+                        (I - A21 12 (0))[22 (0)]-1 = (I - A21 12 (1))[22 (1)]-1 .                       (A.24)
+
+and therefore implies that
+                                             A22 (0) = A22 (1).                                         (A.25)
+
+We can rewrite (A.24) as
+
+                        (I - A21 12 (1))-1 (I - A21 12 (0)) = [22 (1)]-1 22 (0).                        (A.26)
+
+Combining (A.26) with the second set of equations in display (A.23), we obtain
+
+     (j 2 (1) - Bj 1 12 (1))[22 (1)]-1 22 (0) = (j 2 (0) - Bj 1 12 (0)),            j = 1, . . . , k - 1.
+
+Thus, we can deduce that
+
+                                  Bj 2 (1) = Bj 2 (0),   j = 1, . . . , k - 1.                          (A.27)
+
+as required.
+
+   Finally, we will manipulate the third equation in display (A.23) as follows. Following the
+same steps as for the xj term, we can write
+
+                         (k2 (1) - Bk1 12 (1) - µ1 A11 12 (1))[22 (1)]-1
+                           = (k2 (0) - Bk1 12 (0) - µ1 A11 12 (0))[22 (0)]-1 .
+This Version: March 10, 2021                                                                           A-14
+
+
+Using the expressions for A12 (s) and Bk2 (s) in (A.22) we obtain
+
+                              Bk2 (1) + µ1 A12 (1) = Bk2 (0) + µ1 (A12 (0).
+
+Moreover, because the intercepts k2 (1) and Bk1 are equal to zero, we can deduce that
+
+                          Bk2 (1) = 0,           Bk2 (0) = µ1 (A12 (1) - A12 (0)).
+
+
+A.3     An Alternative Formulation of the Necessary and Sufficient
+        Condition in Proposition 1
+
+Solving (13) for   1,t   yields
+
+                         B·1 - ·2 (1)A21                     22 (1)A21            A11
+         1,t   = -xt                     +           2,t                 - µ1               .         (A.28)
+                         1 - 12 (1)A21                     1 - 12 (1)A21      1 - 12 (1)A21
+
+For continuity, we require that for all (x, 1 , 2 ) such that (A.28) is satisfied the following
+equality holds:
+
+                x ·2 (0) +        1 12 (0)   +    2 22 (0)   = x ·2 (1) +   1 12 (1)   +   2 22 (1)   (A.29)
+
+After replacing    1   by (A.28), we deduce from the coefficients on               2   that
+
+                                                                22 (1)A21
+                                   22 (0) = 22 (1) -                                                  (A.30)
+                                                              1 - 12 (1)A21 12
+
+where
+                                              
+                                             12 = 12 (0) - 12 (1).
+
+From the coefficients on x we can deduce the following. Starting with j = 1, . . . , k - 1
+
+                                                             Bj 1 - j 2 (1)A21  
+                              j 2 (0) = j 2 (1) +                              12 .                   (A.31)
+                                                              1 - 12 (1)A21
+
+For j = k we obtain
+
+                                         Bk1 - k2 (1)A21             A11
+               k2 (0) = k2 (1) +                         12 + µ1               .                      (A.32)
+                                          1 - 12 (1)A21          1 - 12 (1)A21 12
+
+   We can verify that the restrictions in (A.30) to (A.32) are equivalent to (16). Consider
+This Version: March 10, 2021                                                                 A-15
+
+
+the condition in (A.31) for j = 1:
+
+                                   
+                                 12                12
+                                           =                 .                           (A.33)
+                             1 - 12 (1)A21   B11 - 12 (1)A21
+
+Plugging (A.33) into (A.30) to (A.32) reproduces (16). Moreover, using (A.33), we can
+rewrite the condition in Proposition 1(ii) as
+
+                         sign 1 - 12 (1)A21 = sign 1 - 12 (0)A21
+
+which is equivalent to
+                                     A11 - A11 12 (0)A21
+                               =                         > 0.                            (A.34)
+                                     A11 - A11 12 (1)A21
+Using (A.16) we can write
+
+                                                                         -1
+             A11 - A11 12 (s)A21 = A11 + A12 (s) A22 - A21 A- 1
+                                                            11 A12 (s)        A21 .      (A.35)
+
+From the formulas for the inverse of a partitioned matrix
+
+                                                     -1
+                                           A B
+                                          C D
+
+we obtain the relationship
+
+                  (D - CA-1 B )-1 = D-1 + D-1 C (A - BD-1 C )-1 BD-1 .
+
+Thus, we can rewrite (A.35) as follows
+
+     A11 - A11 12 (s)A21                                                                 (A.36)
+                                                -1
+       = A11 + A12 (s) A22 - A21 A- 1
+                                  11 A12 (s)         A21
+                                                                       -1
+       = A11 + A12 (s)A-  1              -1                   -1
+                        22 A21 + A12 (s)A22 A21 A11 - A12 (s)A22 A21        A12 (s)A- 1
+                                                                                    22 A21
+                           2 ( s )
+       = A11 + (s) +
+                       A11 - (s)
+              1
+       =              A2 - A11 (s) + (s)A11 - 2 (s) + 2 (s)
+         A11 - (s) 11
+             A2
+              11
+       =            ,
+         A11 - (s)
+This Version: March 10, 2021                                                                          A-16
+
+
+where (s) = A12 (s)A- 1
+                    22 A21 is scalar. In turn,
+
+
+                                               A11 - A12 (1)A- 1
+                                                             22 A21
+                                       =                            ,                                (A.37)
+                                               A11 - A12 (0)A- 1
+                                                             22 A21
+
+
+which is identical to the condition provided in Proposition 1 of Mavroeidis (2020) because
+in his notation the role of 1 and 2 subscripts are exchanged.
+
+
+
+B       The Likelihood Function and Filtering
+
+B.1      Derivations for the Likelihood Function
+
+The derivations for p(y1,t |·) in (38) and p(y2,t |y1,t > -µ1 , ·) in (40) are straightforward. We
+will focus on the derivation of p(y2,t |y1,t = -µ1 , ·) in (39). In the latter case, the specific
+value of u1,t (0) is unknown. Write
+
+
+                   p(y2,t |y1,t = -µ1 , ·) =     p(y2,t |u1,t )p(u1,t |y1,t = -µ1 , ·)du1,t .        (A.38)
+
+We begin by deriving the density of u1,t conditional on y1,t = -µ1 :
+
+                                     pN u1,t ; 0, 11 (0) I{u1,t (0)  -xt ·1 (0) - µ1 }
+         p(u1,t |y1,t = -µ1 , ·) =                                                              .    (A.39)
+                                                              xt ·1 (1)+µ1
+                                                    FN       - 
+                                                                  11 (1)
+
+
+Combining (A.38) and (A.39) yields:
+
+                                                               -1
+                                            xt ·1 (1) + µ1
+    p(y2,t |y1,t = -µ1 , ·) =    FN     -                             pN u2,t (0); u1,t M12 (0), 2|1 (0)
+                                                11 (1)
+                                ×pN u1,t ; 0, 11 (0) I{u1,t (0)  -xt ·1 (0) - µ1 }du1,t .            (A.40)
+
+In the subsequent steps we will evaluate the integral.
+
+    To simplify the notation we drop the st = 0 argument from  and  matrices. The key
+This Version: March 10, 2021                                                                                               A-17
+
+
+terms that appear in the integral in (A.40) can be manipulated as follows:
+
+              u2,t - u1,t M12 - 1                        -1
+                              2|1 u2,t - M21 u1,t + u1,t 11 u1,t
+
+               = u2,t - 1                  -1                  -1                  -1
+                      2|1 u2,t - 2u1,t M12 2|1 u2,t + u1,t M12 2|1 M21 u1,t + u1,t 11 u1,t
+                                                                                                                  2
+                                                                                           M12 - 1
+                                                                                               2|1
+               = u2,t - 1            -1        -1
+                      2|1 u2,t + M12 2|1 M21 + 11                           u1,t -                         u2,t
+                                                                                     M12 - 1       -1
+                                                                                         2|1 M21 + 11
+                                               2
+                           M12 - 1
+                               2|1 u2,t
+                    -                              .
+                        M12 - 1       -1
+                            2|1 M21 + 11
+
+
+Define
+                                          M12 - 1
+                                              2|1                                                     -1
+                        ¯u =
+                        M                                           ¯u = M12 -1 M21 + -1
+                                                             1,     V        2|1      11
+                                 M12 - 1
+                                     2|1 M21           +   -
+                                                           11
+
+Notice that
+
+                                         1                                           u1,t - M¯ u u2,t                ¯ u u2,t
+                                                                                                       x  ·1 + µ 1 + M
+          ¯u |-1/2 ×
+(2 )-1/2 |V                                        ¯ u u2,t )2 I
+                                   exp - ¯ (u1,t - M                                                  - t                         du1,t
+                                        2Vu                                                 ¯u
+                                                                                            V                     ¯u
+                                                                                                                  V
+                                                       ¯ u u2,t
+                                          xt ·1 + µ1 + M
+                         = FN         -                                     .
+                                                    ¯u
+                                                    V
+
+Therefore, we obtain Equation (40) in the main text:
+
+          p(y2,t |y1,t = -µ1 , ·)
+                                                                                                                      -1
+                        -(n-1)/2             -1/2                 -1/2    ¯u (0)|1/2 FN         xt ·1 (1) + µ1
+            = (2 )                 |2|1 (0)|        |11 (0)|             |V                 -
+                                                                                                     11 (1)
+                               xt ·1 (0) + µ1 + M ¯ u (0)u2,t (0)
+                ×F N       -
+                                             ¯u (0)
+                                             V
+                       1                         1 ¯ -1  ¯
+                × exp - u2,t (0)- 1
+                                2|1 (0)u2,t (0) + Vu (0)[Mu (0)u2,t (0)]
+                                                                        2
+                       2                         2
+
+
+B.2        Particle Filter
+
+We use a bootstrap particle filter (BSPF) to approximate the likelihood function in the
+model with stochastic volatility. In the description of the filter we denote the latent state
+by st .
+
+Algorithm 1 (Bootstrap Particle Filter)
+This Version: March 10, 2021                                                                A-18
+
+                                                                                   iid
+  1. Initialization. Draw the initial particles from the distribution sj
+                                                                       0  p(s0 | ) and set
+       j
+     W0 = 1, j = 1, . . . , M .
+
+  2. Recursion. For t = 1, . . . , T :
+
+                                ~j
+      (a) Forecasting st . Draw s                                       st |sj
+                                  t from the state-transition density p(~    t-1 ,  ).
+
+      (b) Forecasting yt . Define the incremental weights
+                                            j
+                                          w
+                                          ~t          ~j
+                                              = p(yt |s t , Y1:t-1 ,  )                    (A.41)
+
+          The predictive density p(yt |Y1:t-1 , ) can be approximated by
+                                                              M
+                                                        1              j
+                                     ^(yt |Y1:t-1 , ) =
+                                     p                               w
+                                                                     ~t  Wtj-1 .           (A.42)
+                                                        M    j =1
+
+
+      (c) Define the normalized weights
+                                                              M
+                                     ~ tj = w j          1
+                                     W      ~t  Wtj-1                w
+                                                                     ~tj
+                                                                         Wtj-1 .           (A.43)
+                                                         M    j =1
+
+
+      (d) Selection. Resample the particles, for instance, via multinomial resampling. Let
+          { sj  M
+             t }j =1 denote M iid draws from a multinomial distribution characterized by sup-
+          port points and weights {s  ~j    ~j             j
+                                        t , Wt } and set Wt = 1 for j =, 1 . . . , M . An approxi-
+          mation of E[h(st )|Y1:t , ] is given by h¯ t,M = 1  M       j    j
+                                                           M  j =1 h(st )Wt .
+
+  3. Likelihood Approximation. The approximation of the log-likelihood function is
+     given by
+                                       T        M
+                                             1        j
+                          ^(Y1:T |) =
+                       ln p               ln        w
+                                                    ~t  Wtj-1 .            (A.44)
+                                      t=1
+                                             M j =1
+
+
+   Figure A-1 shows the accuracy of the BSPF. Conditional on the posterior mean ¯ we run
+the BSPF Nrun = 100 times. Because it is a stochastic algorithm, the likelihood approx-
+imations differ across runs. The figure depicts kernel density estimates of the distribution
+of log likelihood values across runs. The more concentrated the density, the more accurate
+the approximation. The accuracy increases with the number of particles M . The SMC2
+algorithm implicitly averages out the approximation errors.
+
+
+B.3    Derivations for the Shadow Rate
+                                                                              
+Homoskedasticity. The shadow rate can be characterized through the density p(y1,t |y1,t =
+-µ1 , y2,t , xt , ). Recall that our model conditional on y1,t = -µ1 (and, hence, st = 0) has
+This Version: March 10, 2021                                                                    A-19
+
+
+          Figure A-1: Accuracy of Particle Filter Approximation of Log Likelihood
+
+
+         0.4
+                   BSPF M=100
+                   BSPF M=1,000
+         0.3
+
+         0.2
+
+         0.1
+
+           0
+                -250           -245            -240              -235               -230
+Notes: Density plots are based on Nrun = 100 runs of the BSPF (M = 100 is solid blue and M = 1, 000 is
+dotted red). The parameter value  is fixed at the posterior mean ¯.
+
+
+the reduced-form representation
+
+                       
+                      y1,t = xt ·1 (0) + u1,t (0),   y2,t = xt ·2 (0) + u2,t (0).             (A.45)
+
+Define
+               1|2 (0) = 11 (0) - 12 (0)- 1
+                                        22 (0)21 (0),           M21 (0) = - 1
+                                                                          22 (0)21 (0).       (A.46)
+
+Thus,
+                                u1,t |u2,t  N u2,t M21 (0), 1|2 (0) .
+
+Now condition on y1,t = -µ1 which we can express as u1,t (0)  -µ1 - xt ·1 (0):
+
+                p(u1,t |y1,t = -µ1 , u2,t (0), ·)                                             (A.47)
+                        pN u1,t ; u2,t M21 (0), 1|2 (0) I{u1,t (0)  -µ1 - xt ·1 (0)}
+                  =                                                                  ,
+                                                  µ1 +xt ·1 (0)+u2,t M21 (0)
+                                        FN -             
+                                                       12 (0)
+This Version: March 10, 2021                                                               A-20
+
+
+which is the density of a truncated normal distribution. To generate a draw i conditional on
+(µ, (0), (0)) from the posterior of the shadow rate, we can proceed as follows:
+  (i) Compute u2,t (0) = y2,t - xt ·2 (0).
+ (ii) Compute 1|2 (0) and M21 (0) using (A.46).
+ (iii) Draw ui
+             1,t  p(u1,t |y1,t = -µ1 , u2,t (0), ·).
+               i                  i
+ (iv) Compute y1,t = xt ·1 (0) + u1,t .
+           i          i
+ (v) Let y
+         ~1,t = µ1 + y1,t .
+
+                                             
+Because xt depends on y1,t-1:t-p instead of y1,t-1:t-p inference on the shadow rate is static
+and does not require dynamic filtering. The last step shifts the re-centered shadow rate back
+to its original level.
+
+Stochastic Volatility. In every period, we compute the shadow rate based on the filtered
+volatilities E[Dii,t |Y1:t , ], adjusting the  terms in the homoskedastic expressions to reflect
+the time variation of the shock volatility: t (s) =  (s)Dt  (s) .
+
+
+
+C      Sequential Monte Carlo Algorithm
+
+Algorithm 2 (Generic SMC Algorithm)
+
+                                                                                    i         iid
+   1. Initialization. (n = 0 and 0 = 0.) Draw the initial particles from the prior: 1 
+               i
+      p() and W1 = 1, i = 1, . . . , N .
+
+   2. Recursion. For n = 1, . . . , N ,
+
+       (a) Correction. Reweight the particles from stage n - 1 by defining the incremental
+            weights
+                                                                 i
+                                                  i      pn (Y |n  -1 )
+                                                w
+                                                ~n  =              i
+                                                                                          (A.48)
+                                                        pn-1 (Y |n   -1 )
+
+            and the normalized weights
+
+                                                  i  i
+                                    ~i =        w
+                                                ~n  Wn -1
+                                    Wn      1    N
+                                                                  ,   i = 1, . . . , N.   (A.49)
+                                                       w
+                                                       ~ni Wi
+                                            N    i=1        n-1
+
+
+       (b) Selection (Optional). Resample the swarm of particles, {n         i      ~i N
+                                                                               -1 , Wn }i=1 , and
+           denote resampled particles by {^i , W i }N , where W i = 1 for all i.
+                                           n    n i=1          n
+This Version: March 10, 2021                                                                A-21
+
+
+       (c) Mutation. Starting from    ^i , propagate the particles {^i , W i } via NM H steps
+                                       n                             n    n
+           of a Metropolis-Hastings (MH) algorithm with transition density Kn (|    ~; n ) and
+           stationary distribution n (). Note that the weights are unchanged, and denote
+                                     i    i N
+           the mutated particles by {n , Wn }i=1 .
+
+  3. The importance sampling approximation of the posterior mean E [h()] is given by:
+
+                                                   N
+                                       ¯ N ,N =
+                                       h                   i
+                                                         h(N    i
+                                                              )WN  .                       (A.50)
+                                                                  
+                                                   i=1
+
+
+      Moreover, the marginal likelihood can be approximate by
+
+                                             N            N
+                                                    1             i  i
+                                   p
+                                   ^(Y ) =                      w
+                                                                ~n  Wn -1    .             (A.51)
+                                             n=1
+                                                    N    i=1
+
+
+   We initialize the SMC algorithm for n = 0 with draws from the prior density, obtained
+from a rejection sampler that accounts for the indicator functions fu () and fs () in the
+definition of p(, ) in (32).
+
+   The correction step is a classic importance sampling step, in which the particle weights
+are updated to reflect the stage n distribution n (). The selection step is executed if the
+variance of the particle weights, transformed into an effective particle sample size
+
+                                                         N
+                                                   1            ~ i )2
+                                ESS n = N                      (W n      ,                 (A.52)
+                                                   N     i=1
+
+
+falls below the threshold N/2. This threshold rule balances the trade-off between adding
+noise to the Monte Carlo approximation through resampling and inaccuracies due to very
+uneven particle weights. The resampling is implemented through systematic resampling; see
+the textbooks by Liu (2001) or Capp´
+                                   e, Moulines, and Ryden (2005).
+
+   The mutation step changes the particle values. In the absence of the mutation step, the
+particle values would be restricted to the set of values drawn in the initial stage from the
+prior distribution. This would clearly be inefficient, because the prior distribution is typically
+a poor proposal distribution for the posterior in an importance sampling algorithm. As the
+algorithm cycles through the N stages, the particle values successively adapt to the shape
+of the posterior distribution. This is the key difference between SMC and classic importance
+sampling. The transition kernel Kn (|      ~; n ) is designed to have the following invariance
+This Version: March 10, 2021                                                             A-22
+
+
+property:
+                                  n (n ) =      Kn (n |^n ; n )n (^n )d^n .            (A.53)
+
+Thus, if ^i is a draw from n , then so is i . The mutation step is implemented by using
+          n                               n
+multiple steps of a Metropolis-Hastings (MH) algorithm. The vector n summarizes the
+tuning parameters of the MH algorithm.17
+
+
+
+D        Data Sources
+
+All series are obtained from the economic research database of the Federal Reserve Bank of St.
+Louis (FRED). Real GDP is gdpc1, real potential GDP is gdppot, the personal consumption
+expenditure deflator is dpcerd3q086sbea, and the federal funds rate is fedfunds. We average
+the monthly rates to time-aggregate the interest rates to quarterly frequency.
+
+
+
+E        Additional Empirical Results
+
+Table A-1 provides summary statistics for the posterior distribution of the model parameters.
+
+    In Figures A-2 and A-3 we compare prior (grey) and posterior (green) uncertainty about
+the impulse responses generated conditional on the states of the economy in 1999:Q1 and
+2009:Q1, respectively. Our prior distribution allows for a wide variety of responses to the
+three shocks. While the prior distribution of the impact effect is constrained by the sign
+                        
+restrictions imposed on S , D , and D , the wide bands for h  2 indicate that the prior
+leaves the sign of the dynamic effect largely unconstrained. The posterior distribution of
+the impulse responses is substantially more concentrated, reflecting the sample information
+about the effects of the three shocks.
+
+    Figure A-4 plots the estimated structural shocks conditional on the posterior mean. The
+structural shocks are generated by converting the reduced-form residuals u
+                                                                         ^t using the matrix
+ (s). During the ELB period there is uncertainty about the realization of the reduced-
+form residuals, which is handled in the same way as uncertainty about the shadow rate; see
+Section B.3.
+
+
+
+  17
+       The tuning of the mutation step follows Herbst and Schorfheide (2015).
+This Version: March 10, 2021                                                                    A-23
+
+
+
+
+                                  Table A-1: Posterior Distribution
+
+  Parameter    Mean    HPD Low        HPD High       Parameter Mean        HPD Low      HPD High
+  µ1           5.32                                  10,2        0           -0.05         0.03
+  µ2           -0.94                                 11,2      -0.02         -0.04         0.01
+  µ3           2.56                                  12,2      -0.01         -0.05         0.02
+               0.45        0.24          0.72        1,3        0.08         -0.02         0.15
+  z            1.43        1.16          1.63        2,3        0.02         -0.04         0.14
+   
+  S            2.99        2.12          3.63        3,3        0.92          0.84         1.03
+  D            0.12        0.02          0.18        4,3         0           -0.11         0.12
+  -D           0.78        0.56          0.94        5,3       -0.02         -0.12         0.06
+  B1,1         1.08        0.91          1.21        6,3       -0.08         -0.18        -0.01
+  B2,1         -1.15      -1.39         -0.81        7,3       -0.03         -0.08         0.05
+  B3,1          -0.3      -0.56          0.04        8,3       -0.05         -0.09         0.01
+  B4,1         -0.18      -0.31         -0.03        9,3       -0.02         -0.07         0.06
+  B5,1         -0.05      -0.23          0.05        10,3      -0.01         -0.05         0.02
+  B6,1         -0.01      -0.11         0.14         11,3        0           -0.04         0.03
+  B7,1         0.02       -0.09          0.1         12,3      -0.01         -0.05         0.02
+  B8,1         0.02       -0.05          0.08         12,1     -0.05         -0.16         0.12
+  B9,1         0.11       -0.01          0.18         12,2     -0.36         -0.52        -0.21
+  B10,1        0.02       -0.04          0.09        D11        0.6           0.43         0.71
+  B11,1        0.01       -0.03          0.06        D22       0.44           0.35         0.53
+  B12,1        0.02       -0.03          0.08        D33       1.64           0.68          2.2
+  1,2           0.1        0.02          0.22                  0.81           0.74         0.92
+  2,2          0.98        0.87          1.07        0         11.87          5.88        18.41
+  3,2          0.03       -0.12          0.15        l         3.25           2.46         4.07
+  4,2          -0.06      -0.18         0.02         ,1        0.89           0.83         0.97
+  5,2          -0.03      -0.13         0.07         ,2        0.79           0.67         0.89
+  6,2          -0.02      -0.09         0.09         ,3        0.88           0.84         0.95
+  7,2          -0.05       -0.1          0.02        1         0.29           0.18         0.42
+  8,2          -0.02      -0.06         0.02         2          0.3           0.11         0.45
+  9,2          -0.04      -0.09         0.03         3         0.29           0.18         0.36
+
+Notes: HPD Low and High are the 5th and 95th percentiles of the (marginal) posterior distribution. The
+following hyperparameters are fixed: d = 4,  = 16, and I = , meaning we are fixing the level
+parameters µ1 , µ2 , and µ3 .
+This Version: March 10, 2021                                                                     A-24
+
+
+
+
+Figure A-2: Responses to Minus-Two-Standard-Deviation Shocks with Flexible Regimes and
+Prior/Posterior Parameter Uncertainty in 1999:Q1
+
+       3                                   2                            10
+
+       2
+                                           0                            5
+       1
+
+       0
+                                           -2                           0
+      -1                  Prior
+                          Posterior
+      -2                                   -4                           -5
+            0   10   20   30          40        0   10   20   30   40        0   10   20   30    40
+
+
+       2                                   2                            6
+
+                                                                        4
+       1                                   0
+                                                                        2
+
+                                                                        0
+       0                                   -2
+                                                                        -2
+
+      -1                                   -4                           -4
+            0   10   20   30          40        0   10   20   30   40        0   10   20   30    40
+
+
+     1.5                                   2                            6
+
+       1                                   1                            4
+
+     0.5                                   0                            2
+
+       0                                   -1                           0
+
+     -0.5                                  -2                           -2
+
+      -1                                   -3                           -4
+            0   10   20   30          40        0   10   20   30   40        0   10   20   30    40
+
+
+
+Notes: Prior median (black) and 90% credible interval (grey); posterior median (green) and 90% credible
+interval (light green).
+This Version: March 10, 2021                                                                           A-25
+
+
+
+
+Figure A-3: Responses to Minus-Two-Standard-Deviation Shocks with Flexible Regimes and
+Prior/Posterior Parameter Uncertainty in 2009:Q1
+
+
+         3                                   2                            8
+
+         2                                                                6
+                                             0
+         1                                                                4
+
+         0                                                                2
+                                             -2
+         -1                 Prior                                         0
+                            Posterior
+         -2                                  -4                           -2
+              0   10   20   30          40        0   10   20   30   40        0   10   20   30   40
+
+
+         2                                   2                            6
+
+                                                                          4
+         1                                   0
+                                                                          2
+
+                                                                          0
+         0                                   -2
+                                                                          -2
+
+         -1                                  -4                           -4
+              0   10   20   30          40        0   10   20   30   40        0   10   20   30   40
+
+
+        1.5                                  2                            6
+
+         1                                   1                            4
+
+        0.5                                  0                            2
+
+         0                                   -1                           0
+
+       -0.5                                  -2                           -2
+
+         -1                                  -3                           -4
+              0   10   20   30          40        0   10   20   30   40        0   10   20   30   40
+
+
+
+Notes: Prior median (black) and 90% credible interval (grey); posterior median (green) and 90% credible
+interval (light green).
+This Version: March 10, 2021                                                                                            A-26
+
+
+                                            Figure A-4: Historical Shocks
+
+
+                                                   Monetary Policy Shock
+
+       2                                                             2
+
+
+       1                                                             1
+
+
+       0                                                             0
+
+
+       -1                                                            -1
+
+
+       -2                                                            -2
+
+
+       -3                                                            -3
+
+
+       -4                                                            -4
+         1985   1990   1995   2000   2005   2010   2015                1985   1990   1995   2000   2005   2010   2015
+
+
+                                                          Demand Shock
+
+       3                                                             4
+
+
+       2                                                             3
+
+                                                                     2
+       1
+                                                                     1
+       0
+                                                                     0
+       -1
+                                                                     -1
+
+       -2                                                            -2
+
+       -3                                                            -3
+         1985   1990   1995   2000   2005   2010   2015                1985   1990   1995   2000   2005   2010   2015
+
+
+                                                          Supply Shock
+
+       8                                                             5
+
+       6                                                             4
+
+                                                                     3
+       4
+                                                                     2
+       2
+                                                                     1
+       0
+                                                                     0
+       -2
+                                                                     -1
+       -4                                                            -2
+
+       -6                                                            -3
+         1985   1990   1995   2000   2005   2010   2015                1985   1990   1995   2000   2005   2010   2015
+
+
+                              Level                                                  Standardized
+
+Notes: Shocks are computed conditional on posterior mean   ¯. During the ELB period the grey bands indicate
+90% equal-tail-probability bands that reflect uncertainty about the realization of the shocks.
+

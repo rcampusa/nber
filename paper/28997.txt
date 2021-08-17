@@ -1,0 +1,729 @@
+                              NBER WORKING PAPER SERIES
+
+
+
+
+                          REPUTATION AND PARTIAL DEFAULT
+
+                                       Manuel Amador
+                                      Christopher Phelan
+
+                                      Working Paper 28997
+                              http://www.nber.org/papers/w28997
+
+
+                    NATIONAL BUREAU OF ECONOMIC RESEARCH
+                             1050 Massachusetts Avenue
+                               Cambridge, MA 02138
+                                    July 2021
+
+
+
+
+Thee views expressed herein are those of the authors and not necessarily those of the Federal
+Reserve Bank of Minneapolis or the Federal Reserve System. The views expressed herein are
+those of the authors and do not necessarily reflect the views of the National Bureau of Economic
+Research.
+
+NBER working papers are circulated for discussion and comment purposes. They have not been
+peer-reviewed or been subject to the review by the NBER Board of Directors that accompanies
+official NBER publications.
+
+© 2021 by Manuel Amador and Christopher Phelan. All rights reserved. Short sections of text,
+not to exceed two paragraphs, may be quoted without explicit permission provided that full
+credit, including © notice, is given to the source.
+Reputation and Partial Default
+Manuel Amador and Christopher Phelan
+NBER Working Paper No. 28997
+July 2021
+JEL No. F34,F41
+
+                                         ABSTRACT
+
+This paper presents a continuous-time reputation model of sovereign debt allowing for
+both varying levels of partial default and full default. In it, a government can be a non-
+strategic commitment type, or a strategic opportunistic type, and a government's
+reputation is its equilibrium Bayesian posterior of being the commitment type. Our equilibrium
+has that for bond levels reachable by both types without defaulting, bigger partial defaults (or
+bigger haircuts for bond holders) imply higher interest rates for subsequent bond issuances, as in
+the data.
+
+
+Manuel Amador
+Department of Economics
+University of Minnesota
+4-101 Hanson Hall
+1925 Fourth Street South
+Minneapolis, MN 55455
+and Federal Reserve Bank of Minneapolis
+and also NBER
+amador.manuel@gmail.com
+
+Christopher Phelan
+Department of Economics
+University of Minnesota
+4-101 Hanson Hall
+1925 Fourth Street South
+Minneapolis, MN 55455
+and Federal Reserve Bank of Minneapolis
+and also NBER
+cphelan@umn.edu
+
+
+
+
+Code is available at https://github.com/manuelamador/partial_default
+                     Reputation and Partial Default
+                         Manuel Amador                     Christopher Phelan
+
+                                               June 28, 2021
+
+
+
+                                                   Abstract
+
+               is paper presents a continuous-time reputation model of sovereign debt allowing for
+       both varying levels of partial default and full default. In it, a government can be a non-
+       strategic commitment type, or a strategic opportunistic type, and a government's reputation
+       is its equilibrium Bayesian posterior of being the commitment type. Our equilibrium has that
+       for bond levels reachable by both types without defaulting, bigger partial defaults (or bigger
+       haircuts for bond holders) imply higher interest rates for subsequent bond issuances, as in
+       the data.
+
+
+
+1      Introduction
+Countries which when partially defaulting impose bigger haircuts on their bond holders face
+bigger market consequences. In particular, the interest rates they face for future bond issuances
+are higher.1 But it is far from clear that this should be the case. A er all, the bigger the haircut,
+the be er debt position the defaulting country is in.
+    Here, we propose a possible explanation: Bigger adverse consequences for bigger haircuts act
+as an endogenous equilibrium incentive to make sovereign governments willing to mix between
+di ering haircut levels.
+    In our model, governments can have possible private "types" (in particular a strategic "op-
+portunistic" type and a non-strategic "commitment" type). We assume the commitment type,
+which by assumption never fully defaults, is sometimes stochastically forced to partially default
+at varying haircut levels, while the opportunistic type can default at any level at any time. Our
+       e views expressed herein are those of the authors and not necessarily those of the Federal Reserve Bank of
+Minneapolis or the Federal Reserve System.
+    University of Minnesota, Federal Reserve Bank of Minneapolis, and NBER.
+    University of Minnesota, Federal Reserve Bank of Minneapolis, and NBER.
+   1 Cruces and Trebesch (2013) were the rst to point out this fact a er compiling a comprehensive dataset on
+
+haircuts and bond prices for sovereign defaults. See also the subsequent work of Asonuma (2016).
+
+
+                                                       1
+equilibrium has the property that for bond levels reachable by the opportunistic type without
+defaulting, bond prices are higher the higher the equilibrium probability a country's government
+is the commitment type. Further, our equilibrium involves the opportunistic type mixing -- for
+any positive length of time, it chooses a positive nite probability of defaulting at every possible
+haircut level.
+     For such mixing to be a best response for an opportunistic type, the equilibrium mixing prob-
+abilities must imply that when a country imposes a bigger haircut on its lenders, its reputation
+(the Bayesian posterior that it is the commitment type) falls further than if it had imposed a
+smaller haircut. e intuition is that the bene t of a larger haircut is, of course, the wiping out of
+more debt. But for the opportunistic type to then ever choose a smaller haircut, there has to be
+a corresponding, and equal, cost to imposing a larger haircut. e cost imposed by equilibrium
+is then this greater loss in reputation, and the corresponding greater increase in future interest
+rates.
+     Our model is similar to and based on the continuous time model of Amador and Phelan (forth-
+coming), referred to now as A&P21. In that model, however, countries can only fully default (that
+is, fully repudiate the debt ensuring no payments would ever be made to current bond holders).
+Here, we also allow countries to partially default.
+        ere are several papers that model reputational considerations in sovereign debt markets,
+such as Cole, Dow and English (1995), Alfaro and Kanczuk (2005), D'Erasmo (2011), Egorov and
+Fabinger (2016), and Dovis (2019).2 e initial quantitative models of sovereign debt e ectively as-
+sumed that there are no partial defaults (all defaults are full), and the sovereign can subsequently
+re-enter nancial markets with a clean slate.3 is assumption has been relaxed by subsequent re-
+search that has modelled the process of renegotiation between lenders and the sovereign.4 Aguiar,
+Amador, Hopenhayn and Werning (2016), Dvorkin, S´        anchez, Sapriza and Yurdagul (2021), and
+Mihalache (2020) study the role of the maturity structure plays in restructurings. e la er two
+provide a quantitative analysis, but do not focus on the behavior of spreads a er default and re-
+entering nancial markets. In her study of cyclical renegotiation outcomes, Sunder-Plassmann
+(2018) is able to generate spreads that are higher a er higher haircuts in an Eaton and Gersovitz
+   2 See  Amador and Phelan (forthcoming) for a discussion of these papers. Cha erjee, Corbae, Dempsey and R´       ios-
+Rull (2020) explore the implications of reputational concerns in unsecured consumer credit markets.
+    3 See for example Arellano (2008) and Aguiar and Gopinath (2006), which are based on the incomplete markets
+
+framework of Eaton and Gersovitz (1981). A er re-entering nancial markets following a default, there are two op-
+posing forces at play in these models: rst, default costs are low and expected to remain low in the future, raising the
+probability of future defaults. But debt is also low (as the country has fully defaulted), which lowers that probability.
+   is second force dominates and generates counter-factually low spreads a er a country re-enters nancial markets
+following a default.
+    4 See, for instance Yue (2010), who introduced bargaining over restructuring terms in the Eaton-Gersovitz frame-
+
+work. For an earlier model on renegotiation, see Bulow and Rogo (1989). See also Salomao (2017), and Benjamin
+and Wright (2008).
+
+
+
+                                                           2
+(1981) style model by making the bargaining power of the government during a renegotiation
+counter-cyclical.     is can lead to higher haircuts in defaults that occur during recessions (and
+those lower output states are associated with lower default costs in the future ­ potentially in-
+creasing spreads). Note that in our paper, output (which is constant) and debt are not su cient
+state variables to capture the behavior of spreads, a fact emphasized by Cruces and Trebesch
+(2013). Arellano, Mateos-Planas and R´  ios-Rull (2019) provides an alternative model where partial
+defaults lead to further defaults and increases in debt (because of arrears).
+
+
+2        e Environment
+   e continuous and in nite time environment/game we consider is similar to and based on the
+environment of A&P21. As in A&P21, here we consider a small open economy endowed with a
+constant ow of a consumption good whose government can borrow from risk-neutral price-
+taking outside lenders who discount the future at rate > 0. e terms of such borrowing is that
+the country can issue long term bonds at every date which pay a coupon at date of ( + ) - ( - ) .
+   is coupon schedule ensures that the price of a bond is one at date if default cannot occur.
+Assuming exponentially decaying coupon payments is equivalent to the government paying an
+instantaneous coupon of + per unit of current debt, ( ) , with such debt decaying at rate .
+We assume the initial level of debt is zero, and there exists an exogenous maximum level of debt,
+  < /( + ) (which ensures paying the required coupon is always feasible).
+
+
+2.1    Players
+As in A&P21, there is a countable list of potential governments where at any date  0, only
+one of the potential governments is active and makes decisions. We assume the rst government
+on the list is an opportunistic type, the second a commitment type, with the list then alternating
+between types. At all times, with Poisson arrival rate > 0, an opportunistic type government
+is replaced by the next government on the list (a commitment type). With arrival rate > 0, a
+commitment type government is replaced by an opportunistic type. Such switches are private.
+
+
+2.2    Strategies
+We assume the commitment type is non-strategic and continuously makes coupon payments
+( + ) per unit of debt. Unlike A&P21, here we assume the commitment type is sometimes
+forced to partially default. To this end, let = { 1, . . . , } denote an increasing grid of fractions
+representing the severity of a partial default, where a larger value of represents a smaller haircut,
+or a larger level of remaining debt a er the partial default. Let > 0 denote the Poisson arrival
+
+                                                 3
+rate of a shock which forces a commitment government with debt ( ) to partially default and
+reset its debt to      ( ) . In particular, partial default resets the promised stream of payments of
+each existing bond proportionally to            of its previous value. Assume these shocks are not
+publicly observed, and that a commitment type never fully defaults.
+     An opportunistic type, however, can both fully and partially default. It can always fully de-
+fault, and, like the commitment type, can partially default at level , rese ing debt to         ( ) . If a
+full default occurs, current bond holders get no additional payments, and the stock of outstanding
+debt is set to zero. If an opportunistic type partially defaults, coupon payments are adjusted ex-
+actly as if the commitment type partially defaults. Since both types can partially default, a partial
+default at any level does not mechanistically reveal the government's type.
+     As in A&P21, we assume that strategies are Markov. e payo relevant state variables here
+are the level of debt ( ) and the government's reputation ( ) . In A&P21, where only full default
+or no default was possible at any given moment, these two state variables could be reduced, with-
+out loss, to a single state variable that implied them both, time since last default, denoted . Here,
+this is no longer true. With partial default, time since last full default no longer mechanistically
+implies debt and reputation. Nevertheless, here we again look for strategies as a function of ,
+but consider to be a more abstract object, best thought of as the time on a stopwatch which
+can be reset back to either zero (in the case of full default) or to endogenous earlier time-points
+depending on the level of partial default, . In particular, let ( ) be the level of debt if there are
+no defaults for periods starting from no debt. We search for equilibria where upon a partial
+default from ( ) to debt level          ( ) , the stopwatch is reset to the endogenous amount of time
+it takes a country to go from zero debt to debt level          ( ) conditional on not defaulting at any
+                                                            
+level during that time, denoted ( ( )) . ( at is, ( ) is the inverse function of ( ) .)
+     For the commitment type, we assume that as long as it is in control, it follows a pre-speci ed
+expenditure rule determined by the expectations of international nancial markets of how a com-
+mitment type should act. at is, as long as the commitment type is in control, the stock of debt
+evolves according to
+
+                                           ( )=     ( ( ), ( ))                                        (1)
+
+for some exogenous function , where ( ) represents the price of a bond when the stopwatch
+displays (from now on referred to as period ) a er the realization of the period default event.
+    It follows from the sequential budget constraint that ( ) = - ( + ) ( ) + ( )( ( ) + ( )) ,
+and thus consumption for the commitment type is determined by ( ) = ( ( ), ( )) where the
+function is given by
+                               ( , ) -( + ) + ( ( , )+ )
+
+
+                                                    4
+   We further impose the following further conditions on            ( , ) (and thus, implicitly, ( , ) ):
+
+Assumption 1. Let X  [0, ] × [0, 1] . e function : X  R satis es the following: (i) H is
+Lipschitz continuous; (ii) H is weakly decreasing in ; (iii) H is weakly increasing in ; (iv) ere
+exists  ( 0, + + + + ) such that   ( 0, ) = 0 for all  [0, ] , and ( 0, ) > 0 for all  ( , 1] ;
+(v) ( , 1)  0; (vi) is di erentiable in the set of ( , )  X such that ( , ) > 0.
+
+     Restrictions (ii) and (iii) guarantee that the commitment type increases its debt by more the
+higher the price of its bonds and the lower the inherited debt stock.5
+     For the opportunistic type, in addition to the Markov restriction, we impose a restriction that it
+always chooses a level of borrowing (and thus consumption) that is identical to that which would
+have been chosen by a commitment government facing the same debt and price. (In A&P21,
+we show this restriction is without loss.) With this restriction, the only decision le under the
+control of the opportunistic government is whether and how much to default. Let default level
+   = 0 denote full default and default level  {1, . . . , } denote the partial default rese ing debt
+   to     by adjusting future coupon payments proportionally.
+     Given these restrictions, we assume that a strategy for an opportunistic government consists
+of a scalar , and two vectors, ( ) and ( ) . e rst vector, ( ) = { 0 ( ), . . . , ( )}, denotes
+for all < , the Poisson arrival rate of the opportunistic government defaulting at each level
+ .     e second vector, ( ) = { 0 ( ), . . . , ( )}, denotes for all  , the probability of the
+opportunistic government defaulting at each level at precisely period . We further assume
+    =0   ( ) = 1 for all  , or that an opportunistic type certainly and immediately defaults
+at some level for all  . Such a strategy speci cation is de nitely not without loss. We
+nevertheless a empt to construct equilibria in this class.
+
+
+2.3        Payo s
+If the government does not default at period , it issues additional bonds ( ( ), ( )) + ( )
+at endogenous price ( ) and its consumption is ( ( ), ( )) . If the government fully defaults
+(that is, defaults at level = 0), then is reset to zero with 0 = 0. If the government partially
+defaults at level  1, debt is reset from ( ) to        ( ) , and is reset to  ( ( )) .
+       ere are no direct costs of choosing to fully or partially default and no restrictions on gov-
+ernment borrowing from then on. In particular, in the case of full default, the government im-
+mediately issues new additional bonds ( 0, ( 0)) at endogenous price ( 0) and its consumption
+is ( 0, ( 0)) . In the case of partial default, the government immediately issues new additional
+bonds ( ( ), (  ( ( )))) +                ( ) at endogenous price (  ( ( ))) and its consump-
+tion is ( ( ), (  ( ( )))) .
+   5 See   A&P (2021) for justi cation of the other restrictions.
+
+                                                             5
+       e opportunistic type receives a ow payo equal to ( ( )) as long as it is continuously in
+power, and discounts future payo s at rate > 0. We assume that : R+  [ , ] for some nite
+values and , and that is strictly increasing. We make no other assumptions on the preferences
+of the opportunistic type. (As in A&P21, a preview of our results is that our constructed Markov
+equilibrium is essentially independent of and . Other than more is preferred to less, and now
+is preferred to later, the preferences of the opportunistic type will not ma er at all.)
+
+
+2.4    Beliefs
+Recall ( ) represents the international market's beliefs, or Bayesian posterior, that the govern-
+ment is the commitment type when the stopwatch is at . If the government fully defaults at any
+period  0, Bayesian updating implies immediately jumps to zero, since only the opportunis-
+tic type can fully default.
+     Next, consider < . If the government partially defaults at level at , Bayesian updating
+depends on the opportunistic type's strategy. Speci cally, if a partial default of level occurs,
+Bayesian updating implies ( ) jumps to
+
+                                                        ( )
+                                                                                .
+                                           ( )      + ( 1 - ( ))          ( )
+
+  is is the arrival rate of an -level default by the commitment type divided by the arrival rate of
+an -level default by either type.
+    If the government doesn't default at any level at date < , Bayesian updating again depends
+on the opportunistic type's strategy. Bayesian updating in this case implies6
+
+
+                 ( ) = ( 1 - ( )) + ( ) ( 1 - ( ))                  0(    )+             (   ( )-     ) -       .   (2)
+                                                                                    =1
+
+    For  , ( ) = 1, since by assumption an opportunistic government immediately defaults
+at some level for all  . Further, Bayesian updating requires to remain at one if no default
+occurs. As when < , if government fully defaults, Bayesian updating requires to jump to
+  6   is formula is the derivative of the following with respect to  evaluated at  = 0
+
+                                                               ( ) (1 -    =1       )
+                      ( + ) = ( 1 - )
+                                          ( ) (1 -    =1       ) + ( 1 - ( )) ( 1 -           =0    ( ) )
+                                                           ( ) (1 -       =1        )
+                              +  (1 -                                                                      ).
+                                         ( )( 1 -    =1    ) + ( 1 - ( )) ( 1 -              =0    ( ) )
+
+
+
+
+                                                           6
+zero. If a government partially defaults at level , Bayesian updating requires                                      to jump to
+
+                                                                             .
+                                                             +         ( )
+
+   is is again the arrival rate of an -level default by the commitment type divided by the arrival
+rate of an -level default by either type, where the arrival rate of an -level default by an op-
+portunistic type is the arrival rate of a type switch, , multiplied the probability of an immediate
+ -level default, ( ) .
+
+
+2.5       Prices
+Our construction of a Markov equilibrium will take candidate initial prices ( 0) as given. Prices
+for all periods 0 <  are then determined by the delay di erential equation7
+
+                                    ( ) = -( + ) + ( )( + + ( 1 - ( ))                                0(   ))+
+
+                                ( ( ) - ( (            ( ))) )( ( )               + ( 1 - ( ))         ( )) .                    (3)
+                           =1
+
+        For    ,
+
+                                        ( ) = -( + ) + ( )( + +                          0(    ))+
+
+                                        ( ( ) - ( (              ( ))) )(            +       ( )) .                              (4)
+                                   =1
+
+
+3        Markov Equilibria
+We consider a collection ( ( ), ( ), ( ), , {                     ( )}       =0, {    ( )}    =0 )   to be a Markov equilibrium
+if
+
+    1. (Foreign investors break even in equilibrium.) For all , ( ) is the expected discounted
+       (by ) value of the stream of coupon payments for a bond issued at period .
+                                               ( +)- ( )
+    7    is formula is the limit as   0 of                  where
+
+                                    -( + ) 
+                   ( ) = ( + ) +              ( + )         ( ) (1 -             ) + ( 1 - ( )) ( 1 -            ( ) )
+                                                                        =1                                 =0
+
+                                             -( + ) 
+                                         +                  ( (        ( )))      ( ( )  + ( 1 - ( ))            ( ) ) .
+                                                       =1
+
+
+
+
+                                                                  7
+    2. (Market beliefs are rational.)   : R+  [0, 1] ; satis es Bayes rule.
+
+    3. (Debt evolution and budget constraint.)    e level of debt, as a function of , evolves ac-
+       cording to the pre-speci ed expenditure rule .
+
+    4. (opportunistic type optimizes.) For all , no other default strategy improves the continua-
+       tion expected lifetime payo of the opportunistic type.
+
+
+4     Constructing a Markov Equilibrium
+In this section, we construct a Markov equilibrium.
+       e main idea for the equilibrium construction, as in A&P21, is to rst ensure that consump-
+tion for the opportunistic type is always at a constant  > for all periods < , and that
+consumption of the opportunistic type is weakly less than  for all  . e construction next
+ensures that reputation is reset a er a partial default so that a er a default of level in period
+  , jumps to (  ( ( ))) . Such a construction ensures that an opportunistic government is
+indi erent between defaulting at any level or not defaulting for < , and is indi erent between
+default levels (and is willing to certainly and immediately default at some level) for  .
+     To this end, let ( , ) denote the price which causes a commitment type with debt to set
+its consumption to . at is, ( , ) is such that ( , ( , )) = . Assumption 1 guarantees that
+   ( , ) is strictly increasing in and , re ecting the fact that to maintain a level of consumption
+higher than , the bond price must be higher at a higher debt level (as the government must be
+generating positive revenue from new issuances to sustain > ); and that a higher consumption
+requires a higher bond price, given a debt level.
+     Consider then a solution to the following autonomous rst order di erential equation:
+
+                                                               
+                                        ( )=   ( ( ), ( ( ),      ))                            (5)
+
+with initial condition ( 0) = 0. Its solution, along with ( ) = ( ( ), ) will de ne the candi-
+date ( ( ), ( )) before period , as the debt level and bond price paths that keep consumption
+at . Once these candidate paths for debt and bond prices are determined, they will be used to
+determine the candidate paths of default arrival rates, ( ) , and reputation, ( ) . We then de ne
+our candidate as the earliest period such that ( ) = 1.
+    To de ne the candidate ( ) implied by our candidate ( ) and ( ) for  , we derive a
+delay di erential equation. First, to ensure that jumps to (  ( ( ))) a er an type partial
+default, one needs
+                                           ( ) 1 - (  ( ( )))
+                                 ( )=                               ,                          (6)
+                                        1- ( )      (  ( ( )))
+
+                                                  8
+for all  1. Given this and solving equation (3) for               0(       ) and substituting into equation (2), one
+derives the delay di erential equation
+
+
+                                               ( )+ +
+                         ( )= + ( )                              - ( )( + + + )
+                                                  ( )
+                                         ( (      ( )))    ( )
+                          ( )        (                    
+                                                                                    - 1) .                       (7)
+                                =1
+                                               ( )      ( ( ( )))
+
+Since our candidate ( ) and ( ) (and thus ( ) ) have been previously determined, this delay
+di erential equation, with initial condition ( 0) = 0, solves for our candidate ( ) . De ne as
+the smallest such that ( ) = 1.
+      is de nes our candidate ( ( ), ( ), ( ), { ( )} =0 ) up to , all as a function of the as-
+sumed ( 0) .
+    For > , the candidate ( ) and ( ) are no longer determined by the paths necessary to
+hold consumption constant at . Candidates for ( ) and ( ) are constructed for > by using
+ ( ) and ( ) as initial conditions and using the di erential equations (1) and (4), substituting
+  ( ) = ( (  ( 1 ( ))) - 1) for  1 and 0 ( ) = 1 - =1 ( ) into (4), yielding the delay
+di erential equation
+
+                                                                              (  ( ( )))
+             ( ) = -( + ) + ( ) ( + + ) - ( )                          (                        - 1) .           (8)
+                                                                  =1
+                                                                            ( ) (  ( ( )))
+
+Se ing ( ) to this value ensures that reputation jumps to (  ( ( ))) a er a partial de-
+fault of level , and se ing 0 ( ) to this value ensures that a er a type switch, the newly born
+opportunistic type immediately defaults at some level.
+     Is this candidate equilibrium an equilibrium? For this, we need to check four conditions.
+First, we need our constructed ( )  [0, 1] for any  ( 0, ] . Second, we need our constructed
+    =1   ( )  [0, 1] for all  .        ird, we need ( ( ), ( ))   for all  .              is and
+consumption equal to for all  [0, ] ensures optimization by the opportunistic government
+                         
+
+is satis ed. Finally, we need prices ( ) to actually represent the expected present discounted
+value of the coupon payments of a bond issued at period .       is is ensured if and only if ( )
+converges to a nite limit as  . In particular, , ( ) must converge to
+
+                                                           ( (        ))
+                                         + +      =1       ( (        ))
+                                                                               ,                                 (9)
+                                               + + +             =1
+
+
+where    lim        ( ) . Note for any arbitrary           ,     such convergence will in general not occur.
+
+                                                       9
+For low , the corresponding ( 0) = ( 0, ) and ( ) will also be low, and the pricing equation
+(4) will cause ( ) to diverge downward. Intuitively, the di erential equation (4) is "justifying"
+a too low ( ) through ever increasing capital losses. Likewise, for high , the corresponding
+  ( 0) = ( 0, ) and ( ) will also be high, and the pricing equation (4) will cause ( ) to diverge
+upward. Here, the di erential equation (4) justi es a too high ( ) through ever increasing capital
+gains.
+
+
+5    Main Result
+Proposition 1. Let a collection ( ( ), ( ), ( ), { ( )}          =0, {( )} =0 ) be an equilibrium con-
+structed as in the previous section. en for all  ( ) and           > , ( (       ( ))) > (  ( ( ))) .
+
+Proof.    at  > implies ( ) is increasing in for < . at ( , ) is decreasing in and
+increasing in , along with  ( 0, 1) implies ( , ) is also decreasing in and increasing in .
+   us for consumption, ( ) , to be constant at  for < , ( ) must also be increasing in for
+  < .
+
+       is result implies that for partial defaults possibly done in equilibrium by the opportunistic
+type, the fall in bond prices following a partial default is greater the greater the bondholder hair-
+cut. (In our construction, partial defaults to debt values greater than ( ) are only ever done by
+the commitment type in equilibrium. If a type switch from commitment to opportunistic occurs
+when ( )  ( ) , the opportunistic type immediately either fully defaults or partially defaults
+at a level such that        ( ) < ( ) .) Note, our result that bigger partial defaults imply bigger
+drops in bond prices holds independent of the values of (the arrival rates of partial default by
+the commitment type), or any other parameters of the model such as , , , { 1, . . . , }, , ,
+or .
+
+
+6    An Example
+In this section we present an example which computationally meets our equilibrium criteria. e
+example parameters, where possible, are the same as in A&P21. In particular, for the commitment
+type's borrowing function ( , ) , we choose
+
+                                                         +
+                             ( , ) = max        -            -   ,0 ( - ) .                       (10)
+
+   We normalize = 1, and choose other parameters consistent with a unit of time being one
+year. us our choice of = 0.01 and = 0.02 implies a 1% chance per year that an opportunistic
+
+                                                    10
+                                          q (t)                                                                                          b(t)
+   0.9                                                                                   1.00
+
+
+                                                                                         0.75
+   0.8
+
+                                                                                         0.50
+
+   0.7
+                                                                                         0.25
+
+
+   0.6                                                                                   0.00
+           0        20       T       40           60     80           100                            0            20       T        40          60    80   100
+
+
+                                          (t)                                                                                            c(t)
+ 1.00
+                                                                                         1.00
+
+ 0.75
+                                                                                         0.99
+ 0.50
+
+                                                                                         0.98
+ 0.25
+
+
+ 0.00                                                                                    0.97
+               0        20       T   40           60     80          100                         0                20       T        40           60   80    100
+
+
+
+Figure 1: Equilibrium paths for , , , and starting from 0 = 0 and 0 = 0. is as in equation
+(10).    e rest of the parameters are = 1, = 0.01, = 0.02, = 0.01, = 0.2,  = 0.15,
+  = { .25, .75}, 1 = 2 = .005. e value of = 30.9 is represented by the vertical line.
+
+                                          n (t)                                                                                      n (t)
+ 0.5
+                                                              0                                          0
+                                                                                       0.6
+                                                              1 ( = 0.25)                                1 ( = 0.25)
+ 0.4                                                          2 ( = 0.75)                                2 ( = 0.75)
+                                                                                       0.5
+
+
+ 0.3                                                                                   0.4
+
+
+                                                                                       0.3
+ 0.2
+                                                                                       0.2
+
+ 0.1
+                                                                                       0.1
+
+
+ 0.0                                                                                   0.0
+       0           20        T       40           60          80            100              0               20        T       40               60    80     100
+
+
+
+
+                                                  Figure 2: Equilibrium paths for                                 and          .
+
+government dies in the next year to be replaced by a commitment government, and a 2% chance
+per year that a commitment government dies to be replaced by an opportunistic government.
+We set the outside world discount rate = 0.01 and = 0.2, corresponding to a yearly principal
+
+                                                                                  11
+payo of 20% or roughly ve-year debt.
+
+                                           Change in yield after haircut
+                                   8                                        = 0.25
+
+                                   6
+
+
+
+
+                               %
+                                   4
+
+
+
+                                   2
+
+
+                                                                            = 0.75
+                                   0
+                                       0       25           50        75         100
+
+
+
+            Figure 3: Increase in interest rates for new bond issuances a er partial default.
+
+    For the parameters associated with partial default, we set the grid of partial default levels
+   = { .25, .75}, and the Poisson arrival rates that the commitment type is forced to partially default
+at these levels at { .005, .005}.8
+    Figure 1 presents the computed equilibrium functions ( ) , ( ) , and ( ) , along with the
+implied function ( ) . Here, the graduation date = 30.9. Figure 2 presents the computed equi-
+librium functions ( ) and ( ) . Note ( )   for  {0, 1, 2} as  . at is, as  ,
+default at some level becomes certain. For  , by construction, a newly born opportunistic
+type immediately defaults at some level, but mixes between default levels. Finally, Figure 3 illus-
+trates our main result (Proposition 1) for these parameters: For all > 0, if a government wipes
+out 25% of its debt (or = .75) bond yields associated with new issuances rise by less than if it
+wipes out 75% of its debt (or = .25).
+
+
+7     Other Equilibria
+Are there other Markov equilibria with positive borrowing? While not proved here, we think
+not. Mixing by the opportunistic type imposes substantial discipline on equilibria, (speci cally
+indi erence), which our construction exploits.
+       e intuition for why all equilibria should involve mixing over haircut levels is as follows:
+Suppose at some date and history a proposed strategy called for the opportunistic type to set the
+Poisson arrival rate of that haircut to zero. Bayesian updating then implies a partial default at
+this level must have been done by the commitment type, implying a deviating opportunistic type
+    8 Computationally,  we can handle a much ner grid on partial default levels, as well as   values being non-
+constant.     e course grid is chosen only to make visualization easier.
+
+
+                                                       12
+could both partially default at this level and improve its reputation (all bene ts, and no costs). So
+instead suppose at that date and history, a proposed strategy called for the opportunistic type to,
+with some positive probability, partially default at that level at exactly that date. Given that the
+probability of a commitment type partially defaulting at any exact date is zero (given the Poisson
+arrival rate assumption on forced partial defaults by the commitment type), Bayesian updating
+implies if such a partial default occurs, the government's reputation jumps to zero. But then why
+should an opportunistic government only partially default when it can fully default and su er no
+worse a consequence? is logic suggests that partial defaults by the opportunistic type have to
+happen as strictly positive Poisson arrival events as well, implying indi erence as an equilibrium
+condition, as in our construction.
+
+
+8     Conclusion
+In papers in the tradition of Eaton and Gersovitz (1981), bigger partial defaults have ambiguous
+or counterfactual e ects on bond prices, since larger partial defaults put a country in a be er
+debt position going forward. We provide here a possible reputational explanation for why larger
+haircuts imply larger e ects on bond prices or interest rates for future bond issuances.
+
+
+References
+Aguiar, Mark and Gita Gopinath, "Defaultable Debt, Interest Rate and the Current Account,"
+ Journal of International Economics, 2006, 69 (1), 64­83.
+
+    , Manuel Amador, Hugo Hopenhayn, and Ivan Werning, "Take the Short Route: Equilib-
+    rium Default and Debt Maturity," 2016. working paper.
+
+Alfaro, Laura and Fabio Kanczuk, "Sovereign debt as a contingent claim: a quantitative ap-
+  proach," Journal of International Economics, 2005, 65 (2), 297 ­ 314.
+
+Amador, Manuel and Christopher Phelan, "Reputation and Sovereign Default," Econometrica,
+ forthcoming.
+
+Arellano, Cristina, "Default Risk and Income Fluctuations in Emerging Economies," American
+  Economic Review, 2008, 98 (3), 690­712.
+
+    , Xavier Mateos-Planas, and Jos´e-V´       ios-Rull, "Partial default," Technical Report, Na-
+                                        ictor R´
+    tional Bureau of Economic Research 2019.
+
+
+
+                                                 13
+Asonuma, Tamon, "Serial Sovereign Defaults and Debt Restructurings," Technical Report March
+  2016.
+
+Benjamin, David and Mark Wright, "Recovery Before Redemption: A Model of Delays in
+  Sovereign Debt Renegotiations," 2008. UCLA Working Paper.
+
+Bulow, Jeremy and Kenneth Rogo , "A Constant Recontracting Model of Sovereign Debt,"
+  Journal of Political Economy, 1989, 97, 155­178.
+
+Chatterjee, Satyajit, Dean Corbae, Kyle P Dempsey, and Jos´       e-V´      ios-Rull, "A quan-
+                                                                     ictor R´
+ titative theory of the credit score," Technical Report, National Bureau of Economic Research
+ 2020.
+
+Cole, Harold L., James Dow, and William B. English, "Default, Se lement, and Signalling:
+ Lending Resumption in a Reputational Model of Sovereign Debt," International Economic Re-
+ view, 1995, 36 (2), 365­385.
+
+Cruces, Juan J. and Christoph Trebesch, "Sovereign Defaults:     e Price of Haircuts," American
+  Economic Journal: Macroeconomics, July 2013, 5 (3), 85­117.
+
+D'Erasmo, Pablo, "Government Reputation and Debt Repayment in Emerging Economies," 2011.
+  Working Paper.
+
+Dovis, Alessandro, "E cient Sovereign Default," Review of Economic Studies, 2019, 86 (1), 282­
+ 312.
+
+Dvorkin, Maximiliano, Juan M. S´    anchez, Horacio Sapriza, and Emircan Yurdagul,
+ "Sovereign Debt Restructurings," American Economic Journal: Macroeconomics, April 2021, 13
+ (2), 26­77.
+
+Eaton, Jonathan and Mark Gersovitz, "Debt with Potential Repudiation:       eoretical and Em-
+  pirical Analysis," Review of Economic Studies, 1981, 48 (2), 289­309.
+
+Egorov, Konstantin and Michal Fabinger, "Reputational E ects in Sovereign Default," SSRN
+  Scholarly Paper ID 2724568, Social Science Research Network, Rochester, NY January 2016.
+
+Mihalache, Gabriel, "Sovereign default resolution through maturity extension," Journal of In-
+ ternational Economics, 2020, 125C, 103326.
+
+Salomao, Juliana, "Sovereign Debt Renegotiation and Credit Default Swaps," Journal of Mone-
+  tary Economics, October 2017, 90, 50­63.
+
+
+                                             14
+Sunder-Plassmann, Laura, "Writing o sovereign debt: Default and recovery rates over the
+  cycle," Journal of International Money and Finance, 2018, 81, 221­241.
+
+Yue, Vivian Z., "Sovereign Default and Debt Renegotiations," Journal of International Economics,
+  2010, 80 (2), 176­187.
+
+
+
+
+                                              15
+

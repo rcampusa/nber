@@ -1,0 +1,2553 @@
+                              NBER WORKING PAPER SERIES
+
+
+
+
+      DOUBLE-ROBUST IDENTIFICATION FOR CAUSAL PANEL DATA MODELS
+
+                                      Dmitry Arkhangelsky
+                                       Guido W. Imbens
+
+                                      Working Paper 28364
+                              http://www.nber.org/papers/w28364
+
+
+                     NATIONAL BUREAU OF ECONOMIC RESEARCH
+                              1050 Massachusetts Avenue
+                                Cambridge, MA 02138
+                                    January 2021
+
+
+
+
+This paper benefited greatly from our discussions with Manuel Arellano, Stéphane Bonhomme,
+and David Hirshberg. We are grateful for comments from seminar participants at CERGE-EI,
+University of Chicago, University of Georgia, Princeton University, and various conferences.
+This research was generously supported by ONR grant N00014-17-1-2131. The views expressed
+herein are those of the authors and do not necessarily reflect the views of the National Bureau of
+Economic Research.
+
+NBER working papers are circulated for discussion and comment purposes. They have not been
+peer-reviewed or been subject to the review by the NBER Board of Directors that accompanies
+official NBER publications.
+
+© 2021 by Dmitry Arkhangelsky and Guido W. Imbens. All rights reserved. Short sections of
+text, not to exceed two paragraphs, may be quoted without explicit permission provided that full
+credit, including © notice, is given to the source.
+Double-Robust Identification for Causal Panel Data Models
+Dmitry Arkhangelsky and Guido W. Imbens
+NBER Working Paper No. 28364
+January 2021
+JEL No. C01,C1,C23
+
+                                          ABSTRACT
+
+We study identification and estimation of causal effects in settings with panel data. Traditionally
+researchers follow model-based identification strategies relying on assumptions governing the
+relation between the potential outcomes and the unobserved confounders. We focus on a novel,
+complementary, approach to identification where assumptions are made about the relation
+between the treatment assignment and the unobserved confounders. We introduce different sets of
+assumptions that follow the two paths to identification, and develop a double robust approach.
+We propose estimation methods that build on these identification strategies.
+
+
+Dmitry Arkhangelsky
+CEMFI
+5 Calle Casado del Alisal
+Madrid 28014
+Spain
+darkhangel@cemfi.es
+
+Guido W. Imbens
+Graduate School of Business
+Stanford University
+655 Knight Way
+Stanford, CA 94305
+and NBER
+Imbens@stanford.edu
+1     Introduction
+Panel data are widely used to assess causal effects of policy interventions on economic outcomes.
+These data are particularly useful in settings where researchers are concerned with the presence
+of unobserved confounders that invalidate simple comparisons between treated and control out-
+comes. With Yit the outcome of interest for unit i in period t, the general setup we consider is
+
+
+
+      Yit = gt (Wit , Ui , Xit , it ),                                                      (1.1)
+
+
+with Wit an indicator for the treatment, Ui the unobserved confounder, Xit the observed at-
+tributes, and it an independent idiosyncratic error term. The possibility that Ui may be cor-
+related with Wit even after controlling for observed characteristics prevents us from estimating
+the average effect of Wit on the outcome by comparing treated and control outcomes.
+    The conventional strategy to deal with the unobserved confounder is to impose restrictions
+on the outcome model gt (·) that allow us to remove dependence on Ui . The most common
+approach in empirical work relies on a linear additive two-way fixed effect specification for the
+outcome model,
+
+
+      gt (w, u, x, e) = (u) + t + w + x  + e,                                               (1.2)
+
+
+in combination with it  {(Wil , Xil )}T
+                                      l=1 , so that the parameters can be estimated by least
+
+squares regression.
+    In this paper we focus on a different, what we call a design-based, strategy. Recall the
+basic linear regression omitted-variable-bias formula insight that the bias from an unobserved
+confounder comes from the combination of its correlation with the outcome and its correlation
+with Wit . As an alternative, or complement, to building a model for the outcomes that restricts
+the dependence of the outcomes on the unobserved confounders, we can therefore restrict the
+dependence of the assignment mechanism on the unobserved confounder to remove the bias. Let
+W i be the T -vector of assignments with typical element Wit . The restrictions we consider are
+
+
+
+
+                                               1
+of the form
+
+
+      Wi  Ui          Si ,                                                                     (1.3)
+
+
+where Si is a known function of W i . For example, Si may be equal to the average treatment
+assignment for unit i, W i =    t   Wit /T . This would amount to the assumption that units with
+the same fraction of treated periods are comparable. Later in the paper we provide several
+examples of statistical and structural economic models that justify (1.3) for a particular choice
+of Si . If (1.3) holds, we can compare treated unit that are treated with control of unit as long as
+the units have the same value for Si . Whether the restrictions in a model such as (1.2) are more
+plausible than a restriction as in (1.3) depends on the substantive application. For example
+when nonlinearities are important (e.g., Løken et al. [2012]), the model-based approach may be
+challenging. The first contribution here is to point out that an alternative to the outcome-model
+based strategy is to build a model for the assignment mechanism.
+   The second contribution of the paper is the insight that one can combine the two strategies,
+model-based and design-based, into a single, doubly-robust identification strategy. Models such
+as (1.2) validate a particular set of comparisons between treated and control outcomes. The
+restriction in (1.3) validates a different set of comparisons between treated and control outcomes.
+In many cases we can focus on comparisons that are validated by both the model in (1.2) and
+the restriction in (1.3). Such comparisons remain valid as long as at least one of the models is
+correct.
+   To implement our strategy we restrict attention to linear estimators that are widely used
+in economics and statistics (e.g., Donoho et al. [1994], Armstrong and Koles´
+                                                                            ar [2018b]). Our
+estimator has the following form:
+
+            1
+      ^=              it Yit                                                                   (1.4)
+           NT   i,t
+
+
+where researchers explicitly select the weights it by solving a quadratic optimization problem.
+Our estimator remains consistent if either outcome or assignment model is correctly specified and
+is robust to arbitrary heterogeneity in treatment effects (thus addressing concerns expressed in
+de Chaisemartin and D'Haultfoeuille [2018]). We also provide an extension to general non-binary
+treatments.
+
+                                                 2
+   It is important to note that our strategy is not based on constructing consistent estimates
+for Ui and then controlling for it. In fact, in the fixed T case we consider, it is usually impossible
+to build an unbiased estimator for Ui . Instead, we leverage the fact that the distribution of Ui
+stays constant for units with different assignment paths W i as long as we restrict our attention
+to subpopulations defined by Si . This emphasizes the practical role that design assumptions
+can play in models with unobserved heterogeneity. We can interpret the conventional two-way
+fixed effect estimator also as following our approach. Specifically, it can be viewed as comparing
+treated and control units at the same point in time within the set of units with the same fraction
+                                                       T
+of treated periods, that is, conditioning on Si =      t=1   Wit (e.g., Mundlak [1978]). However, as
+we show by a simple example, the two-way fixed effect estimator is not doubly robust, primarily
+because it controls for Si only linearly. Our proposed estimator explicitly deals with this problem,
+while also addressing potential issues that two-way fixed effect estimators have in the presence
+of heterogeneous treatment effects.
+   The additive structure in (1.2) has a long history in applied economics (going back at least to
+Mundlak [1961], Hoch [1962], Mundlak and Hoch [1965]) and econometrics (e.g., Chamberlain
+[1984, 1992], Arellano and Bonhomme [2011], Graham and Powell [2012], Chernozhukov et al.
+[2013], Freyberger [2018]). The second approach justifies (1.3) by putting additional restrictions
+on the relationship between W i and Ui , or, in other words, by formulating an assignment model.
+This type of restrictions on the assignment mechanism are at the heart of the "credibility
+revolution" in applied economics (Angrist and Pischke [2010]) that emphasizes the role of the
+research design. Many strategies currently used for causal inference with cross-sectional data
+are based on such design assumptions (see Angrist and Pischke [2008], Currie et al. [2020] for
+evidence on this). Although less common than outcome modeling in panel data settings, this
+design-based approach has been used to achieve identification in settings with grouped data,
+e.g., the exchangeability assumption in Altonji and Matzkin [2005], or the exponential family
+assumption in Arkhangelsky and Imbens [2018] (see also Borusyak and Hull [2020]). We are
+making two contributions to this literature. First, building on the research on binary panel
+models (e.g., Honor´
+                   e and Kyriazidou [2000], Chamberlain [2010], Aguirregabiria et al. [2018]), we
+show how to use design-based assumptions to identify treatment effects in this setting. Second,
+we propose a doubly robust identification strategy that combines the models for outcomes and
+assignments and remains valid if either of them is correctly specified. In practice, this means
+that applied researchers can directly exploit information about economic mechanisms behind
+
+                                                  3
+different patterns in W i , without abandoning familiar outcome models such as (1.2).
+    This paper is also directly related to recent causal panel literature that focuses on two-way
+fixed effect estimators (de Chaisemartin and D'Haultfoeuille [2018], Callaway and Sant'Anna
+[2019], Sant'Anna and Zhao [2020], Goodman-Bacon [2017], Athey and Imbens [2018]). Similarly
+to these papers, we use the two-way structure to model the baseline outcomes. However, our
+focus is quite different. First, we consider general designs, whereas the previous research has
+been focused on either block case or staggered adoption. Second, we develop a new estimator,
+that directly utilizes both assignment and outcome model. Finally, our identification strategy
+can be applied more broadly. In particular, although we focus on the two-way model for the
+baseline outcomes, the strategy can be extended to general factor models, thus connecting to
+the literature on synthetic control (e.g., Abadie et al. [2010], Xu [2017], Athey et al. [2017],
+Abadie et al. [2010], Ben-Michael et al. [2018], Arkhangelsky et al. [2019], Chernozhukov et al.
+[2019]).
+
+
+
+2     Setup
+In a generic panel data set up we observe N units over T periods (i and t being a generic unit
+and period, respectively), e.g., Chamberlain [1984], Arellano and Honor´
+                                                                       e [2001], Hsiao [2014],
+Baltagi [2008], Wooldridge [2010], Arellano et al. [2007]. We focus on settings with large N
+and fixed T . We are interested in the effect of a binary policy variable w on some economic
+outcome Yit . Later we discuss settings with more general treatments or policies. To formalize
+this we consider a potential outcome framework (Rubin [1974], Imbens and Rubin [2015]). The
+policy or treatment can change over time, and so is indexed by unit i and time t, Wit  {0, 1}.
+Let wt := (w1 , w2 , . . . , wt ) denote the sequence of treatment exposures up to time t, with w
+as shorthand for the full vector of exposures wT . Define W i := (Wi1 , . . . , WiT ) to be the full
+assignment vector for unit i. For the first part of the paper we abstract from the presence of
+additional unit-level covariates. We explicitly introduce them in Section 5. In general, one can
+view all our identification results as conditional on covariates.
+    Let Yit (wt ) denote the potential outcome for unit i at time t, given treatment history up to
+time t:
+
+
+      Yit (wt )  Yit (w1 , w2 , . . . , wt ).                                                  (2.1)
+
+                                                 4
+In this paper we consider a static version of this general model where some potential outcomes
+are identical.
+
+Assumption 2.1. (No Dynamics) For arbitrary t-compponent assignment vectors wt and wt
+                                                t    t
+such that the period t assignment is the same, wt = wt the potential outcomes in period t are
+the same:
+
+
+      Yit (wt ) = Yit (wt ).                                                                    (2.2)
+
+
+   This restriction implies that past treatment exposures do not affect contemporaneous out-
+comes. This assumption does not restrict time-series correlation in the realized outcomes and
+so on its own does not have any testable implications. However, given a particular assignment
+process, Assumption 2.1 can be tested. Because a substantial part of the empirical literature
+focuses on contemporaneous effects and assumes away dynamic effects, we view this as a natural
+starting point. The conceptual issues we raise are relevant for the dynamic treatment effect case
+as well but are discussed most easily in the static case.
+   Given the no-dynamics assumption we can index the potential outcomes by a single binary
+argument w, so we write Yit (w), for w  {0, 1}. Define also Y i (w)  (Yi1 (w1 ), . . . , Yit (wT )) to
+be the vector of potential outcomes. In this setup we can be interested in various treatment
+effects. The main building block is the individual and time-specific treatment effect:
+
+
+      it  Yit (1) - Yit (0)                                                                     (2.3)
+
+
+We focus primarily on identification and estimation of average treatment effects, typically a
+convex combination of individual effects it .
+   Next we discuss to assumptions we maintain throughout the paper. First, we restrict out
+attention to settings with strictly exogenous covariates (e.g., Arellano [2003]) and make the
+following assumption:
+
+Assumption 2.2. (Latent Unconfoundedness) There exist a random variable Ui  Rd
+such that the following conditional independence holds:
+
+
+      Wi         Y i (w)       Ui                                                               (2.4)
+                           w
+
+
+
+                                                  5
+   This assumption implies that once we control for Ui , then all the differences in the treatment
+paths W i across units are unrelated to the potential outcomes. This type of assignment should
+be contrasted with the sequential assignment where Wit can depend on past outcomes and latent
+characteristics (see Arellano [2003] for a discussion in the linear case). On its own Assumption
+2.2 is not restrictive because we allow Ui to be unobserved: if we choose Ui = W i this assumption
+is satisfied by construction.
+   We view Ui as a permanent (time-invariant) unit characteristic that we need to control for if
+we wish to compare outcomes across different units. We formalize this by making the following
+assumption on the (infeasible) generalized propensity score (Imbens [2000]) that ensures that in
+principle such comparisons are possible. Define the infeasible generalized propensity score:
+
+
+      rinf (w, u) := pr(W i = w|Ui = u).                                                      (2.5)
+
+
+Assumption 2.3. (Latent Overlap) For any u  U:
+
+
+      max{rinf (w, u)} < 1                                                                    (2.6)
+       w
+
+
+   This assumption essentially says that in the population there exist units with the same Ui but
+different values of W i . Such restrictions are common in the (cross-section) program evaluation
+literature: without an overlap assumption we would not be able to identify the average causal
+effect of the treatment without functional form restrictions even if we observed Ui . However,
+this latent overlap assumption is not always maintained in the panel literature. For example, if
+only time-series variation is used to make causal statements, then one does not need to make
+Assumption 2.3.
+   Considered together Assumptions 2.2 and 2.3 have testable restrictions, because now we
+cannot simply choose Ui = W i . Crucially, Assumption 2.2 implies that the assignment process
+does not depend on past outcomes. This restriction is often unrealistic in settings where Wit can
+be viewed as a choice variable that agents use to optimize Yit . In such cases, past outcomes might
+contain important information and thus are useful for decisions today. As a canonical example,
+consider a firm that selects inputs to optimize the output while facing uncertainty about future
+productivity (e.g., Olley and Pakes [1992]). In this case, past outcomes can be informative about
+the unobserved productivity, affecting the decisions today. As another example, consider a well-
+
+
+                                                6
+known empirical observation that earnings of labor programs' participants tend to decline right
+before the start of the program (e.g., Ashenfelter [1978]). In this case, the decision to participate
+is likely directly affected by recent earnings.
+    Nothwithstanding these examples, Assumption 2.2 is quite natural when Wit is either driven
+by some (quasi)-experimental shocks or is a choice variable that is not used to optimize Yit
+directly. Examples of the first type are common in the applied literature, especially when the
+shocks are aggregate, but some units are more exposed to them than others. As an example of
+the second type, consider a situation where Wit corresponds to national-level prices for product
+i in period t and Yit is a measure of sales in a local-level market. In this case, unobserved quality
+Ui makes Yit and Wit correlated (over i), despite the fact that Wit is not chosen to optimize Yit
+directly. Overall, the relationship between Wit and Ui that satisfies Assumptions 2.2 and 2.3 can
+arise for a variety of reasons and in the subsequent sections we show why it is useful to model
+it explicitly.
+
+
+
+3     Two paths to Identification
+
+3.1     Preliminaries
+Before we consider identification in various models we need to define additional objects. Let W
+be the support of the vector of assignments W i ; we can think of W as a matrix with at most 2T
+rows and T columns, where each row is an element of the support of W i . Let Wk be a k row of the
+matrix W ­ a T -dimensional vector of zeros and ones. Let k  pr(W i = Wk ) = E 1W i =Wk .
+All k are positive, otherwise the corresponding row of W can be dropped. Let K  2T be the
+number of rows in W .
+    For example, if T = 3 then a possible form for W is:
+               
+          0 0 0
+               
+               
+         1 0 1
+      W =      
+                                                                                               (3.1)
+         0 1 1
+               
+          1 1 1
+
+Each row of this matrix represents a possible assignment, and in this particular case only four
+
+
+                                                  7
+                             Table 1: Assignment process and weights
+                                                            (f e)    (f e)   (f e)
+                                k         Wk       k     k 1         k2    k 3
+                                1      (0,0,0)   0.09    0.46       -0.64 0.18
+                                2      (1,0,0)   0.04    5.70       -3.26 -2.44
+                                3      (0,1,0)   0.11   -2.16        4.60 -2.44
+                                4      (1,1,0)   0.14    3.08        1.98 -5.07
+                                5      (0,0,1)   0.07   -2.16       -3.26 5.42
+                                6      (1,0,1)   0.08    3.08       -5.88 2.80
+                                7      (0,1,1)   0.15   -4.78        1.98 2.80
+                                8      (1,1,1)   0.32    0.46       -0.64 0.18
+
+
+out of the eight (23 = 8) possible combinations have positive probability. For a particular unit
+i, let k (i) be the row Wk of the support matrix W such that Wk = W i . For the identification
+argument we assume we know W and the assignment probabilities k . We consider the case
+with unknown  in Section 5.
+   We are interested in estimating weighted averages of the treatment effects it . Our estimators
+will be linear in Y , with weights  :
+
+                   N   T
+              1
+      ^( ) =                it Yit .
+             NT   i=1 t=1
+
+
+For the estimators we consider, the weights  are a function of the assignment matrix w,
+ : {0, 1}N ×T  RN ×T (but do not depend on the outcomes data). Thus, choosing an estimator
+corresponds to choosing a weight function it (w). We maintain throughout this section the
+no-dynamics assumption (Assumption 2.1), latent unconfoundedness assumption (Assumption
+2.2), and latent overlap (Assumption 2.3).
+
+
+3.2    Double Robust Identification ­ An Example
+We start with an example that illustrates the main message of the paper. Suppose that T = 3
+and K = 8 = 2T , so W i has full support. We assume that the distribution of W i in population is
+given by the third column of Table 1. Suppose that potential outcomes Yit (w) have the following
+
+
+
+
+                                                        8
+structure:
+
+        Yit (w) = (Ui ) + t +  w + it
+                                                                                                            (3.2)
+        E[it |W i , Ui ] = 0
+
+and we use OLS with two-way fixed effects to "estimate"  in population. This procedure leads
+                                              (fe)
+to a particular set of weights it (W ), and then to the following fixed effect estimand:
+
+                   1               (fe)
+         fe = E               Yit it (W ) ,                                                                 (3.3)
+                   T      t
+
+
+where the expectation is taken over the Ui , it and the assignment W . If (3.2) is correctly
+specified then  fe =  ­ the average treatment effect ­ but in general this equality will not hold.
+For the distribution given above the weights are presented in the last three column of Table 1.
+By construction these weights sum up to 0 for every row and every column (once re-weighted
+by the marginal probability of W i ).
+   In general, the model (3.2) is overidentified which means that we can use other weights to
+                                   (f e)
+identify  . The weights t                  (·) are selected for efficiency reasons, because under homoskedasitic-
+ity they lead to an estimator with the least possible variance. In practice, we can have concerns
+besides efficiency. In particular, we may be worried that the model (3.2) is misspecified.
+   To illustrate this, suppose that DGP for the assignment mechanism W i has the following
+form:
+
+                                                                       exp((Ui ) + t )
+        (t, t ): Wit  Wit |Ui ,                      E[Wit |Ui ] =                       .                  (3.4)
+                                                                     1 + exp((Ui ) + t )
+
+As we show in the next section, this assumption implies the following conditional independence:
+
+
+
+        Wi         Y i (w)           Wi                                                                     (3.5)
+                               w
+
+
+                    T
+where W i           t=1   Wit /T is the fraction of treated periods for unit i. Now we can articulate a
+key insight. If the two-way fixed effect outcome model (3.2) is misspecified, but the assignment
+mechanism (3.4) is correctly specified and the treatment effect is constant, it =  , then the fixed
+
+
+                                                                 9
+                                              Table 2: Aggregated weights
+                                     (f e)                      (f e)                  (f e)
+                         Wi    E[1           (W i )|W i ] E[2           (W i )|W i ] E[3       (W i )|W i ]
+                           0                        0.46                      -0.64                   0.18
+                         1/3                       -0.73                       0.60                   0.13
+                         2/3                       -0.08                       0.36                  -0.28
+                           1                        0.46                      -0.64                   0.18
+
+
+effect estimand is equal to the treatment effect, or  f e =  , as long as the following condition is
+satisfied for all t and W i :
+
+          (f e)
+      E[t         (W i )|W i ] = 0                                                                              (3.6)
+
+                                                    (f e)
+This restriction requires the weights t                     (W i ) to balance out any time-specific function of W i .
+If it is not satisfied, then the differences in the outcomes for treated and control units can be
+attributed in the differences in the baseline outcomes Yit (0).
+   Table 2 shows that this condition does not hold not true for the fixed effect weights from
+Table 1. In other words, although fixed effects weights balance individual and time effects
+overall, they do not necessarily do so within subpopulations defined by W i . This is particularly
+striking, because the two-way estimator can be interpreted as controlling for W i . As shown in
+Mundlak [1978] the fixed effects estimand  f e is numerically equivalent to the estimand in the
+following linear regression:
+
+
+      Yit =  + t +  Wit + W i + ~it                                                                             (3.7)
+
+
+As a result, when constructing  f e we control for W i only linearly and this is not enough to
+enforce the necessary balancing property.
+   This example shows that the weights based on the outcome model (3.2) do not work if the
+assignment model (3.5) is correctly specified. As an alternative to the fixed effect weights one
+can use the assignment model (3.5) to construct weights that deliver the treatment effect  if the
+design model (3.5) is correctly specified. Similarly to the current example, there is no guarantee
+that such weights will "work" for the outcome model (3.2). The question now arises whether we
+find the weights that deliver  if either the fixed effect model (3.2) or the design process (3.5)
+is correctly specified. The answer is positive and a set of weights that satisfy this restriction
+
+
+                                                                 10
+                                   Table 3: Doubly robust weights
+                                             (dr)         (dr)          (dr)
+                        (W1 , W2 , W3 ) 1 (W k ) 2 (W k ) 3 (W k )
+                               (0,0,0)     0.00     0.00     0.00
+                               (1,0,0)     6.59    -3.95    -2.64
+                               (0,1,0)    -1.46     4.10    -2.64
+                               (1,1,0)     3.24     1.66    -4.90
+                               (0,0,1)    -1.46    -3.95     5.42
+                               (1,0,1)     3.24    -6.39     3.15
+                               (0,1,1)    -4.81     1.66     3.15
+                               (1,1,1)     0.00     0.00     0.00
+
+
+are given in Table 3. It is evident that the weights some up to zero for each row and a simple
+                           (dr)
+calculation shows that E[t        (W i )|W i ] = 0 for every t and W i . As a result, there is no trade-off
+in terms of identification and we can construct the estimator that works for both models.
+   So far we have assumed that the treatment effects are constant. This assumption is very
+strong and it is well-documented that the two-way estimators have problems in cases with
+heterogenous treatment effects (e.g., see de Chaisemartin and D'Haultfoeuille [2018]). This is
+evident from looking at Table 1: in the last row we assign a negative weight to all treated units
+in the second period. To guarantee that this does not happen the following restriction can be
+enforced when the weights are constructed:
+
+
+      Wit t (W i )  0                                                                                (3.8)
+
+
+As we show in the next sections this does not make the problem much harder computationally
+and in fact the robust weights from Table 3 are constructed with this restriction in mind. As
+a result, in this case it easy to be robust to arbitrary heterogeneity in treatment effects. This
+should be contrasted with the well-known problem with potentially negative weights that arises
+in IV estimation (Imbens and Angrist [1994]).
+   It is also important to emphasize that with general heterogeneity in treatment effects the
+robust weights might not deliver the average treatment effect (the same is true for the fixed effect
+weights). Instead, we get a weighted average with observable, or at least estimable, weights. The
+fact that the weights are estimable is important, because in the empirical work these weights
+can be reported and analyzed.
+
+
+
+                                                    11
+3.3    Identification Through the Outcome Model
+First we consider outcome models. Recall that by the no-dynamics assumption the potential
+outcomes Yit (w) are indexed by a binary treatment w. Here we focus on an outcome model with
+the following structure:
+
+Assumption 3.1. The potential outcomes satisfy:
+
+
+      E[Yit (w)|Ui ] = (Ui ) + t + t (Ui )w.                                                   (3.9)
+
+
+   Given Assumption 2.2 the content of this model is that it restricts the time-dependency of
+the conditional mean of the control outcome. Rewriting the model we can see that more directly.
+The conditional mean for control units is
+
+
+      E[Yit (0)|Ui ] = (Ui ) + t ,
+
+
+which is restricted to be additively separable in time, and the conditional treatment effect is
+
+
+      E[it |Ui ] = t (Ui ),
+
+
+which is unrestricted.
+   To motivate this outcome model, note that it has a long tradition in econometric literature.
+Chamberlain [1992] analyzed a more general factor model with an additional restriction t (Ui ) =
+ (Ui ), and derived an efficiency bound for E[ (Ui )]. For the two-way case his analysis was refined
+in Graham and Powell [2012] which looked at settings in which the semiparametric efficiency
+bound is equal to infinity, and thus  cannot be estimated by a regular estimator. In Arellano and
+Bonhomme [2012] authors return to the general model of Chamberlain [1992], impose additional
+time-series restrictions on the errors, and show how they can be used to identify the whole
+distribution of  (Ui ).
+   In our analysis we depart from these papers in two important directions. First, we explicitly
+allow for t (Ui ) to depend on t in an unrestricted way. Second, we do not focus only on averages
+of E[t (Ui )]. Instead we ask which convex combinations of t (Ui ) can be identified. Analysis in
+de Chaisemartin and D'Haultfoeuille [2018] shows that both of these directions are important:
+there is evidence that treatment effects vary with time, and the standard estimators do not
+
+                                                12
+deliver convex combinations of treatment effects in general.
+   To identify a convex combination of  (Ui ) we consider the weights kt that satisfy the fol-
+lowing four restrictions:
+
+           K       T
+      1
+                       k kt Wkt = 1,                                                       (3.10)
+      T    k=1 t=1
+
+
+
+
+      k,           kt = 0,                                                                 (3.11)
+               t
+
+
+
+
+            K
+      t,           k kt = 0,                                                               (3.12)
+           k=1
+
+
+
+
+      (t, k ), kt Wkt  0                                                                   (3.13)
+
+
+These constraints are natural given the outcome model described above. The first and the last
+restriction insure that we focus on a convex combination of treatment effects. The second and
+the third restriction guarantee that weights balance out the systematic variation in the baseline
+outcomes Yit (0). By construction, any weights that satisfy these restrictions lead to within-unit
+comparisons. We do not include the analogue of non-negativity constraint for control units, thus
+allowing for extrapolation. Depending on application, one might want to impose such constraint
+as well.
+   Let Woutc be the set of weights {tk }t,k that satisfy these restrictions. We can evaluate these
+restrictions and thus we can construct this set. For any generic element   Woutc define the
+random variables k(i) t :
+
+                         K
+      k(i) t ( ) :=           kt 1W i =Wk                                                  (3.14)
+                        k=1
+
+
+
+
+                                               13
+Using these stochastic weights we can compute the following expectation:
+
+                     T
+              1
+      ( ) = E              Yit k(i) t ( )                                                  (3.15)
+              T      t=1
+
+
+Proposition 1. Suppose Assumptions 2.1, 2.2, and 3.1 hold, and that   Woutc . Then  ( )
+is a convex combination of t (Ui ).
+
+   As a result, a certain convex combination of  (Ui ) can be identified whenever Woutc is non-
+empty. A necessary and sufficient condition for this is simple: the matrix W should contain at
+least one of the following two submatrices (up to permutation of columns):
+                                              
+               0 1                      0 1
+     W1 =             , W2 =                  .                                            (3.16)
+               0 0                      1 0
+
+Consider each of these cases separately. In the first case there are adoptors i of the treatment,
+and periods t and t with (Wit = 0, Wit = 1) and in the same periods t and t non-adoptors i
+with (Wi t = 0, Wi t = 0). In the second case there are adopters with (Wit = 0, Wit+1 = 1) and
+units who switch out with (Wit = 1, Wit+1 = 0). To put this discussion in perspective, it is not
+sufficient to have assignment matrices of the type
+                                                               
+               0 0                      0 1              1 1
+     W3 =             , W4 =                   , W5 =          ,
+               1 1                      0 1              1 0
+
+where with the first design some units are always in the control group and all others are always
+in the treatment group, in the second design all units adopt the treatment at exactly the same
+time. The third design is more complicated, because at a first sight W5 looks very similar to
+W1 ; the key difference is that with W1 we have a control period and this allows us to deal
+with unobserved unit-specific differences. With W5 this is no longer feasible and we need to use
+negative weights that are not allowed. Standard two-way fixed effect estimator treats W1 and
+W5 symmetrically and this is the reason why the resulting estimand might be outside of the
+convex hull of treatment effects.
+
+
+
+
+                                                   14
+3.4    Identification Through Design
+In this section we consider assignment processes that satisfy a certain sufficiency property. Here
+we state it as a high-level assumption, and provide examples of economic models that satisfy
+this assumption in the next section.
+   Define r(w, s) to be the feasible generalized propensity score:
+
+
+      r(w, s) := pr(W i = w|Si = s).                                                              (3.17)
+
+
+Assumption 3.2. (Sufficiency) There exist a known W i -measurable sufficient statistic Si 
+S and a subset A  S such that: (i)
+
+
+      Wi  Ui      Si ,                                                                            (3.18)
+
+
+and (ii), for all s  A:
+
+
+      max{r(w, s)} < 1.                                                                           (3.19)
+       w
+
+
+   This assumption might look restrictive, but Si that satisfies the conditional independence
+assumption (3.18) always exists. The obvious choice is Si = W i that satisfies this restriction
+by construction. Of course, in this case the overlap condition is not satisfied. Alternatively,
+one can consider Sigen  fU |W (·|W i ), where fU |W (x|y ) is the conditional distribution of Ui given
+W i . While less restrictive than W i , Sigen is not feasible, because fU |W (x|y ) is unknown. More
+generally, we need to find different values for W i that generate the same distribution of Ui , but
+still exhibit variation in some Wit . For example, in addition to conditioning on the fraction of
+                                                                                         T -1
+treated periods, W i , we may want to condition on the number of transitions,            t=1    Wit (1 -
+Wit+1 ). In the next section we describe examples that show that Si arises naturally in different
+empirical settings.
+   The main implication of the Assumption 3.2 coupled with Assumption 2.2 is summarized in
+the following proposition:
+
+Proposition 2. Suppose Assumptions 2.1, 2.2, and 3.2 hold. Then for any w:
+
+
+      1W i =w  Y i (w)    Si .                                                                    (3.20)
+
+                                                 15
+   This proposition demonstrates that unconfoundedness conditional on Ui (1.3) can be trans-
+formed into undonfoundedness conditional on Si (3.20) under the additional assumption that
+restricts the assignment process.
+   Let Si be a potential sufficient statistics. Let W s be a matrix representation of the support
+                                  s
+of W i conditional on Si = s and Wk be a generic row (element of the support). For example, if
+Si =       t   Wit and W is given by (3.1) then Si takes 3 possible values and we have the following:
+
+
+                                                    
+                                               1 0 1
+       W 0 = 0 0 0 , W 2/3                   =      ,W1 = 1 1 1                                (3.21)
+                                               0 1 1
+
+   When considering identification strategy based on design assumptions we do not restrict
+potential outcomes, but instead require that assumptions behind Proposition 2 are satisfied. In
+this case, one can identify a convex combination of individual treatment effects using the weights
+that satisfy the following restrictions (for all k, s and t):
+
+       1
+                    k kt Wkt = 1,                                                              (3.22)
+       T       tk
+
+
+
+
+                     k kt = 0.                                                                 (3.23)
+       k:Wk W s
+
+
+
+
+                     k kt Wkt  0,                                                              (3.24)
+       k:Wk W s
+
+
+Let Wdesign be the set of weights {tk }t,k that satisfy these restrictions. It is easy to see that
+Wdesign is nonempty whenever there exists at least one s such that W s contains at least two
+rows. This is guaranteed by the second part of Assumption 3.2. For any   Wdesign define the
+random variables k(i) t in the same way as before and consider the following expectation:
+
+                           T
+                1
+        ( ) = E                 Yit k(i) t                                                     (3.25)
+                T         t=1
+
+
+                                                      16
+Proposition 3. Suppose Assumptions 2.1, 2.2, 2.3, and 3.2 hold, and that   Wdesign . Then
+ ( ) is a convex combination of treatment effects.
+
+
+3.5      Examples
+In this section we consider various examples of assignment models. We show that Assumption
+3.2 holds in a wide range of examples and discuss their applicability to various applied problems.
+
+
+3.5.1     Aggregate shocks
+
+As a first case, we consider a situation, where Wit is determined by an observed p-dimensional
+aggregate shock t , and idiosyncratic noise it . Importantly, different units are affected by t
+in a way that is determined by their unobserved Ui . Formally, we have the following model that
+includes a latent index:
+
+                            T
+        Wit = t + 1 (Ui ) + 2 (Ui )t + it ,
+
+        {it }t  {(Ui ), Y i (w)}                                                                  (3.26)
+
+        Wit = 1Wit >0
+
+Here (Ui ) = (1 (Ui ), 2 (Ui ))  Rp+1 captures the exposure of different units to aggregate
+shocks t and it represents an independent mean-zero idiosyncratic component. Because Wit
+is binary, the model is nonlinear: instead of the latent index Wit we observe only Wit = 1Wit >0 .
+   In this model endogeneity arises because the exposure (Ui ) can be correlated with the
+potential outcomes. This should be compared with a situation where (Ui ) = , but it can be
+correlated with Y i (w). In the latter case, t can be used as an aggregate instrument. In our
+model the situation is different and we can use t to control for (Ui ). To gain some intuition for
+why this can be done assume that Wit is observed. In this case, we can construct OLS estimates
+for (Ui ). More precisely, let ~t = (1, t ) and define the following estimates:
+
+                    T             -1   T
+        ^ (Ui ) =         ~t 
+                             ~               ~t (W - W )                                          (3.27)
+                              t                   it  t
+                    t=1                t=1
+
+
+                                                                                          -1
+We can use ^ (Ui ) instead of (Ui ) to control for Ui . Since neither W t nor   t   t t        vary over
+
+
+                                                       17
+                                                                  T
+i, this is equivalent to controlling for (          t   Wit /T,   t=1   t Wit /T ). This is an intuitive strategy:
+if endogeneity arises because of the differential exposure to t , then we can simply estimate this
+exposure and control for it.
+   There are two major problems with this strategy: first, we do not observe Wit , second, ^ (Ui )
+is not equal to (Ui ). To solve both problems we need to make two additional assumptions. First,
+we assume that it is independent over t, second, we assume that it has a logistic distribution.
+Together these two assumptions lead to the following model:
+
+                                           T
+                        exp(1 (Ui ) + t + 2  (Ui )t )
+      E[Wit |Ui ] =                           T
+                                                         ,
+                      1 + exp(1 (Ui ) + t + 2   (Ui )t )                                                   (3.28)
+      Wit  {Wil }l=t          Ui ,
+
+which is a natural generalization of the familiar two-way logit model
+
+                        exp(1 (Ui ) + t )
+      E[Wit |Ui ] =                         .                                                              (3.29)
+                      1 + exp(1 (Ui ) + t )
+
+   The key feature of (3.28) is that now the version of the previously outlined strategy works
+without any additional caveats. In particular, define the following statistic:
+
+               T               T
+      Si =          Wit /T,          t Wit /T   .
+              t=1             t=1
+
+
+Si has the same interpretation as ^ (Ui ): it measures the exposure of unit i to aggregate shocks.
+Si depends on observable quantities only and can be computed, thus solving the first problem
+outlined above. It also solves the second problem, because it is easy to show that the following
+independence condition holds:
+
+
+      Ui  Wi          Si                                                                                   (3.30)
+
+
+and thus Si satisfies Assumption 3.2.
+   Undoubtedly the assumptions that make Si a sufficient statistic are strong. In particular,
+the logistic distribution of it is a functional form assumption on the unobserved idiosyncratic
+errors. The discussion above shows that we make this assumption to deal with the infeasibility
+
+
+                                                            18
+of ^ (Ui ). At the same time, one can interpret Si as a scale-free estimator for (Ui ) in the
+spirit of maximum score estimation (Manski [1975], Horowitz [1992]). As a result, we expect it
+to capture essential aspects of the unobserved heterogeneity even if the logistic assumption is
+violated.
+
+
+3.5.2     Stationary dynamics
+
+In the previous example Wit was mainly determined by aggregate exogenous shocks. In this
+section, we consider an opposite situation and assume that Wit is mainly determined by its
+past. In particularly, we consider the following structure:
+
+
+        Wit  {Wil }l>t       Ui , Wit-1
+                                  exp((Ui ) +  (Ui )Wit-1 )                                  (3.31)
+        E[Wit |Ui , Wit-1 ] =
+                                1 + exp((Ui ) +  (Ui )Wit-1 )
+
+This assumption describes a stationary first-order Markov dynamic model with rich unobserved
+heterogeneity. As we show below it arises naturally when Wit is a solution of a dynamic opti-
+mization problem, with past choices determining the current state.
+   As a stylized example, consider a sales manager for product i who decides on the price wt
+(high or low) solving a dynamic optimization problem with a discount factor  , and the following
+instantaneous payoff:
+
+
+        it (wt , wt-1 ) = R(wt , Ui ) - c(wt , wt-1 , Ui ) + it                              (3.32)
+
+
+where Ui is the unobserved quality of the product, it is an independent (of Ui and over time)
+idiosyncratic shock. Here the function R(wt , Ui ) reflects the instantaneous profit, and function
+c(wt , wt-1 , Ui ) captures costs of price adjustments. Bellman's principle implies that the optimal
+Wit is a solution of the following problem:
+
+
+        V (Wit-1 , Ui , it ) = max {it (w, Wit-1 ) +  E[V (it+1 , w, Ui )|Ui , it ]}         (3.33)
+                                 w
+
+
+where V is a value function. The optimal policy is a function of the state:
+
+
+        Wit = ft (Wit-1 , Ui , it )                                                          (3.34)
+
+                                                        19
+and as long as it are i.i.d. (over time) we get that Wit satisfies the following restrictions:
+
+
+        Wit  {Wil }l>t             Ui , Wit-1
+                                                                                                             (3.35)
+        E[Wit |Ui , Wit-1 ] = E[Wit |Ui , Wit-1 ]
+
+                                                                       i (Wit-1 )
+Let i (Wit-1 ) := E[Wit |Ui , Wit-1 ] and observe that log            1-i (Wit-1 )
+                                                                                     is a linear function of Wit-1 :
+
+
+
+                 i (Wit-1 )
+        log                            = (Ui ) +  (Ui )Wit-1                                                 (3.36)
+               1 - i (Wit-1 )
+
+This can be expressed in a familiar logit form:
+
+                                       exp((Ui ) +  (Ui )Wit-1 )
+        E[Wit |Ui , Wit-1 ] =                                                                                (3.37)
+                                     1 + exp((Ui ) +  (Ui )Wit-1 )
+
+which together with (3.35) implies (3.31).
+   Define the following statistic:
+
+                T -1           T
+        Si =           Wit ,         Wit Wit-1 , Wi1 , WiT   .
+                 t=2           t=2
+
+
+It is not hard to show that, as long as conditions (3.31) are satisfied, Si is a sufficient statistic
+that satisfies Assumption 3.2. In fact, the discussion above shows that (3.31) is equivalent to
+(3.35). This means that contrary to our previous example, in this model, sufficiency does not
+follow from a functional form assumption. The only real restriction that we impose is that Wit
+is a stationary first-order Markov process.
+
+
+3.5.3     Discussion
+
+Examples from Sections 3.5.1 and 3.5.2 illustrate two different empirical settings in which one
+can use our approach. The first example emphasizes the role of exogenous aggregate shocks that
+are frequently used in applied literature to identify policy effects (e.g., Duflo and Pande [2007],
+Dube and Vargas [2013], Nunn and Qian [2014], Nakamura and Steinsson [2014]). Our approach
+is applicable as long as the primary reason for endogeneity is differential exposure of different
+
+
+                                                                 20
+units to these shocks. The second example emphasizes the role of the structural assumptions,
+such as Markov restrictions, thus providing a way of combining structural choice models with
+the estimation of treatment effects.
+    From the formal point of view all the models considered above share the same structure. In
+all of them the conditional distribution of W i has the following representation:
+
+
+      log (P(W i |Ui )) = S (W i ) (Ui ) +  (Ui ) +  (W i )                                (3.38)
+
+
+In other words, the distribution of Wi belongs to an exponential family, with S (W i ) begin the
+sufficient statistic. Sufficiency arguments have a long tradition in econometrics of binary panel
+models (e.g., Andersen [1970], Chamberlain [1984], Honor´
+                                                        e and Kyriazidou [2000], Chamberlain
+[2010]) where they have been used to obtain consistent estimators for common parameters. More
+recently, sufficiency arguments were used by Aguirregabiria et al. [2018] to identify common
+parameters in dynamic structural models. We are using sufficiency differently: instead of using
+Si to identify common parameters, we use it to condition on unobserved heterogeneity, similarly
+to Arkhangelsky and Imbens [2018].
+
+
+
+4     Double robustness
+In this section we build on our previous results and present a doubly-robust identification argu-
+ment. We then propose a natural algorithm that implements our strategy.
+
+
+4.1    Identification
+The sets of Woutc and Wdesign described in Section 3 are motivated by different models and in
+general do not need to be similar. The first set is built with within-unit comparisons in mind,
+while the second one is based on within-period comparisons. The non-negativity constraints are
+also different: in Woutc we require every treated unit to have a non-negative weight, while in
+Wdesign this property only holds for the weights averages within a subpopulation described by
+Si . Nevertheless, these sets are not entirely different, because Woutc  Wdesign can be non-empty.
+Consequently, one does not need to take a stand on what comparisons to use: those based on
+looking at the same units across time or at different units for a fixed time period.
+
+
+                                                  21
+   Let Wdr = (Woutc  Wdesign ) and observe that combining the restrictions in (3.10)-(3.13) and
+(3.22)-(3.23) we get that any   Wdr satisfies the following restrictions:
+
+                1
+     Target :            k kt Wkt = 1,                                                        (4.1)
+                T   tk
+
+
+
+
+                                      T
+                                 1
+     Within - unit balance :               kt = 0,                                            (4.2)
+                                 T   t=1
+
+
+
+
+     Within - period balance :                    k kt = 0,                                   (4.3)
+                                     k:Wk   W s
+
+
+
+
+     Non - negativity : kt Wkt  0.                                                            (4.4)
+
+
+   The set Wdr treats units and periods asymmetrically. The weights need to balance arbitrary
+functions of Si within each period, but only need to balance unit fixed effects for every unit. Of
+course, this is a direct consequence of the two-way model that we consider for the outcomes. If
+the underlying model is more complicated ­ e.g., there are interactive fixed effects ­ then it will
+introduce additional restrictions. While we do not pursue such extensions in this paper, they
+can be addressed within our framework using the ideas from Arellano and Bonhomme [2011]
+and Freyberger [2018].
+   Combining earlier discussion of Woutc and Wdesign it is easy to see that a necessary and
+sufficient condition for Wdr to be non-empty is that there exists a value s for the sufficient
+statistic Si such that the corresponding W s contains at least one of the following two sub-
+matrices (up to permutations):
+                                           
+                0 1                  0 1
+     W1 =              W2 =                                                                   (4.5)
+                0 0                  1 0
+
+The requirement that for some s the set W s contains at least one of these sub-matrices is in
+
+                                                       22
+general more demanding than the assumption that W contains one of these submatrices. It is
+also more demanding than the overlap restriction in Assumption 3.2. At the same time, if Si
+includes W i then for any s, W s can contain W1 only if it contains W2 and this is equivalent to
+the overlap condition.
+    Finally we can state the main identification result. The following theorem is a direct conse-
+quence of Propositions 1 and 3:
+
+Theorem 1. Suppose Assumptions 2.1, 2.2, and 2.3 hold, and either 3.1, or 3.2, or both hold.
+Then for any   Wdr , the estimand  ( ) is a convex combination of treatment effects.
+
+    It is important to compare this theorem with other doubly-robust results in the panel liter-
+ature (e.g., Sant'Anna and Zhao [2020]). The conventional interpretation of double robustness
+(e.g., Robins and Rotnitzky [1995], Chernozhukov et al. [2016, 2018b,a]) is based on two differ-
+ent ways of using covariates in estimation. One can either demean the outcomes, thus making
+units directly comparable, or re-weight the units to guarantee that the differences between them
+average out. To ensure good statistical properties (e.g., semiparametric efficiency), we need to
+combine both of these ideas. In this case, the bias of the resulting estimator depends on the
+product of two errors. As a result, one can trade a less accurate outcome model for more precise
+weighting and vice versa.
+    Our interpretation of double robustness is different. We have not explicitly introduced the
+covariates, and thus any discussion on how to use them is irrelevant for our identification re-
+sult. More precisely, our approach is based on combining two different identification arguments,
+whereas the traditional double robustness uses a single identification assumption (a version of
+conditional independence). In principle, one can combine traditional double robustness with
+ours, but this lies outside of the scope of this paper.
+
+
+4.2     Algorithm
+Our estimator uses the panel data {Yit , Wit , Xi }i,t , where we now explicitly introduce time in-
+variant covariates Xi . We assume that a researcher has constructed a sufficient statistic Si .
+To incorporate covariates we consider two p-dimensional functions of (Xi , Si , t) and (Xi , Si ):
+                        (1)                   (1)                                  (2)                (2)
+ (1) (Xi , Si , t) = (1 (Xi , Si , t), . . . , p (Xi , Si , t)),  (2) (Xi , t) = (1 (Xi , t), . . . , p (Xi , t)),
+and define it  ( (1) (Xi , Si , t),  (2) (Xi , t)). In cases where Xi is discrete these functions can be
+simply set to time-specific indicators for each value of Xi and Si .
+
+                                                       23
+   Given these inputs, our estimator is defined in the following way:
+
+              1
+      ^ :=             ^it Yit                                                                  (4.6)
+             NT   it
+
+
+where the weights {^it }it solve the optimization problem:
+
+                              1                 2
+      {^it }it = arg min                        it
+                  {it }it   (N T )2        it
+                             1                          1
+             subject to:                  it Wit = 1,             it = 0,
+                            nT                          T
+                                     it                      i                                  (4.7)
+                            1                            1
+                                          it = 0,                     it it = 0,
+                            N    t
+                                                        NT       it
+
+                            it Wit  0,
+
+The weights ^it are related to weights produced by OLS. The key difference is that we are
+explicitly looking for weights that balance out functions of Si , not only fixed attributes Xi , and
+satisfy certain inequality constraints. The last restriction is crucial, because it is well documented
+that the standard OLS estimators with fixed effects in general do not correspond to reasonable
+estimands if the effects are heterogeneous (see e.g., de Chaisemartin and D'Haultfoeuille [2018]).
+   Our estimator fits naturally into recent theoretical literature on balancing weights (e.g.,
+Imai and Ratkovic [2014], Zubizarreta [2015], Athey et al. [2016], Hirshberg and Wager [2017],
+Chernozhukov et al. [2018a,b], Armstrong and Koles´
+                                                  ar [2018a]). The main technical difference is
+that we need to balance unit-specific functions and explicitly impose non-negativity constraints.
+At the same time, we only balance a parametric class of functions of (Xi , Si ), rather than a
+general nonparametric class (as in Hirshberg and Wager [2017], Armstrong and Koles´
+                                                                                  ar [2018a])
+   The weights that we get from (4.7) have the least possible norm, subject to balancing con-
+ditions motivated by Theorem 1. Our choice of the objective function is justified by statistical
+reasons ­ the variance of any linear estimator is directly related to the norm of the weights. While
+we do not pursue this in the current work, one can consider alternative objective functions that
+are motivated by economic reasons, e.g., a version of empirical welfare.
+
+
+
+
+                                                             24
+5     Inference
+
+5.1    Statistical framework
+We assume that we observe a random sample {Y i , W i , Xi }N
+                                                           i=1 from some distribution P with
+
+T (number of periods) being fixed. We assume that a researcher has constructed sufficient
+statistics Si  S (W i , Xi ) based on a design model. We maintain Assumptions 2.1, 2.2,2.3 and
+additionally restrict the outcome model:
+
+Assumption 5.1. Either there exist a sufficient statistic Si such that the following is true:
+
+
+      Yit (0) = t +  (2) (Xi , t)  +  (1) (Xi , Si , t)  + uit
+
+      E[uit |Xi , Si ] = 0                                                                   (5.1)
+
+      (ui1 , . . . uiT )  W i |Xi , Si
+
+or Ui = (i , Xi ) and we have the following:
+
+
+      Yit (0) = i + t +  (2) (Xi , t)  + uit
+
+      E[uit |Xi , i ] = 0                                                                    (5.2)
+
+      (ui1 , . . . uiT )  W i |Xi , i
+
+    This assumption allows for our design model to be correct, so that we only need to control
+for (Si , Xi ), or the more traditional fixed effects model to be correct. We do not impose any
+restrictions on Yit (1) and thus on heterogeneity in treatment effects. For simplicity we assume
+that in both cases the conditional expectations are linear in parameters with respect to a known
+finite-dimensional dictionary. This is without loss of generality if both Xi and Si are discrete.
+
+
+5.2    Formal resuls
+To state the inference results we make several statistical assumptions:
+
+Assumption 5.2. (a) P -a.s. (Xi , Si )   ­ compact subset of some metric space; (b)  (Xi , Si , t)
+is a continuous function of its arguments (on ); errors uit satisfy the following moment condi-
+
+
+                                                   25
+tions:
+
+         0 < 2     2                2
+             u  E[uit |W i , Xi ]   u < 
+                                                                                           (5.3)
+         E[u4
+            it ] < 
+
+
+   For each i, t define the following 2 × p-dimensional random vector:
+
+                                          T
+                                          l=1 (1 - Wil )il
+         it  (1 - Wit )it -                 T
+                                                                                           (5.4)
+                                            l=1 (1 - Wil )
+
+
+Assumption 5.3. (a) Si includes W i ; (b) for all t and  > 0 we have E[Wit |Si , Xi ]  1 -  ;
+(c) the following holds:
+
+                   T
+         min             E it it        >0                                                 (5.5)
+                   t=1
+
+
+   Define the target parameter:
+
+                     1
+         cond =                 ^ it Wit E[it |W i , Xi ]
+                                                                                           (5.6)
+                    NT     it
+
+
+This is a conditional weighted average treatment effect, where the weights are directly observed
+(and equal to ^ it Wit ). By construction these weights are nonnegative. Next theorem shows ^ is
+close to cond :
+
+Theorem 2. Suppose Assumptions 5.1, 5.2, 5.3 are satisfied. Then there exist a collection of
+random variables {t (Xi , W i , t)}T
+                                   t=1 such that the following holds:
+
+
+              T
+         1
+                   ^ t - t
+                                2   = op (1)                                               (5.7)
+         T   t=1
+
+
+and the following convergence in distribution holds:
+
+         
+                 - cond )  N (0,  2 )
+             n (^                                                                          (5.8)
+
+
+
+
+                                                             26
+The variance has the following form:
+                                                                       2
+                                                                           
+                       T
+                  1
+      2 = E                  it ((uit + Wit (it - E[it |W i , Xi ]))                        (5.9)
+                  T    t=1
+
+
+
+    This theorem describes the performance of our estimator in larger samples. The population
+weights  depend on (Xi , W i ), not only on Si which is an implication of the fact that we need
+to deal with individual fixed effects.
+    To conduct inference we need to construct an estimator for  2 . Our next results shows that
+conventional unit-level bootstrap can be used for this purpose.
+
+Theorem 3. Let {^(b) }B
+                      b=1 be a set of non-parametric (unit-level) bootstrap analogs of ^. Define:
+
+
+                 B
+       2   N                      2
+      ^ :=             ^(b) - 
+                              ^                                                            (5.10)
+           B     b=1
+
+
+and suppose that assumption of Theorem 2 hold. Then if E[it |W i , Xi ] =  ^ 2 is consistent for
+ 2 ; otherwise ^ 2 is conservative.
+
+    Theorems 2 and 3 imply that one can construct asymptotically conservative confidence in-
+tervals by standard methods. In particular, let z be an -level quantile of the standard normal
+distribution. Then the following interval has an asymptotic coverage of at least 1 - :
+
+                       ^2
+                       
+      cond  ^±            z/2                                                              (5.11)
+                       N
+
+
+6     Extensions and Experiments
+
+6.1    Non-binary treatment
+In applications, the treatment Wit is often non-binary, and the results discussed so far are not
+directly applicable. One possibility is to binarize the treatment, but this process will change
+both the outcome and the assignment models. This section discusses an alternative strategy for
+dealing with a general treatment.
+
+                                                       27
+   To proceed we need to specify the outcome model and the assignment process for general
+non-binary treatment Wit . For the outcome model we resort to the two-way linear structure:
+
+
+        Yit (w) = (Ui ) + t + t (Ui )w +       it
+                                                                                             (6.1)
+        E[ it |Ui ] = 0
+
+thus abstracting away from potential non-linear effects of w. This is the standard assumption
+made in applications, and it does not take us far from the current empirical practice.
+   For the assignment model we consider a baseline distribution f0 (w) that has the same support
+as Wit . If Wit is non-negative, then this can be an exponential distribution, if Wit represents
+counts of certain events, then f0 (w) can be Poisson. We then assume that the distribution of
+Wi conditional on Ui belongs to the following exponential family:
+
+
+        f (Wi |Ui ) = exp           (Ui )t (Wit ) -  (Ui )       f0 (Wit )                   (6.2)
+                               t                             t
+
+
+where t (·) is a known function. This structure directly generalizes the example presented in
+Section 3.5.1. In particular, if we observe aggregate shocks Zt then it is natural to consider
+t (Wit ) = Zt Wit .
+   Exponential structure of the assignment model implies the general unconfoundedness condi-
+tion:
+
+
+        Wi  {Yi (w)}w |Si                                                                    (6.3)
+
+
+where Si =          t   t (Wit ). Given Si we can proceed by identifying the effect by running the
+standard two-way regression:
+
+
+        Yit = i + t + it Wit +        it                                                     (6.4)
+
+
+withing the subpopulations defined by Si . This approach delivers meaningful causal effects if
+it does not vary in the subpopulations defined by Si . In practice, we can split the data into
+clusters with similar values of Si , run OLS separately for each cluster, and then aggregate the
+effects. This approach connects us with the recent work on fixed-effect models (Bonhomme and
+
+
+                                                      28
+Manresa [2015], Bonhomme et al. [2017]), where the authors argue for using K-means algorithm
+to classify units into clusters, as a way to estimate computationally challenging fixed-effect
+models. Our results shows how to use the assignment model to derive the characteristics that
+can be used for such classification.
+   The model (6.2) can be considerably generalized. Instead of the aggregate shocks, one can
+consider stationary dynamic models from Section 3.5.2. In general, one can use a rich class of
+generalized linear models (Nelder and Wedderburn [1972], Efron and Hastie [2016]) to adapt
+the assignment process to the particular structure of Wit . These models are commonly used
+in applied data analysis to understand complex data structures, and our results show how to
+exploit them for identification purposes.
+   If we use the normal distribution as the baseline for Wit then the assignment model reduces
+to linear regression:
+
+
+      Wit =  (Ui ) t + it
+
+
+implying that Wit can be decomposed into a low-rank component  (Ui ) t and idiosyncratic
+noise it . This suggests that one can use interactive fixed effects regressions to estimate the
+treatment effects. This choice is attractive for some applications, but the panels that we have in
+mind have small T and large n, rendering both conventional interactive fixed effects regressions
+(e.g., Bai [2009]) and its regularized analogs (e.g., Chernozhukov et al. [2019]) inconsistent.
+Also, we do not restrict the persistence in the errors of the potential outcomes; thus, the GMM
+estimators in the spirit of Holtz-Eakin et al. [1988], Freyberger [2018] are inapplicable as well.
+
+
+6.2    Empirical illustration
+To illustrate our approach at work in a real application we consider data from Charles and
+Stephens Jr [2013]. In the paper authors analyze the relationship between the local voting pref-
+erences (expressed by turnout) and local economic outcomes (such as earnings or employment).
+In particular, the stylized version of the main regressions that is proposed in the paper has the
+following form:
+
+
+      Yit = i + t +  Wit +    it                                                              (6.5)
+
+
+                                                29
+where the unit of observation i corresponds to the U.S. counties, Yit measures the local turnout
+(we will focus on the presidential elections), Wit measure the log-income per capita in the cor-
+responding county. Authors estimate  by IV, using aggregate shocks to construct instruments.
+In particular, their first stage model has the following form:
+
+
+         Wit = t + 1 D1i Z1t + 2 D2i Z2t + it                                                             (6.6)
+
+
+where {Z1t , Z2t }t correspond to nation-level oil and coal prices, and Dki = (D1ki , D2ki ) are in-
+dicators for the importance of oil and coal for the county i (medium or large). As a result,
+authors use the variation in Wit that is "cleaned" from it and t to identify  . This variation
+is coming from two sources: the variation in Dki over i and Zt over t. The underlying identi-
+fication assumption behind this approach is that the endogeneity problem arises from it being
+correlated with  it , while Dki is not.
+       Our approach to identification is different: instead of (6.6) we consider the following first
+stage model:
+
+
+         Wit = i + t + 1i Z1t + 2i Z2t + it                                                               (6.7)
+
+
+and assume that (i , 1i , 2i ) are correlated with the potential outcomes, while {it }t are not.
+Using our previous notation, we can express this in the following way:
+
+
+         Ui = (i , 1i , 2i )                                                                              (6.8)
+
+
+As a result, our approach is complimentary to that of Charles and Stephens Jr [2013]. While
+they exploit the variation in Dki ­ which can be viewed as a proxy for ki ­ we instead control
+for it and exploit the variation in it .1
+       We use (6.7) to construct the sufficient statistic for Ui :
+
+
+         Si :=        Wit ,        Z1t Wit ,        Z1t Wit                                               (6.9)
+                 tT           tT               tT
+
+   1
+    In principle one can utilize variation in Zkt only, but more time periods are needed for this approach to be
+practically useful. See Arkhangelsky and Korovkin [2020] for more details.
+
+
+
+
+                                                              30
+                                                estimate    s.e.
+                                          ^DR       0.003 0.007
+
+Table 4: The results are based on the data from n = 2994 counties over T = 8 presidential elec-
+tions (1972-2000). The outcome is the turnout in the presidential elections at the county level,
+and the treatment is the log-earnings. Sufficient statistic Si is constructed using log(national em-
+ployment) in coal and gas industries. K -means algorithm is used to split counties into K = 1000
+groups based on Si . Standard errors are computed using county-level bootstrap.
+
+
+
+Note that if {it }t has normal distribution then Si is sufficient for Ui , otherwise one can justify
+using Si with the logic from Section 3.5.1. Si is a 3-dimensional object and to control for it we
+use K-means algorithm to classify n units into K groups with similar values of Si . Once these
+groups are defined, we proceed by estimating 6.5 by OLS with two-way fixed effects within each
+group. The results of the estimation are presented in Table 4. These results are qualitatively
+similar to those obtained by Charles and Stephens Jr [2013] who also do not find significant
+effects for the presidential elections.
+
+
+6.3    Simulations
+We use the data from Charles and Stephens Jr [2013] as a basis for a simulation. Let Y and W
+be n × T matrices with enties equal to Yit and Wit , respectively. We standardize each of these
+matrices by subtracting the overall mean, and dividing by the overall standard deviation. We
+then decompose them into three components:
+
+
+      Y = FY + LY + EY
+                                                                                             (6.10)
+      W = FW + LW + Ew
+
+               (k)     (k)
+where Fk = i         + t     is the two-way matrix, Lk is a matrix of rank 5, and Ek captures the
+residual variation. We compute the size and the correlation between the residuals and elements
+
+
+
+
+                                                   31
+of matrices Lk :
+
+                      2
+      2
+                    Ek,it
+                       it
+      k (E ) =
+                  nT
+                 it Ey,it Ew,it
+      (E ) =
+             nT w (E )y (E )
+                                                                                                       (6.11)
+                    L2
+                     k,it
+      2
+      k (L) = it
+                 nT
+                it Ly,it Lw,it
+      (L) =
+             nT w (L)y (L)
+
+and then simulate the data using the following model:
+
+                (b)          1                       (b)       Y (L) (b)
+      Yit = FY,it +                        (1 -  2 )LY,it +         L     +   it
+                            c( )                               W (L) W,it
+                 (b)           (b)
+      Wit = FW,it + LW,it + it
+
+          (b)    (b)         (b)     (b)
+where (FY,it , LY,it , FW,it , LW,it ) are sampled uniformly from the rows of Fk , Lk , while ( it , it ) have
+a joint normal distribution with the covariance matrix implied by y , w , . Parameter  controls
+the excess selection bias that is not present in the real data. Parameter c( ) normalizes this
+                                                       2
+component to have the expected sum of squares equal to Y (L) to keep the relative sizes of the
+fixed effects and the low-rank component constant. We consider two designs: in the first one
+ = 0, in the second it is equal to 0.05. Note that in this simulation the effect of the treatment
+is equal to zero, which is natural given the results presented in the previous section.
+   The summary of the results over 1000 simulations is presented in Table 5. We use two
+benchmarks: the standard two-way OLS regression and the TSLS regression implemented in
+the original paper. In the baseline case, our estimator and the standard TW perform equally
+well. Both exhibit certain bias, which is not surprising given the presence of the low-rank
+components and the correlation between the errors. Once we introduce the additional selection
+bias ( = 0.05), the performance of TW estimator deteriorates considerably (1300% increase in
+RMSE), while our estimator continues to perform well (50% increase in RMSE).
+   We emphasize that we do not generate the treatment using the first stage described in the
+previous section:
+
+
+      Wit = t + 1i Z1t + 2i Z2t + it
+
+                                                                 32
+                                                       RMSE                    Bias
+                              (L)     (E )
+                                              DR        TW TSLS           DR   TW TSLS
+       Design 1 ( = 1)    0.039      -0.038 0.016      0.016 0.521      -0.01 0.013 -0.005
+       Design 2 ( = 0.95) 0.351      -0.038 0.023      0.205 0.505       0.02 0.205 0.222
+
+Table 5: Results are based on 1000 simulations, with n = 2994 and T = 8; size of the outcome
+                                      2      2       2       2
+and assignment models components: (Y    (L), W (L), Y  (E ), W (E )) = (0.12, 0.09, 0.02, 0.06).
+
+
+
+Instead, we use the actual data to extract the systematic components of Wit . Moreover, we do
+not set the correlation between it and   it   to zero. There are two reasons for the success of our
+estimator. First, the contribution of the errors it ,   it   to the corresponding outcomes is small
+compared to the contribution from Lk,it and Fk,it . In particular, in both cases, the two-way
+fixed effects play a key role, explaining 85% of the variation in the data. This drives the good
+behavior of both TW and DR when  = 0. Once we scale the correlation between LW,it and LY,it
+the low-rank component starts to play a role, and TW estimator does not do anything about
+it. In contrast, the aggregate shocks (Z1t , Z2t ) allow us to extract important components of the
+low-rank matrix and control for them.
+
+
+
+7    Conclusion
+In this paper, we propose a novel identification argument that can be used to evaluate a causal
+effect using panel data. We show that one can naturally combine familiar restrictions on the
+relationship between the outcome and the unobserved unit-level characteristics with reasonable
+economic models of the assignment. Our approach allows us to construct a doubly robust
+identification argument: out estimand has causal interpretation if either the outcome model
+is correct, or the assignment model is correct (or both). Using these results, we construct a
+natural generalization of the standard two-way fixed effects estimator that is robust to arbitrary
+heterogeneity in treatment effects, prove that it is asymptotically normal, and show how to
+conduct inference of it.
+
+
+
+
+                                                 33
+References
+Alberto Abadie, Alexis Diamond, and Jens Hainmueller. Synthetic control methods for com-
+  parative case studies: Estimating the effect of California's tobacco control program. Journal
+  of the American Statistical Association, 105(490):493­505, 2010.
+
+Victor Aguirregabiria, Jiaying Gu, and Yao Luo. Sufficient statistics for unobserved heterogene-
+  ity in structural dynamic logit models. arXiv preprint arXiv:1805.04048, 2018.
+
+Joseph G Altonji and Rosa L Matzkin. Cross section and panel data estimators for nonseparable
+  models with endogenous regressors. Econometrica, 73(4):1053­1102, 2005.
+
+Erling Bernhard Andersen. Asymptotic properties of conditional maximum-likelihood estima-
+  tors. Journal of the Royal Statistical Society: Series B (Methodological), 32(2):283­301, 1970.
+
+Joshua Angrist and Steve Pischke. Mostly Harmless Econometrics: An Empiricists' Companion.
+  Princeton University Press, 2008.
+
+Joshua D Angrist and J¨
+                      orn-Steffen Pischke. The credibility revolution in empirical economics:
+  How better research design is taking the con out of econometrics. Journal of economic
+  perspectives, 24(2):3­30, 2010.
+
+Manuel Arellano. Panel data econometrics. Oxford university press, 2003.
+
+Manuel Arellano and St´
+                      ephane Bonhomme. Identifying distributional characteristics in random
+  coefficients panel data models. The Review of Economic Studies, 79(3):987­1020, 2011.
+
+Manuel Arellano and St´
+                      ephane Bonhomme. Identifying distributional characteristics in random
+  coefficients panel data models. The Review of Economic Studies, 79(3):987­1020, 2012.
+
+Manuel Arellano and Bo Honor´
+                            e. Panel data models: some recent developments. Handbook of
+  econometrics, 5:3229­3296, 2001.
+
+Manuel Arellano, Jinyong Hahn, et al. Understanding bias in nonlinear panel models: Some
+  recent developments. Econometric Society Monographs, 43:381, 2007.
+
+Dmitry Arkhangelsky and Guido Imbens. The role of the propensity score in fixed effect models.
+  Technical report, National Bureau of Economic Research, 2018.
+
+                                               34
+Dmitry Arkhangelsky and Vasily Korovkin. On policy evaluation with aggregate time-series
+  shocks. CERGE-EI Working Paper Series, (657), 2020.
+
+Dmitry Arkhangelsky, Susan Athey, David A Hirshberg, Guido W Imbens, and Stefan Wager.
+  Synthetic difference in differences. Technical report, National Bureau of Economic Research,
+  2019.
+
+Timothy Armstrong and Michal Koles´
+                                  ar. Finite-sample optimal estimation and inference on
+  average treatment effects under unconfoundedness. 2018a.
+
+Timothy B Armstrong and Michal Koles´
+                                    ar. Optimal inference in a class of regression models.
+  Econometrica, 86(2):655­683, 2018b.
+
+Orley Ashenfelter. Estimating the effect of training programs on earnings. The Review of
+  Economics and Statistics, pages 47­57, 1978.
+
+Susan Athey and Guido Imbens. Design-based analysis in difference-in-differences settings with
+  staggered adoption. 2018.
+
+Susan Athey, Guido Imbens, and Stefan Wager. Efficient inference of average treatment effects in
+  high dimensions via approximate residual balancing. arXiv preprint arXiv:1604.07125, 2016.
+
+Susan Athey, Mohsen Bayati, Nikolay Doudchenko, Guido Imbens, and Khashayar Khosravi.
+  Matrix completion methods for causal panel data models. arXiv preprint arXiv:1710.10251,
+  2017.
+
+Jushan Bai. Panel data models with interactive fixed effects. Econometrica, 77(4):1229­1279,
+  2009.
+
+Badi Baltagi. Econometric analysis of panel data. John Wiley & Sons, 2008.
+
+Eli Ben-Michael, Avi Feller, and Jesse Rothstein. The augmented synthetic control method.
+  arXiv preprint arXiv:1811.04170, 2018.
+
+St´
+  ephane Bonhomme and Elena Manresa. Grouped patterns of heterogeneity in panel data.
+  Econometrica, 83(3):1147­1184, 2015.
+
+
+
+
+                                              35
+St´
+  ephane Bonhomme, Thibaut Lamadon, and Elena Manresa. Discretizing unobserved hetero-
+  geneity. University of Chicago, Becker Friedman Institute for Economics Working Paper,
+  (2019-16), 2017.
+
+Kirill Borusyak and Peter Hull. Non-random exposure to exogenous shocks: Theory and appli-
+  cations. NBER Working Paper, (w27845), 2020.
+
+Stephen Boyd and Lieven Vandenberghe. Convex optimization. Cambridge university press,
+  2004.
+
+Brantly Callaway and Pedro HC Sant'Anna. Difference-in-differences with multiple time periods.
+  Available at SSRN 3148250, 2019.
+
+Gary Chamberlain. Panel data. Handbook of econometrics, 2:1247­1318, 1984.
+
+Gary Chamberlain. Efficiency bounds for semiparametric regression. Econometrica: Journal of
+  the Econometric Society, pages 567­596, 1992.
+
+Gary Chamberlain. Binary response models for panel data: Identification and information.
+  Econometrica, 78(1):159­168, 2010.
+
+Kerwin Kofi Charles and Melvin Stephens Jr. Employment, wages, and voter turnout. American
+  Economic Journal: Applied Economics, 5(4):111­43, 2013.
+
+Victor Chernozhukov, Iv´
+                       an Fern´
+                              andez-Val, Jinyong Hahn, and Whitney Newey. Average and
+  quantile effects in nonseparable panel models. Econometrica, 81(2):535­580, 2013.
+
+Victor Chernozhukov, Denis Chetverikov, Mert Demirer, Esther Duflo, Christian Hansen, Whit-
+  ney Newey, and Robins James. Double machine learning for treatment and causal parameters.
+  arXiv preprint arXiv:1608.00060, 2016.
+
+Victor Chernozhukov, Whitney Newey, and James Robins. Double/de-biased machine learning
+  using regularized riesz representers. arXiv preprint arXiv:1802.08667, 2018a.
+
+Victor Chernozhukov, Whitney K Newey, and Rahul Singh. Learning l2 continuous regression
+  functionals via regularized riesz representers. arXiv preprint arXiv:1809.05224, 2018b.
+
+
+
+
+                                              36
+Victor Chernozhukov, Christian Bailey Hansen, Yuan Liao, and Yinchu Zhu. Inference for
+  heterogeneous effects using low-rank estimations. Technical report, cemmap working paper,
+  2019.
+
+Janet Currie, Henrik Kleven, and Esm´
+                                    ee Zwiers. Technology and big data are changing eco-
+  nomics: mining text to track methods. Technical report, National Bureau of Economic Re-
+  search, 2020.
+
+Cl´
+  ement de Chaisemartin and Xavier D'Haultfoeuille. Two-way fixed effects estimators with
+  heterogeneous treatment effects. 2018.
+
+David L Donoho et al. Statistical estimation and optimal recovery. The Annals of Statistics, 22
+  (1):238­270, 1994.
+
+Oeindrila Dube and Juan F Vargas. Commodity price shocks and civil conflict: Evidence from
+  colombia. The review of economic studies, 80(4):1384­1421, 2013.
+
+Esther Duflo and Rohini Pande. Dams. The Quarterly Journal of Economics, 122(2):601­646,
+  2007.
+
+Bradley Efron and Trevor Hastie. Computer Age Statistical Inference, volume 5. Cambridge
+  University Press, 2016.
+
+Joachim Freyberger. Non-parametric panel data models with interactive fixed effects. The
+  Review of Economic Studies, 85(3):1824­1851, 2018.
+
+Andrew Goodman-Bacon. Difference-in-differences with variation in treatment timing. Technical
+  report, Working Paper, 2017.
+
+Bryan S Graham and James L Powell. Identification and estimation of average partial effects
+  in irregular correlated random coefficient panel data models. Econometrica, 80(5):2105­2152,
+  2012.
+
+David A Hirshberg and Stefan Wager. Augmented minimax linear estimation. arXiv preprint
+  arXiv:1712.00038, 2017.
+
+Irving Hoch. Estimation of production function parameters combining time-series and cross-
+  section data. Econometrica: journal of the Econometric Society, pages 34­53, 1962.
+
+                                              37
+Douglas Holtz-Eakin, Whitney Newey, and Harvey S Rosen. Estimating vector autoregressions
+  with panel data. Econometrica: Journal of the econometric society, pages 1371­1395, 1988.
+
+Bo E Honor´
+          e and Ekaterini Kyriazidou. Panel data discrete choice models with lagged dependent
+  variables. Econometrica, 68(4):839­874, 2000.
+
+Joel L Horowitz.      A smoothed maximum score estimator for the binary response model.
+  Econometrica: journal of the Econometric Society, pages 505­531, 1992.
+
+Cheng Hsiao. Analysis of panel data. Number 54. Cambridge university press, 2014.
+
+Kosuke Imai and Marc Ratkovic. Covariate balancing propensity score. Journal of the Royal
+  Statistical Society: Series B (Statistical Methodology), 76(1):243­263, 2014.
+
+Guido Imbens.        The role of the propensity score in estimating dose­response functions.
+  Biometrika, 87(0):706­710, 2000.
+
+Guido W Imbens and Joshua D Angrist. Identification and estimation of local average treatment
+  effects. Econometrica, 62(2):467­475, 1994.
+
+Guido W Imbens and Donald B Rubin. Causal Inference in Statistics, Social, and Biomedical
+  Sciences. Cambridge University Press, 2015.
+
+Katrine V Løken, Magne Mogstad, and Matthew Wiswall. What linear estimators miss: The
+  effects of family income on child outcomes. American Economic Journal: Applied Economics,
+  4(2):1­35, 2012.
+
+Charles F Manski. Maximum score estimation of the stochastic utility model of choice. Journal
+  of econometrics, 3(3):205­228, 1975.
+
+Shahar Mendelson. Learning without concentration. In Conference on Learning Theory, pages
+  25­39, 2014.
+
+Yair Mundlak. Empirical production function free of management bias. Journal of Farm
+  Economics, 43(1):44­56, 1961.
+
+Yair Mundlak. On the pooling of time series and cross section data. Econometrica: journal of
+  the Econometric Society, pages 69­85, 1978.
+
+                                                38
+Yair Mundlak and Irving Hoch. Consequences of alternative specifications in estimation of
+  cobb-douglas production functions. Econometrica: Journal of the Econometric Society, pages
+  814­828, 1965.
+
+Emi Nakamura and Jon Steinsson. Fiscal stimulus in a monetary union: Evidence from us
+  regions. American Economic Review, 104(3):753­92, 2014.
+
+John Ashworth Nelder and Robert WM Wedderburn. Generalized linear models. Journal of the
+  Royal Statistical Society: Series A (General), 135(3):370­384, 1972.
+
+Nathan Nunn and Nancy Qian. Us food aid and civil conflict. American Economic Review, 104
+  (6):1630­66, 2014.
+
+G Steven Olley and Ariel Pakes. The dynamics of productivity in the telecommunications
+  equipment industry. Technical report, National Bureau of Economic Research, 1992.
+
+James Robins and Andrea Rotnitzky. Semiparametric efficiency in multivariate regression mod-
+  els with missing data. Journal of the American Statistical Association, 90(1):122­129, 1995.
+
+Donald B Rubin. Estimating causal effects of treatments in randomized and nonrandomized
+  studies. Journal of Educational Psychology, 66(5):688­701, 1974.
+
+Pedro HC Sant'Anna and Jun Zhao. Doubly robust difference-in-differences estimators. Journal
+  of Econometrics, 219(1):101­122, 2020.
+
+Jeffrey M Wooldridge. Econometric analysis of cross section and panel data. MIT press, 2010.
+
+Yiqing Xu. Generalized synthetic control method: Causal inference with interactive fixed effects
+  models. Political Analysis, 25(1):57­76, 2017.
+
+Jos´
+   e R Zubizarreta. Stable weights that balance covariates for estimation with incomplete
+  outcome data. Journal of the American Statistical Association, 110(511):910­922, 2015.
+
+
+
+
+                                              39
+8     Appendix
+
+8.1     Dual representation
+The Lagrangian saddle-point problem for the program (4.7) has the following form:
+
+
+                                  1                  2      1                    1
+      inf             sup              2
+                                                     it +             (i)                 it         +
+       it   (t) ,(i) ,,µit 0, 0 (N T )          it
+                                                            N
+                                                                  i
+                                                                                 T
+                                                                                     i
+
+      1                1                               1
+                (t)              it       + 1-                    it Wit         -
+      T     t
+                       N    t
+                                                      NT
+                                                             it
+
+                                                                                      1                            1
+                                                                                                      it it   -                  µit it Wit (A.1)
+                                                                                     NT                           NT
+                                                                                                it                          it
+
+
+where we use it as a shorthand for  (Xi , Si , t). In Lemma A.1 we show that strong duality holds and
+we can rearrange the minimization and maximization:
+
+
+                                        1            2      1                    1
+                sup             inf                  it +             (i)                 it         +
+      (t) ,(i) ,,µit 0, 0 it          (N T )2               N                    T
+                                                it                i                  i
+
+      1                1                         1
+                (t)              it       -                 it Wit - 1 -
+      T     t
+                       N    t
+                                                NT
+                                                       it
+
+                                                                                      1                            1
+                                                                                                     it it    -              (µit it Wit ) (A.2)
+                                                                                     NT                           NT
+                                                                                           it                          it
+
+
+Solving this in terms of it (an unconstrained quadratic problem) we get the following representation:
+
+                                          T
+                                      1                                                                  2        4
+                inf             Pn              Wit - (t) - (i) -  it - µit Wit                               -                            (A.3)
+      (t) ,(i) ,,µit 0, 0             T                                                                           N
+                                          t=1
+
+
+We can further simplify this expression by concentrating out µit and  . To this end, define the following
+loss function:
+
+
+      z (x) := x2 (1 - z ) + x2
+                              +z                                                                                                           (A.4)
+
+
+
+
+                                                                      40
+After some algebra we get the following:
+
+                                 T
+                          1
+         inf       Pn                 Wit Wit - (t) - (i) -  it                                           (A.5)
+      (t) ,(i) ,          T
+                                t=1
+
+
+Let {^ (t) , ^ (i) , ^}i,t be the solutions to this problem. The optimal unnormalized weights are equal to
+the following:
+
+
+                    (un)           ^ (t) - ^ (i) -                         ^ (t) - ^ (i) - 
+                   ^it     = Wit -                 ^ it (1 - Wit ) + Wit -                 ^ it       Wit (A.6)
+                                                                                                  +
+
+
+and the optimal weights are given by the normalization:
+
+                           (un)
+                         ^it
+      ^it :=                 (un)
+                                                                                                          (A.7)
+                1
+               NT        it ^it Wit
+
+By construction the weights are non-negative for the treated units and sum up to one once multiplied
+by Wit . The denominator is strictly positive under the conditions of Lemma A.1.
+
+
+8.2     Propositions
+Proof of Proposition 1: For any   Woutc we defined the random variables
+
+                    K
+      k(i) t :=          kt {W i = Wk }                                                                   (A.8)
+                   k=1
+
+
+and considered the following estimator:
+
+                            T
+               1
+       ( ) = E                    Yit k(i) t                                                              (A.9)
+               T
+                           t=1
+
+
+
+
+                                                          41
+By assumption we have the representation:
+
+                T                          T
+        1                             1
+      E               Yit k(i) t   =E           ((Ui ) + t +  (Ui )Wit + it )k(i) t =
+        T                             T
+                t=1                       t=1
+                 T                                         K                                     T
+          1                                                                                  1
+      E               ((Ui ) + t +  (Ui )Wit + it )            kt {W i = Wk } = E                      ((Ui )kt {W i = Wk }) +
+          T                                                                                  T
+                t=1                                     k=1                                      t=1
+          T           K                                                            K   T
+      1                                                                        1
+                t         E [kt {W i = Wk }] + E  (Ui ){W i = Wk }                           Wkt kt =
+      T                                                                        T
+          t=1       k=1                                                            k=1 t=1
+                                                       T         K
+                                                   1
+                                                             t         k kt + E [ (Ui ) (W i )] = E [ (Ui ) (W i )] (A.10)
+                                                   T
+                                                       t=1       k=1
+
+
+                             1            K       T
+where  (W i ) := {W i = Wk } T            k=1     t=1 Wkt kt       0. The first equality follows from the restrictions
+on the outcome model, the second ­ by definition of the weights, the third ­ because E[i |Ui ] = 0
+and strict exogeneity assumption; finally the last two equalities follow by construction of weights. By
+construction we also have that  (W i )  0 and E[ (W i )] = 1. This proves the claim.
+Proof of Proposition 3: The proof is very similar to the one above and is omitted.
+Proof of Proposition 2: We need to prove the following for arbitrary w and measurable A0 , A1 :
+
+
+    E[{W i = w}{Y i (0)  A0 , Y i (1)  A1 }|Si ] = E{W i = w}|Si ]E[{Y i (0)  A0 , Y i (1)  A1 }|Si ] (A.11)
+
+
+We have the following chain of equalities that proves the claim.
+
+
+      E[{W i = w}{Y i (0)  A0 , Y i (1)  A1 }|Si ] =
+
+      E[{W i = w}E[{Y i (0)  A0 , Y i (1)  A1 }|Si , Ui , W i ]|Si ] =
+
+      E[{W i = w}E[{Y i (0)  A0 , Y i (1)  A1 }|Ui , Si ]|Si ] =
+
+      EE[{W i = w}|Si , Ui ]E[{Y i (0)  A0 , Y i (1)  A1 }|Ui , Si ]|Si ] =
+
+      E[E[{W i = w}|Si ]E[{Y i (0)  A0 , Y i (1)  A1 }|Ui , Si ]|Si ] =
+
+                                                             E{W i = w}|Si ]E[{Y i (0)  A0 , Y i (1)  A1 }|Si ] (A.12)
+
+
+where the second inequality follows by strict exogeneity, the fourth one ­ by sufficiency.
+
+
+
+
+                                                                 42
+8.3      Lemmas
+Lemma A.1. Suppose that {Wit }i,t are such that there is no {i , t ,  }i,t such that the following is
+true:
+
+        i + t + it   0
+                                                                                                                               (A.13)
+        Wit = {i + i + it  > 0}
+
+Then (a) the primal problem always has a unique solution and (b) the strong duality holds, i.e., for a
+function
+
+
+                                    1           2      1               1
+        h(, µ, , ,  ) :=                        it +            (i)                it    +
+                                  (nT )2               n               T
+                                           it              i                   i
+
+        1                1                          1
+                  (t)             it   + 1-                     it Wit      -
+        T     t
+                         n    t
+                                                   nT
+                                                           it
+
+                                                                                     1                      1
+                                                                                               it it   -             µit it Wit (A.14)
+                                                                                    nT                     nT
+                                                                                          it                    it
+
+
+we have
+
+
+        inf             sup         h(, µ, , ,  ) =                   sup               inf h(, µ, , ,  )                      (A.15)
+        it  , ,,µ 0, 0                                     (t) ,(i) ,,µit 0, 0 it
+           (t) (i) it
+
+
+
+Proof. Direct application of Generalized Farkas' lemma implies that the constraint set is empty iff
+there exist (i , t ,  ) such that the following is true:
+
+
+        i + t + it   0
+                                                                                                                               (A.16)
+        Wit = {i + t + it  > 0}
+
+By assumption such (i , t ,  ) does not exist and thus the constraint set is not empty and convex.
+Since the objective function is strictly convex we have that the primal problem has the unique solution.
+Since all the inequality constrains are affine strong duality holds (see 5.2.3 in Boyd and Vandenberghe
+[2004]) and we have the result.
+
+
+
+
+                                                                      43
+Lemma A.2. For arbitrary  define g (X, W ,  ) in the following way:
+
+                                           T
+                                      1
+       g (X, W ,  )  arg min                    Wt (Wt -  - t  )                                                     (A.17)
+                                      T
+                                          t=1
+
+
+Then for any W such that W < 1 this function is uniquely defined. Also if t                            < K then g (X, W ,  )
+is P a.s. uniformly (in (X, W )) Lipschitz in  .
+
+Proof. If W < 1 then the minimized function is strictly convex with a unique minimum. Define
+                        ~ (1) , . . . , h
+ht := Wt - t  ; and let h               ~           T            be the decreasing ordering of ht for units with Wt = 1; let
+                                          (         t=1   Wt )
+~ (0) = 0. For k = 0, . . . ,     T
+h                                 t=1 Wt   define the following functions:
+
+                                T                                k ~
+                                t=1 (1 - Wit )ht +               l=0 h(l)
+       gk (X, W ,  ) :=               T
+                                                                                                                     (A.18)
+                                      t=1 (1 - Wit )        +k
+
+It is easy to see that we have the following:
+
+                                                k
+       g (X, W ,  ) = g0 (X, W ,  ) +                 ~ (l)  g(l-1) }(gl (X, W ,  ) - (gl-1 (X, W ,  ))
+                                                     {h                                                              (A.19)
+                                               l=1
+
+
+From this representation if follows that g (X, W ,  ) is differentiable and P -a.s. uniformly (in (X, W ))
+Lipschitz in  .
+
+Lemma A.3. Let {W i , Xi } be distributed according to P ; assume that Si includes W i and E[Wit |Si , Xi ] <
+1 -  P a.s. for  > 0. Then there exist a  (W i , Xi )-measurable random variable i and a vector 
+such that the following conditions are satisfied:
+
+
+       it := Wit - i - it 
+              T
+       E           it it (1 - Wit {Wit - i - it   0}) = 0
+                                                                                                                     (A.20)
+             t=1
+         T
+              it (1 - Wit {Wit - i - it   0}) = 0
+        t=1
+
+
+Proof. Define F := {f  L2 (P )T : ft = g (W i , Xi ) + ht (Si , Xi ), g, ht  L (P )}, similarly define
+G := {g = (g1 , . . . gT ) : gt = f + t , f  L2 (P ),   Rp }.
+
+
+
+
+                                                                        44
+Consider the following optimization program:
+
+                      T
+                  1
+       inf E                Wit (Wit - git )                                                                     (A.21)
+       g G        T
+                      t=1
+
+
+and let r be the value of infimum. We prove that there exists a function g  G that solves this
+problem. This is not entirely trivial because G is not compact and the loss function is not quadratic
+so we cannot directly use neither Weierstrass nor the standard projection theorem.
+                                                  1     T
+Consider the set F (r ) := {f  F : E              T     t=1 Wit (Wit   - fit )  r }. It is straightforward to see that
+this set is convex and because R(f ) is continuous on LT
+                                                       2 (P ) it follows that f  F (r )  R(f )  r .
+
+The set F (r ) is closed and convex. Now assume that g does not exist and thus F (r )  G = . By
+construction G is closed (in L2 (P )) and convex; as a result we have two closed convex sets with empty
+intersection.
+Assume that F (r ) is weakly compact then by strict separating hyperplane theorem it follows that
+there exist h  LT
+                2 (P ) and a  R such that supf F (r ) (f, h ) < a1 < a2 < inf g G (g, h ). Assume that
+
+there exist a function f  F (r )  G 0 such that R(f )  R(f ) for any function f  F (r )  G 0 . Fix an
+ > 0 and consider a function g  G such that R(g ) < r + . Using this function construct g0  G0
+
+
+such that R(g0 ) < r + . For t  [0, 1] consider a function r (t) = R(f + t(f - g 0 )). By convexity of
+                                                                                
+
+t it follows that r(t) is convex and by definition of f it follows that r(t) has a minimum at zero.
+For t  [0, 1] consider a function:
+
+                   0
+       (h , f + t(g  - f )) =: a + bt                                                                            (A.22)
+
+                          a1 -a                a2 -a                     t2 -t1       a2 -a1
+and define t1 :=            b     and t2 :=      b .   It follows that     t1     =   a1 -a    > 0 ­ does not depend on
+g0 . By construction it follows that r (t )  r and r (t ) < r +  and by convexity we have r (t ) 
+                                         1             2                                      2
+           r(t1 ))-r(0)                        r -R(f )
+r(t1 ) +         t1       × (t2 - t1 )  r +       t1      × (t2 - t1 ). The RHS of this inequality does not depend
+on  which leads to contradiction.
+To finish the proof we need to show that (a) f exists and is unique and (b) that F (r ) is weakly
+compact. The latter statement will follow if we prove that F (r ) is bounded in L2 (P ). This follows
+because R(f ) is convex and has a unique minimum at f in F (r ).
+Finally we prove that R(f ) has a unique minimum at f . Consider f such that ft := E[Wit |Si , Xi ].
+                                                 1     T
+Because Si includes W i it follows that          T     t=1 ft   = W i . Take any function f  F and consider a convex
+
+
+
+                                                                 45
+combination f () := f + (f - f ). Because ft  L (P ) and ft  1 -  it follows that for all  < 0
+                                                                                 1    T
+we have ft () < 1 almost surely. For any  < 0 we have that R(f ()) = E           T    t=1 (Wt   - ft )2 +
+     T
+E    t=1 (ft   - ft ())2 > R(f ). By convexity of R(f ) it follows that R(f ) > R(f ) which proves that
+g exists. The final result follows because R(f ) is Gato-differentiable on F and the results follows by
+taking first order conditions.
+
+
+
+
+                                                   46
+8.4     Theorems
+Proof of Theorem 2: We split the proof into two parts. First, we assume that ( )un - ^ un                                                            2   =
+                                                                         1       T
+op (1), (it )un is uniformly bounded, and E                              T
+                                                                                          un
+                                                                                 t=1 (it ) Wit              > 0, and prove the normality result.
+Then we prove the first statement.
+
+
+Part 1: Assume that ( )un - ^ un                                 2   = op (1).
+For the estimator ^ we have the following:
+
+             1                           1                                 1                                     1
+      ^=
+                           ^ it Yit =                   ^ it it Wit +
+                                                                                        ^ it uit = emp +                     ^ it uit =
+            nT                          nT                                nT                                    nT
+                      it                           it                             it                                    it
+
+                                                         1                    1                                1
+                             emp +         1            T
+                                                                                            (it )un uit +               (^
+                                                                                                                         itun
+                                                                                                                              - (it )un )uit      (A.23)
+                                        Pn T            t=1 
+                                                              un W
+                                                            ^ it   it        nT                               nT
+                                                                                       it                          it
+
+
+By construction and assumption we have the following:
+
+
+           un
+      E[(^
+         it   - (it )un )uit |{W j , Xj }n
+                                         j =1 ] = (^
+                                                   itun
+                                                        - (it )un )E[uit |{W j , Xj }n
+                                                                                     j =1 ] =
+
+                                                                                                        un
+                                                                                                     (^
+                                                                                                      it   - (it )un )E[uit |W i , Xi ] = 0 (A.24)
+
+
+This implies that by conditional Chebyshev inequality we have the following:
+
+                                               T
+                                       1                un
+      n ( ) := E                  n Pn               (^
+                                                      it   - (it )un )uit                        |{W j , Xj }n
+                                                                                                             j =1 
+                                       T
+                                               t=1
+                                                                         2
+                                        T      un
+                           Pn E         t=1 (^
+                                             it          - (it )un           |{W j , Xj }n
+                                                                                         j =1
+                                                                                                            2u
+                                                                                                                ( )un - ^ un          2
+                                                                                                                                      2   = op (1) (A.25)
+                                                             T2      2                                      T 2
+
+Since indicator is a bounded function it follows that for any                                            >o
+
+
+      E[n ( )] = o(1)                                                                                                                             (A.26)
+
+                            1                                                       1
+and thus we have           nT      it   ( )un - ^ un 2 uit = op                     
+                                                                                     n
+                                                                                                . Finally we need to check that CLT applies to
+ 1               un u .
+nT    it (it )       it    The mean of each summand is zero and the variance is bounded:
+
+                                           2
+                                               
+                     T                                       T                                       T
+                 1                un            1                              un           2
+      E                    (it ) uit                               E ((it ) uit )                           E[u4           un 4
+                                                                                                               it ]E[((it ) ) ] <                 (A.27)
+                 T                              T
+                     t=1                                     t=1                                    t=1
+
+
+                                                                                 47
+Finally, define:
+
+                                 (it )un
+         it :=                                                                                                      (A.28)
+                             1   T        un
+                       E     T   t=1 (it ) Wit
+
+
+It is easy to see that we have:
+
+                      T                        T
+              1               un           1
+         Pn                 ^ it Wit = E             (it )un Wit + op (1)                                           (A.29)
+              T                            T
+                      t=1                      t=1
+
+
+and thus we have the following:
+
+
+          -   ^ 2 = op (1)
+                                                                                                                    (A.30)
+                            2
+             - emp )  N (0, 
+          n(^                 )
+
+which concludes the first part.
+
+
+Part 2: In this part we prove that ( )un - ^ un                             2   = op (1), (it )un is uniformly bounded, and
+    1     T        un
+E   T     t=1 (it ) Wit            > 0. We use the dual representation derived in Section 8.1 and show that the
+solution converges to a population one.
+The proof below shows that empirical weights converge to oracle weights that solve a certain problem
+in population. We use a natural adaptation of the "small-ball" argument from Mendelson [2014]. This
+is not necessary and most likely one can construct a simpler proof using classical results for GMM
+estimators. We present a different argument because it can be naturally generalized to handle more
+sophisticated estimation procedures ­ something that we want to address in future work.
+We start by defining relevant oracle weights. Consider ({i }n
+                                                            i=1 ,  ) that satisfy the following restric-
+
+tions:
+
+         it := Wit - i - it 
+                  T
+         E             it it (1 - Wit {Wit - i - it   0}) = 0
+                                                                                                                    (A.31)
+              t=1
+          T
+               it (1 - Wit {Wit - i - it   0}) = 0
+         t=1
+
+
+Where we include time fixed effects t into the definition of it , since T is fixed this does not create
+
+
+                                                                    48
+any problems. We prove that oracle weights that satisfy these restrictions exists in Lemma A.3. Using
+these parameters we consider a lower bound on individual components of the loss function:
+
+
+      Wit (Wit - i - it  ) = (Wit - i - it  )2 1 - Wit {Wit - i - it   0} =
+
+      (Wit - i - it  )2 1 - Wit {Wit - i - it   0} +
+
+      (Wit - i - it  )2 Wit {Wit - i - it   0} - {Wit - i - it   0} 
+
+      (Wit - i - it  )2 1 - Wit {Wit - i - it   0} -
+
+                                          (Wit - i - it  )2 Wit {i + it  < 1  i + it  } (A.32)
+
+
+Using this and the properties of the oracle weights we get the following inequality for the excess loss
+for unit i:
+
+
+
+        T
+              Wit (Wit - i - it  ) - Wit (Wit - i - it  ) 
+       t=1
+        T
+              (i - i ) + it ( -  ))2 1 - Wit {Wit - i - it   0}              +
+       t=1
+        T
+              it (i - i ) 1 - Wit {Wit - i - it   0}        +
+       t=1
+        T
+              it it ( -  ) 1 - Wit {Wit - i - it   0}         -
+       t=1
+        T
+              (Wit - i - it  )2 Wit {i + Xi  < 1  i + it  } =
+       t=1
+        T
+              (i - i ) + it ( -  ))2 1 - Wit {Wit - i - it   0}              +
+       t=1
+        T
+              it it ( -  ) 1 - Wit {Wit - i - it   0}         -
+       t=1
+                                     T
+                                          (Wit - i - it  )2 Wit {i + it  < 1  i + it  }         (A.33)
+                                    t=1
+
+
+Note that the last equality follows by definition of it and ({i }n
+                                                                 i=1 ,  ).
+
+
+
+
+                                                   49
+In Lemma A.2 we show that i is a function of  and data for unit i:
+
+
+        i = g (Xi , Wi ,  )                                                                                           (A.34)
+
+
+and prove that g is uniformly Lipschitz. By construction for every  we only need to consider i that
+satisfies the following equality:
+
+
+        i = g (Xi , Wi ,  )                                                                                           (A.35)
+
+
+Define:
+
+        fit = i + it 
+                                                                                                                      (A.36)
+        fit = i + it 
+
+and observe that we have the following:
+
+             T                                                 T
+        Pn         (1 - Wit {Wit < fit })(fit - fit )2  Pn           (1 - Wit )(fit - fit )2 
+             t=1                                               t=1
+                                                   T
+                                                                                                2                2
+                                     ( -  )             Pn it it      ( -  ) =   -              2   + op (  -    2)   (A.37)
+                                                  t=1
+
+
+where
+
+                                      T
+                                      l=1 (1 - Wil )il
+        it := (1 - Wit )it -            T
+                                                                                                                      (A.38)
+                                        l=1 (1 - Wil )
+
+
+Assume that  -               2   = r2 , which implies that |i - i |  C1 r. Assumptions guarantee that it is
+                             2
+                            T
+bounded and thus            t=1   ft - ft       C2 r. Using CS we get the following inequality:
+
+
+        Pn it it ( -  ) 1 - Wit {Wit - i - it   0} 
+
+                                                -       2   × Pn it it 1 - Wit {Wit - i - it   0}                     (A.39)
+                                                                                                                 2
+
+
+
+
+                                                               50
+We also have the following inequality:
+
+               T
+           1
+      Pn             (Wit - i - it  )2 Wit {i + it  < 1  i + it  } 
+           T
+               t=1
+                           T                                                                   T
+                       1                                                                   1
+                Pn               (fit - fit )2 {fit < 1  fit }  f - f         2
+                                                                                  × Pn               {fit < 1  fit }       (A.40)
+                       T                                                                   T
+                           t=1                                                                 t=1
+
+
+where the first implication follows because of the indicator, and the the second one follows by Holder
+inequality. Since f - f               C2 r we have the following:
+
+               T                                   T
+           1                                   1
+      Pn             {fit < 1  fit }  Pn                 {fit < 1  fit + C2 r}                                             (A.41)
+           T                                   T
+               t=1                                 t=1
+
+
+DKW inequality implies that we have the following with high probability:
+
+               T                                             T
+           1                                             1                               C3
+      Pn             {fit < 1  fit + C2 r}  E                    {fit < 1  fit + C2 r} +                                   (A.42)
+           T                                             T                                n
+               t=1                                           t=1
+
+
+                                                          1
+It is now easy to see that if r is greater than O         
+                                                           n
+                                                                  then the excess loss is positive with high probability.
+                                                                                                                      1
+Since the loss function is convex this implies that optimum should belong to a ball of radius                         
+                                                                                                                       n
+                                                                                                                           around
+                                                                                  (un)
+({i }n
+     i=1 ,  ) with high probability which proves that for all t ^t                       - (t )un     2   = op (1).
+
+
+
+
+                                                                 51
+Proof of Theorem 3:
+
+
+Part 1 For each observation i define Mi ­ the number of times this observation is sampled in a
+bootstrap sample. Using this notation we can define bootstap analogs of i and  from the proof of
+Theorem 2:
+
+                                                       T
+           (b)                                     1
+      {i ,  (b) }n
+                 i=1 = arg min Pn Mi
+                                                                            T
+                                                             Wit (Wit - i - it )                                           (A.43)
+                                                   T
+                                                       t=1
+
+
+                                        (b)
+in case if Mi = 0 we define i                 using the function g (Xi , Wi ,  ) from 2. It is straightforward to extend
+the proof of Theorem 2 and show that bootstrap weights converge to population ones. Most part follow
+because of two key properties of {Mi }n
+                                      i=1 :
+
+
+      Pn Mi Xi = E[Xi ] + op (1)
+                               1                                                                                           (A.44)
+      P n M i i = O p          
+                                n
+
+for any square integrable Xi and any square integrable mean-zero i (all independent of Mi ). The
+second inequality follows by applying Chebyshev inequality, the first one follows from the second one.
+The only additional result that we need is the following one:
+
+                       T                                                              T
+                 1                                                                1
+      P n Mi                 {fit < 1  fit + C2 r} = Pn (Mi - 1)                            {fit < 1  fit + C2 r} +
+                 T                                                                T
+                       t=1                                                            t=1
+                 T                                                T
+             1                                                1
+      Pn               {fit < 1  fit + C2 r} - E                        {fit < 1  fit + C2 r}        +
+             T                                                T
+                 t=1                                              t=1
+                              T                                               T
+                    1                                         1                                                       1
+                  E                 {fit < 1  fit + C2 r} = E                      {fit < 1  fit + C2 r} + Op              (A.45)
+                    T                                         T                                                        n
+                              t=1                                            t=1
+
+
+where the last line follows by DKW inequality, the fact that the set of intervals is Donsker, and the
+multiplier process converges to same limit process as the standard empirical one. It follows that we
+have convergence results:
+
+
+        (b) -                = op (1)
+                                      1                                                                                    (A.46)
+        (b) -           2    = Op     
+                                       n
+
+
+
+                                                                        52
+Part 2: By construction of bootstrap estimator we have the following representation:
+
+                                     T                                       T
+        (b)               1                (b)                        1
+      ^
+              -^ = Pn M i                  it it Wit             - Pn              ^ it it Wit +
+                          T                                           T
+                                     t=1                                     t=1
+                   T                                   T
+               1          (b)                  1
+      P n Mi             it uit - Pn                       ^ it uit =
+               T                               T
+                   t=1                             t=1
+                    T                                                        T
+               1          (b)                                        1
+      P n Mi             it (it - E[it ])Wit - Pn                                ^ it (it - E[it ])Wit +
+                                                                                 
+               T                                                     T
+                   t=1                                                     t=1
+                                                                                                                 T
+                                                                                                         1                           1
+                                                                                             Pn (Mi - 1)               it uit + op        (A.47)
+                                                                                                         T                            n
+                                                                                                                 t=1
+
+
+From this representation it follows that if it = const then the bootstrap estimator is consistent for
+the asymptotic variance of ^. In case if it is heterogenous we further expand the first term. Define
+t (W i , Xi ) := E[it |W i , Xi ] and it := it - t (W i , Xi ). We have the following:
+
+                   T                                       T
+               1          (b)                          1
+      P n Mi             it it Wit - Pn                          ^ it it Wit =
+               T                                       T
+                   t=1                                     t=1
+                    T                                                    T
+             1           (b)                                    1
+      P n Mi             it t (W i , Xi )Wit               - Pn              ^ it t (W i , Xi )Wit +
+             T                                                  T
+                   t=1                                                t=1
+                    T                                      T
+               1          (b)                          1
+      P n Mi             it it Wit - Pn                          ^ it it Wit =
+               T                                       T
+                   t=1                                     t=1
+                                T                                                                          T
+                         1                 (b)                                                         1                             1
+                    Pn              (Mi it - ^ it )t (W i , Xi )Wit + Pn (Mi - 1)                                it it Wit + op           (A.48)
+                         T                                                                             T                              n
+                             t=1                                                                           t=1
+
+
+It follows that we have the following:
+
+                                                   T
+                                           1
+      ^(b) - 
+             ^ = Pn (Mi - 1)                           it (it Wit + uit )+
+                                           T
+                                               t=1
+                                                                     T
+                                                                 1                 (b)
+                                                            Pn             (Mi it - ^ it )t (W i , Xi )Wit + small order terms (A.49)
+                                                                 T
+                                                                     t=1
+
+
+Since the second summand is uncorrelated with the first one we have that the bootstrap variance is a
+conservative estimator of the correct variance.
+
+
+
+
+                                                                                   53
+

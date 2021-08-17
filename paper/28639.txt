@@ -1,0 +1,1564 @@
+                                NBER WORKING PAPER SERIES
+
+
+
+
+             THE PRICING STRATEGIES OF ONLINE GROCERY RETAILERS
+
+                                           Diego Aparicio
+                                          Zachary Metzman
+                                          Roberto Rigobon
+
+                                        Working Paper 28639
+                                http://www.nber.org/papers/w28639
+
+
+                      NATIONAL BUREAU OF ECONOMIC RESEARCH
+                               1050 Massachusetts Avenue
+                                 Cambridge, MA 02138
+                                      April 2021
+
+
+
+
+Data and codes to reproduce the results will be publicly available. Aparicio: daparicio AT iese.edu,
+IESE Business School; Metzman: zmetzman AT mit.edu, MIT; Rigobon: rigobon AT mit.edu, MIT
+and NBER. The authors thank Matthew Gentzkow and Duncan Simester for detailed discussions. The
+authors also thank Emek Basker, Michael Baye, Alberto Cavallo, Glenn Ellison, Ricard Gil, Avi Goldfarb,
+Madhav Kumar, Jessie Liu, Alex MacKay, Preston McAfee, Filippo Mezzanotti, Mateo Montenegro,
+Sarah Moshary, Leonard Nakamura, Thomas Otter, Ariel Pakes, Elena Pastorino, Ananya Sen, Ben
+Shiller, Hal Varian, and seminar participants at the Spring 2021 NBER Economics of Digitization,
+for helpful comments. Nestor Santiago Perez provided outstanding research assistance. Authors' own
+analyses calculated (or derived) based in part on data from Nielsen Consumer LLC and marketing
+databases provided through the NielsenIQ Datasets at the Kilts Center for Marketing Data Center at
+The University of Chicago Booth School of Business. The conclusions drawn from the NielsenIQ
+data are those of the researchers and do not reflect the views of Nielsen. Nielsen is not responsible
+for, had no role in, and was not involved in analyzing and preparing the results reported herein. The
+views expressed herein are those of the authors and do not necessarily reflect the views of the National
+Bureau of Economic Research.
+
+NBER working papers are circulated for discussion and comment purposes. They have not been peer-
+reviewed or been subject to the review by the NBER Board of Directors that accompanies official
+NBER publications.
+
+© 2021 by Diego Aparicio, Zachary Metzman, and Roberto Rigobon. All rights reserved. Short sections
+of text, not to exceed two paragraphs, may be quoted without explicit permission provided that full
+credit, including © notice, is given to the source.
+The Pricing Strategies of Online Grocery Retailers
+Diego Aparicio, Zachary Metzman, and Roberto Rigobon
+NBER Working Paper No. 28639
+April 2021
+JEL No. D9,L1,L2,M31,O33
+
+                                                 ABSTRACT
+
+Matched product data is collected from the leading online grocers in the U.S. The same exact products
+are identified in scanner data. The paper documents pricing strategies within and across online (and
+offline) retailers. First, online retailers exhibit substantially less uniform pricing than offline retailers.
+Second, online price differentiation across competing chains in narrow geographies is higher than
+offline retailers. Third, variation in offline elasticities, shipping distance, pricing frequency, and local
+demo- graphics are utilized to explain price differentiation. Surprisingly, pricing technology (across
+time) magnifies price differentiation (across locations). This evidence motivates a high-frequency
+study to unpack the patterns of algorithmic pricing. The data shows that algorithms: personalize prices
+at the delivery zipcode level, update prices very frequently and in tiny magnitudes, reduce price synchronization,
+exhibit lower menu costs, constantly explore the price grid, and often match competitors' prices.
+
+
+Diego Aparicio                                          Roberto Rigobon
+IESE Business School                                    MIT Sloan School of Management
+Carrer d'Arnus i de Gari, 3-7                           100 Main Street, E62-516
+Spain                                                   Cambridge, MA 02142
+daparicio@iese.edu                                      and NBER
+                                                        rigobon@mit.edu
+Zachary Metzman
+Massachusetts Institute of Technology
+Massachusetts Avenue 77
+Cambridge, MA 02139
+zmetzman@mit.edu
+1       Introduction
+The Internet has reduced the barriers to search, allowing consumers to explore products and
+prices across platforms at a lower cost (Bakos (1997); Brown and Goolsbee (2002)). One
+would imagine that this has led to vast price transparency and convergence, both within a
+firm and across competing firms. At the same time, the Internet fostered information and
+communications technologies (Brynjolfsson and McAfee (2014); Ford (2015); Forman and
+Goldfarb (2020)) that exploit customization opportunities. In fact, a recent technology re-
+ferred to as algorithmic pricing, in which computer algorithms constantly train to optimize
+prices, allows firms to introduce remarkable flexibility in price setting.
+         This paper shows that online grocery retailers implement pricing strategies that
+trade-off between uniform pricing and algorithmic pricing. Features that signal advances
+in pricing technology magnify online price differentiation. This is surprising: algorithmic
+pricing is typically associated with high-frequency price changes (Calvano et al. (2020); As-
+sad et al. (2020)) and does not imply anything for price differentiation across consumers,
+making purchase decisions in different locations for the same products in a given point in
+time.
+
+
+
+
+                     Figure 1: Algorithmic Pricing and Price Differentiation
+
+Notes: Algorithmic pricing and price differentiation between two delivery zipcodes, pooling all zipcode pairs
+for the same retailer-product-timestamp combination. The details are discussed in Section 5 using high-
+frequency data from Amazon and Walmart. The shaded band indicates a 95% confidence interval.
+
+
+         Figure 1 provides a compelling visual perspective. A higher intensity of algorith-
+mic pricing (as determined by daily price changes) magnifies the price differentiation, for
+the same product and timestamp, across two delivery zipcodes. This is remarkable because
+price differentiation is a cross-section property and algorithmic pricing is a time-series prop-
+erty; and in principle these two properties need not be related. The intuition for why this
+occurs, as we describe later, is that algorithmic pricing personalize prices at the delivery
+zipcode level, which exacerbates non-uniform pricing. This strategy allows for great flex-
+
+
+                                                     2
+ibility, such as: price grid experimentation, tiny price changes, non-synchronization, and
+price matching.
+        Online groceries represent a meaningful part of the CPI expenditures and of the U.S.
+economy. In 2019, the U.S. retail e-commerce industry reached $600 billion in sales; and
+despite representing 11% of total retail sales, it grows at an annual rate of 16%, compared to
+3% in offline sales (U.S. Census Bureau (2020)). Even faster growth, close to 20%, is taking
+place in online groceries (New York Times (2018)). The COVID-19 pandemic exacerbated
+this trend: online groceries reached record sales in May 2020, increasing 450% with respect
+to August 2019 (Financial Times (2020)).
+        We make a methodological contribution to study pricing strategies in the context of
+online groceries, which can be summarized as follows. First, we collect price data from the
+leading U.S. online grocery retailers; critically, data for a given product is collected at the
+same time across retailers and across locations. Additionally, we collect price data intra-
+day to capture the patterns of algorithmic pricing. Second, online products are carefully
+matched with Nielsen's scanner data. This allows us to study the three key dimensions of
+price setting between online and offline grocers: pricing across locations, pricing across
+retailers, and pricing across time.
+        We begin the paper by documenting that online price dispersion is larger than offline
+price dispersion. In particular, we show that online grocers have higher measures of non-
+uniform pricing within the chain and across locations; the estimates of offline uniform
+pricing closely follow DellaVigna and Gentzkow (2019).1 We also show that online price
+dispersion, across competing chains and within a delivery zipcode, is higher than the offline
+equivalent specification. These results indicate that the online grocery market is far from a
+frictionless price convergence, especially when compared to electronics and durables.
+        We decompose price dispersion in relative prices between chain and location effects.
+We find that over half of the price variation is explained by chain effects, but there is a
+meaningful residual explained by the retailer-zipcode. In contrast, the retailer-store effect
+in offline data accounts for a small portion of price variation (Nakamura (2008); DellaVigna
+and Gentzkow (2019); Hitsch, Hortacsu and Lin (2019)). We then proceed to understand
+price differentiation within a chain. We estimate offline elasticities (for the same product
+and city), and find that offline elasticities are informative for offline price dispersion and,
+importantly, for online price dispersion. Intuitively, the variation in offline elasticities is
+arguably informative about the variation in online elasticities. We also find that shipping
+costs explain price differentiation across locations, suggesting that retailers price-in some
+shipping and handling charges in the products' prices. Interestingly, local demographics
+are not a critical determinant. Perhaps most surprisingly is that pricing technology explains
+   1
+     Recent studies related to uniform pricing include, for example, Nakamura (2008); DellaVigna and
+Gentzkow (2019); Hitsch, Hortacsu and Lin (2019) using scanner data, and Cavallo, Neiman and Rigobon
+(2014); Aparicio and Cavallo (2021); Cavallo (2018a) using online data. See also Orbach and Einav (2007);
+Aparicio and Rigobon (2020) for uniform pricing across differentiated goods.
+
+
+
+                                                   3
+variation in prices across locations. Said differently, a lower price stickiness in a given
+delivery zipcode amplifies the price differentiation, for the same product and time, between
+that and another delivery zipcodes.
+       Taking a step back from the singularities of online groceries, the evidence informs
+that advances in pricing technology have more implications than commonly assumed. To
+better understand the scope and patterns of this technology, and more precisely of algo-
+rithmic pricing, we collect matched product data in high-frequency intervals for the two
+leading online grocers in the U.S.
+       We initially document that prices change very frequently and with great flexibility.
+The probability of a price change intra-day is 7% and in two consecutive days is over 11%.
+In Amazon, 48% of the products have experienced at least one price change during a week.
+These estimates reflect that price durations are decreasing considerably, relative to studies
+using online or offline data in the past decade, and illustrate the rise of algorithmic pric-
+ing. Relatedly, the sizes of the price changes are significantly smaller, consistent with the
+premise that algorithmic pricing overcomes some menu costs: close to 70% of the daily
+price changes are within 50 cents. This is important because price changes in offline stores
+are subject to many in-labor organizational obstacles (Zbaracki et al. (2004); Anderson,
+Jaimovich and Simester (2015)).
+       In addition to increasing the frequency and lowering the sizes of price fluctuations,
+algorithmic pricing allows to expand the price grid. We show that online grocers tend
+to constantly explore distinct prices. That digital platforms augment the price grid may
+not be itself surprising, but it is when compared with the striking evidence of "discrete"
+pricing (Levy et al. (2011); Anderson, Jaimovich and Simester (2015); DellaVigna and
+Gentzkow (2019); Ilut, Valchev and Vincent (2020); Aparicio and Rigobon (2020); Stevens
+(2020)) and calls for further research to understand price setting frictions across channels.
+For example, these set of studies show that often retailers set equal prices not just across
+locations but even across variants or categories of products. In contrast, algorithmic pricing
+breaks the discrete menu of prices across locations and across time.
+       The high-frequency data also allows to study synchronization of price changes. Sev-
+eral results are noteworthy. First, synchronization is nearly zero across retailers. In other
+words, a given retailer-zipcode-hour does not seem more likely to change a price when the
+competing retailer changes the price for the same zipcode-product, even when looking at
+24-hour windows. Second, there is some degree of synchronization within the same retailer,
+across locations and for the same product, within hours. However, those price changes are
+often in the opposite direction. In contrast, price changes in offline retailers are remarkably
+synchronized, i.e. stores of the same chain tend to increase (or decrease) prices together.
+This flexibility in updating prices is, once again, another novel scope of algorithmic pricing.
+       The lack of price convergence or the lack of synchronization across competing re-
+tailers might give the impression that retailers optimize prices somewhat in isolation, e.g.
+
+
+                                              4
+their technology is not mindful of competitor prices. This is incorrect. We find that retailers
+often price-match each other's price for the same product and delivery zipcode. The pat-
+terns of price matching are also interesting. Price matching tends to occur on prices that are
+on average lower (for both the retailer matching and the retailer being matched). In par-
+ticular, approximately 83% of the matching events take place on prices that are below the
+median price. Moreover, price matching is associated with lowering prices approximately
+2.7%. While this suggestive evidence should not be generalized, it speaks to Miklós-Thal
+and Tucker (2019)'s theoretical work that algorithmic pricing can sometimes lead to lower
+prices and thereby increase consumer surplus.
+       The rest of the paper is organized as follows. Section 1.1 reviews the literature.
+Section 2 describes the data and the collection methodology. Section 3 documents facts
+about online and offline price differentiation and Section 4 explains its main drivers. Section
+5 documents patterns of algorithmic pricing. Section 6 concludes.
+
+
+1.1 Related Literature
+This paper relates to two main bodies of literature. We relate to an abundant empirical lit-
+erature on supermarket pricing. In the area of price stickiness, see Bils and Klenow (2004);
+Nakamura and Steinsson (2008, 2013) using BLS micro data data, Cavallo and Rigobon
+(2016); Gorodnichenko and Talavera (2017); Cavallo (2018b) using online prices, and
+Klenow and Malin (2010); Eichenbaum, Jaimovich and Rebelo (2011); Campbell and Eden
+(2014); Anderson et al. (2017) using scanner data. In the area of price dispersion, see El-
+lickson and Misra (2008); Arcidiacono et al. (2019); Eizenberg, Lach and Yiftach (2016);
+Kaplan et al. (2019); DellaVigna and Gentzkow (2019); Hitsch, Hortacsu and Lin (2019);
+Adams and Williams (2019); Mojir and Sudhir (2020) using offline data and Baylis and
+Perloff (2002); Chevalier and Goolsbee (2003); Boivin, Clark and Vincent (2012); Overby
+and Forman (2015); Aparicio and Cavallo (2021); Cavallo (2018a); Goldfarb and Tucker
+(2019) using online data. These studies examine in great detail one dimension of price
+setting (e.g., competition across sellers), and the offline and online channels separately.
+We build upon these studies by documenting stylized facts in online groceries within and
+across chains, across channels, and over time. Our dataset is, to the authors' knowledge, the
+first effort in combining time precision (the same product collected at the same time across
+locations and retailers) and product precision (the same product matched across retailers).
+A set of carefully matched products has several advantages (Section 2); critically, it allows
+to map online data with scanner data and to rule out pricing differences due to assort-
+ment composition. Hwang, Bronnenberg and Thomadsen (2010) discuss the importance
+of assortment overlap between supermarket chains.
+       We also relate to a growing literature on high-frequency pricing. Jank and Kannan
+(2005); Shiller et al. (2014); Fisher, Gallino and Li (2017); Dubé and Misra (2019) dis-
+cuss how dynamic or personalized pricing can increase revenue. Chen, Mislove and Wilson
+
+                                              5
+(2016); Miklós-Thal and Tucker (2019); Calvano et al. (2020); Brown and MacKay (2021);
+Asker, Fershtman and Pakes (2021) discuss competition incentives due to machine-based
+algorithms. While these studies focus on a different industry, our results provide comple-
+mentary perspectives to the advances of algorithmic pricing. We describe novel patterns
+using a high-frequency dataset across matched locations; a collection effort that, to the
+authors' knowledge, is seldom available in online groceries.
+
+
+
+2    Data
+We collect price data from the leading online grocery retailers in the Unites States: Amazon
+Fresh, Walmart Grocery, FreshDirect, Peapod, Jet, and Instacart. In the case of Instacart, we
+collected prices for Safeway, CVS, and Whole Foods; each sets its own prices on the Instacart
+platform (Instacart (2019)). These retailers have various market shares and geographic
+footprint, e.g. Amazon Fresh accounts for about 15-20% of the online grocery market and
+FreshDirect holds close to 60% of the market in New York City (New York Times (2020)).
+Throughout the paper price observations are weighted by market shares. As per industry
+reports, we use Amazon (0.35), Walmart (0.25), Peapod (0.13), FreshDirect (0.07), Jet
+(0.04), and Instacart (0.18). Robustness specifications are discussed in the Appendix.
+       The data covers fresh produce, packaged food, and cleaning and personal care prod-
+ucts. See Appendix A.1 for a list of products. In order to avoid too much traffic for websites,
+we focus on 30 zipcodes which are among the most populated cities in the U.S. However, we
+also choose cities that maximize geographic coverage. In the Appendix we show robustness
+results using data collected from 109 zipcodes.
+       For each retailer, we created scripts that would enter a zipcode into the website and
+then collect prices. A random VPN was also used to test robustness of data collection from
+different originating IP Addresses. Data was collected at the end of each month, and each
+retailer-zipcode data was collected within minutes. We then matched each of the products
+across all retailers. See Appendix A.2 for methodological details on collecting online data.
+       We collected two additional online datasets. We collected price data in high-frequency
+intervals (hours difference within a day) for Amazon and Walmart during about three
+months. This dataset represents, to the best of the authors' knowledge, the first high-
+frequency effort in online groceries. In addition, we collected category-wide data for all
+retailers, allowing to utilize a retailer's entire price distribution (after normalizing prices
+across categories and units of measurement).
+       The second main dataset is Nielsen's Retail Scanner (RMS) data, which is provided
+by the Kilts Center at the University of Chicago. This data covers sales and prices at the store,
+week, and UPC level. We primarily use the 2017 dataset which is the latest available, but we
+also complement the analyses using all 2006-2017 RMS datasets. We restrict the sample to
+the set of matched products, to stores located in the same cities as those in the online data
+
+
+                                               6
+(Nielsen's data includes the city but not the zipcode of the store), and to grocery retailers.
+See Appendix A.3 for methodological details. These cities account for approximately 40%
+of the observations in the RMS data. In the Appendix we report robustness results using
+all retail formats (not just grocery chains). Moreover, the results are similar using the 2016
+RMS dataset. None of the chains are merged with the online data because retailer identifiers
+are masked in the Nielsen data.
+       Third, we collected zipcode-level covariates. We obtained the geographic coordi-
+nates and computed pairwise distances using the World GWGS 84 model (U.S. Department
+of Defense (2014)). In addition, we obtained home values from Zillow Research (2018),
+income per capita and education from the 2014-2018 American Community Survey (ACS)
+from U.S. Census (2019), and population from the U.S. Decennial Census of Population
+and Housing in 2010. We calculated the average measure within a 10-mile radius of each
+delivery zipcode following NBER (2017).
+       Overall, the data covers 88 distinct matched online products, of which 82 are iden-
+tified in the scanner data. There are 23,734 price observations in the baseline dataset,
+147,517 observations in the high-frequency dataset, and 302,537 observations in the scan-
+ner dataset. Appendix A.4 shows additional summary statistics. The map in Appendix A.5
+depicts the delivery locations. The average and median home values of the 30 zipcodes is
+$648,437 and $420,200, respectively.
+
+
+
+3    Price Differentiation
+We study price differentiation in online groceries using a set of matched products. We
+distinguish between two forms of price differentiation: within the same retailer (across
+locations), and across retailers (within the same location or across locations). We find that
+price dispersion across retailers is at least three times the price dispersion within retailers,
+and that online price dispersion is larger than offline price dispersion.
+       It is useful to start with one example: Oreo's. How similar are the prices of the
+same exact Oreo's product across online delivery locations and across offline stores? We
+compute the price difference between all retailer-location pairs of the same chain, and
+between pairs of different chains. A measure of dispersion is the percent of pairs that are
+(almost) identical. Figure 2 indicates that the share of identical prices is larger within chains
+than across chains; and in both cases identical prices are less likely online than offline.
+
+
+
+
+                                               7
+                                                60
+                                 Share of Identical Prices (%)
+                                 20             0 40
+                                                                 Across-Chain Across-Locations Within-Chain Across-Locations
+
+                                                                                       Offline              Online
+
+
+
+
+                     Figure 2: Price Dispersion of Oreo's Online and Offline
+
+Notes: Figure shows the share of (almost) identical prices between all pairs of retailer-locations in different
+states using price observations on the same date. The share of identical prices is computed separately for
+locations of the same chain and for locations of different chains. A formal definition is below.
+
+
+
+3.1 Uniform Pricing
+Uniform pricing is often defined as the practice of setting the same prices across loca-
+tions (or even across products) within the same retail chain. Uniform prices have been
+documented in scanner data (Anderson, Jaimovich and Simester (2015); DellaVigna and
+Gentzkow (2019); Hitsch, Hortacsu and Lin (2019)) and in durable products in the online
+channel (Cavallo, Neiman and Rigobon (2014); Cavallo (2018a); Aparicio and Rigobon
+(2020)). However, there is no comprehensive evidence of pricing behaviors across geogra-
+phies and across retailers in the online grocery market, or about the extent to which those
+behaviors are similar online and offline for the same set of matched products.
+        We measure uniform pricing following standard methods in the literature. We first
+compute pairwise price differentials at the product, time, and retailer level across all loca-
+tions. We then compute the percent difference in absolute value between two prices:
+
+
+                                                                           t ,i
+                                                                                                 | pst,,r
+                                                                                                        i
+                                                                                                             pst0,,ir 0 |
+                              Price                              Differences ,s0      =                                      100   (1)
+                                                                                            ( pst,,r
+                                                                                                   i
+                                                                                                     + pst0,,ir 0 )/2
+
+Where pst,,r
+           i
+             denotes the price of item i in location s, retailer r , at time t . For notation
+simplicity we define a retailer x location as a retailer-zipcode (retailer-store) in the case of
+                                       t ,i
+online (offline) data. Price Differences ,s0 in equation (1) denotes the percent difference, in
+absolute value, for item i between a retailer location s and s0 at time t . Note that in the case
+of the online data t stands for (nearly) the same timestamp; in the case of scanner data, t
+stands for the same week. We now focus on within-retailer price pairs and therefore r = r 0 .
+However, equation (1) allows the specification for price pairs across retailers in either the
+same location or in different locations.
+
+                                                                                           8
+             A second measure of uniform pricing is the share of identical prices:
+
+                                      1st,,si0 = 1 if pst,,ri = pst0,,ir 0 ; 0 otherwise                                  (2)
+
+                                                                                        t ,i
+Where pst,,r
+           i
+             is defined similarly. In the case of within-retailer pairs, the indicator 1s ,s0 takes
+value one when the price of the item i , retailer r , at time t is the same between two locations
+s and s0 .2
+             The results are shown in Table 1. We report the median and mean of all price dif-
+ferences, as defined in equation (1). We also report the average share of identical prices,
+as defined in equation (2). We distinguish between price differentiation computed on price
+pairs of retailer-locations within and across states. Appendix B shows robustness results
+using data collected from multiple zipcodes within cities.
+             Online retailers have higher measures of non-uniform pricing. The mean share of
+identical prices across states is 40.3% online and 63.0% offline. The median and average
+percent difference in pairwise prices is 4.9% and 9.8% online, respectively; while the equiv-
+alent measures are 0% and 7.0% offline. The estimates of offline price dispersion follow
+those in DellaVigna and Gentzkow (2019). For instance, they report a share of 68% iden-
+tical prices within a metropolitan area using all retail formats; similarly, we find a share of
+73.8% identical prices within the same state using all formats of retail chains (Appendix
+B.2) and 78.2% identical prices within the same state using grocery chains.
+
+                                 Table 1: Price Dispersion Within Retailers
+
+                                                           Online data                              Scanner data
+
+                                                Within-State       Across-State            Within-State    Across-State
+
+       (1)     Share of identical prices (%)    66.1 (0.65)         40.3 (0.12)            78.2 (0.21)     63.0 (0.11)
+       (2)     Median price difference (%)             0                 4.9                    0                  0
+       (3)     Mean price difference (%)         5.2 (0.15)         9.8 (0.03)              3.4 (0.04)      7.0 (0.04)
+                 Fresh                           6.4 (0.34)         11.6 (.08)              3.0 (0.06)      6.6 (0.07)
+                 Packaged                        4.9 (0.17)         9.5 (0.04)              3.8 (0.06)      7.6 (0.06)
+                 Cleaning                        3.7 (0.27)         6.5 (0.06)              2.0 (0.13)      3.6 (0.13)
+       (4)     Price pairs                          5,318            166,185                 40,088          78,616
+
+    Notes: Price dispersion is computed for price pairs of the same product, within retailers, across loca-
+   tions of the same state or across locations of different states. Results using all price pairs weighted by
+   retailers' market shares. Standard errors reported in parenthesis.
+
+
+             Price dispersion tends to decrease with the perishability of the product, but among
+each type of product online price dispersion is larger than the offline. For instance, in the
+   2
+    In contrast to weekly-average scanner data, online data allows to compute exact price differentials of
+matched products in the same day. We consider two prices as identical when the percent difference is within
+0.01%. Prices at Nielsen's scanner data are available at the weekly level and weighted by units sold. Due to
+measurement error, rounding, liquidation, or noise in the actual price points, we bin prices to 5% intervals.
+We find similar estimates rounding prices to 10 cents.
+
+
+                                                              9
+case of the online price dispersion across states, price dispersion is 11.6% in fresh produce,
+9.5% in packaged food, and 6.5% in personal care and cleaning products. The equivalent
+measure is 6.6%, 7.6%, and 3.6% in the scanner data, respectively.
+       Interestingly, the share of identical prices is over 90% for private labels in the on-
+line data. Although the sample is small, these are products for which one might expect
+the greatest price flexibility (i.e., more control over prices). These findings complement
+McShane et al. (2016)'s evidence of significantly higher price stickiness for private label
+products. Further research is needed to understand how wholesale price negotiation with
+upstream producers or brand-image concerns affect decisions for private labels.
+
+
+3.2 Price Segmentation
+The online grocery industry is reportedly under increasing competition (New York Times
+(2018); Bloomberg (2018a)). The industry has recently experienced large acquisitions;
+two prominent examples are Walmart's acquisition of Jet for $3.3 billion, and Amazon's
+acquisition of Whole Foods for $13.7 billion. And it is experiencing a surge of partnerships
+in a race to make delivery faster and wider (Wall Street Journal (2018); de Castro (2019)).3
+       It is therefore natural to wonder how price dispersion across competing retailers
+compares with that of within retailers. We proceed using the same methods as in Section
+3.1. Once again, online price dispersion is found to be significantly larger than offline.
+       The results are shown in Table 2. Price dispersion is computed within a location
+(price pair between two online retailers, in the same zipcode, at the same time) and across
+states (price pair in two cities in different states). Two results are noteworthy. First, on-
+line price dispersion across retailers is larger than the offline equivalent. This fact is ob-
+served both within and across locations. Consider two retailers located in the same loca-
+tion (columns (1) and (3)). In the online data, the share of identical prices and the average
+price difference is 6.7% and 25.8%, respectively. The equivalent measures are 31.5% and
+15.7% offline, respectively. Now consider retailers in different states (columns (2) and (4)).
+The share of identical prices and the average price difference is 5.0% and 26.3% online,
+respectively; and they are 16.5% and 20.5% offline, respectively.
+       Moreover, price dispersion is found to increase for perishable items, and among
+each type the estimates are larger online than for the same products offline. For instance,
+within a narrow location, the average price difference is 28.3% for fresh products, 25.8% for
+packaged products, and 18.9% for cleaning and personal care products. When computed
+offline, the estimates are 16.5%, 15.4%, and 11.5%, respectively.
+       The second finding is that, if we compare Table 1 and Table 2, price dispersion across
+chains is substantially larger than within chains. In fact, price dispersion across chains in the
+same city is between three to five times the price dispersion within chains in the same state.
+   3
+     Jet recently launched a new online grocery platform in New York (Bloomberg (2018b)). We collected
+prices for this new platform and found even larger estimates of non-uniform pricing.
+
+
+                                                 10
+Consider the online case. The average price difference, within chains, within states and
+across states, is 5.2% and 9.8%, respectively; and the equivalent measures, across chains,
+are 25.8% and 26.3%. A similar behavior is observed in the offline data. The average price
+difference, within chains, is 3.4% and 7.0% for the corresponding specification; and across
+chains it is 15.7% and 20.5%.
+
+                               Table 2: Price Dispersion Across Retailers
+
+                                                       Online data                                   Scanner data
+
+                                              Within-Zipcode        Across-State               Within-City   Across-State
+
+     (1)    Share of identical prices (%)       6.7 (0.16)           5.0 (0.04)                31.5 (0.12)   16.5 (0.02)
+     (2)    Median price difference (%)            21.6                    22.3                   12.4          18.2
+     (3)    Mean price difference (%)           25.8 (0.14)         26.3 (0.04)                15.7 (0.04)   20.5 (0.01)
+              Fresh                             28.3 (0.36)         29.0 (0.09)                16.5 (0.07)   20.6 (0.02)
+              Packaged                          25.8 (0.16)         26.2 (0.04)                15.4 (0.05)   20.9 (0.01)
+              Cleaning                          18.9 (0.25)         19.1 (0.07)                11.5 (0.15)   16.2 (0.04)
+     (4)    Price pairs                           25,239                 357,560                139,790       2,512,808
+
+     Notes: Price dispersion is computed for price pairs of the same product, across retailers, within the same
+    zipcode and across zipcodes (from different states). Results using all price pairs weighted by retailers'
+    market shares. Standard errors reported in parenthesis.
+
+
+           Interestingly, chains' price segmentation is remarkably stable across locations and
+products. A machine learning classification is illustrative: five random products from two
+retailers can predict which retailer is more expensive with 75% accuracy. Appendix D shows
+additional evidence. Appendix B reports robustness specifications.4
+
+
+
+4       Explaining Online Price Differentiation
+
+4.1 Decomposition
+The evidence in Section 3 motivates a decomposition of price variation into retailer, product,
+and retailer-zipcode effects. We estimate the following variance decomposition model:
+
+                                            pir,z = i +    r   +   i,r   + i ,z , r                                         (3)
+
+The price pir,z (in natural logs) of product i in location z of retailer r can be decomposed into
+four components: a product effect, i ; a retailer effect,                             r;   a retailer-product effect,       i,r ;
+
+    4
+     We report results from a fixed-effects model controlling for product- and time- fixed effects. We replicate
+the analysis using data from 109 zipcodes. In this case, the data includes multiple zipcodes within a city. We
+also replicate the analysis using a random subset of products. In addition, we report results on online price
+dispersion using equal-sampling, equal-weights in retailers' price pairs. Finally, we replicate the analysis of
+offline price dispersion using data from all formats (not just grocery chains).
+
+
+
+
+                                                          11
+and a residual i ,z , r that captures variation in prices for the same product across different
+delivery zipcodes of the same chain.
+          This model is similar to Kaplan et al. (2019) using scanner data, but ignoring auto-
+covariances that would exist with time lags in equation (3). We explain variation in relative
+prices, and therefore we subtract the mean price of each product. Each term in equation (3)
+is computed through sequential linear regressions (i.e., first with retailer indicators, then
+retailer-product indicators), obtaining the corresponding residual variance, computing its
+share (subtracted from that of the previous regression, and as a share of price variance).
+Robustness specifications are discussed in Appendix C.1.
+          Results are shown in Panel (a) in Figure 3. The retailer effect explains about 30% of
+the variation in prices, and the retailer-product effect explains about 40%. Therefore, the
+residual, which is attributed to the retailer-zipcode effect (a given chain setting different
+prices across zipcodes) explains close to 30%. Note this is a lower bound because the
+retailer-zipcode effect is included last in the sequential regressions.
+
+
+
+
+                                                                          Retailer
+
+
+
+                                                                  Retailer-Zipcode
+   Retailer-Product
+
+
+                                                                             State
+
+
+
+                                                                             Date
+           Retailer
+
+                                                                      Home Value
+
+
+
+                                                                           Income
+
+   Retailer-Zipcode
+                                                                        Population
+
+
+
+                      0   10          20           30   40                           0.0    0.1   0.2    0.3     0.4   0.5   0.6
+                               Variance Explained (%)
+                                                                                                  Feature Importance
+
+
+               (a) Variance Decomposition                                                  (b) Random Forest
+
+                                       Figure 3: Components of Price Variation
+
+Notes: Panel (a) shows the results of the variance decomposition following the model in equation (3). Esti-
+mates are averages across months. Panel (b) shows feature importance (node impurity) obtained through a
+random forest. The values are scaled such that the sum of individual scores adds up to one. We use 5,000
+trees, two maximum features per split, and a minimum node size of 8 units. Parameters are obtained through
+5-fold cross-validation.
+
+
+          Instead of assuming a particular form of price decomposition, we can alternatively
+explain variation in prices through feature importance methods in machine learning. We
+use a random forest because it allows to include a larger number of features (while de-
+correlating trees when the features are correlated) and it allows two extract two inter-
+pretable measures of feature importance (Breiman (2001)). We train a random forest with
+
+                                                             12
+k-fold cross-validation that minimize MSE (mean squared error), and then estimate feature
+importance predicting normalized prices. We include a set of covariates: retailer, retailer x
+delivery zipcode, state, collection date, income per capita, home values, and population.
+        Results are shown in Panel (b) in Figure 3. Feature importance is measured by
+the node impurity, i.e. the residual sum of squares from splitting on the relevant feature,
+averaged over all trees. For instance, the estimates can be interpreted as indicating that
+the chain component is responsible for about 45% of the information gain in the training
+process. We also find that the retailer-zipcode accounts for a similar portion, while local
+demographics are less predictive. The random forest analysis is useful because it provides
+intuitive and model-free evidence of the substantial non-uniform pricing across locations.
+Appendix C.1 shows robustness results.
+
+
+4.2 Price Elasticities
+We now explore the degree to which price elasticities are informative of online price disper-
+sion. There are a number of ways to compute price elasticities in the literature. We follow
+similar reduced-form specifications to Nijs et al. (2010); DellaVigna and Gentzkow (2019);
+Hitsch, Hortacsu and Lin (2019).
+        We pool the 2015-2017 scanner datasets together, requiring at least 80% of price
+observations available in a given store-product pair. We then estimate the following fixed
+effects model:
+                                log(qs,i , t ) =  + s,i log( ps,i , t ) +    s, j , y   +                          (4)
+
+Where we regress log units sold of product i in store s in week t (qs,i , t ) on log weekly price
+( ps,i , t ), and including a store-product-year fixed effect (              s , j , y ).    We estimate equation (4)
+for each store-product pair separately. Therefore, ^s,i denotes the own-price elasticity of
+product i in store s, which will be used in explaining offline price dispersion.5 Because it
+is not possible to perform a map between store-product elasticity and online prices, addi-
+tionally we re-estimate equation (4) at the product-DMA level (e.g., Los Angeles CA is a
+DMA), including a fixed effect for product-DMA-week (                       i ,m, t ).      The corresponding ^i ,m de-
+notes the own-price elasticity of product i in city m, which will be used in explaining online
+price dispersion. The histogram of the elasticities is depicted in Appendix C.2. The median
+own-price elasticity is -2.52 when computed at the store-product level and it is -2.15 at the
+DMA-product level.
+        We then explain price differentiation (Section 3) using the price elasticities for each
+    5
+      It is also possible to follow DellaVigna and Gentzkow (2019)'s approach of instrumenting log weekly
+price ( ps,i , t ) with the average price of the same product, in the same retail chain, but of stores located in
+different areas. Like that study, we find that both own-price elasticities are similar (correlation of 86.3% and
+median absolute difference of 0.23); since focusing on matched cities between online and offline yields fewer
+IV elasticities, we report own-price elasticities obtained using equation (4).
+
+
+
+
+                                                        13
+corresponding product. We consider several models that take the following form:
+
+                               ( ps,i , t , ps0 ,i , t ) =  +        (^s,i , ^s0 ,i ) + i +    t   +   m   +                        (5)
+
+Where        ( ps,i , t , ps0 ,i , t ) denotes the pairwise price differential between two retailer-location
+pairs of the same chain (or different chains), in percentage terms;                                        (^s,i , ^s0 ,i ) denotes the
+                                                                 0                                 0
+elasticity differential between stores s and s (or DMAs m and m ); and i ,                                       t,     m   denote a set
+of product-, time-, and DMA- fixed effects, respectively. We estimate several specifications of
+equation (5): the price differential in absolute terms, the elasticity differential in absolute
+terms, the average elasticity (¯) for a given product between two stores (or for a given
+product in a DMA), and the standard deviation of elasticities across retailers for a given
+product in a DMA ( ()). For simplicity we report summary results below; Appendix C.2
+shows additional specifications.
+         Note that, while in the offline data we can map the price dispersion between two
+store-product pairs with their store-product elasticities, the same is not feasible in the online
+data. However, an analogous approximation is to map the delivery zipcodes with their
+corresponding DMAs in the scanner datasets, and then use elasticities estimated at the
+product-DMA level as described above.
+
+                                 Table 3: Price Elasticities and Price Dispersion
+
+                                     Within Retail Chains, Across DMAs                   Across Retail Chains, Within DMAs
+
+                                     Scanner                    Online                   Scanner                      Online
+  Dispersion        Elasticity          (1)                      (2)                          (3)                      (4)
+    ( ps , ps0 )      ( s ,  s 0 )     1.13                      0.52                         2.40                      -
+                                      (0.11)                    (0.11)                    (0.09)
+  | ( ps , ps0 )|   ¯(s , s0 )
+                                          -                          -                        0.56                     1.52
+                                                                                          (0.06)                      (0.32)
+  Product FE                           YES                       YES                          YES                      YES
+  Time FE                              YES                       YES                          YES                      YES
+  DMA FE                               YES                       YES                          YES                      YES
+
+  Notes: Table reports the coefficients of estimating several specifications of equation (5): the left-hand
+ side price dispersion outcome is indicated in the Dispersion column and the right-hand side elasticity-
+ based measure is indicated in the Elasticity column. Robust standard errors in parenthesis. Models are
+ estimated separately using price pairs weighted by retailers' market shares and including product-, time-,
+ and DMA- fixed effects.
+
+
+
+         Table 3 shows the results. Overall, we find precisely estimated coefficients with the
+correct economical sign. First, consider the set of results in columns (1)-(2), explaining
+price dispersion across locations within the same chain. We find that a more price-sensitive
+demand in one location relative to another location, the larger the price differentiation
+between those retailer-location pairs. For instance, an additional elasticity differential point
+relates to 1.13 additional percentage points in relative prices.
+
+                                                                     14
+        Second, consider the set of results in columns (3)-(4) which explain price dispersion
+across retailers within a location. We also find a positive coefficient between the elasticity
+differential and the price differential, i.e. the 2.40 point estimate in column (3). The
+second model estimates the relationship between price dispersion and the average elasticity
+(between two store-product pairs for offline, or a product-DMA for online). The coefficients
+indicate that a lower average elasticity (a more price-sensitive demand) accounts for a lower
+price dispersion for a given product across competing retailers. For example, an additional
+elasticity point relates to 1.52 additional percentage points in online relative prices.
+        While we lack online demand to compute online elasticities, arguably the cross-
+market variation in offline elasticities is informative about the cross-market variation in
+online elasticities. The results indicate that variation in offline sensitivity is informative
+of the online price dispersion. Most importantly, a more price-sensitive demand drives a
+higher online price convergence, both across competing retailers (within the same city) and
+across locations (within the same retailer).
+
+
+4.3 Shipping Costs
+In the same vein, we study whether shipping costs explains price dispersion within a chain.
+Although data on shipping costs is not available, shipping costs are intrinsically related to
+the distance between the distribution facility and the delivery zipcode (Houde, Newberry
+and Seim (2017)). We collect data on the location of the fulfillment centers and offline
+stores, and define the shipping distance as the distance between the target zipcode and the
+closest location fulfilling the order.6 Formally, d r,z  minz 0 dist(z                   f ), 8 f 2 F r .
+        We explain geographic price differentiation estimating the following model:
+
+                                            0
+                                         z
+                                  ( pir,,t , pir,,t
+                                                  z
+                                                    )=+   (d r,z , d r,z 0 ) + i +   t   +                            (6)
+
+                      0
+Where      ( pir,,t
+                  z
+                    , pir,,t
+                           z
+                             ) denotes the pairwise price differential for product i and retailer r at
+time t between zipcode z and zipcode z 0 , in percentage terms;                           (d r,z , d r 0 ,z 0 ) denotes the
+distance differential between their corresponding fulfillment centers (between the distance
+from zipcode z to its fulfillment location and the distance from zipcode z 0 to its fulfillment
+location); i and          t   denote a series of product- and time- fixed effects, respectively. There-
+fore, equation (6) allows to test whether the relative distance to the fulfillment center is
+priced-in in the relative prices for the same exact product.
+        Summary results are shown in Table 4; the complete set of specifications are pre-
+sented in Appendix C.3. Overall, the coefficients are precisely estimated and indicate
+that delivery distances (thereby shipping costs) drive geographic price variation within the
+chain. Consider the results in columns (1) and (2). The coefficients indicate that 10 ad-
+   6
+    Data on the location of the facility fulfilling an online order is not publicly available. We set up programs
+that enter a zipcode and retrieve the zipcodes of the offline stores or distribution centers.
+
+
+
+                                                          15
+ditional miles increases the difference in pairwise prices by 0.14 percentage points, and
+that an additional 1 log point distance increases prices by 0.14 percentage points, respec-
+tively. Importantly, these specifications are estimated for retailer-location pairs for which
+their closest (most plausible) fulfillment center is the same. In other words, we exploit
+the variation in prices between San Jose and San Francisco for the same set of products
+in the same retailer and the variation in distance to the fulfillment center, given that both
+locations are served by the same fulfillment center. These estimates can be interpreted as
+suggesting that an additional 25 miles increases prices by $0.02 for an average product of
+$4.4 between two delivery zipcodes of the same retailer.7
+
+                                   Table 4: Price Dispersion Across Delivery Zipcodes
+
+                                                            Within Retailer, Across Zipcodes
+
+                                           Shipping Costs          Pricing Technology          Demographics
+
+                                            (1)       (2)            (3)       (4)              (5)      (6)
+           (d r,z , d r 0 ,z 0 )           0.014
+                                          (0.001)
+        log Distance                                0.142
+                                                    (0.048)
+        p( p r,z , p r 0 ,z 0 )                                    0.095
+                                                                   (0.004)
+        p( p r,z , p r 0 ,z 0 )                                                4.16
+                                                                              (0.16)
+           (Homez , Homez 0 )                                                                  0.260
+                                                                                           (0.022)
+           (Incomez , Incomez 0 )                                                                      0.280
+                                                                                                       (0.027)
+        Product FE                          YES      YES            YES        YES             YES      YES
+        Time FE                             YES      YES            YES        YES             YES      YES
+        State FE                            YES      YES            YES        YES              NO      NO
+        R2                                 0.05      0.04           0.24       0.24            0.04     0.04
+
+        Notes: Columns (1) and (2) report results for equation (6); Columns (3) and (4) report
+       results for equation (7); Columns (5) and (6) report results for equation (8) price pairs in the
+       extended dataset (covering multiple zipcodes within a city, as described in Section 2). Model
+       use price pairs weighted by retailers' market shares and including product-, time-, and state-
+       fixed effects; equation (6) is estimated using multiple zipcodes within a city. Robust standard
+       errors in parenthesis.
+
+
+
+        Finally, recall that Section 3.1 (and Appendix B.1.1) showed that price differentia-
+tion within the retailer and across nearby zipcodes of the same city is notably lower than
+   7
+    Houde, Newberry and Seim (2017) studies the economics of Amazon's network of fulfillment centers
+(not Amazon Fresh). The authors find that it costs Amazon between $0.17 and $0.41 to ship a box of $30 for
+100 miles. Although we study online groceries (and not just Amazon Fresh), the set of estimates in Houde,
+Newberry and Seim (2017) provide a benchmark which is qualitatively comparable to Table 4.
+
+
+
+                                                              16
+across cities. Those findings are consistent with the estimates in Table 4, in the sense that
+nearby zipcodes in the same city are not only served by the same fulfillment center but also
+have nearly the same distance to that fulfillment center.
+
+
+4.4 Pricing Technology
+Improvements in pricing technology allow retailers to gain price flexibility and, thereby,
+increase its frequency of price changes (Assad et al. (2020); Brown and MacKay (2021)).
+We now connect the price frequency with the degree of non-uniform pricing by estimating
+the following model:
+
+                                         0                            0
+                             |( pir,,t
+                                     z
+                                       , pir,,t
+                                              z
+                                                        p( pir,,t
+                                                )| =  + ~       z        z
+                                                                  , pir,,t ) + i +   t   +   z   +         (7)
+
+                       0
+Where     |( pir,,t
+                  z
+                    , pir,,t
+                           z
+                             )| denotes the pairwise absolute price differential, in percentage terms,
+                                                                                                             0
+                                                                               p( pir,,t
+for product i and retailer r at time t between zipcode z and zipcode z 0 ; and ~       z
+                                                                                         , pir,,t
+                                                                                                z
+                                                                                                  )
+denotes the probability of a price change across both price sequences.
+        The results are shown in Table 4. The point estimates are economically large and
+statistically precise. A greater intensity of price changes (across time in a given delivery zip-
+code) magnifies the degree of non-uniform pricing (for the same product and time, between
+two given delivery zipcodes). Columns (3) and (4) indicate that price differentiation in-
+creases approximately 2 percentage points when the frequency increases by 20 percentage
+points, and that it increases 4 percentage points when at least one of the locations changed
+prices, respectively.
+
+
+4.5 Local Demograhics
+Finally, we explain price dispersion within retail chains, across locations, using a set of de-
+mographics measured at the zipcode level. In particular, we estimate the following model:
+
+                                     0
+                                  z
+                           ( pir,,t , pir,,t
+                                           z
+                                             )=+       (Incomez , Incomez 0 ) + i +              t   +     (8)
+
+                   0
+Where     ( pir,,t
+                 z
+                   , pir,,t
+                          z
+                            ) denotes the pairwise price differential between two retailer-location
+pairs of the same chain, in percentage terms; and                     (Incomez , Incomez 0 ) denotes the income
+                                                   0
+differential between zipcodes z and z . We estimate various specifications of equation (8):
+differences in home values, in population, and in education.
+        The results are shown in Table 4; the complete set of specifications are presented in
+Appendix C.4. Local demographics can explain relative prices between two delivery loca-
+tions, although the point estimates are (highly significant) relatively small. For instance,
+prices increase with home values and income; an additional $200,000 and $5,000 in median
+home values and annual income per capita, respectively, relates to an increase of approx-
+imately 0.26 and 0.28 percentage points in prices, which amounts to about 3% in price
+
+                                                            17
+dispersion. The results are similar in log differences.
+
+
+4.6 Summary
+The set of findings in Section 4 inform our understanding of the geographic price differen-
+tiation. The online grocers exhibit a remarkable flexibility in setting prices at the zipcode
+level; but interestingly, it is not primarily driven by local demographics. Most importantly, a
+less price-sensitive demand, a greater intensity of price frequency, and variation in shipping
+distance magnify the price differentiation across locations. With these ideas in mind, the
+next Section studies the role of algorithmic pricing.
+
+
+
+5    Patterns of Algorithmic Pricing
+We use high-frequency hourly data collected during three months for Amazon and Wal-
+mart, which account for close to 50% of the online grocery market. We recover the key
+patterns of algorithmic pricing, such as: frequency, synchronization, price matching, and
+price exploration. We construct analogous statistics using scanner data of grocery chains;
+Appendix B.2 reports robustness results using all retail formats.
+
+
+5.1 Price Stickiness
+We begin with estimates on the frequencies of price changes. Because data is collected in
+high-frequency, we report price changes at various time intervals. Let L be the time interval
+of interest. A given product i at time t in retailer r and delivery zipcode z experiences a
+                                       r,z ,i
+price change when its current price, p t      , is different from at least one of the prices collected
+             r,z ,i
+throughout p t   L . Formally,
+
+
+                                                                             r,z ,i
+                          Price Change r
+                                       t
+                                         ,z ,i                   r,z ,i
+                                               = 1 if 9h 2 L : p t      6= p t   h
+                                                                                                  (9)
+
+Where the indicator takes value 1 when, e.g. in a weekly interval, the price of a retailer-
+zipcode-product experienced at least one change during the previous 168 hours (7 days).
+       In the case of offline data, price changes are defined similarly, but with the simpli-
+fication that the average price per week for each store-product is reported. Prices in the
+scanner data are weekly volume-weighted averages, which have been found to overstate
+frequencies of price changes (Campbell and Eden (2014); Cavallo (2018b)). In order to
+better account for measurement error, liquidation, or fractional prices in scanner data, we
+bin prices into 5% bins. This may not alleviate all concerns because, in addition to time-
+averaging, scanner prices include the effects of coupons or loyalty cards, both of which
+generate an artificial price change. For example, a single purchase with coupons can in-
+duce a price change in that store-product-week even if the tag price remained constant. See
+
+
+                                                    18
+additional discussions in Appendix E.1.
+        The results are shown in Table 5. First, we document large estimates of daily, and
+even intra-day, price changes. The probability of a price change within a day is 0.07 and
+0.08 in Amazon and Walmart, respectively. The probability between two consecutive days
+is 0.17 in Amazon and 0.12 in Walmart. The distinction between the two grocers becomes
+more noticeable at longer intervals. For instance, close to 50% of the products exhibit at
+least one price change during a given week in Amazon, while in Walmart it occurs for less
+than 25% of the products. The implied duration is 8.7 days and 10.1 days in Amazon
+and Walmart, respectively. Interestingly, price changes do not occur uniformly throughout
+the week. For instance, Amazon's and Walmart's frequencies in Wednesday and Thursday,
+respectively, are an order of magnitude larger than other week days. The results by day of
+the week are described in Appendix E.2.
+
+                                       Table 5: Price Stickiness
+
+                                            Amazon           Walmart           Scanner
+                Prob. Price Change
+                Same day                 0.069 (0.002)     0.082 (0.002)           -
+                Daily                    0.173 (0.002)     0.117 (0.002)           -
+                Weekly                   0.479 (0.003)     0.231 (.003)     0.317 (0.003)
+                Monthly                  0.736 (0.004)     0.500 (0.005)    0.578 (0.004)
+                Duration
+                Median duration            1.2 weeks         1.4 weeks        3.0 weeks
+                Notes: Probability of price change denotes the average probability of any
+               price change (increase or decrease) at the corresponding time interval. Es-
+               timates are an equal-weight average across retailer-zipcode-product. Median
+               implied duration measured as 1/(ln(1 f )), where f is the ratio of number
+               of price changes to the number of price observations. Standard errors reported
+               in parenthesis.
+
+
+        The online frequencies can be compared, with the caveats mentioned above, with the
+frequencies in the scanner data. The probability that a store-product exhibits a price change
+over two consecutive weeks and over a month is 0.32 and 0.58, respectively. The implied
+duration is 3.0 weeks. These set of estimates can also be compared with the literature.
+Online and offline monthly frequencies have been estimated in the range of 0.30 to 0.55.8
+Importantly, the time period can partly explain differences with the literature. Combining
+the 2006-2017 RMS scanner datasets we observe a trend of increasing price frequencies
+over time. More precisely, the probability of a weekly price change increases from below
+   8
+     In the case of offline frequencies of price changes, Eichenbaum, Jaimovich and Rebelo (2011) reports
+weekly frequencies between 0.24 and 0.43; Anderson et al. (2017) reports a weekly frequency of 0.21; Cavallo
+(2018b) reports a median weekly frequency of 0.25; Klenow and Malin (2010) reviews the literature and
+shows monthly frequencies between 0.35 to 0.55. In the case of online data, Boivin, Clark and Vincent
+(2012) reports a monthly frequency of 0.41 in online books; Gorodnichenko and Talavera (2017) reports a
+weekly frequency between 0.20 and 0.37 in electronics; Cavallo (2018b,a) documents monthly frequencies
+between 0.27 and 0.48 in CPI categories.
+
+
+
+                                                    19
+27% in 2006 to over 30% in 2017, and the median duration decreases from 4.1 weeks to 3.7
+weeks. While we lack data to test a formal hypothesis about the managerial process (unlike
+Zbaracki et al. (2004)), it is possible that improvements in pricing technology facilitate
+retailers to implement price changes more frequently. We estimate frequencies over time as
+follows. We use entire modules data from Nielsen's grocery chains (a module is a narrow
+category, e.g. potato chips), we sample at most 10 random stores per chain-year, exclude
+store-product pairs with less than 80% observations available, and then sample 50 random
+products per store-year. The amount of data is considerable: it covers 945 distinct products
+and 3,915,922 price observations. Additional results are discussed in Appendix E.3.
+        Returning to our estimates of online price stickiness, Walmart's frequencies are rel-
+atively similar to benchmarks using either offline or online data. In fact, it is plausible that
+Walmart's online behavior is influenced by its offline stores. For instance, Anderson et al.
+(2017) describes how coordination at the retail chain affects pricing decisions, and Ater and
+Rigbi (2019) describes how the existence of price disclosure laws affect price dispersion at
+the chain level. However, Amazon exhibits a degree of price flexibility which is substan-
+tially larger than any comparable statistic previously reported in the literature. The tails
+are informative: 10% of the product-zipcode combinations have average daily probabilities
+of a price change above 0.45. If Amazon's results can be used as any guide about trends in
+online groceries, they inform the key role of algorithmic pricing.9
+        With these ideas in mind, we test whether algorithmic pricing increases price differ-
+entiation within chain and across locations. Once we obtain the daily indicators of price
+changes for each retailer-zipcode-product combination (over time), we map them to the
+corresponding price dispersion between two zipcodes (for the same retailer-product and
+time). We then estimate the following model:
+
+                                                0
+                                    |( pir,,t
+                                            z
+                                              , pir,,t
+                                                     z
+                                                               pir, t +
+                                                       )| =  + ~          t   +                      (10)
+
+                     0
+Where | ( pir,,t
+               z
+                 , pir,,t
+                        z
+                          )| denotes the pairwise absolute price differential for product i and re-
+                                                                                pir, t denotes
+tailer r at time t between zipcode z and zipcode z 0 , in percentage terms; and ~
+the probability that the price at time t changed in either location. We also estimate a speci-
+fication using the intensity of algorithmic pricing, defined as the average frequency of daily
+price changes.
+        We find that, when the price changes in either of the delivery zipcodes, price differ-
+entiation on average increases by 5.8 percentage points. Similarly, an increase in just 10
+percentage points in the algorithmic pricing intensity, relates to an increase in price differ-
+entiation across locations of 2.7 percentage points. The estimates are statistically precise
+( p < 0.001). A visual summary to this analysis can be seen in Figure 1 in the Introduction.
+It shows the price differentiation (across two given zipcodes) as a function of the algorith-
+  9
+    The term algorithmic pricing is often substituted for robo-pricing or dynamic pricing. We note that dy-
+namic pricing is often used in models of intertemporal price discrimination (Nair (2007)).
+
+
+                                                      20
+mic pricing intensity (price changes across those two zipcodes and for the same product).
+The results pool all product-zipcode pairs across time within the chain.
+       A note about causality. The reader might question whether a link to causality can
+be established. A randomized "experiment" is not possible: randomizing the algorithmic
+pricing also entails to decide the degree of price differentiation. Instead, our identification
+relies on: given the pricing algorithms that retailers have in place and switch on/off, exploit
+variation in frequency intensity (within and across, products and time) and variation in
+price differentiation across locations.
+
+
+5.2 Synchronization and Price Matching
+Algorithmic pricing might allow to gain flexibility in the synchronization of price changes,
+either across locations (within a retailer-product) or across retailers (within a zipcode-
+product). This is important in connection with prior work showing various forms of or-
+ganizational obstacles when setting and updating prices (Zbaracki et al. (2004); Levy et al.
+(2011); Anderson, Jaimovich and Simester (2015); Anderson et al. (2017)).
+       We define synchronization across locations as the probability that at least one location
+exhibits a price change, conditional on a price change in another location. In order to
+be synchronized, these price changes must take place within 12 hours. We focus on four
+events: a price increase (or decrease) given an increase; a price decrease (or increase) given
+an increase.
+       The results are shown in Table 6. We find some evidence of synchronization. In par-
+ticular, Walmart shows relatively large conditional probabilities of a price change­although
+not necessarily in the same direction. When a zipcode-product exhibits a price change, the
+same product is likely to experience a price change in a different location within hours; but
+it can be in the opposite direction. Amazon, on the other hand, exhibits significantly lower
+measures of synchronization. Line (3) shows that the probability of any price change, condi-
+tional on observing a price change, is greater than the (unconditional) daily probability of a
+price change. The synchronization probability is 0.10 in Amazon and 0.38 in Walmart; and
+these compare to the unconditional probabilities of 0.07 and 0.08 (Table 5), respectively.
+Hence, these estimate indicate some degree of synchronization; however, most surprising
+is that the sign of the price change is not the same.
+       The third column in Table 6 reports analogous synchronization measures for the
+scanner data. In particular, we restrict attention to retail chains which have at least four
+stores, and randomly sample four stores for each chain-product combination. This is slightly
+more robust than sampling four random stores for all products in the retail chain. We
+then observe, conditional on a weekly price change, whether other stores of the chain also
+exhibit a price change for that product-week. The estimates show a remarkable degree of
+synchronization, i.e. stores tend to increase prices (or decrease prices) at the same time.
+The probability that a store increases (decreases) the price, conditional on a price increase
+
+                                              21
+(decrease) on another store, is 0.63 (0.67), respectively.
+
+                             Table 6: Synchronization Across Locations
+
+                                                    Amazon            Walmart           Scanner
+           (1)    Cond. on Increase
+                   Prob. of price increase       0.046 (0.018)     0.283 (0.019)     0.633 (0.006)
+                   Prob. of price decrease       0.062 (0.021)     0.371 (0.020)     0.245 (0.005)
+           (2)    Cond. on Decrease
+                   Prob. of price increase       0.082 (0.028)     0.329 (0.018)     0.234 (0.005)
+                   Prob. of price decrease       0.102 (0.031)     0.197 (0.016)     0.665 (0.006)
+           (3)    Any Change
+                   Prob. of price change         0.100 (0.020)     0.381 (0.015)     0.770 (0.004)
+          Notes: Table estimates probabilities of price change synchronization, within each retailer,
+         across four common zipcodes. When a product experiences a price change in a given
+         zipcode, we observe whether a different zipcode experiences a price change, for the same
+         product, within at most 12 hours. Standard errors reported in parenthesis.
+
+
+        We also explore synchronization across retailers within the same delivery zipcode and
+within a window of 6 hours. We find that the probabilities of synchronization are nearly
+0%. It is possible that a 6 hour window is too restrictive. For this reason we compute
+synchronization within 24 hours and ignoring the direction of the price change. In this
+case we find probabilities that are close to 3%, which are significantly smaller than the
+unconditional probabilities.10
+        While price changes do not appear to be synchronized, retailers might still track
+each others' prices and use them as input to their price setting. In fact, the high-frequency
+data allows us to detect that retailers often match each other's price. We define a price
+matching event when Amazon and Walmart have a price within 10 cents for the same
+product-zipcode in a window of 24 hours. We find that in 19% of the product-zipcode
+pairs the average probability that Amazon and Walmart have a matching price is greater
+than 0.05.11 Appendix E.5 shows the distribution of the matching events and additional
+methodological details. We also examine the timestamps preceding the matching event
+to understand whether retailers coincide on a matching price or whether one of retailers
+actively matches an existing competitor price. In almost all cases, a retailer sets the price
+first. Moreover, the average probability that Amazon matches Walmart is 74.8%. That is to
+say, in 74.8% of the occasions Walmart "sets" the price and Amazon "matches".
+        The examples in Figure 4 provide a visual perspective. Although both retailers tend
+to change prices relatively frequent, Amazon explores the price grid while Walmart switches
+  10
+     To the best of the authors' knowledge, these are the first estimates of across-location or across-retailer
+synchronization in online groceries. Gorodnichenko and Talavera (2017); Gorodnichenko, Sheremirov and
+Talavera (2014) report no synchronization across sellers of durable goods at the weekly frequency. Cavallo
+(2017) reports low rates of synchronization between price changes of the same retailer in its online and offline
+store.
+  11
+     The results are similar using price differences within 3 cents. We do not consider matching events ex-
+ceeding a 24-hour range or in a different delivery zipcode, although less stringent specifications that study
+delayed price matching or matching in baskets of products or locations are interesting.
+
+
+                                                      22
+between focal prices. And occasionally, throughout the price path, Amazon will match a
+Walmart price.
+
+
+
+
+    (a) Ben & Jerry's Chocolate Fudge Brownie                    (b) Philadelphia Cream Cheese
+
+                                  Figure 4: Price Matching Events
+
+Notes: Panels (a) and (b) show the high-frequency price series in 12-hour timestamps for two selected prod-
+ucts. In both panels, we focus on the same product-zipcode across retailers.
+
+
+        The price levels at which price matching occurs are also interesting. Tracking the
+price sequence leading to the event, price matching is associated with lower prices. More
+precisely, 88% and 79% of the price matching events occur at prices that are below the me-
+dian price (for that zipcode-product) in Amazon and Walmart, respectively. More formally,
+                                      z
+we estimate the following model: pir,,t =  + E vent ir,,t
+                                                        z
+                                                          +        t
+                                                                                                z
+                                                                       +  r,z ,i + , where pir,,t is the (log)
+price of product i in retailer r at time t in zipcode z , E vent is an indicator that takes value 1
+with a price matching, and        t   +  r,z ,i control for day and for retailer-zipcode-product fixed
+effects, respectively. Price matching relates to a 2.7% decrease in prices ( p < 0.001). Inter-
+estingly, these findings bring preliminary evidence to the theoretical work in Miklós-Thal
+and Tucker (2019), which shows that machine-based pricing can sometimes lower prices.
+
+
+5.3 Price Grid
+A related feature in the dynamics of algorithmic pricing is, rather than the frequency, the
+menu of prices. We show that there is substantial experimentation in the price choice set.
+In fact, for the same time period and product, Amazon might use six times more distinct
+prices than Walmart­despite that the daily frequencies are of the same order of magnitude.
+        Again, a guiding example allows to visualize the sharp distinction between price
+choices. Figure 5 shows the behavior of a selected product. While Amazon explores more
+distinct prices and exhibits a greater degree of non-uniform pricing, Walmart tends to fol-
+low a high/low strategy between stable prices (a behavior that connects with Seim and
+
+                                                    23
+                       (a) Amazon                                         (b) Walmart
+
+                               Figure 5: Algorithmic Pricing Example
+
+Notes: Figure shows prices of a Diet Coke 12 fl oz 12 Pack during about three months. Data was collected
+multiple times a day and therefore the horizontal denotes the hours since the first collection time (e.g., 120
+label is the end of the 5th day). Panel (a) shows Amazon Fresh prices across locations and hours. Panel (b)
+shows Walmart Grocery prices across locations and hours.
+
+
+Sinkinson (2016)'s high/low pricing in office supplies).
+        We formalize these observations using a number of measures that characterize the
+flexibility in introducing distinct prices. Table 7 shows that the price of a product lasts
+on average 3.1 weeks on Amazon, and it lasts 5.9 weeks on Walmart. Similarly, there
+are 1.6 price changes per distinct price on Amazon, and 3.6 price changes on Walmart.
+The probability that a retailer-zipcode-product explores a new price is 0.65 in Amazon and
+0.27 in Walmart. When similar measures are estimated in the scanner data, the evidence
+suggests a significantly tighter price grid in offline retailers. The number of weeks per
+distinct price and the price changes per distinct price are 12.0 and 3.7, respectively. The
+probability that, conditional on a price change, a store-product pair picks a price not used
+in the last four weeks is 0.52.
+        Line (4) in Table 7 measures the average number of distinct prices across locations
+per day. The number of daily distinct prices is 3.7 in Amazon and 1.8 in Walmart. In
+other words, Amazon's products simultaneously sold in four zipcodes exhibit, on average,
+3.7 distinct prices per day. Line (5) computes the average number of distinct prices per
+product over the full sample period. The average number of distinct prices is 12.7 and 2.2
+in Amazon and Walmart, respectively.
+        Amazon displays greater price experimentation for almost every single matched
+product. Appendix E.4 shows the distribution of the product-level distinct prices by re-
+tailer, as well as the product-by-product ratio. The average and median ratio is 7.5 and 6.0,
+respectively. That is to say, Amazon uses on average 6.5 more distinct prices for the same
+
+
+
+                                                     24
+                                           Table 7: Price Grid
+
+                                                           Amazon         Walmart          Scanner
+               Product-Zipcode Level
+         (1)   Weeks per distinct pricea                   3.1 (0.1)      5.9 (0.2)      12.0 (0.2)
+         (2)   Price changes per distinct price b          1.6 (0.1)      3.6 (0.2)      3.7 (0.04)
+         (3)   Prob. of new pricec                        0.65 (0.01)    0.27 (0.01)     0.52 (0.01)
+               Product Level
+         (4)   Daily distinct prices per productd         3.7 (0.01)      1.8 (0.01)           -
+         (5)   Distinct prices per producte               12.7 (0.78)     2.2 (0.16)           -
+
+        Notes: a Average ratio of the number of weeks to the number of distinct prices. b Average
+       ratio of number of price changes to the number of distinct prices. c Probability that a retailer-
+       zipcode, conditional on a price change, picks a price not used in that retailer-zipcode-
+       product during the past week. d Average number of distinct prices on a daily basis for
+       the same product across four common zipcodes. e Average number of distinct prices for
+       the same product across four common zipcodes over the sample period. Standard errors
+       reported in parenthesis.
+
+
+matched product than Walmart.
+       Taking a step back from Amazon and Walmart, these facts about algorithmic pricing
+are important because they bring a new perspective to a body of literature on pricing fric-
+tions. For example, Levy et al. (2011) shows evidence of price points in the distribution of
+prices, DellaVigna and Gentzkow (2019) shows uniform pricing within chains, Ilut, Valchev
+and Vincent (2020); Stevens (2020) show discrete pricing in supermarkets, and Aparicio
+and Rigobon (2020) shows price clusters across differentiated products in fashion. Future
+research is needed to examine the role of price rigidities across the online and online chan-
+nel. For instance, retailers might exploit algorithmic pricing to experiment the price menu,
+and then carry the optimized menu to the offline stores.
+
+
+5.4 Menu Cost and Tiny Price Changes
+Algorithmic pricing is often characterized as automating the price setting process (Brown
+and MacKay (2021)). In principle, this automation can break the relationship between
+the menu cost and the size of the price change. In other words, small or large changes
+are equally "costly". In order to make a connection between the menu cost and the price
+frequency, we follow a similar approach to Anderson, Jaimovich and Simester (2015) in
+measuring the number of variants. Products with more variants have a higher in-labor menu
+cost and thus are less likely to experience price changes (Zbaracki et al. (2004); Anderson,
+Jaimovich and Simester (2015)). In our case, using the product description files (Appendix
+A.3), we recover the number of distinct UPCs in a given brand, or brand-category, or brand-
+category-package. We then map the matched product with its offline-based variants, and
+explore whether the menu cost is also present in the online channel. Additional details are
+discussed in Appendix E.6.
+
+
+                                                     25
+                                 Table 8: Size of Price Changes
+
+                                             Amazon          Walmart        Scanner
+               Daily
+               (1) Increase size (%)        12.5 (0.30)    12.7 (0.28)          -
+               (2) Decrease size (%)       -10.0 (0.21)    -10.6 (0.33)         -
+               Weekly
+               (1) Increase size (%)        12.6 (0.15)    13.2 (0.20)     28.9 (0.19)
+               (2) Decrease size (%)       -10.6 (0.11)    -10.0 (0.14)   -21.9 (0.13)
+               Notes: Size of price change denotes the average size of the price change,
+              in percentage terms, conditional on a price change. In order to measure
+              the size of online price changes, which can be multiple for an interval L ,
+              we compute the average size of the positive and negative changes for each
+              retailer-zipcode-product-time, and then obtain the average across products.
+              Standard errors reported in parenthesis.
+
+
+       We find that a 10% increase in the number of variants reduces the probability of a
+price change by 5.2 percentage points in offline retailers. However, an analogous effect is
+close to 0 and not significant in the case of online grocers. Consistent with a reduction in the
+menu cost, Table 8 shows that the sizes of positive and negative price changes in the offline
+retailers are about two times larger than the sizes of price changes in online retailers. The
+distribution of those changes is particularly informative (see Appendix E.6). Approximately
+70% of the price changes are within 50 cents, and 30% of the price changes are within 5%
+in absolute value.
+
+
+
+6    Conclusion
+This paper provides new stylized facts about price setting in the online grocery industry.
+We collect data from the leading online grocers in the U.S. We focus on a set of products,
+matched across online and offline retailers, which rules out assortment differences and
+allows to study pricing strategies in both channels.
+       Online grocers exhibit higher non-uniform pricing and higher price dispersion across
+chains, compared to offline retailers. While online grocers personalize prices at the delivery
+zipcode, local demographics moderately drive those differences. Instead, price elasticities,
+pricing technology, and shipping distance amplify non-uniform pricing. In closer examina-
+tion using a high-frequency dataset, algorithmic pricing allows for remarkable flexibility:
+intra-day price changes, little synchronization, precise price matching within hours, tiny
+price changes, and substantial grid experimentation. This personalized pricing clustered at
+the zipcode level amplifies price differentiation.
+
+
+
+
+                                                 26
+References
+Adams, Brian, and Kevin R Williams. 2019. "Zone pricing in retail oligopoly." American
+  Economic Journal: Microeconomics, 11(1): 124­56.
+
+Ailawadi, Kusum L, Jie Zhang, Aradhna Krishna, and Michael W Kruger. 2010. "When
+  Wal-Mart enters: How incumbent retailers react and how this affects their sales out-
+  comes." Journal of Marketing Research, 47(4): 577­593.
+
+Anderson, Eric, Benjamin A Malin, Emi Nakamura, Duncan Simester, and Jón Steins-
+  son. 2017. "Informational rigidities and the stickiness of temporary sales." Journal of
+  Monetary Economics, 90: 64­83.
+
+Anderson, Eric, Nir Jaimovich, and Duncan Simester. 2015. "Price stickiness: Empirical
+  evidence of the menu cost channel." Review of Economics and Statistics, 97(4): 813­826.
+
+Aparicio, Diego, and Alberto Cavallo. 2021. "Targeted price controls on supermarket
+  products." Review of Economics and Statistics, 103(1): 60­71.
+
+Aparicio, Diego, and Roberto Rigobon. 2020. "Quantum Prices." NBER w26646.
+
+Arcidiacono, Peter, Paul B Ellickson, Carl F Mela, and John D Singleton. 2019. "The
+  competitive effects of entry: Evidence from supercenter expansion." American Economic
+  Journal: Applied Economics, forthcoming.
+
+Asker, John, Chaim Fershtman, and Ariel Pakes. 2021. "Artificial Intelligence and Pricing:
+  The Impact of Algorithm Design." NBER w28535.
+
+Assad, Stephanie, Robert Clark, Daniel Ershov, and Lei Xu. 2020. "Algorithmic Pricing
+  and Competition: Empirical Evidence from the German Retail Gasoline Market." CESifo
+  Working Paper 8521.
+
+Ater, Itai, and Oren Rigbi. 2019. "Price transparency, media and informative advertising."
+  Working Paper.
+
+Bakos, J Yannis. 1997. "Reducing buyer search costs: Implications for electronic market-
+  places." Management Science, 43(12): 1676­1692.
+
+Baylis, Kathy, and Jeffrey M Perloff. 2002. "Price dispersion on the Internet: Good firms
+  and bad firms." Review of industrial Organization, 21(3): 305­324.
+
+Bils, Mark, and Peter J Klenow. 2004. "Some evidence on the importance of sticky prices."
+  Journal of Political Economy, 112(5): 947­985.
+
+Bloomberg. 2018a. "Grocery Rivalry Hot as Ever a Year After Amazon-Whole Foods Deal."
+  Craig Giammona, June 14, 2018.
+
+Bloomberg. 2018b. "Walmart's Jet Revamps Site to Narrow Focus on Urban Shoppers."
+  Matthew Boyle, September 13, 2018.
+
+Bloomberg. 2019. "Amazon Effect Invigorates Northern Virginia's Housing Market." Shelly
+  Hagan, July 19, 2019.
+
+Boivin, Jean, Robert Clark, and Nicolas Vincent. 2012. "Virtual borders." Journal of In-
+  ternational Economics, 86(2): 327­335.
+
+                                           27
+Breiman, Leo. 2001. "Random forests." Machine learning, 45(1): 5­32.
+
+Brodersen, Kay Henning, Cheng Soon Ong, Klaas Enno Stephan, and Joachim M Buh-
+  mann. 2010. "The balanced accuracy and its posterior distribution." 3121­3124, IEEE.
+
+Brown, Jeffrey R, and Austan Goolsbee. 2002. "Does the Internet make markets more
+  competitive? Evidence from the life insurance industry." Journal of Political Economy,
+  110(3): 481­507.
+
+Brown, Zach, and Alexander MacKay. 2021. "Competition in Pricing Algorithms." Avail-
+  able at SSRN 3485024.
+
+Brynjolfsson, Erik, and Andrew McAfee. 2014. The second machine age: Work, progress,
+  and prosperity in a time of brilliant technologies. WW Norton & Company.
+
+Calvano, Emilio, Giacomo Calzolari, Vincenzo Denicolò, and Sergio Pastorello. 2020.
+  "Artificial intelligence, algorithmic pricing and collusion." American Economic Review,
+  110(10): 3267­97.
+
+Campbell, Jeffrey R, and Benjamin Eden. 2014. "Rigid prices: Evidence from us scanner
+  data." International Economic Review, 55(2): 423­442.
+
+Cavallo, Alberto. 2017. "Are Online and Offline Prices Similar? Evidence from Large Multi-
+  Channel Retailers." The American Economic Review, 107(1): 283­303.
+
+Cavallo, Alberto. 2018a. "More amazon effects: Online competition and pricing behav-
+  iors." NBER w25138.
+
+Cavallo, Alberto. 2018b. "Scraped data and sticky prices." Review of Economics and Statis-
+  tics, 100(1): 105­119.
+
+Cavallo, Alberto, and Roberto Rigobon. 2016. "The Billion Prices Project: Using online
+  prices for measurement and research." The Journal of Economic Perspectives, 30(2): 151­
+  178.
+
+Cavallo, Alberto, Brent Neiman, and Roberto Rigobon. 2014. "Currency unions, prod-
+  uct introductions, and the real exchange rate." The Quarterly Journal of Economics,
+  129(2): 529­595.
+
+Chen, Le, Alan Mislove, and Christo Wilson. 2016. "An empirical analysis of algorithmic
+  pricing on amazon marketplace." 1339­1349, International World Wide Web Conferences
+  Steering Committee.
+
+Chevalier, Judith, and Austan Goolsbee. 2003. "Measuring prices and price competition
+  online: Amazon. com and BarnesandNoble. com." Quantitative Marketing and Economics,
+  1(2): 203­222.
+
+Chintagunta, Pradeep K, Junhong Chu, and Javier Cebollada. 2012. "Quantifying trans-
+  action costs in online/off-line grocery channel choice." Marketing Science, 31(1): 96­114.
+
+CNBC. 2019. "Walmart announces next-day delivery." Lauren Thomas, May 14, 2019.
+
+de Castro, Vitoria. 2019. "The Value of Same-Day Delivery." Minnesota Working Paper.
+
+
+
+                                            28
+DellaVigna, Stefano, and Matthew Gentzkow. 2019. "Uniform pricing in us retail chains."
+  The Quarterly Journal of Economics, 134(4): 2011­2084.
+
+Dubé, Jean-Pierre, and Sanjog Misra. 2019. "Personalized Pricing and Customer Welfare."
+  Working Paper.
+
+Eichenbaum, Martin, Nir Jaimovich, and Sergio Rebelo. 2011. "Reference prices, costs,
+  and nominal rigidities." American Economic Review, 101(1): 234­62.
+
+Eizenberg, Alon, Saul Lach, and Merav Yiftach. 2016. "Retail prices in a city." Working
+  Paper.
+
+Ellickson, Paul B, and Sanjog Misra. 2008. "Supermarket pricing strategies." Marketing
+  Science, 27(5): 811­828.
+
+Financial Times. 2020. "US online grocery shopping jumps as chains rush to add capacity."
+  Dave Lee, June 01, 2020.
+
+Fisher, Marshall, Santiago Gallino, and Jun Li. 2017. "Competition-based dynamic pric-
+  ing in online retailing: A methodology validated with field experiments." Management
+  Science, 64(6): 2496­2514.
+
+Ford, Martin. 2015. Rise of the Robots: Technology and the Threat of a Jobless Future. Basic
+  Books.
+
+Forman, Chris, and Avi Goldfarb. 2020. "Concentration and Agglomeration of IT Innova-
+  tion and Entrepreneurship: Evidence from Patenting." NBER w27338.
+
+Fortune. 2019. "It's Not Just Amazon: Free One-Day Delivery Is The New Normal." Laura
+  Stampler, April 30, 2019.
+
+Goldfarb, Avi, and Catherine Tucker. 2019. "Digital economics." Journal of Economic Lit-
+  erature, 57(1): 3­43.
+
+Gorodnichenko, Yuriy, and Oleksandr Talavera. 2017. "Price setting in online markets:
+  Basic facts, international comparisons, and cross-border integration." American Economic
+  Review, 107(1): 249­82.
+
+Gorodnichenko, Yuriy, Viacheslav Sheremirov, and Oleksandr Talavera. 2014. "Price
+  setting in online markets: Does IT click?" Journal of the European Economic Association.
+
+Hitsch, Günter J, Ali Hortacsu, and Xiliang Lin. 2019. "Prices and promotions in us retail
+  markets: Evidence from big data." NBER w26306.
+
+Houde, Jean-François, Peter Newberry, and Katja Seim. 2017. "Economies of density in
+ e-commerce: A study of amazon's fulfillment center network." NBER w23361.
+
+Hwang, Minha, Bart J Bronnenberg, and Raphael Thomadsen. 2010. "An empirical anal-
+ ysis of assortment similarities across US supermarkets." Marketing Science, 29(5): 858­
+ 879.
+
+Ilut, Cosmin, Rosen Valchev, and Nicolas Vincent. 2020. "Paralyzed by fear: Rigid and
+   discrete pricing under demand uncertainty." Econometrica, 88(5): 1899­1938.
+
+Instacart. 2019. "Instacart com help." Instacart com (Help Pricing), Jan 24, 2019.
+
+                                            29
+Jank, Wolfgang, and PK Kannan. 2005. "Understanding geographical markets of online
+  firms using spatial models of customer choice." Marketing Science, 24(4): 623­634.
+
+Kaplan, Greg, Guido Menzio, Leena Rudanko, and Nicholas Trachter. 2019. "Relative
+  price dispersion: Evidence and theory." American Economic Journal: Microeconomics,
+  11(3): 68­124.
+
+Klenow, Peter J, and Benjamin A Malin. 2010. "Microeconomic evidence on price-setting."
+  In Handbook of Monetary Economics. Vol. 3, 231­284. Elsevier.
+
+Levy, Daniel, Dongwon Lee, Haipeng Chen, Robert J Kauffman, and Mark Bergen.
+  2011. "Price points and price rigidity." Review of Economics and Statistics, 93(4): 1417­
+  1431.
+
+McShane, Blakeley B, Chaoqun Chen, Eric T Anderson, and Duncan I Simester. 2016.
+ "Decision stages and asymmetries in regular retail price pass-through." Marketing Science,
+ 35(4): 619­639.
+
+Miklós-Thal, Jeanine, and Catherine Tucker. 2019. "Collusion by Algorithm: Does Bet-
+ ter Demand Prediction Facilitate Coordination Between Sellers?" Management Science,
+ 65(4): 1552­1561.
+
+Mojir, Navid, and K Sudhir. 2020. "A Model of Multipass Search: Price Search Across Stores
+ and Time." Management Science, forthcoming.
+
+Nair, Harikesh. 2007. "Intertemporal price discrimination with forward-looking con-
+  sumers: Application to the US market for console video-games." Quantitative Marketing
+  and Economics, 5(3): 239­292.
+
+Nakamura, Emi. 2008. "Pass-through in retail and wholesale." American Economic Review,
+  98(2): 430­37.
+
+Nakamura, Emi, and Jon Steinsson. 2008. "Five facts about prices: A reevaluation of
+  menu cost models." The Quarterly Journal of Economics, 123(4): 1415­1464.
+
+Nakamura, Emi, and Jon Steinsson. 2013. "Price Rigidity: Microeconomic Evidence and
+  Macroeconomic Implications." Annual Review of Economics, 5(1): 133­163.
+
+NBER.    2017.   "ZIP   Code    Distance   Database."   https://www.nber.org/data/
+  zip-code-distance-database.html.
+New York Times. 2018. "Amazon's Ripple Effect on Grocery Industry." Erin Griffith, August
+  21, 2018.
+
+New York Times. 2020. "FreshDirect, After Broken Eggs and Angry Customers, Stages a
+  Comeback." David Yaffe-Bellany, February 21, 2020.
+
+Nijs, Vincent, Kanishka Misra, Eric T Anderson, Karsten Hansen, and Lakshman Kr-
+  ishnamurthi. 2010. "Channel pass-through of trade promotions." Marketing Science,
+  29(2): 250­267.
+
+Orbach, Barak Y, and Liran Einav. 2007. "Uniform prices for differentiated goods: The case
+  of the movie-theater industry." International Review of Law and Economics, 27(2): 129­
+  153.
+
+                                            30
+Overby, Eric, and Chris Forman. 2015. "The effect of electronic commerce on geographic
+  purchasing patterns and price dispersion." Management Science, 61(2): 431­453.
+
+Pozzi, Andrea. 2013. "The effect of Internet distribution on brick-and-mortar sales." The
+  RAND Journal of Economics, 44(3): 569­583.
+
+Reuters. 2017. "Amazon's Name Pops Up on 10% of U.S. Earnings Conference Calls." July
+  28, 2017.
+
+Seim, Katja, and Michael Sinkinson. 2016. "Mixed pricing in online marketplaces." Quan-
+  titative Marketing and Economics, 14(2): 129­155.
+
+Shiller, Benjamin Reed, et al. 2014. "First-degree price discrimination using big data."
+  Federal Trade Commission.
+
+Stevens, Luminita. 2020. "Coarse pricing policies." The Review of Economic Studies,
+  87(1): 420­453.
+
+U.S. Census. 2019. "American Community Survey 2014-2018." https://www.census.
+  gov/programs-surveys/acs/.
+U.S. Census Bureau. 2020. "Quarterly retail e-commerce sales: 4Q 2019." Feb 19, 2020.
+
+U.S. Department of Defense. 2014. "World Geodetic System 1984." Its Definition and
+  Relationships with Local Geodetic Systems.
+
+Wall Street Journal. 2018. "Inside FreshDirect's Big Bet to Win the Home-Delivery Fight."
+ Jennifer Smith, July 18, 2018.
+
+Walmart. 2020. "Walmart com price matching policy." Walmart com Help, Jan 26, 2020.
+
+Zbaracki, Mark J, Mark Ritson, Daniel Levy, Shantanu Dutta, and Mark Bergen. 2004.
+  "Managerial and customer costs of price adjustment: direct evidence from industrial mar-
+  kets." The Review of Economics and Statistics, 86(2): 514­533.
+
+Zillow Research. 2018. "Zillow Home Value Index." https://www.zillow.com/
+  research/data/.
+
+
+
+
+                                           31
+

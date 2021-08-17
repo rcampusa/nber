@@ -1,0 +1,2090 @@
+                              NBER WORKING PAPER SERIES
+
+
+
+
+           WHAT'S MISSING IN ENVIRONMENTAL (SELF-)MONITORING:
+       EVIDENCE FROM STRATEGIC SHUTDOWNS OF POLLUTION MONITORS
+
+                                         Yingfei Mu
+                                       Edward A. Rubin
+                                          Eric Zou
+
+                                      Working Paper 28735
+                              http://www.nber.org/papers/w28735
+
+
+                    NATIONAL BUREAU OF ECONOMIC RESEARCH
+                             1050 Massachusetts Avenue
+                               Cambridge, MA 02138
+                                    April 2021
+
+
+
+
+We thank Michael Anderson, Trudy Ann Cameron, Eric Edwards, Dave Evans, Mary Evans,
+Cynthia Giles, Corbett Grainger, Andreas Hagemann, Alex Hollingsworth, Nicolai Kuminoff,
+Shanjun Li, Julian Reif, Michelle M. Rubin, Ivan Rudik, William Wheeler, Jianwei Xing,
+officials at the U.S. Environmental Protection Agency, and seminar participants at Arizona State
+University, the Online Summer Workshop in Environment, Energy, and Transportation
+Economics, and the Society for Benefit-Cost Analysis Annual Meeting for helpful comments. All
+errors are our own. The views expressed herein are those of the authors and do not necessarily
+reflect the views of the National Bureau of Economic Research.
+
+NBER working papers are circulated for discussion and comment purposes. They have not been
+peer-reviewed or been subject to the review by the NBER Board of Directors that accompanies
+official NBER publications.
+
+© 2021 by Yingfei Mu, Edward A. Rubin, and Eric Zou. All rights reserved. Short sections of
+text, not to exceed two paragraphs, may be quoted without explicit permission provided that full
+credit, including © notice, is given to the source.
+What's Missing in Environmental (Self-)Monitoring: Evidence from Strategic Shutdowns
+of Pollution Monitors
+Yingfei Mu, Edward A. Rubin, and Eric Zou
+NBER Working Paper No. 28735
+April 2021
+JEL No. C12,H77,Q53
+
+                                          ABSTRACT
+
+Regulators often rely on self-reported data to determine compliance. Tolerance for missingness in
+self-monitoring data may create incentives for local agents to strategically decide when (not) to
+monitor regulated activities. This paper builds a framework to detect whether local governments
+skip air pollution monitoring when they expect air quality to deteriorate. We infer this expectation
+from air quality alerts ­ public advisories based on local governments' own pollution forecasts ­
+and test whether monitors' sampling rates fall when these alerts occur. We first use this method to
+test an individual pollution monitor in Jersey City, NJ, suspected of a deliberate shutdown during
+the 2013 "Bridgegate" traffic jam. Consistent with strategic shutdowns, this monitor's sampling
+rate drops by 33% on days that Jersey City issues pollution alerts. Building on large-scale
+inference tools, we then apply the method to test over 1,300 monitors across the U.S., finding at
+least 14 metro areas with clusters of monitors showing similar strategic behavior. We discuss
+imputation methods and policy responses that may help deter future strategic monitoring.
+
+
+Yingfei Mu                                       Eric Zou
+Department of Economics                          Department of Economics
+University of Oregon                             University of Oregon
+1415 Kincaid Street                              1415 Kincaid Street
+Eugene, OR 97405                                 Eugene, OR 97403
+USA                                              and NBER
+yingfeim@uoregon.edu                             ericzou@uoregon.edu
+
+Edward A. Rubin
+Department of Economics
+University of Oregon
+1415 Kincaid Street
+Eugene, OR 97405
+edwardr@uoregon.edu
+1. Introduction
+        When regulators face substantial monitoring requirements, it is a common practice to ask regulated
+entities to monitor their own compliance. Police officers are charged with turning on/off cameras that verify
+their maintenance of ethical behavior; hospital staff transcribe operation events to catalog surgeons'
+regulatory compliance; countries self-monitor greenhouse gas emissions to demonstrate adherence to
+climate commitments. This system of self-monitoring is particularly common within environmental
+regulation, where local entities ­ such as state governments and individual firms ­ assume the roles of both
+the subject of regulation and the recorder of pollution data that demonstrate compliance. Can federal
+regulators rely on the regulated to provide complete, representative self-monitoring data? We study this
+question in the context of U.S. air quality regulation, where state and local governments monitor air
+pollution to demonstrate compliance with federally set air quality standards. We show that state agencies'
+leeway to decide when (not) to monitor, combined with the ability to anticipate pollution events in the near
+future, results in strategic timing in monitoring activities at some locations. We begin with a motivating
+anecdote, followed by an econometric analysis of the general prevalence of strategic monitoring.
+
+        On September 9th, 2013, two of three lanes to the George Washington Bridge closed for five days
+at the toll plaza connecting Fort Lee, New Jersey and Manhattan, New York for what was initially said to
+be a traffic study. The event was later found to be a deliberate act of political retribution.1 Coincidentally,
+at the time of the "Bridgegate"-induced traffic jams, a nearby fine particulate matter (PM2.5) air pollution
+monitor on the rooftop of the Jersey City firehouse stopped collecting data. The monitor, placed by the state
+government to continuously monitor compliance with the federal Clean Air Act mandates, was later found
+to have been inoperative for 13 days (September 6th-18th), the longest inactive period recorded in the decade
+since its installation. Though an investigation by the U.S. Environmental Protection Agency (EPA) blamed
+an "equipment malfunction," 2 the timing of the incident has raised concerns that the monitor was
+intentionally disabled so that it would not record the spike in air pollution caused by the Bridgegate traffic
+jam.
+
+        This incident raises a general question of whether local officials are able to deliberately halt
+pollution monitoring when they anticipate elevated pollution levels will be recorded. First, state
+governments have the incentive to "game." While the federal EPA sets the national air quality standards
+(NAAQS), states and local governments self-monitor compliance with these standards. When state
+
+
+
+1
+  See Wikipedia, The Free Encyclopedia, s.v. "Fort Lee lane closure scandal," (accessed November 13, 2020),
+https://en.wikipedia.org/wiki/Fort_Lee_lane_closure_scandal
+2
+  Enck, Judith. Regional Administrator of the U.S. Environmental Protection Agency Region 2. Letter to Jeff Ruch,
+Executive Director of the Public Employees for Environmental Responsibility. February 28, 2014.
+
+                                                       2
+governments' own monitoring indicates a lack of compliance, they bear the regulatory penalties including
+elevated requirements of expensive emission-reduction investments. Second, state governments have the
+discretion to game. While the federal EPA encourages states to stick to their monitoring schedules as
+strictly as possible, states have significant leeway, with every monitor typically allowed to miss up to 25%
+of its required data each quarter. Third, state governments have the ability to game. In many states, the
+same agencies that carry out monitoring also run advanced air quality forecasting ­ providing these agencies
+with the best data and forecasts of air quality in the near future. Despite these concurrent factors, the current
+system is not set up to detect strategic monitoring. Missing days are ignored by the federal regulators,
+implicitly assuming that pollution levels on monitored days are equal to pollution levels on unmonitored
+days. This tolerance for gaps in compliance monitoring data may induce strategic timing in state and local
+agencies' self-monitoring activity.
+        We propose an econometric framework that assesses whether air pollution monitors strategically
+shut down to avoid sampling on high-pollution days ­ specifically focused on identifying individual
+monitors whose pattern of shutdowns suggests gaming. Our framework has three components. The first
+component infers the government's expectation of high-pollution events through locally issued air quality
+alerts. These public advisories calling for citizens to reduce outdoor activities and vehicle use are often
+issued when forecasts predict that air pollution will exceed the Clean Air Act standards. We use an event
+study to assess whether a monitor's sampling rate falls when pollution alerts are in place. As a motivating
+example, our analysis begins with the sampling patterns from the PM2.5 monitor at the Jersey City Firehouse
+(JCF). Analyzing 21 alerts sent by the Jersey City from 2007 to 2014, we show that the data capture rate of
+the JCF monitor drops significantly during pollution alert weeks (declining by 10 percentage points from a
+mean of 88%) and especially during the alert day itself (declining by 28 percentage points). Though we do
+not directly address the reasons for the failure of the JCF air pollution monitor during the "Bridgegate"
+incident, our analysis indicates that the JCF monitor's sampling pattern over the seven-year period is
+consistent with strategic shutdowns during times of high pollution.
+
+        The second component of our framework incorporates simultaneous inference. We repeat the
+Jersey City firehouse monitoring exercise to analyze 1,359 monitors that are set up to sample continuously
+for air quality compliance for six different pollutants (PM2.5, PM10, O3, NO2, SO2, and CO) throughout the
+contiguous United States. These monitors are located in 167 counties with similar pollution alert programs.
+Importantly, our task is not to estimate the response of the average monitor, but instead to pinpoint which
+monitors are gaming the regulatory design by excluding days likely to have high pollution levels. This
+inference problem poses two challenges, which we address with large-scale inference tools (Efron, 2012).
+First, for each individual monitor, the event-study test for strategic shutdowns likely uses a small sample
+due to the limited number of alerts and/or short time series for the monitor. Consequently, traditional
+
+                                                       3
+inference comparing the test statistic with its theoretical (asymptotic) null distribution is likely invalid. We
+remedy this issue with a randomization inference scheme, which allows us to generate an empirical null
+distribution based upon "placebo" event studies that each use randomly dated pollution alerts (Rosenbaum,
+2002). We then calculate p-values, for each monitor, as the proportion of the empirical null distribution that
+is more extreme than the observed effect. Second, by testing a large number of monitors, there is risk of
+overstating the confidence of rejection for any individual monitor. We address this risk in several ways,
+including an assessment of the p-value histogram (we find an overabundance of tests with small p-values),
+a standard false discovery control strategy (Benjamini and Hochberg, 1995), and an "eye-ball" screening
+of monitors whose patterns of strategic missingness are the most visually apparent. Following these steps,
+we generate a list of "interesting" monitors whose distinctive monitoring patterns warrant further regulatory
+attention. We post detailed estimation results for all monitors on a publicly available website. Together,
+these first two steps of detection and inference offer researchers and policymakers the ability to narrow in
+on a potentially small subset of gamers within a much larger population of monitors/agencies.
+
+        The third component of our framework is economic characterization. We document key
+characteristics of these interesting monitors, and we shed light on underlying mechanisms for the patterns
+we see. We discover two primary features. First, we map the locations of the interesting monitors, and find
+14 metro areas with clusters of interesting cases. Because the statistical procedure to determine interesting
+monitors does not use geographic proximity as an input, the fact that interesting cases cluster in specific
+regions suggests state- and/or local-government influences. Second, we use regression analysis to
+characterize counties with interesting monitoring patterns, we find that a county's Clean Air Act compliance
+status plays a major role. For example, our state fixed effects regression suggests that being located in a
+noncompliant (nonattainment) county raises the probability a monitor is "interesting" by 64 percent,
+compared to other counties within the same state. Regressions with additional county-level characteristics,
+such as environmental friendliness, government size, and corruption, show limited explanatory power
+conditional on nonattainment status. Together, these test results support our hypothesis that strategic
+shutdowns arise from state and local governments' incentives to avoid or alleviate nonattainment penalties.
+
+        One possible way federal regulators could deter strategic shutdowns would be filling in missing
+monitoring data with values that better approximate the true air quality conditions, rather than omitting the
+missing days from records. We build a PM2.5 pollution dataset with imputed values based on inverse
+distance weighting (IDW), a spatial-averaging prediction method commonly used in the epidemiology and
+the economics literatures to infer air quality at an unmonitored location using available data from nearby
+monitors (e.g., Shepard, 1968; Schwartz, 2001; Currie and Neidell, 2005). We adapt this idea to our study
+context in which data are temporally incomplete; we impute a monitor's missing value on a given day by
+
+
+                                                       4
+using the inverse distance-weighted average of data from a set of nearby "donor" monitors on that day.
+Because donor monitors that are closer to the monitor of interest are more heavily weighted, we use a liberal,
+20-mile search windows for donor monitors. This allows the IDW to provide substantial coverage while
+still preserving local variations in pollution concentration. We find that the IDW is able to explain 81.4%
+of observed PM2.5 variation and provide predictions for 38.6% of the missing values.3 We use this dataset
+to illustrate that missing data should not automatically be given the "benefit of doubt." Among the
+aforementioned interesting monitors, the distribution of pollution on "unobserved" days exhibits a longer
+right tail. Had the measurements been taken, PM2.5 levels would have exceeded the 15 ug/m3 annual
+standard on 23% of these missing days and would have exceeded the 35 ug/m3 daily standard on 2.7% of
+the unmonitored days. These findings suggest strategic shutdowns could have misled federal compliance
+status designations. We calculate that the forgone health values from air quality improvements that the
+county would otherwise have enjoyed without strategic monitoring amount to about $67 million (2020
+dollars) per strategic monitor. We hope our method may provide the regulator with a tractable route to
+assessing strategic shutdowns beyond the scope of this study ­ such as monitors located in areas without
+pollution alert programs.
+
+         We believe that the strategic self-monitoring problem highlighted in this paper is an
+underappreciated challenge for environmental compliance. We reported our findings to members of the
+federal EPA's ambient air quality monitoring group. 4 Officials with whom we spoke reacted that the
+shutdowns may be explained by local agencies' benevolent actions to prepare for incoming pollution
+episodes by taking the monitors offline and conducting maintenance. 5 In fact, we take away from the
+conversation that federal regulators tend not to worry about strategic responses in ambient air quality
+monitoring programs in which the entity of regulation is the state/local government ­ at least much less so
+than they would worry about point-source monitoring where the entity of regulation is often a company.
+The officials do agree with the importance of identifying interesting monitors. In their language, while these
+patterns do not necessarily suggest the local agencies are doing something "wrong", it is worth informing
+the corresponding agencies that their data look "different" from the data generated by others. We hope our
+analysis can raise awareness about monitoring and enforcement challenges associated with the tension
+between the imperative of national environmental protection and individual states' compliance incentives
+(Giles, 2020).
+
+
+
+3
+  The remaining missing observations are too far from non-missing monitors to use IDW with any confidence.
+4
+  We held a 1-hour meeting with a senior staff scientist and a statistician, both with expertise in ambient air quality
+monitoring and enforcement. Our discussion primarily focused on Figure 1A, 3, 4, and 5 of this paper.
+5
+  We believe these explanations do not fit the data. Our findings suggest that, if anything, such maintenance actions
+have caused the monitors to miss out the incoming pollution peaks.
+
+                                                          5
+        An emerging literature documents that the principal-agent nature of the Clean Air Act's monitoring
+and enforcement rules has contributed to an underrepresentation of high-pollution observations in states'
+self-monitored air quality data (Grainger, Schreiber, and Chang, 2017; Fowlie, Rubin, and Walker, 2019;
+Sullivan and Krupnick, 2019; Zou, 2020). A similar phenomenon has been observed in developing country
+settings, where local officials' desire to demonstrate air quality achievements has impaired truthfulness
+(Andrews, 2008; Chen, Jin, Kumar, and Shi, 2012; Duflo, Greenstone, Pande, and Ryan, 2013; Ghanem
+and Zhang, 2014; Greenstone, He, Jia, and Liu, 2020) and representativeness in pollution monitoring (Yang,
+2020). Our research is most closely related to Grainger, Schreiber, and Chang (2017) who use remote-
+sensing data to reveal that state governments strategically decide where to place air quality monitors; we
+show local governments also strategically select when to conduct monitoring to their own advantage. We
+contribute to a growing understanding of enforcement challenges in environmental regulations (e.g., Gray
+and Shimshack, 2011; Shimshack, 2014; Morehouse and Rubin, 2020) and environmental federalism (e.g.,
+Oates, 2001; Millimet, 2014).
+
+        We aim to provide concrete evidence for regulatory actions ­ in particular, which "interesting"
+monitors may warrant regulatory attention. Our approach is related to recent development in large-scale
+inference and its applications in bioinformatics, such as high-throughput screening for drug discovery
+(Malo et al., 2006), and genomics/proteomics data analysis (Dudoit, Shaffer, and Boldrick, 2003;
+Bantscheff et al, 2007; Huang, Sherman, and Lempicki, 2009), where the research goal is to credibly detect
+interesting units among a sea of null. Within economic applications, we are most closely related to the
+literature on permutation inference (e.g., Barrios, Diamond, Imbens, and Kolesár, 2012; Buchmueller,
+Miller, and Vujicic, 2016; Young, 2016; Hagemann, 2019), multiple hypothesis testing (e.g., Anderson,
+2008; Heckman et al., 2010; Finkelstein et al., 2012; Christensen and Miguel, 2018; Jones, Molitor, and
+Reif, 2019; List, Shaikh, and Xu, 2019) and heterogeneous treatment effects estimation (e.g., Athey and
+Imbens, 2016; Chernozhukov, Demirer, Duflo, and Fernandez-Val, 2018; Davis and Heller, 2020). Our
+framework extends to other contexts where the goal is detecting a relatively small group of "responsive"
+units, rather than estimating the average treatment effect.
+
+        Section 2 provides background and a description of the data. Section 3 explains our framework and
+discusses the results. Section 4 describes the companion dataset. Section 5 concludes.
+
+
+
+
+                                                      6
+2. Background and Data
+2.1. Clean Air Act and Ambient Air Quality Monitoring
+         The National Ambient Air Quality Standards (NAAQS). The U.S. Clean Air Act (CAA)
+delegates the U.S. Environmental Protection Agency (EPA) to set up safety standards in the form of
+maximum concentration levels for outdoor air pollution. These are the National Ambient Air Quality
+Standards (NAAQS). Since the 1970s, the EPA has set up NAAQS for "criteria" air pollutants including
+particulate matter (PM2.5 and PM10), ozone (O3), nitrogen dioxide (NO2), sulfur dioxide (SO2), lead (Pb),
+and carbon monoxide (CO). The CAA charges state governments with monitoring air quality within their
+own jurisdictions. The federal EPA uses states' submitted data to categorize counties into "attainment"
+(adhering to the standards) and "nonattainment" (violating the standards) groups. Most criteria pollutants
+have two standards: a 24-hour standard and an annual standard; ozone's standard is based upon an 8-hour
+period. For example, a county falls into PM2.5 nonattainment if its three-year average for PM2.5 exceeds 15
+ug/m3, and/or if the three-year average of annual 98th percentile concentration values exceeds 35 ug/m3.
+The most updated NAAQS for all criteria pollutants are listed in the federal EPA's NAAQS Table
+(https://www.epa.gov/criteria-air-pollutants/naaqs-table).
+
+         Nonattainment counties face substantially elevated regulatory costs for both existing and
+prospective entities. The state is required to develop a State Implementation Plan (SIP) that details plant-
+specific regulations to bring the county back into compliance. These regulations typically involve the
+adoption of expensive pollution abatement technologies and emission limits on existing factories. Factories
+planning new production capacity in nonattainment jurisdictions must adopt technologies with the "lowest
+achievable emission rate," irrespective of the cost of doing so.6 Local governments and individual polluters
+occasionally receive direct penalties from the EPA in cases of sustained nonattainment. The NAAQS
+provision functions as the CAA's ultimate safeguard for outdoor air quality. Its regulatory incentives for
+the state economy ­ with respect to the compliance costs, firms' productivity changes, and labor market
+implications ­ have been widely documented in the literature (e.g., Greenstone, List, and Syverson, 2012;
+Walker, 2013; Blundell, Gowrisankaran, and Langer, 2018; Shapiro and Walker, 2020). A separate strand
+of literature finds evidence that by directing regulatory resources toward sources in high-pollution areas,
+local governments have been able to achieve localized air quality improvements near the violating monitors
+(e.g., Bento, Freedman, and Lang, 2015; Auffhammer, Bento, and Lowe, 2019).
+
+
+
+6
+  Lowest Achievable Emission Rate, or LAER, refers to technologies that achieve the lowest possible emission rate
+in practice without cost consideration. In contrast, new sources in attainment jurisdictions comply with the Best
+Available Control Technology, which is often much less strict and allows for considerations of energy, environmental,
+and economic impacts and other costs.
+
+                                                         7
+        EPA Rules for Incomplete Monitoring. To demonstrate compliance with NAAQS, states'
+monitoring data must satisfy completeness goals. Appendix Table A.1 tabulates the EPA's completeness
+goals for each of the criteria pollutants (U.S. EPA, 2013). The typical requirement is for each monitor to
+take at least 75% of required samples per quarter of the year. What happens if monitoring data fall below
+the completeness goals? In principle, incomplete data cannot be used to demonstrate compliance, and the
+areas is thus designated as "unclassifiable." In practice, an unclassifiable county is treated just as an
+attainment county. However, if statistics computed from incomplete data suggest a potential violation of
+NAAQS, then the EPA can invoke rights to assign "nonattainment" status using limited data available. For
+example, in the case of PM2.5 monitors, only 11 days of observations per quarter are needed for the EPA to
+designate violation ­ if, for example, the average of the available observations exceeds the annual standard
+of 15 ug/m3. If the monitor collects even fewer than 11 samples per quarter, the CAA gives the EPA the
+right to use alternative data. The federal regulation states that the EPA administrator "may consider factors
+such as monitoring site closures/moves, monitoring diligence, the consistency and levels of the daily values
+that are available, and nearby concentrations" in determining attainment / nonattainment status.7
+
+        These rules imply that the completeness goal per se is not subject to gaming. A violating area
+cannot bring itself out of nonattainment simply by reducing its data capture rate below 75% per quarter
+because nonattainment can be designated using very limited data (11 observations); for a non-violating area,
+it makes little difference if its quarterly capture rate is above the 75% level (attainment) or below
+(unclassifiable). However, strategic responses can arise when local monitoring agencies skip high-pollution
+days to water down the average (or whatever relevant statistics) of captured pollution, which is the focus
+of this study.
+
+        Why Might Monitoring Data be Missing? In practice, missing monitoring data can occur in three
+types of scenarios. The first scenario is when the field samples are not taken (i.e., shutdowns). Reasons for
+shutdowns could include monitor maintenance, instrument calibration/audits, staff shortage, power outage,
+or, as we argue in this paper, strategic skipping. This type of shutdown, which often lasts for only a short
+period of time, is the primary scenario of interest of this paper.8
+
+        The second scenario is data invalidation during state monitoring agency's quality control (QC)
+processes before submitting the data to the federal Air Quality System (AQS) for compliance determination
+(U.S. EPA, 2013). For example, once every two weeks, a monitor is required to go through a one-point QC
+
+
+7
+ 40 C.F.R. Appendix N to Part 50 - Interpretation of the National Ambient Air Quality Standards for PM2.5.
+8
+  In particular, we note that pollution monitors are not expected to "max out" at the ranges of air pollution
+concentrations observed in the U.S. For example, all regulatory PM2.5 monitors are capable of measuring 24-hour fine
+particulates mass concentration of at least 200 ug/m3, while over 99% of daily monitor readings in our study sample
+are below 100 ug/m3.
+
+                                                         8
+check, in which a monitor is exposed to a gas of known concentration. If the test exceeds the EPA's critical
+criteria for the one-point QC check,9 the monitoring agency should void all previous readings from that
+monitor, indicating that data are missing for the period extending back to the date when the monitor passed
+the previous one-point QC check. Similar checks are done for other instrument tasks, such as flow rate
+audits that are done once every month.10 Because QC failures will result in the invalidation of a large chunk
+of monitoring data, this type of missingness is unlikely to be relevant for what we find in this paper.
+
+         Finally, the federal EPA has the ultimate authority to decide whether to use submitted data from
+the monitoring agency in NAAQS determination. Occasionally, the EPA has invalidated data submitted to
+the AQS after failures in federal audits. These cases also tend to involve the invalidation of a large swath
+of data, and thus are also unlikely to explain the findings of this paper.11
+
+
+
+2.2. Pollution Alerts
+         Pollution alerts are based on air quality forecasts made by state and local agencies using chemistry
+transport models, such as the Community Multiscale Air Quality Modeling System (CMAQ).12 An alert is
+issued when unfavorable local weather events (thermal inversions, light winds, high pressure zones, etc.)
+and emission events (traffic congestion, wildfires, etc.) are expected to push air pollution to unhealthy levels
+as defined by the NAAQS nonattainment standards.13 Appendix Figure A.2 shows the distribution of the
+predicted Air Quality Index associated with the alerts. The distribution exhibits substantial pileup at the
+AQI cutoff of 100 (at which point the AQI code moves from "Moderate" to "Unhealthy for Sensitive
+Groups") and the cutoff of 150 (at which point the AQI code becomes "Unhealthy").
+
+         We are unaware of any institutional reasons for a mechanical link between alerts and missing
+monitoring data. To the extent that a forecasting algorithm uses monitoring data as predictors for future
+pollution, lower data capture on higher pollution days, if anything, would decrease the odds of pollution
+alerts, generating a positive correlation between capture rate and alerts. Alerts are associated with changes
+
+
+9
+  For example, the critical criteria for the ozone one-point QC check is that the measured concentration is over 7%
+different in value from the true concentration.
+10
+   One might also concern how extreme values are treated in the QC process. The EPA guideline encourages manual
+inspections of all data to spot unusual values, which can be used to "indicate a gross error in the data collection system."
+An outlier is considered valid until there is an explanation for why the data should be invalidated, for example, if a
+subsequent one-point QC fails. Therefore, extreme values are unlikely to be driving the findings of this study.
+11
+   For example, in a recent incident, a contract laboratory's audit failure led data from four states to be suspended from
+NAAQS comparison (https://www.epa.gov/air-trends/pm25-data-omitted-air-trends-assessment).
+https://www.epa.gov/air-trends/pm25-data-omitted-air-trends-assessment
+12
+   https://www.epa.gov/cmaq/cmaq-models-0
+13
+   Pollution alerts are often salient. Previous research has shown that alerts suppress outdoor activities and influence
+transportation choices (Neidell, 2009; Cutter and Neidell, 2009; Graff Zivin and Neidell, 2009).
+
+                                                            9
+in general atmospheric conditions, such as temperature and precipitation, which could influence monitors'
+data capture due to equipment and/or staff performance. However, such mechanical association would
+affect all monitors, and it should not be specific to "interesting" monitor groups. We provide further details
+in Section 3.1 where we discuss the empirical strategy.
+
+
+
+2.3. Data
+         Pollution Monitoring. Pollution monitoring data come from the EPA's Air Quality System (AQS)
+database. We use AQS Daily Summary Data which contain information from every monitor for each day
+from 2004 to 2015. A daily summary record is the aggregate of all sub-daily measurements, typically 24
+hourly samples taken by the monitor. Our primary variable of interest is a monitor-by-day level indicator
+for missing data, i.e., none of the sub-daily measurements being available.
+
+         Pollution Alerts. We obtain air pollution alerts data through the EPA AirNow (airnow.gov) Action
+Day Program. Action Day provides a tracker of all air quality alert programs implemented by state and
+local agencies.14 The database we use contains a total of 33,357 pollution alerts issued by 342 jurisdictions
+between 2004 and 2015. An advisory is often issued one day ahead of the actual alert day. We use the alert
+day itself to define the timing of pollution alert events.
+
+
+
+
+3. Framework and Evidence
+         This section describes the three components of our framework and presents our findings. We begin
+in Section 3.1 with the Jersey City Firehouse (JCF) PM2.5 monitor and explain how we test for strategic
+shutdowns for a single monitor. Section 3.2 describes the simultaneous testing problem where we scale up
+the exercise in Section 3.1 to all 1,359 monitors. Section 3.3 presents an econometric analysis of the
+characteristics of monitors that are deemed "interesting" by the testing process.
+
+
+
+3.1. Test of Individual Monitor: The Jersey City Firehouse Monitor as an Example
+         Using an event study framework, we model the JCF monitor's "capture rate" of PM2.5 data ­ an
+indicator variable equaling "1" when scheduled monitoring occurs ­ around the timing of pollution alerts
+(the "events"). There are a total of 37 pollution alert days in the Jersey City during our study period. Alerts
+
+
+14
+  For example, this includes the "Spare the Air" program in the Bay Area of California ( https://www.sparetheair.org/),
+and the "High Pollution Advisory" program managed by the state of Arizona ( https://ein.az.gov/keywords/high-
+pollution-advisory). A full list of programs contained in the database is here: https://www.airnow.gov/aqi/action-days/.
+
+                                                          10
+are sometimes issued for several consecutive days, in which case we keep the first day of the episode to
+focus on the alert issuance effect. This leaves us with 21 pollution alert events. For each alert event, we pull
+the JCF monitor's operational status 30 days before and 30 days after the alert day, forming an event study
+dataset with 1,281 observations (21 alert events multiplied by the 61-day event study window for each alert).
+The estimation equation is:
+
+            Capture Ratet = 1 - (Missing PM2.5 Data)t = [-30,30]   (t = ) + t                       (1)
+
+
+where () represents the indicator function. Note that the   estimates are simply the capture rate -day
+relative to the pollution alert day, averaged across all 21 events.
+
+        Our goal is to assess whether the   's have lower values around  = 0, i.e., a lower capture rate
+(more missing values) near the time when a pollution alert is issued. We specify a donut difference-in-
+means estimator as our test statistic:
+
+                                        1
+                                    T = 7 [-3,3]   - 1 [-30,-11] 
+                                                     40
+                                                                  [11,30]
+
+
+which is the average capture rate within a seven-day event window around the pollution alert day, subtracted
+by the average capture rate outside that window, with a three-day buffer on each side of the event window.
+Our identification premise is the standard zero-trend assumption: under the null hypothesis that the
+pollution alert has no impact on the capture rate, we should have T = 0, and, alternatively, if alerts do affect
+the capture rate, we expect T  0.15 One departure from the standard event study framework is that our
+treatment (pollution alert) reflects the monitoring agency's belief about future pollution, and thus the
+shutdown of monitors may well occur before the issuance of pollution alerts. Such anticipation underlies
+our choice to allow the test statistic to capture potential change in shutdown rates several days before the
+actual alert day.
+
+        Figure 1, panel A plots the   coefficients for the JCF monitor. The graph features a clear drop of
+the monitor's capture rate around the pollution alert day. The corresponding T estimate is -0.101, meaning
+the capture rate within the seven-day window around a pollution alert is 10.1 percentage points lower than
+the outside-window average of 88 percent (an 11.5% reduction). Note that the largest change in the
+monitor's capture rate occurs on the alert day and the day before, with a 28.6 percentage points reduction
+(a 32.5% reduction).
+
+
+
+15
+  In unreported analysis, we have confirmed that our findings are insensitive to alternative choices of event window
+and buffer window.
+
+                                                        11
+        An important feature of Figure 1, panel A is that the decline in the data capture rate began days
+before the actual pollution alert day. This is a pattern that we repeatedly observe among "interesting"
+monitors. Note that pollution not only increases on the actual alert day, but that it tends to rise leading up
+to the alert-day peak. Thus, the capture rate pattern is likely a consequence of forward-looking agencies
+changing monitoring effort in anticipation of a future high-pollution episode (Malani and Reif, 2015). This
+pattern also suggests data absences are not mechanically linked with alert issuances (Section 2.2), in which
+case one would expect to see a change in capture on the alert day only.
+
+        We are now ready to conduct inference on whether T is statistically different from zero. In a large-
+sample setting, we could implement a t-test of T = 0 via an OLS regression of Capture Ratet on an
+indicator for the seven-day window around the alert day. This approach has several limitations in our setting.
+First, it relies on the distributional assumption that the t-statistic of T under the null hypothesis will be
+normally distributed N(0,1), which may not be true in our finite-sample setting. Second, with a small sample,
+the magnitude and precision of T could be sensitive to specification choices. Therefore, rather than relying
+on distributional and specification assumptions, we build on the idea that, under the (sharp) null hypothesis
+that pollution alerts have no effects whatsoever on the monitor's capture rate , variable T does not depend
+on whether a pollution alert occurs; therefore, we can generate the null distribution of T from the data by
+randomly shuffling the timing of pollution alerts. In practice, we assign 21 dates as the "placebo" alert days.
+We restrict the randomization so that the placebo day does not occur within one month of the true alert
+day.16 We repeat the process 5,000 times, each iteration generating a placebo test statistic. We then compute
+a two-tail p-value of the observed T as the proportion of the null distribution that is more extreme (in
+absolute value) than T. Note that we employ two-tail testing, allowing T to be significant for the "wrong"
+sign. In Section 3.2, we will show this "wrong" tail provides us with an opportunity for sanity checks.
+
+        Figure 1, panel B reports the inference exercise. The histogram plots the empirical null distribution
+of T across 5,000 randomization of pollution alerts. The vertical solid line marks the true estimate which
+lies outside of the 95 percent range of the null distribution, with a two-tail p-value of 0.014. Evidence thus
+points to a statistically significant reduction of the JCF monitor's capture rate around pollution alerts.
+
+        Causal Interpretation and "Strategic" Shutdowns. Before proceeding, we discuss the causal
+interpretation of the T estimate. Taken at face value, patterns of Figure 1 suggest evidence of selective
+shutdowns. That is, more missing data are occurring around pollution alerts with significant deterioration
+of air quality. Note that selective shutdown per se is an undesirable feature of monitoring data that is worth
+documenting: if missing rate is differentially higher around high-pollution alerts, the resulting monitoring
+
+16
+  In unreported analysis, we have confirmed that our results are robust to using shorter randomization buffers such
+as 15 days or 7 days.
+
+                                                         12
+data will understate the true pollution concentration. Improving continuity of monitoring near these
+pollution events will thus increase accuracy of the monitoring data regardless of why such selective
+shutdowns were occurring.
+
+         But to interpret such selective shutdowns as strategic behavior ­ a term that implies intentionality
+­ we need the assumption to hold that a local government's expectation of bad air quality causes the
+reduction in monitor's capture rate. In other words, the strategic interpretation relies on the identification
+assumption that there will be no changes in the monitor's capture rate in the absence of pollution expectation.
+Here we discuss two concerns for potential violation of this identification assumption.
+
+         A first concern is selection. Equation (1) may be mis-specified if monitors' capture rates and
+pollution alerts are both correlated with some unobserved factors. We note that the permutation inference
+should purge the influence of unobserved factors except for those that are systematically correlated with
+the timing of alert issuance. Moreover, if systemic omitted variable bias exists, it likely applies broadly to
+many monitors. In contrast, we report in Section 3.3 that strategic shutdowns tend to occur in regions with
+higher risk of violating the clean air standards. Section 3.4 shows interesting monitors are also more likely
+to miss monitoring during bad pollution years in general, not just around pollution alerts.
+
+         We also note that we have little prior reasons to expect any "spontaneous" relationship between
+monitors' sampling rate and socioeconomic/atmospheric conditions. As we mentioned in Section 2.1,
+monitoring techniques certified by the EPA have stringent technological standards and can robustly operate
+under various meteorological and pollution conditions.17 Nevertheless, in order to assess this point more
+directly, we consider an exercise that tries to predict daily monitoring missingness using weather conditions.
+Weather is a candidate for confounding that could affect both when a monitor misses observations and
+when local agencies issue air alerts (e.g., if bad weather events influence the functioning of monitoring
+devices and, at the same time, affect polluting activities such as road traffic). For this confounding to occur,
+some function of weather must predict missing monitoring data. We train several flexible machine-learning
+(ML) models that use contemporaneous and lagged weather data to predict whether monitors missed
+planned observations.18 None of the weather-based ML models successfully improve upon a "null model"
+
+
+
+17
+   For trace gas monitoring (O3, SO2, NO2, and CO), measurement accuracy is sensitive to temperature and hence the
+monitoring system is placed in an HVAC-controlled indoor environment, with only the gas inlet extended outdoor
+(U.S. EPA, 2013).
+18
+   Specifically, we use three different ML algorithms: (i) lasso-penalized OLS regression, (ii) lasso-penalized logistic
+regression, and (iii) random forest. The outcome for each model is a binary indicator for whether the monitor-day's
+observation is missing. The predictors include contemporaneous and lagged weather features--temperature (mean,
+minimum, and maximum), precipitation, dew point, pressure, visibility, wind speed, wind gust, and indicators for
+extreme weather events. We tune the models' hyperparameters using 5-fold cross validation and ultimately assess
+performance on final, held out test set. The daily weather data come from NOAA's Global Summary of the Day
+
+                                                          13
+that predicts a region's majority class ("not missing"). In fact, the models functionally ignore the weather
+inputs and replicate the null model ­ always predicting "not missing." This fact remains true even when we
+oversample missing days to control for missingness days' relative infrequency.
+
+         A deeper concern is reverse causality. Because pollution forecasts such as the CMAQ use
+contemporaneous monitoring data as input, one might be concerned that the natural (non-strategic) absence
+of monitors' data may interact with the issuance of pollution alerts in ways that could generate a reversely
+causal relationship between monitor shutdowns and alerts. This is unlikely the case. Note that if missing
+data occur randomly, then the distribution of missing pollution data should mirror that of the observed data.
+Thus, natural missingness should not affect forecasts or alert issuances. On the other hand, if the data
+capture rate does fall on high pollution days (but for reasons unrelated to pollution alerts), then one would
+expect a decrease in the odds of pollution alerts because fewer high-pollution days are being captured, and
+thus a positive, rather than negative relationship between capture rate and alerts.
+
+
+
+3.2. Simultaneous Test of All Monitors
+         We now repeat the exercise in Figure 1 with all other monitors. We make the following sample
+restrictions: First, we restrict to monitors located in counties that have issued at least two pollution alerts
+during our study period. Second, we restrict to monitors that are designated to sample air quality every day.
+For PM2.5 and PM10 monitors, this means restricting to monitors sampling on a "1-in-1-day" basis.19 For O3,
+NO2, SO2, and CO monitors, seasonal monitoring is often practiced (e.g., ozone is often deemed a problem
+only during the summer months), and we restrict to monitor-months for which at least one day of monitoring
+data was available.20 Our final pool of tests includes 1,359 pollution monitors (including the Jersey City
+Firehouse monitor) for PM2.5, PM10, O3, NO2, SO2, and CO located in 167 counties operating between 2004
+and 2015. We begin with a collection of null hypotheses that we test at once:
+
+                {Hi : Monitor i s operation schedule is not affected by pollution alerts}N
+                                                                                         i=1
+
+
+
+
+(GSOD) 2005-2014. We use inverse-distance weighting to estimate each monitor-day's weather based upon the
+monitor's distance to each of the 4,579 NOAA weather stations in the GSOD data.
+19
+   Particulate pollution monitoring is often done intermittently (once every three or six days) for sites that still adopt
+manual sampling technologies. Intermittent monitoring is typically allowed by the Environmental Protection Agency
+in jurisdictions that are not in immediate danger of violating the NAAQS. We identify 1-in-1-day monitors using the
+Air Quality System database's "required day count" field. We do not test lead (Pb) particulate monitors because
+virtually all lead monitors follow an intermittent monitoring schedule.
+20
+   Gaseous pollutant monitoring uses chemiluminescent technologies, and are by default conducted continuously. Our
+sample selection primarily reflects the fact that monitoring seasons may differ across monitors.
+
+                                                           14
+and the corresponding mean-difference test statistics {Ti }N
+                                                           i=1 analogously defined as in equation (1). For
+
+each monitor, we use randomization inference to obtain its two-tail p-value pi measuring the degree to
+which the observed Ti contradicts Hi .
+
+        We next turn to the simultaneous testing problem. At any given chosen rejection threshold , the
+test will falsely reject the null approximately 100% of the time. With a large number of hypotheses, a
+substantial number of monitors will be falsely considered to be "gaming." We introduce several measures
+to approach this issue. First, we present the p-value histogram. By construction, the p-value histogram
+should feature a uniform distribution U(0,1) if the null hypothesis holds true (i.e., alerts have no effect on
+data availability) for every monitor i. In practice, the histogram of {pi }N
+                                                                           i=1 is potentially a mixture of cases
+
+where the null hypothesis is true and cases where the null is false. If enough monitors are gaming, one
+would expect a deviation from U(0,1); more specifically, the p-value histogram would exhibit an
+overabundance of small p-values (<0.05). Figure 2, panel A presents the p-value histogram. We see a clear
+spike in small p-values in the p<0.05 range. When test statistics are further partitioned into Ti  0
+("correct"-signed test statistic) and Ti > 0 ("wrong"-signed test statistic) groups, we find that the spike in
+small p-values are driven by tests with the "correct" signs, i.e., those with drops in the capture rate, rather
+than increases around pollution alerts (Figure 2, panel B).
+
+        Second, we employ the Benjamini-Hochberg procedure to control for false discovery rates
+(Benjamini and Hochberg, 1995). This method is closely related to the p-value histogram. Large p-values
+on the p-value histogram mostly represent observations from the null hypothesis, and thus can be used to
+estimate the proportion of small p-values that also come from the null hypothesis. More formally, we order
+{pi }N
+     i=1 in an increasing order p(1)    p(N) , and for a choice of target false discovery rate  = 0.05,
+
+we find the largest value of k such that p(k)  k/N, and reject the null for i = 1, ... , k. For each Ti , we
+also compute a q-value equals to the minimum false discovery rate that can be attained when Ti is
+considered significant (Storey, 2003; Anderson 2008). We follow the literature and give q-value a Bayesian
+posterior significance level interpretation (i.e., false discovery adjusted significance level).
+
+        Finally, recent applied econometrics has demoted sole reliance on p- or q-values and promoted
+weights on the degree to which the data patterns are visually compelling. In our case, because monitoring
+agencies have no incentive to pull capture rates way down (Section 2.1), one would expect that interesting
+monitors would exhibit a T-shaped response where otherwise stable monitoring operation shows a sharp
+drop just around the days of high pollution episodes. To operationalize this test, we aggregate the   's
+estimates and compute average event study patterns separately for two groups: interesting monitors and
+other monitors. Figure 3 displays the findings. First, except for the case of PM10, the overabundance of
+
+
+                                                      15
+small p-values is apparent for each type of monitor. Second, non-interesting monitors show a flat and stable
+operation pattern around pollution alerts; this suggests the average monitor is not strategically shutting
+down around pollution alerts. Third, except for the case of CO, visual evidence is strong for interesting
+monitors, with a sharp but transient drop in capture rates around pollution alert days. Going one step further,
+we manually screen the event study patterns among all interesting monitors, and pinpoint those with "very
+interesting", T-shaped pattern. Figure 4 presents one example for each type of pollution monitor.
+
+        We have made our estimation results for all monitors available on a website. Appendix Figure A.3
+provides an illustration. The interactive map presents all tested areas, interesting monitors, very interesting
+monitors, and other tested monitors. For each monitor, we report the test statistic, the p- and q-values, and
+the event study graph, among other location information.
+
+
+
+3.3. Some Features of "Interesting" Monitors
+        The statistical procedure in the previous two sections generates a list of monitors whose patterns of
+missing data are consistent with strategic shutdowns. In this subsection, we present two exercises that
+document characteristics of these interesting monitors that speaks to underlying mechanisms.
+
+        Location. Appendix Table A.1 tabulates total number of pollution alerts, tested monitors,
+interesting monitors, and very interesting monitors by all 54 Core Based Statistical Areas (CBSAs) in our
+data. We find that interesting monitors tend to cluster in certain regions of the country. For example, among
+the 86 pollution monitors that we test in the Phoenix-Mesa-Scottsdale metro area in Arizona, 23 show up
+as interesting. Figure 5 maps the locations of monitors in the 14 CBSAs that in total house 60% of all these
+interesting monitors. The clustering pattern is not an artifact of some CBSAs simply having
+disproportionately more monitors. Several large metro areas we examined ­ such as Chicago-Naperville-
+Elgin (IL-IN-WI), Sacramento-Roseville-Arden-Arcade (CA), and Philadelphia-Camden-Wilmington
+(PA-NJ-DE-MD) ­ have many monitors but very few interesting cases. Because the statistical procedure
+we use to determine interesting monitors does not use geographic proximity as an input, the fact that
+interesting cases cluster in certain places is informative, and suggests regional government influences.
+
+        The clustering pattern also implies that the decision to strategically monitor is spatially correlated,
+and some of the local variation in monitors' interesting/non-interesting status is due to the use of a sharp
+statistical decision criterion (i.e., monitor is interesting if its p-value is less than 0.05). For example, among
+all non-interesting PM2.5 monitors within 20 miles of interesting PM2.5 monitors, over 18% have
+permutation p-values between 0.05 and 0.15. This fraction is 7% and 3% for non-interesting monitors
+within 20-50 mile and 50-100 mile distance, respectively. Put differently, some non-interesting monitors in
+
+
+                                                       16
+fact do exhibit strategic monitoring patterns like their interesting neighbors, and they would have been
+considered as interesting if we were to use a less conservative decision rule in hypothesis testing.
+
+        County Characteristics. A key premise of our analysis is that state and local governments avoid
+sampling high-pollution days in an effort to either avoid nonattainment status of the federal air quality
+standards (NAAQS) or, in the case of counties already in violation, to move out of nonattainment. We now
+use cross-sectional regressions to test whether being located in counties currently in or with a history of
+NAAQS nonattainment in fact increased a monitor's likelihood to operate strategically. Table 1, column 1
+reports a simple linear regression of an indicator variable for being labeled interesting (p-value  0.05) on
+an indicator for the NAAQS nonattainment status of the county in which the monitor is located. This is a
+cross-sectional regression with 1,359 underlying monitors, 11.7% of which are interesting cases. Our
+estimate suggests a county's nonattainment is associated with a 6.6 percentage point increase (or a
+6.6/11.7=56 percent increase) in the odds of the monitor being interesting. In column 2, we repeat the
+"correct-vs-wrong sign" breakdown, finding that the nonattainment correlation is driven by cases with the
+"correct" sign (i.e., the capture rate decreases around pollution alerts). In column 3, we further control for
+                                                                                                21
+several state-level regulatory/political characteristics including party affiliation,                an index for
+environmental friendliness,22 government size,23 and a proxy for corruption.24 We find that nonattainment
+is still a predominant predictor for monitor's "interesting" status. In column 4, we include state fixed effects,
+comparing monitors within the same state but locating in attainment versus nonattainment counties, thus
+purging of the influence of any observable or unobservable characteristics that might differ across states.
+The results again indicate a robust role of nonattainment status. In columns 5-8, we repeat the same set of
+regressions now using the FDR-adjusted significance, i.e., an indicator variable for q-value  0.05, as the
+dependent variable. We obtain similar results from these alternative specifications.
+
+        Figure 6 provides further corroborative evidence on the role of nonattainment risk, using PM2.5
+monitors as an example. The chart documents the relationship between a monitor's quarterly capture rate
+(number of days with creditable sample as a fraction of required days of sampling) and 1-unit bins of annual
+PM2.5 concentration (the "design value") where an exceedance of 15 ug/m3 corresponds to a higher risk of
+violation. The underlying regression controls for monitor fixed effects and year fixed effects, so that the
+
+
+
+21
+   Share of Democratic Party affiliation according to 2006 Gallup Pool.
+22
+   League of Conservation Voters score, which is based on state representatives' voting records on environmental
+issues. A higher score indicates to a stronger environmental preference (Dietz et al., 2015).
+23
+   Government-sector (two-digit NAICS: 92) employment as a share of total employment. Data are sourced from the
+Bureau of Economic Analysis.
+24
+   Per capita number of federal convictions among state and local public officials. Data are sourced from the Report
+to Congress on the Activities and Operations of the Public Integrity Section (Glaeser and Saks, 2006; Leeson and
+Sobel, 2008; Grooms, 2015).
+
+                                                        17
+underlying variation comes from year-of-year changes in recorded pollution levels within the same monitor.
+Panel A reports that for these interesting monitors, years with particularly high levels of pollution
+correspond to particularly low data capture rates. Panel B shows that for the other, non-interesting monitors,
+the capture rate is largely orthogonal to the design value. Our detection framework's focus on monitors'
+sampling patterns within a narrow window around pollution alerts identifies strategic shutdowns; however,
+Figure 6 suggests that strategic sampling may occur at other times, beyond those that involve pollution
+alerts. We discuss this issue in further detail in Section 4.
+
+
+
+
+4. Data Substitution and an Imputation Method
+        One implementable solution to the strategic shutdown problem is for federal regulators to change
+their practices regarding missing data. Rather than effectively ignoring the absence of data, regulators could
+use estimates to approximate conditions that prevailed during down times. Similar approaches have
+successfully been used in other pollution regulations. For example, one can learn from the successful
+enforcement experience of the EPA's Acid Rain Program (ARP), a cap-and-trade program based on a
+monetary system of tradeable emission allowances. All emission sources in the ARP ­ mostly in the power-
+generating sector ­ are required to monitor emissions in real time through a continuous emission monitoring
+systems (CEMS). To incentivize monitoring compliance, the ARP specifies stringent data substitution
+procedures when approved CEMS technology is not used. For example, when the hourly capture rate of
+SO2 emissions falls below 90%, the substitute data value will be the maximum value observed by looking
+back through the last 720 hours. The ultra-conservative approach to substitute for missing data is believed
+to underly the ARP's near-perfect compliance record (Schakenbach, Vollaro, and Forte, 2006).
+
+        The ARP's zero-tolerance approach is obviously very conservative; but it does highlight the
+importance of substituting for missing data ­ rather than ignoring missing data ­ in maintaining monitoring
+compliance. We describe a method that provides predicted PM2.5 pollution values when monitoring data
+are missing. We use a simple and transparent prediction procedure known as the inverse distance weighting
+(IDW). The IDW builds on the idea that atmospheric conditions such as air pollution are often spatially
+correlated. The approach predicts the pollution in a given location as the average of readings from nearby
+"donor" monitors; each donor reading is weighted by the inverse of the donor monitor's distance to the
+location of interest. Formally, at any given point in time, the IDW pollution imputation for a monitor x
+given a set of nearby donor monitors {xi }N
+                                          i=1 is
+
+                                                 N             -1
+                                                 i=1[d(x, xi )] xi
+                                            x=
+                                                 Ni=1[d(x, xi )]
+                                                                -1
+
+
+
+                                                       18
+where d(x, xi ) is the distance between the monitor of interest and the donor monitor i. Because donor values
+that are closer to the monitor of interest are more heavily weighted, we use a liberal, 20-mile search window
+for donor monitors, which allows the IDW to provide substantial coverage while still preserving local
+variations in pollution concentration. Note that IDW "imputation" can be done even if x is not missing,
+given us an opportunity to conduct in-sample validation. The IDW is commonly used in epidemiology and
+environmental economics studies to improve spatial coverage of data as ground monitoring of weather and
+pollution is often sparse (e.g., Schwartz, 2001; Currie and Neidell, 2005). Here we adapt the same idea to
+the context where data are temporally incomplete.
+
+        Figure 7 presents a summary of the dataset. Each panel displays three distributions: observed PM2.5
+(of course, for when monitoring is not missing), predicted PM2.5 when monitoring is not missing, and
+predicted PM2.5 when monitoring is missing. Hence, the two dashed lines tell us how closely the IDW-
+predicted PM2.5 tracks observed PM2.5 levels, and the solid line indicates what the distribution of PM2.5
+would have looked like had monitoring been done on the missing days. Take panel A that summarizes data
+for interesting monitors. First, we find that IDW does a reasonable job predicting actual PM2.5 when
+pollution monitoring is not missing. A simple linear regression of observed PM2.5 on predicted PM2.5 yields
+an R-squared of 0.814. Second, our prediction exercise suggests that, compared to observed PM2.5, the
+distribution of "missed" PM2.5 (solid line) features a longer right-tail. About 23.1% of the missing days
+would have shown PM2.5 exceeding 15 ug/m3 had the measurements been taken, and about 2.7% of the
+missing days would have exceeded 35 ug/m3. These fractions convert to about 6.6 days per year of annual
+standard exceedance and 0.8 days per year of 24-hour standard exceedance. Panel B shows no such
+discrepancy between observed and missed PM2.5 exists for non-interesting monitors.
+
+        More broadly, we hope the IDW provides the regulator with a tractable tool to assess strategic
+shutdowns beyond the scope of this study. Evidence of Figure 7 reveals the difference in interesting
+monitors' PM2.5 distributions on observed days and missed days. The fact that we find the same group of
+monitors that respond to pollution alerts also exhibit a distribution-wide, selective pattern in the timing of
+absent data, suggesting that strategic monitoring goes beyond just the context of pollution alerts.
+
+        One may wonder whether the interesting monitors are of any significance with respect to human
+health values. For example, how might the EPA assess the health risk imposed by an uncaptured 0.8 days
+per year of 24-hour PM2.5 standard exceedance? We follow the idea of Sullivan and Krupnick (2018) and
+Fowlie, Rubin, and Walker (2019) to calculate the foregone health values due to regulation-induced air
+quality improvements that the county would otherwise have enjoyed without strategic monitoring. Our
+calculation is based on the following parameters: First, linking counts of exceedance days and county-level
+nonattainment history, we calculate that each additional day of 24-hour PM2.5 standard exceedance is
+
+                                                     19
+correlated with a 13% increase in the odds of a county receiving a nonattainment designation in the
+following three years; this translates to a 9.6 percentage point increase in nonattainment probability. 25
+Second, to translate nonattainment status to air quality improvement, we use a published estimate that shows
+nonattainment causes on average 1.6 ug/m3 reduction in PM2.5 levels in the county per year for the 10 years
+following the designation (Sanders, Barreca, and Neidell, 2020). Third, to associate air quality improvement
+to mortality consequence, we use an epidemiology study that commonly cited by the EPA that each 10
+ug/m3 reduction in PM2.5 is associated with 6% reduction in all-cause adult mortality rates (Krewski et al.,
+2009). Finally, to convert rate changes to level changes, we use data from the Centers for Disease Control
+and Prevention (CDC) to calculate that the average county's baseline mortality rate in our sample is 671
+per 100,000 people, and the average county's population count during the study period is 1.55 million.
+When multiplied together, these numbers indicate about 7.6 avoidable deaths per interesting monitor per
+year. Assuming a $8.9 million Value of Statistical Life (2020 USD) commonly used by the EPA in
+regulatory impact analyses, these avoidable deaths amount to an annual foregone health value of $67.4
+million per interesting monitor.
+
+
+
+
+5. Conclusion
+        We investigate the operating patterns of air quality monitors in the U.S. using a framework that we
+create to test for evidence of shutdowns that are strategically timed to avoid periods when forecasts predict
+high levels of pollution. We identify clusters of monitors in at least 14 metropolitan areas whose patterns
+of operation show strong evidence of the use of such strategic timing and, thus, warrant further regulatory
+attention. (We make the list of these monitors available at a public website.) Our findings show that the
+monitors that display such operating patterns are predominantly located in federal nonattainment areas that
+face the likelihood of costly penalties for violations of US Clean Air Act standards.
+
+        Our work suggests that current regulatory practices that ignore gaps in compliance-monitoring data
+collection may incentivize strategic changes in local agencies' monitoring diligence. We propose two key
+ways to deter such behavior: detection and incentives. The statistical framework we have devised could
+detect monitors that show a pattern of skipping high-pollution days. We also suggest ways to disincentivize
+the use of strategic shutdowns. Regulators could consider revising the current practice of ignoring missing
+data when they determine compliance. For example, inverse distance weighting, a method used successfully
+
+
+25
+  Note that a one-day observation of 24-hour standard exceedance (over 35 ug/m3 on any given day) does not
+immediately trigger a county's nonattainment, a status that is determined by three-year moving averages of annual
+98th percentile values. Our calculation yields very similar conclusion when considering the forgone health value of
+6.6 days per year of annual standard exceedance.
+
+                                                        20
+by the research community, is one possible solution to provide imputed values. Imputation methods are
+imperfect, but their output may act as a trigger for regulatory investigation, and may thus serve as reasonable
+deterrence to strategic shutdowns.
+
+        We believe that concrete evidence can help level the playing field for environmental regulations,
+improve accuracy of air quality data, and motivate better design of monitoring and enforcement schemes
+in the future to better achieve the wider aims of improved public health from having less-polluted air. More
+broadly, we hope that the new possibilities made possible by large-scale inference tools can extend to other
+research contexts where the detection of a small group of units that evidence distinct patterns (among a sea
+of null) is important.
+
+
+
+
+References
+Anderson, Michael L. "Multiple inference and gender differences in the effects of early intervention: A
+reevaluation of the Abecedarian, Perry Preschool, and Early Training Projects ." Journal of the American
+Statistical Association 103, no. 484 (2008): 1481-1495.
+Andrews, Steven Q. "Inconsistencies in air quality metrics: `Blue Sky' days and PM10 concentrations in
+Beijing." Environmental Research Letters 3, no. 3 (2008): 034009.
+Athey, Susan, and Guido Imbens. "Recursive partitioning for heterogeneous causal effects." Proceedings
+of the National Academy of Sciences 113, no. 27 (2016): 7353-7360.
+Auffhammer, Maximilian, Antonio M. Bento, and Scott E. Lowe. "Measuring the effects of the Clean Air
+Act Amendments on ambient PM10 concentrations: The critical importance of a spatially disaggregated
+analysis." Journal of Environmental Economics and Management 58, no. 1 (2009): 15-26.
+Bantscheff, Marcus, Markus Schirle, Gavain Sweetman, Jens Rick, and Bernhard Kuster. "Quantitative
+mass spectrometry in proteomics: a critical review." Analytical and Bioanalytical Chemistry 389, no. 4
+(2007): 1017-1031.
+Sanders, Nicholas J., Alan I. Barreca, and Matthew J. Neidell. "Estimating Causal Effects of Particulate
+Matter Regulation on Mortality." Epidemiology 31, no. 2 (2020): 160-167.
+Barrios, Thomas, Rebecca Diamond, Guido W. Imbens, and Michal Kolesár. "Clustering, spatial
+correlations, and randomization inference." Journal of the American Statistical Association 107, no. 498
+(2012): 578-591.
+Benjamini, Yoav, and Yosef Hochberg. "Controlling the false discovery rate: a practical and powerful
+approach to multiple testing." Journal of the Royal Statistical Society: Series B (Methodological) 57, no. 1
+(1995): 289-300.
+Bento, Antonio, Matthew Freedman, and Corey Lang. "Who benefits from environmental regulation?
+Evidence from the Clean Air Act Amendments." Review of Economics and Statistics 97, no. 3 (2015): 610-
+622.
+Chernozhukov, Victor, Mert Demirer, Esther Duflo, and Ivan Fernandez-Val. Generic machine learning
+inference on heterogenous treatment effects in randomized experiments. No. w24678. National Bureau of
+Economic Research, 2018.
+
+
+                                                      21
+Currie, Janet, and Matthew Neidell. "Air pollution and infant health: what can we learn from California's
+recent experience?." The Quarterly Journal of Economics 120, no. 3 (2005): 1003-1030.
+Blundell, Wesley, Gautam Gowrisankaran, and Ashley Langer. "Escalation of scrutiny: The gains from
+dynamic enforcement of environmental regulations." American Economic Review 110, no. 8 (2020): 2558-
+85.
+Buchmueller, Thomas, Sarah Miller, and Marko Vujicic. "How do providers respond to changes in public
+health insurance coverage? Evidence from adult Medicaid dental benefits." American Economic Journal:
+Economic Policy 8, no. 4 (2016): 70-102.
+Chen, Yuyu, Ginger Zhe Jin, Naresh Kumar, and Guang Shi. "Gaming in air pollution data? Lessons from
+China." The BE Journal of Economic Analysis & Policy 13, no. 3 (2012).
+Christensen, Garret, and Edward Miguel. "Transparency, reproducibility, and the credibility of economics
+research." Journal of Economic Literature 56, no. 3 (2018): 920-80.
+Cutter, W. Bowman, and Matthew Neidell. "Voluntary information programs and environmental regulation:
+Evidence from `Spare the Air'." Journal of Environmental Economics and Management 58, no. 3 (2009):
+253-265.
+Davis, Jonathan M.V. and Sara B. Heller. "Rethinking the Benefits of Youth Employment Programs: The
+Heterogeneous Effects of Summer Jobs." The Review of Economics and Statistics, 102, no. 4 (2020): 664­
+667.
+Dietz, Thomas, Kenneth A. Frank, Cameron T. Whitley, Jennifer Kelly, and Rachel Kelly. "Political
+influences on greenhouse gas emissions from US states." Proceedings of the National Academy of Sciences
+112, no. 27 (2015): 8254-8259.
+Dudoit, Sandrine, Juliet Popper Shaffer, and Jennifer C. Boldrick. "Multiple hypothesis testing in
+microarray experiments." Statistical Science (2003): 71-103.
+Duflo, Esther, Michael Greenstone, Rohini Pande, and Nicholas Ryan. "Truth-telling by third-party auditors
+and the response of polluting firms: Experimental evidence from India." The Quarterly Journal of
+Economics 128, no. 4 (2013): 1499-1545.
+Efron, Bradley. Large-scale inference: empirical Bayes methods for estimation, testing, and prediction .
+Vol. 1. Cambridge University Press, 2012.
+Finkelstein, Amy, Sarah Taubman, Bill Wright, Mira Bernstein, Jonathan Gruber, Joseph P. Newhouse,
+Heidi Allen, Katherine Baicker, and Oregon Health Study Group. "The Oregon health insurance experiment:
+evidence from the first year." The Quarterly Journal of Economics 127, no. 3 (2012): 1057-1106.
+Fowlie, Meredith, Edward Rubin, and Reed Walker. "Bringing satellite-based air quality estimates down
+to earth." In AEA Papers and Proceedings, vol. 109, pp. 283-88. 2019.
+Ghanem, Dalia, and Junjie Zhang. "`Effortless Perfection:' Do Chinese cities manipulate air pollution
+data?" Journal of Environmental Economics and Management 68, no. 2 (2014): 203-225.
+Giles, Cynthia. "Next Generation Compliance: Environmental Regulation for the Modern Era." Harvard
+Law School Environmental and Energy Law Program, Cambridge, Massachusetts (2020).
+Glaeser, Edward L., and Raven E. Saks. "Corruption in America." Journal of Public Economics 90, no. 6-
+7 (2006): 1053-1072.
+Graff Zivin, Joshua, and Matthew Neidell. "Days of haze: Environmental information disclosure and
+intertemporal avoidance behavior." Journal of Environmental Economics and Management 58, no. 2 (2009):
+119-128.
+
+
+                                                   22
+Grainger, Corbett, Andrew Schreiber, and Wonjun Chang. " Do Regulators Strategically Avoid Pollution
+Hotspots when Siting Monitors? Evidence from Remote Sensing of Air Pollution." Working paper (2017).
+Gray, Wayne B., and Jay P. Shimshack. "The effectiveness of environmental monitoring and enforcement:
+A review of the empirical evidence." Review of Environmental Economics and Policy 5, no. 1 (2011): 3-
+24.
+Greenstone, Michael, Guojun He, Ruixue Jia, and Tong Liu. Can Technology Solve the Principal-Agent
+Problem? Evidence from China's War on Air Pollution. No. w27502. National Bureau of Economic
+Research, 2020.
+Greenstone, Michael, John A. List, and Chad Syverson. The effects of environmental regulation on the
+competitiveness of US manufacturing. No. w18392. National Bureau of Economic Research, 2012.
+Grooms, Katherine K. "Enforcing the Clean Water Act: The effect of state-level corruption on compliance."
+Journal of Environmental Economics and Management 73 (2015): 50-78.
+Hagemann, Andreas. "Placebo inference on treatment effects when the number of clusters is small." Journal
+of Econometrics 213, no. 1 (2019): 190-209.
+Heckman, James, Seong Hyeok Moon, Rodrigo Pinto, Peter Savelyev, and Adam Yavitz. "Analyzing social
+experiments as implemented: A reexamination of the evidence from the HighScope Perry Preschool
+Program." Quantitative Economics 1, no. 1 (2010): 1-46.
+Huang, Da Wei, Brad T. Sherman, and Richard A. Lempicki. "Bioinformatics enrichment tools: paths
+toward the comprehensive functional analysis of large gene lists." Nucleic Acids Research 37, no. 1 (2009):
+1-13.
+Jones, Damon, David Molitor, and Julian Reif. "What do workplace wellness programs do? Evidence from
+the Illinois workplace wellness study." The Quarterly Journal of Economics 134, no. 4 (2019): 1747-1791.
+Krewski, Daniel, Michael Jerrett, Richard T. Burnett, Renjun Ma, Edward Hughes, Yuanli Shi, Michelle C.
+Turner et al. Extended follow-up and spatial analysis of the American Cancer Society study linking
+particulate air pollution and mortality. No. 140. Boston, MA: Health Effects Institute, 2009.
+Leeson, Peter T., and Russell S. Sobel. "Weathering corruption." Journal of Law and Economics 51, no. 4
+(2008): 667-681.
+List, John A., Azeem M. Shaikh, and Yang Xu. "Multiple hypothesis testing in experimental economics."
+Experimental Economics 22, no. 4 (2019): 773-793.
+Malani, Anup, and Julian Reif. "Interpreting pre-trends as anticipation: Impact on estimated treatment
+effects from tort reform." Journal of Public Economics 124 (2015): 1-17.
+Malo, Nathalie, James A. Hanley, Sonia Cerquozzi, Jerry Pelletier, and Robert Nadon. "Statistical practice
+in high-throughput screening data analysis." Nature Biotechnology 24, no. 2 (2006): 167-175.
+Millimet, Daniel L. "Environmental federalism: a survey of the empirical literature." Case Western Reserve
+Law Review 64 (2013): 1669.
+Morehouse, John, and Edward Rubin. "Do polluters strategically locate near borders? The geography of
+US power plants and their emissions." Working paper. 2020.
+Neidell, Matthew. "Information, avoidance behavior, and health the effect of ozone on asthma
+hospitalizations." Journal of Human Resources 44, no. 2 (2009): 450-478.
+Oates, Wallace E. A reconsideration of environmental federalism. Resources for the Future Discussion
+Paper 01-54. 2001.
+
+
+
+                                                    23
+Rosenbaum, Paul R. "Overt bias in observational studies." In Observational Studies, pp. 71-104. Springer,
+New York, NY, 2002.
+Schakenbach, John, Robert Vollaro, and Reynaldo Forte. "Fundamentals of successful monitoring,
+reporting, and verification under a cap-and-trade program." Journal of the Air & Waste Management
+Association 56, no. 11 (2006): 1576-1583.
+Schwartz, Joel. "Air pollution and blood markers of cardiovascular risk." Environmental Health
+Perspectives 109, no. suppl 3 (2001): 405-409.
+Shapiro, Joseph S., and Reed Walker. "Is Air Pollution Regulation Too Stringent?" (2020). Working Paper.
+Shepard, Donald. "A two-dimensional interpolation function for irregularly-spaced data." In Proceedings
+of the 1968 23rd ACM national conference, pp. 517-524. 1968.
+Shimshack, Jay P. "The economics of environmental monitoring and enforcement: A review." Annual
+Review of Resource Economics 6 (2014): 339-60.
+Storey, John D. "The positive false discovery rate: a Bayesian interpretation and the q-value." The Annals
+of Statistics 31, no. 6 (2003): 2013-2035.
+Sullivan, Daniel M., and Alan Krupnick. "Using Satellite Data to Fill the Gaps in the US Air Pollution
+Monitoring Network." Resources for the Future Working Paper (2018): 18-21.
+U.S. EPA. Quality Assurance Handbook for Air Pollution Measurement Systems­Volume II­Ambient Air
+Quality Monitoring Program. Vol. 2. EPA-454/B-13-003 (2013).
+Walker, W. Reed. "The transitional costs of sectoral reallocation: Evidence from the clean air act and the
+workforce." The Quarterly Journal of Economics 128, no. 4 (2013): 1787-1835.
+Yang, Lin. "Pollution Monitoring, Strategic Behavior, and Dynamic Representativeness." Working paper
+(2020).
+Young, Alwyn. "Channeling fisher: Randomization tests and the statistical insignificance of seemingly
+significant experimental results." The Quarterly Journal of Economics 134, no. 2 (2019): 557-598.
+Zou, Eric. "Unwatched pollution: The effect of intermittent monitoring on air quality." Working paper
+(2020).
+
+
+
+
+                                                   24
+        Figure 1. Monitor's Sampling Behavior near Pollution Alerts: Jersey City Firehouse PM2.5 Monitor
+                                               Panel A. Event study of monitor's capture rate
+
+
+
+
+                                      1.1
+                                      1
+                               Capture rate
+                               .8     .7
+                                      .6 .9
+
+
+
+
+                                              -30     -20                  -10       0         10           20   30
+                                                                          Days since pollution alert
+
+
+                               Panel B. Randomized inference with 5,000 placebo scenarios
+                                      .15
+
+
+
+
+                                                                                 95% range
+                                      .1
+
+
+
+
+                                                            JCF monitor
+                               Fraction
+                                      .05
+                                      0
+
+
+
+
+                                              -.2                  -.1                0                .1        .2
+                                                                             Test statistic value
+
+Notes: Panel A plots JCF monitor's average capture rate (i.e., one minus a dummy for missing data) as a function of days since pollution
+alerts issued by the Jersey City. Number of alerts = 35. Dashed line represents three-day moving average of point estimates. Panel
+B plots the distribution of the test statistics derived from 5,000 randomly assigned pollution alerts. Test statistic equals the difference
+between mean capture rates across event days [-3,3] and mean capture rates across event days [-30,-10][10,30]. Solid vertical line is the
+observed (i.e., true) test statistic. Dashed vertical lines show 95% range of the randomized test statistics.
+
+
+
+
+                                                                                  25
+                                          Figure 2. Distribution of p -values, All Monitors
+                                                          Panel A. Overall
+
+
+
+
+                                  .2
+                                  .15
+                               Fraction
+                                  .1
+                                  .05
+
+
+
+
+                                                                                                   U(0,1)
+                                  0
+
+
+
+
+                                          0         .2          .4             .6        .8            1
+                                                                     p-value
+
+
+                                                Panel B. By direction of the effect
+                                  .2
+
+
+
+
+                                                                          "Correct"-signed estimates
+                                                                          "Wrong"-signed estimates
+                                  .15
+                               Fraction
+                                  .1
+                                  .05
+
+
+
+
+                                                                                                   U(0,1)
+                                  0
+
+
+
+
+                                          0         .2          .4             .6        .8            1
+                                                                     p-value
+
+Notes: Panel A shows the distribution of p -values for all monitors. Test statistic equals the difference between mean capture rates across
+event days [-3,3] and mean capture rates across event days [-30,-10][10,30]. Panel B shows the breakdown by the sign of the estimated
+effect. Hollow bars show p -values for negative estimates (i.e., monitoring capture decreases around pollution alerts), and shaded bars
+show p -values for positive estimates (i.e., monitoring capture increases around pollution alerts). Horizontal dashed lines show the uniform
+distribution.
+
+
+
+
+                                                                     26
+                                Figure 3. Capture Rate for "Interesting" Monitors () and Other Monitors ( )
+
+
+
+                          .02
+                                           PM2.5                                                                                            PM10
+
+
+
+
+                                                                                                                           .02
+                          0
+                Change in capture rate
+
+
+
+
+                                                                                                                 Change in capture rate
+                                                                                                                                     0
+                        -.02
+
+
+
+
+                                                                                                                      -.02
+                          -.04
+
+
+
+
+                                                                                                                           -.04
+                          -.06
+
+
+
+
+                                                                                                                           -.06
+                                         -30       -20        -10          0            10        20   30                                 -30      -20        -10          0            10        20   30
+                                                                Days since pollution alert                                                                      Days since pollution alert
+                          .1
+
+
+
+
+                                                                                                                           .1
+                Frac.
+
+
+
+
+                                                                                                                 Frac.
+                          0
+
+
+
+
+                                                                                                                           0
+                                          0              .2         .4             .6        .8        1                                   0             .2         .4             .6        .8        1
+                                                                         p-value                                                                                         p-value
+                          .02
+
+
+
+
+                                                                                                                           .02
+                                           O3                                                                                               NO2
+                          0
+
+
+
+
+                                                                                                                           0
+                Change in capture rate
+
+
+
+
+                                                                                                                 Change in capture rate
+                        -.02
+
+
+
+
+                                                                                                                         -.02
+                          -.04
+
+
+
+
+                                                                                                                           -.04
+                          -.06
+
+
+
+
+                                                                                                                           -.06
+
+
+
+
+                                         -30       -20        -10          0            10        20   30                                 -30      -20        -10          0            10        20   30
+                                                                Days since pollution alert                                                                      Days since pollution alert
+                          .1
+
+
+
+
+                                                                                                                           .1
+                Frac.
+
+
+
+
+                                                                                                                 Frac.
+                          0
+
+
+
+
+                                                                                                                           0
+
+
+
+
+                                          0              .2         .4             .6        .8        1                                   0             .2         .4             .6        .8        1
+                                                                         p-value                                                                                         p-value
+                          .02
+
+
+
+
+                                                                                                                           .02
+
+
+
+
+                                           SO2                                                                                              CO
+                          0
+
+
+
+
+                                                                                                                           0
+                Change in capture rate
+
+
+
+
+                                                                                                                 Change in capture rate
+                        -.02
+
+
+
+
+                                                                                                                         -.02
+                          -.04
+
+
+
+
+                                                                                                                           -.04
+                          -.06
+
+
+
+
+                                                                                                                           -.06
+
+
+
+
+                                         -30       -20        -10          0            10        20   30                                 -30      -20        -10          0            10        20   30
+                                                                Days since pollution alert                                                                      Days since pollution alert
+                     .1
+
+
+
+
+                                                                                                                     .1
+                Frac.
+
+
+
+
+                                                                                                                 Frac.
+                          0
+
+
+
+
+                                                                                                                           0
+
+
+
+
+                                          0              .2         .4             .6        .8        1                                   0             .2         .4             .6        .8        1
+                                                                         p-value                                                                                         p-value
+
+
+Notes: This graph shows mean monitoring capture rate for "interesting" monitors (those with p-value<0.05) and other monitors. Data
+are demeaned by the average capture rate across the first ten event days. Fitted lines show three-day moving averages of point estimates.
+Each panel corresponds to one pollutant. Histograms show the distributions of p-values for the corresponding pollutant monitors.
+
+
+
+
+                                                                                                            27
+                                                                  Figure 4. Examples of "Very Interesting" Monitors
+                                                     Monitor ID: 4013-9812-3 (PM2.5)                                                           Monitor ID: 42003-1301-5 (PM10)
+                              .02                     #alerts=44, p-value<0.01, q-value<0.01                                                   #alerts=21, p-value<0.01, q-value=0.039
+
+
+
+
+                                                                                                                        .08
+                                           0
+
+
+
+
+                                                                                                                                     0
+                    Change in capture rate
+
+
+
+
+                                                                                                              Change in capture rate
+                                -.02
+
+
+
+
+                                                                                                                          -.08
+                        -.04
+
+
+
+
+                                                                                                                  -.16
+                 -.06
+
+
+
+
+                                                                                                           -.24
+                              -.08
+
+
+
+
+                                                                                                                        -.32
+                                               -30    -20       -10       0         10      20   30                                      -30    -20     -10       0         10      20   30
+                                                               Days since pollution alert                                                              Days since pollution alert
+
+
+
+
+                                                            Monitor ID: 6019-7-1 (O3)                                                          Monitor ID: 6031-1004-1 (NO2)
+                                                     #alerts=140, p-value<0.01, q-value=0.069                                                  #alerts=87, p-value<0.01, q-value<0.01
+                              .03
+
+
+
+
+                                                                                                                        .03
+                 Change in capture rate
+
+
+
+
+                                                                                                            Change in capture rate
+                                                                                                                                0
+                                 0
+
+
+
+
+                                                                                                                    -.03
+                   -.03
+
+
+
+
+                                                                                                           -.06
+                              -.06
+
+
+
+
+                                                                                                                        -.09
+
+
+
+
+                                               -30    -20       -10       0         10      20   30                                      -30    -20     -10       0         10      20   30
+                                                               Days since pollution alert                                                              Days since pollution alert
+
+
+
+
+                                                       Monitor ID: 9009-27-1 (SO2)                                                               Monitor ID: 48141-57-1 (CO)
+                                                      #alerts=35, p-value<0.01, q-value<0.01                                                   #alerts=41, p-value<0.01, q-value<0.01
+                              .03
+
+
+
+
+                                                                                                                        .03          0
+                  Change in capture rate
+
+
+
+
+                                                                                                              Change in capture rate
+                                      0
+
+
+
+
+                                                                                                                          -.03
+                          -.03
+
+
+
+
+                                                                                                                  -.06
+                 -.06
+
+
+
+
+                                                                                                           -.09
+                              -.09
+
+
+
+
+                                                                                                                        -.12
+
+
+
+
+                                               -30    -20       -10       0         10      20   30                                      -30    -20     -10       0         10      20   30
+                                                               Days since pollution alert                                                              Days since pollution alert
+
+
+Notes: This graph shows monitor's capture rate for some example "very interesting" monitors (those with p-value<0.05 and compelling
+visual pattern). Data are demeaned by the average capture rate across the first ten event days. Fitted lines show three-day moving
+averages of point estimates. Each panel corresponds to one pollutant. "#alerts" is total number of city's pollution alerts used in the
+event study. "q -value" is the False Discovery Rate adjusted significance level (Anderson, 2008).
+
+
+
+
+                                                                                                      28
+                  Figure 5. Locations of All Tested Monitors ( ), "Interesting" Monitors (), and "Very Interesting" Monitors (                  )
+29
+
+
+
+
+     Notes: Blue shades indicate 14 CBSAs that together house 60% of all "interesting" monitors. Left panel: Bakersfield, CA; Fresno, CA; Hanford-Corcoran, CA; Los
+     Angeles-Long Beach-Anaheim, CA. Right panel: Phoenix-Mesa-Scottsdale, AZ; El Paso, TX.
+              Figure 5 (Cont.). Locations of All Tested Monitors ( ), "Interesting" Monitors (), and "Very Interesting" Monitors (                  )
+30
+
+
+
+
+     Notes: Blue shades indicate 14 CBSAs that together house 60% of all "interesting" monitors. Beaumont-Port Arthur, TX; Houston-The Woodlands-Sugar Land, TX.
+              Figure 5 (Cont.). Locations of All Tested Monitors ( ), "Interesting" Monitors (), and "Very Interesting" Monitors (                        )
+31
+
+
+
+
+     Notes: Blue shades indicate 14 CBSAs that together house 60% of all "interesting" monitors. Left panel: Salt Lake City, UT; Denver-Aurora-Lakewood, CO. Right panel:
+     Louisville/Jefferson County, KY-IN; Memphis, TN-MS-AR.
+              Figure 5 (Cont.). Locations of All Tested Monitors ( ), "Interesting" Monitors (), and "Very Interesting" Monitors (   )
+32
+
+
+
+
+     Notes: Left panel: Pittsburgh, PA. Right panel: New York-Newark-Jersey City, NY-NJ-PA.
+                                             Figure 6. Quarterly Capture Rate vs. Annual PM2.5 Design Value
+
+                               A. "Interesting" monitors                                                                 B. Other monitors
+
+
+
+
+                                                                                                 .1
+           .1
+
+
+
+
+                                                                                                 0
+           0
+
+
+
+
+                                                                                       Change in capture rate
+ Change in capture rate
+
+
+
+
+                                                                                                        -.1
+                  -.1
+
+
+
+
+                                                                                                -.2
+          -.2
+
+
+
+
+                                                                                        -.3
+  -.3
+
+
+
+
+                                                                                                 -.4
+           -.4
+
+
+
+
+                                                                                                 -.5
+           -.5
+
+
+
+
+                          <8   8   9      10   11     12    13   14   15   > 16                                 <8   8   9      10   11     12    13   14   15   > 16
+                                       Annual PM2.5 value (ug/m3)                                                            Annual PM2.5 value (ug/m3)
+
+
+
+
+Notes: This figure reports regression of a monitor's quarterly capture rate (valid sampling days divided by required sampling days in a
+quarter) on 1-ug/m3 bins of annual mean PM2.5 concentration (i.e., design values for the PM2.5 annual standard). The "< 8 ug/m3"
+bin is the omitted category. The regression controls for monitor fixed effects and year fixed effects. The regression is run separately for
+"interesting" monitors (panel A, number of observations = 300) and other monitors (panel B, number of observations = 7,688).
+
+
+
+
+                                                                                  33
+                        Figure 7. Distributions of Observed and Imputed PM2.5 Concentration
+
+               A. "Interesting" monitors                                                    B. Other monitors
+
+
+
+
+                                                                            .12
+                                                                                        Long-term              Short-term
+    .12
+
+
+
+
+                  Long-term             Short-term
+                   standard              standard                                        standard               standard
+
+
+
+
+                                                                            .09
+    .09
+
+
+
+
+                                                                         Density
+ Density
+
+
+
+
+                                                                          .06
+  .06
+
+
+
+
+                                                                            .03
+    .03
+
+
+
+
+                                                                            0
+    0
+
+
+
+
+           0    10         20         30         40            50                  0   10         20         30         40            50
+                           PM2.5 (ug/m3)                                                          PM2.5 (ug/m3)
+
+                Observed value, when not missing monitoring                            Observed value, when not missing monitoring
+                Predicted value, when not missing monitoring                           Predicted value, when not missing monitoring
+                Predicted value, when missing monitoring                               Predicted value, when missing monitoring
+
+
+
+
+Notes: Underlying data are monitor-daily level average PM2.5 concentration. "Observed value" is concentration recorded on the monitor-
+day. "Predicted value" is inverse distance-weighted concentration from all other operative PM2.5 monitors within a 20-mile radius.
+"Long-term standard" marks the 15 ug/m3 annual NAAQS standard. "Short-term standard" marks the 35 ug/m3 24-hr NAAQS
+standard.
+
+
+
+
+                                                                    34
+                                        Table 1. Correlates of "Interesting" Monitors
+                                         (1)         (2)         (3)         (4)           (5)        (6)          (7)         (8)
+Dep. var.:                                          1(p-value  0.05)                                  1(q -value  0.05)
+
+Non-attainment                         0.066**                                           0.039*
+                                       (0.030)                                           (0.021)
+Non-attainment × 1("wrong" sign)                    -0.014      0.011       -0.001                   -0.002      0.012        0.022
+                                                   (0.033)     (0.034)     (0.041)                  (0.024)     (0.024)      (0.030)
+Non-attainment × 1("correct" sign)                0.203***    0.220***    0.223***                 0.111***     0.124***    0.129***
+                                                   (0.055)     (0.055)     (0.061)                  (0.039)      (0.039)     (0.044)
+Above median Democrats                                          -0.022                                           -0.014
+                                                               (0.027)                                          (0.019)
+Above median LCV score                                          -0.023                                           -0.021
+                                                               (0.027)                                          (0.019)
+Above median government size                                    0.007                                            -0.001
+                                                               (0.017)                                          (0.012)
+Above median corruption                                        0.035*                                            0.008
+                                                               (0.018)                                          (0.013)
+
+State fixed effects                                                                                                            
+Mean dep. var.                          0.117       0.117       0.117       0.117         0.052      0.052       0.052       0.052
+Observations                            1,359       1,359       1,359       1,359         1,359      1,359       1,359       1,359
+
+Notes: Each column is a separate regression. Underlying data is a cross-section of monitors matched to parenting county's characteristics.
+Dependent variable is an indicator for whether the monitor's p-value is less than 0.05 (columns 1-4), or an indicator for whether the
+monitor's FDR-adjusted significance q -value is less than 0.05 (columns 5-8) where the family of tests is all 1,359 monitors. "Non-
+attainment" is an indicator for whether the county has ever been in NAAQS non-attainment throughout the study period. "1("correct"
+sign)" indicates a negative effect sign, i.e., capture rate drops near pollution alerts. "Above median"'s indicate the county has an
+above-median level of share of Democrats affiliation (2006 Gallup Poll), League of Conservation Voters score, share of government-sector
+employees (Bureau of Economic Analysis, NAICS=92), and per-capita number of federal convictions among state and local public officials
+(Glaeser and Saks, 2006). *: p < 0.10; **: p < 0.05; ***: p < 0.01.
+
+
+
+
+                                                                 35
+a
+
+
+
+
+    Additional Figures and Tables
+
+
+
+
+                 36
+                         Figure A.1. Monitoring Data Completeness Goals (U.S. EPA, 2013)
+
+
+
+
+Notes: Sourced from U.S. EPA. Quality Assurance Handbook for Air Pollution Measurement Systems Volume II Ambient Air Quality
+Monitoring Program. Vol. 2. EPA-454/B-13-003 (2013). From Section 6.0, page 66: "The data cells highlighted in Table 6-4 refer
+to the standards that apply to the specific pollutant. Even though a highlighted cell lists the completeness requirement, CFR provides
+additional detail, in some cases, on how a design value might be calculated with less data than the stated requirement. Therefore, the
+information provided in Table 6-4 should be considered the initial completeness goal."
+
+
+
+
+                                                               37
+                               Figure A.2. Distribution of Forecasted AQI on Action Days
+                                  25
+                                  20   15
+                              Density(%)
+                             10   5
+                                  0
+
+
+
+
+                                            0      50           100         150     200
+                                                           Forecasted AQI
+
+Notes: Distribution of forecasted AQI on days with Action Day advisory.
+
+
+
+
+                                                               38
+                            Figure A.3. Study Website: Estimation Results for All Monitors
+
+
+
+
+Notes: We store full estimation results at this website. Shaded areas highlight study regions. Click on each monitor to view estimation
+details.
+
+
+
+
+                                                                39
+Figure A.4. Distributions of Daily Observed and Nearby-Monitor-Predicted Concentration, Non-PM2.5 Monitors
+                      A. PM10 monitors, "interesting" (left) and "non-interesting" (right)
+
+
+
+
+                                   .04
+
+
+
+
+                                                                                                                 .04
+                                   .03
+
+
+
+
+                                                                                                                 .03
+                               Density
+
+
+
+
+                                                                                                             Density
+                                .02
+
+
+
+
+                                                                                                              .02
+                                   .01
+
+
+
+
+                                                                                                                 .01
+                                   0
+
+
+
+
+                                                                                                                 0
+                                           0   20             40        60                   80   100                    0   20             40        60                   80   100
+                                                              PM10 (ug/m3)                                                                  PM10 (ug/m3)
+
+                                               Observed value, when not missing monitoring                                   Observed value, when not missing monitoring
+                                               Predicted value, when not missing monitoring                                  Predicted value, when not missing monitoring
+                                               Predicted value, when missing monitoring                                      Predicted value, when missing monitoring
+
+
+
+
+                           B. O3 monitors, "interesting" (left) and "non-interesting" (right)
+                                   .04
+
+
+
+
+                                                                                                                 .04
+                                   .03
+
+
+
+
+                                                                                                                 .03
+                               Density
+
+
+
+
+                                                                                                             Density
+                                .02
+
+
+
+
+                                                                                                              .02
+                                   .01
+
+
+
+
+                                                                                                                 .01
+                                   0
+
+
+
+
+                                                                                                                 0
+                                           0   20             40              60             80   100                    0   20             40              60             80   100
+                                                                   O3 (ppb)                                                                      O3 (ppb)
+
+                                               Observed value, when not missing monitoring                                   Observed value, when not missing monitoring
+                                               Predicted value, when not missing monitoring                                  Predicted value, when not missing monitoring
+                                               Predicted value, when missing monitoring                                      Predicted value, when missing monitoring
+
+
+
+
+                          C. NO2 monitors, "interesting" (left) and "non-interesting" (right)                    .06
+                                   .06
+
+
+
+
+                                                                                                                 .05
+                                   .05
+
+
+
+
+                                                                                                              .03 .04
+                                .03 .04
+                               Density
+
+
+
+
+                                                                                                             Density
+                                                                                                                 .02
+                                   .02
+
+
+
+
+                                                                                                                 .01
+                                   .01
+                                   0
+
+
+
+
+                                                                                                                 0
+
+
+
+
+                                           0        20           40                     60        80                     0        20           40                     60        80
+                                                               NO2 (ppb)                                                                     NO2 (ppb)
+
+                                               Observed value, when not missing monitoring                                   Observed value, when not missing monitoring
+                                               Predicted value, when not missing monitoring                                  Predicted value, when not missing monitoring
+                                               Predicted value, when missing monitoring                                      Predicted value, when missing monitoring
+
+
+
+
+                          D. SO2 monitors, "interesting" (left) and "non-interesting" (right)
+                                   .5
+
+
+
+
+                                                                                                                 .5
+                                   .4
+
+
+
+
+                                                                                                                 .4
+                                      .3
+
+
+
+
+                                                                                                                    .3
+                                Density
+
+
+
+
+                                                                                                              Density
+                               .2
+
+
+
+
+                                                                                                             .2
+                                   .1
+
+
+
+
+                                                                                                                 .1
+                                   0
+
+
+
+
+                                                                                                                 0
+
+
+
+
+                                           0             5                         10             15                     0             5                         10             15
+                                                               SO2 (ppm)                                                                     SO2 (ppm)
+
+                                               Observed value, when not missing monitoring                                   Observed value, when not missing monitoring
+                                               Predicted value, when not missing monitoring                                  Predicted value, when not missing monitoring
+                                               Predicted value, when missing monitoring                                      Predicted value, when missing monitoring
+
+
+
+
+                           E. CO monitors, "interesting" (left) and "non-interesting" (right)
+                                                                                                                 4
+                                   4
+
+
+
+
+                                                                                                                 3
+                                   3
+                               Density
+
+
+
+
+                                                                                                             Density
+                                                                                                               2
+                                 2
+
+
+
+
+                                                                                                                 1
+                                   1
+                                   0
+
+
+
+
+                                                                                                                 0
+
+
+
+
+                                           0             .5                        1              1.5                    0             .5                        1              1.5
+                                                               CO (ppm)                                                                      CO (ppm)
+
+                                               Observed value, when not missing monitoring                                   Observed value, when not missing monitoring
+                                               Predicted value, when not missing monitoring                                  Predicted value, when not missing monitoring
+                                               Predicted value, when missing monitoring                                      Predicted value, when missing monitoring
+
+
+
+
+Notes: Repetition of Figure 7 with other pollutant monitors.
+
+
+                                                                                                        40
+                   Table A.1. List of CBSAs, Ranked by Cases of "Interesting" Monitors ()
+                        CBSA                                                 #alerts        
+                        Phoenix-Mesa-Scottsdale, AZ                            51      86   23   4
+                        Houston-The Woodlands-Sugar Land, TX                  199      49   12   0
+                        Denver-Aurora-Lakewood, CO                             30      21    6   1
+                        Fresno, CA                                            83       32    6   4
+                        Salt Lake City, UT                                    66       21    5   1
+                        Hanford-Corcoran, CA                                   66       9    5   1
+                        New York-Newark-Jersey City, NY-NJ-PA                 30       33    5   1
+                        Memphis, TN-MS-AR                                     18       13    4   0
+                        El Paso, TX                                           44       30    4   1
+                        Los Angeles-Long Beach-Anaheim, CA                     22      72   4    0
+                        Beaumont-Port Arthur, TX                               45      19   4    1
+                        Pittsburgh, PA                                         64      29   4    1
+                        Louisville/Jefferson County, KY-IN                    27       18    4   0
+                        Bakersfield, CA                                        71      29    4   1
+                        San Luis Obispo-Paso Robles-Arroyo Grande, CA          17      16    3   1
+                        San Jose-Sunnyvale-Santa Clara, CA                    18       11    3   1
+                        San Francisco-Oakland-Hayward, CA                      32      57    3   0
+                        Cleveland-Elyria, OH                                   50      15   3    0
+                        Boston-Cambridge-Newton, MA-NH                         19      27    3   1
+                        Bridgeport-Stamford-Norwalk, CT                        40      10    3   1
+                        Knoxville, TN                                          50       7    2   0
+                        Dallas-Fort Worth-Arlington, TX                       78       11    2   0
+                        Modesto, CA                                           82       10    2   0
+                        Grand Rapids-Wyoming, MI                              10        5    2   0
+                        Madera, CA                                             45       9   2    1
+                        Visalia-Porterville, CA                               91        7    2   0
+                        Detroit-Warren-Dearborn, MI                            15      31    2   0
+                        Philadelphia-Camden-Wilmington, PA-NJ-DE-MD           24       51    2   0
+                        Riverside-San Bernardino-Ontario, CA                   21      77   2    0
+                        New Haven-Milford, CT                                  35       9   2    2
+                        Austin-Round Rock, TX                                 28        6    2   0
+                        Raleigh, NC                                            22       7    2   0
+                        Manchester-Nashua, NH                                  11       9   2    0
+                        Vernal, UT                                            14        9    2   0
+                        Sacramento­Roseville­Arden-Arcade, CA                  22      50    2   1
+                        Columbus, OH                                          28        8    2   1
+                        Atlanta-Sandy Springs-Roswell, GA                     60        8    2   0
+                        Kingsport-Bristol-Bristol, TN-VA                      35        4    1   0
+                        Chicago-Naperville-Elgin, IL-IN-WI                     25      29    1   0
+                        Lawton, OK                                             3        1    1   0
+                        Buffalo-Cheektowaga-Niagara Falls, NY                  25      10   1    0
+                        Dayton, OH                                            37        3    1   0
+                        Birmingham-Hoover, AL                                  63      14    1   0
+                        San Antonio-New Braunfels, TX                          13      13    1   0
+                        Washington-Arlington-Alexandria, DC-VA-MD-WV            3      19   1    0
+                        Springfield, MA                                        36       7    1   1
+                        Jamestown-Dunkirk-Fredonia, NY                         33       2    1   1
+                        Providence-Warwick, RI-MA                               9      13   1    0
+                        Dover, DE                                              14       1   1    0
+                        Yuba City, CA                                          4        3    1   0
+                        Gulfport-Biloxi-Pascagoula, MS                         4        5    1   0
+                        Vallejo-Fairfield, CA                                 51       11    1   1
+                        Provo-Orem, UT                                        101       9   1    1
+                        Youngstown-Warren-Boardman, OH-PA                       6       4    1   0
+
+Notes:   = number of tested monitors;  = number of "interesting" monitors;      = number of "very interesting" monitors.
+
+
+
+                                                           41
+

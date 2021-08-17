@@ -1,0 +1,1803 @@
+                             NBER WORKING PAPER SERIES
+
+
+
+
+   MINIMAX RISK AND UNIFORM CONVERGENCE RATES FOR NONPARAMETRIC
+                         DYADIC REGRESSION
+
+                                       Bryan S. Graham
+                                         Fengshi Niu
+                                       James L. Powell
+
+                                     Working Paper 28548
+                             http://www.nber.org/papers/w28548
+
+
+                    NATIONAL BUREAU OF ECONOMIC RESEARCH
+                             1050 Massachusetts Avenue
+                               Cambridge, MA 02138
+                                   March 2021
+
+
+
+
+We thank seminar audiences at University of California - Berkeley for helpful feedback. We also
+thank Matias Cattaneo, Michael Jansson and Harold Chiang for useful comments and discussion.
+All the usual disclaimers apply. Financial support from the National Science Foundation (SES
+#1357499, SES #1851647) is gratefully acknowledged. The views expressed herein are those of
+the authors and do not necessarily reflect the views of the National Bureau of Economic
+Research.
+
+NBER working papers are circulated for discussion and comment purposes. They have not been
+peer-reviewed or been subject to the review by the NBER Board of Directors that accompanies
+official NBER publications.
+
+© 2021 by Bryan S. Graham, Fengshi Niu, and James L. Powell. All rights reserved. Short
+sections of text, not to exceed two paragraphs, may be quoted without explicit permission
+provided that full credit, including © notice, is given to the source.
+Minimax Risk and Uniform Convergence Rates for Nonparametric Dyadic Regression
+Bryan S. Graham, Fengshi Niu, and James L. Powell
+NBER Working Paper No. 28548
+March 2021
+JEL No. C14
+
+                                           ABSTRACT
+Let i = 1, . . . , N index a simple random sample of units drawn from some large population.
+For each unit we observe the vector of regressors Xi and, for each of the N (N - 1) ordered
+pairs of units, an outcome Yij. The outcomes Yij and Ykl are independent if their indices are
+                                                                                        
+disjoint, but dependent otherwise (i.e., "dyadically dependent"). Let  =    ; using
+the sampled data we seek to construct a nonparametric estimate of the mean regression
+                
+function g (Wij)  E [ Yij | Xi, Xj] .
+
+We present two sets of results. First, we calculate lower bounds on the minimax risk
+for estimating the regression function at (i) a point and (ii) under the infinity norm. Second,
+we calculate (i) pointwise and (ii) uniform convergence rates for the dyadic analog of
+the familiar Nadaraya-Watson (NW) kernel regression estimator. We show that the NW
+kernel regression estimator achieves the optimal rates suggested by our risk bounds
+when an appropriate bandwidth sequence is chosen. This optimal rate differs from the
+one available under iid data: the effective sample size is smaller and dW = dim(Wij)
+influences the rate differently.
+
+Bryan S. Graham                                   James L. Powell
+University of California - Berkeley               University of California - Berkeley
+530 Evans Hall #3880                              Department of Economics
+Berkeley, CA 94720-3880                           508-1 Evans Hall #3880
+and NBER                                          Berkeley, CA 94720-3880
+bgraham@econ.berkeley.edu                         powell@econ.berkeley.edu
+
+Fengshi Niu
+University of California - Berkeley
+530 Evans Hall #3880
+Berkeley, CA 94720-3880
+fniu@berkeley.edu
+1       Introduction
+Let i = 1, . . . , N index a simple random sample of units drawn from some large population.
+For each unit we observe the vector of regressors Xi and, for each of the N (N - 1) ordered
+pairs of units, or directed dyads, we observe the "dyadic" outcome Yij (e.g., total exports
+from country i to country j ). The outcomes Yij and Ykl are independent if their indices are
+disjoint, but dependent otherwise (e.g., exports from Japan to Korea may covary with those
+from Japan to Vietnam).
+    Let Wij = Xi , Xj ; using the sampled data we seek to construct a nonparametric
+estimate of the mean regression function
+
+                                               def
+                                      g (Wij )  E [ Yij | Xi , Xj ] .                                  (1)
+
+    We present two sets of results. First, we calculate lower bounds on the minimax risk for
+estimating the regression function at (i) a point and (ii) under the infinity norm. Second, we
+calculate (i) pointwise and (ii) uniform convergence rates for the dyadic analog of the familiar
+Nadaraya-Watson (NW) kernel regression estimator. We show that the NW kernel regression
+estimator achieves the optimal rates suggested by our risk bounds when an appropriate
+bandwidth sequence is chosen.
+    Analogous results are widely available in the i.i.d. setting. For nonparametric regression
+risk bounds see, for example, Stone (1980, 1982) and Ibragimov and Has' Minskii (1982,
+1984). Tsybakov (2008) provides a masterful synthesis of these results, from which we draw
+in formulating our own proofs.
+    Uniform convergence of kernel averages with i.i.d. data, as well as stationary strong mix-
+ing data, have been studied by, for example, Newey (1994) and Hansen (2008) respectively.
+The latter paper includes additional references to the extensive literature in this area. Our
+uniform convergence proofs build upon those of Hansen (2008). Nonparametric density esti-
+mation with dyadic data was first considered by Graham et al. (2019); Chiang et al. (2019)
+present uniform convergence results for dyadic density estimators.1
+    Our results provide insight in the structure of dyadic nonparametric estimation problems.
+                                                                           def
+Our minimax risk bounds suggest that, N , the number of units, not n  N × (N - 1), the
+number of dyadic outcomes, is the relevant "sample size" for dyadic estimation problems.
+This is consistent with the long standing intuition among empirical researchers that dyadic
+dependence makes inference less precise (see Aronow et al. (2017) and the references cited
+therein), as well as with a small, but growing, number of more formal rates-of-convergence
+    1
+     It is possible that the methods of inference presented in Chiang et al. (2019) could be adapted to our
+setting.
+
+
+                                                     1
+results (cf., Graham, 2020a).
+    More surprisingly, we find that the relevant dimension of our estimation problem is just
+dX = dim(Xi ), not dW = 2dX . We provide two intuitions for this fact. The first, described
+below, stems from the thought experiment underlying our minimax risk bound calculations.
+The second, arises from the fact that the H´ajek projection of the NW estimator has a "partial-
+mean-like" structure. As is well known, averaging over the marginal distribution of some re-
+gressors, while holding the remaining ones fixed, improves rates-of-convergence (e.g., Newey,
+1994; Linton and Nielsen, 1995).
+    Graham (2020a) surveys empirical studies in economics utilizing dyadic data. Interest
+in, as well as the availability of, such data are growing in economics, other academic fields,
+and in enterprise settings. This paper provides an initial set of results for nonparametric
+regression with dyadic data. These results are, of course, of direct interest. They should, as
+has been true with their i.i.d. predecessors, also be useful for proving consistency of two-step
+semiparametric M-estimators under dyadic dependence (see Chiang et al. (2019) for some
+results on double machine learning with dyadic data).
+
+
+2     Lower Bounds on the Minimax Risk
+Let i = 1, . . . , N index a simple random sample of units drawn from some large population.
+The econometrician observes the vector of regressors, Xi , for each sampled unit as well as
+the scalar outcome, Yij , for each directed pair of sampled units (i.e., each directed dyad). Let
+ZN = (X1 , . . . , XN , Yij , 1  i = j  N ) be the observable data when N units are sampled.
+The regression function of interest is (1) above. The goal is to construct a nonparametric
+estimate of g : RdW  R where dW = 2dx .
+    We assume that Yij is generated according to the following conditionally independent
+dyad (CID) model (cf., Graham, 2020a, Section 3.3).
+
+                                  Yij = h(Xi , Xj , Ui , Uj , Vij ).                         (2)
+
+Random sampling ensures that (Xi , Ui ) is independent and identically distributed for
+i = 1, . . . , N . We further assume that {(Vij , Vji )}1i<j N are i.i.d. and indepenent of
+X = (X1 , . . . , XN ) and U = (U1 , . . . , UN ). Here h is an unknown function, often called
+the graphon. This set-up, which can also be derived as an implication of more primitive
+exchangeability assumptions, has the following implications (see Graham (2020a,b) for addi-
+tional discussion):
+
+    1. The Yij are relatively exchangeable given the Wij . Namely, the conditional distribution
+
+                                                  2
+      of Y is invariant across permutations of the indices  : N  N satisfying the restriction
+                  d
+      [W(i)(j ) ] = [Wij ]:
+                                                d
+                                         [Yij ] = [Y(i)(j ) ].
+
+   2. Yij and Ykl are independent if their indices are disjoint.
+
+   3. Yij and Ykl are dependent (unconditionally or conditionally given X1 , . . . , XN ) if they
+      share at least one index in common.
+    The statistical problem is to estimate the regression function g when the only prior re-
+striction on it is that it belongs to the H¨
+                                           older class of functions.
+                  ¨ lder Class) Given a vector s = (s1 , . . . , sd ), define |s| = s1 + · · · + sd
+Definition 2.1. (Ho
+and
+                                         s1 +···+sd
+                               D s = s1                .
+                                     w 1 · · ·  sd w d
+Let  and L be two positive numbers. The H¨   older class (, L) on Rd is defined as the set
+of l =  times differentiable functions g : Rd  R whose partial derivative Ds g satisfies
+
+                                                         -l
+                     |Ds g (w) - Ds g (w )|  L||w - w || ,              w, w  Rd
+
+for all s such that |s| =  .           denotes the greatest integer strictly less than the real
+number  .
+    An estimator g ^N is a function w  g  ^N (w) = g^N (w, ZN ) measurable with respect to Z.
+Our first result establishes a lower bound on the minimax risk for estimating the regression
+function at a single point and under the infinity norm. We state this result under a Gaussian
+error assumption, which simplifies the proof.
+Theorem 2.1. (Minimax Risk Lower Bound) Suppose that  > 0 and L > 0; Xi is
+continuously distributed on RdX with density f and supx f (x)  B3 < ; and Yij is generated
+according to the following nonparametric regression model:
+
+                                      Yij = g (Wij ) + eij ,   i = j,
+
+                              iid                        iid
+with eij = Ui + Uj + Vij , Ui  N(0, 1), and Vij  N(0, 1), then
+  (i) For all w  RdW ,
+                                                           2
+                        lim inf inf                    gN (w) - g (w))2  c1 ,
+                                        sup Eg N 2+dX (^
+                         N  g
+                            ^N g (,L)
+
+
+      where c1 > 0 depends only on  and L.
+
+                                                     3
+ (ii)
+                                                          2
+                                                 N      2 +dX
+                       lim inf inf   sup Eg                       ^N - g ||2
+                                                                ||g          c2 ,
+                        N  g
+                           ^N g (,L)            ln N
+
+        where c2 > 0 also depends only on  and L.
+
+    Our proof follows the general recipe outlined in Chapter 2 of Tsybakov (2008). The lower
+bound at a point is based on Le Cam's method of two hypotheses. The lower bound under
+the infinity norm is based on Fano's method of multiple hypotheses.
+    The key, and novel, step in our proof involves constructing hypotheses close enough to
+one other in terms of Kullback-Leibler (KL) divergence while being at the same time different
+enough in terms of the target regression function.
+    An essential feature of our construction is additive separability of the regression functions.
+In the hypotheses we consider, Yij = k (Xi ) + k (Xj ) + Ui + Uj + Vij . Next suppose we also
+             def
+observe Ti  k (Xi ) + Ui . Observe that (Xi , Ti , i = 1, . . . , N ) is sufficient with respect to
+(Xi , Ti , i = 1, . . . , N, Ykl , 1  k = l  N ) for the parameter k .
+    It is well-known that the optimal rates of convergence for estimating k using iid data
+                                                                      
+                                      -                       N - 2 +dX
+(Xi , Ti , i = 1, . . . , N ) are N 2+dX pointwise and ln      N
+                                                                        for the infinity norm. We
+expect the rates for estimating g to be no faster than these. The proof of Theorem 2.1 makes
+this intuition rigorous.
+    Relative to its iid counterpart, there are two distinctive features of Theorem 2.1. First,
+the relevant sample size is not the number of observed dyadic outcomes n = N × (N - 1),
+but instead the number of sampled units, N . Dependence across outcomes sharing indices
+in common is strong enough to slow down the feasible rate of convergence. Second, although
+the regression function has dW = 2dX arguments, the relevant dimension reflected in the rate
+of convergence result is just dX (i.e., just half of what might naively be expected).
+    The form of our constructed hypotheses provides one intuition for this second finding:
+clearly the relevant dimension of the problem of estimating k (x) is just dX . Relatedly this
+finding is consistent with those of Linton and Nielsen (1995) in their analysis of additively
+separable, but otherwise nonparametric, regression functions (see also Newey (1994)).
+    The pairwise structure of dyadic data results in apparent data abundance (sample N
+agents, but observe O(N 2 ) outcomes!). This abundance is both illusory, in the sense that the
+effective sample size is indeed just N , and real, in the sense that availability of the pairwise
+outcome data allows for an effective reduction in the dimensionality of the problem via partial
+mean like average (as in Newey (1994) and Linton and Nielsen (1995) in a different context).
+
+
+
+                                                4
+3      Kernel Estimator of Dyadic Regression
+In this section we study the properties of a specific nonparametric regression estimator.
+Namely, the dyadic analog of the well-known Nadaraya-Watson (NW) kernel regression esti-
+mator. While our results are specific to this estimator, they could, for example, be extended
+to apply to local linear regression (e.g., Hansen, 2008).
+    The dyadic NW kernel regression estimator is
+
+                                                 1i=j NKij,N (w)Yij
+                                 g
+                                 ^N (w) :=                          ,                                    (3)
+                                                  1i=j N Kij,N (w )
+
+
+where
+                                                  1           Wij - w
+                                  Kij,N (w) :=            K             ,
+                                                 hd
+                                                  N
+                                                   W            hN
+K is a fixed multivariate kernel function, and hN is a vanishing bandwidth sequence.
+    We first develop a sequence of results useful for bounding the variance of kernel objects
+of the form
+
+                             ^ N (w) :=       1
+                                                           Yij Kij,N (w)                                 (4)
+                                          N (N - 1) 1i=j N
+
+and then apply these results to the NW regression estimator. We then bound the NW
+estimator's bias and combine the two sets of results to formulate a risk bound.
+
+
+3.1     Variance Bound and Uniform Convergence
+Here we are interested in bounding the deviation of ^ N (w) from its mean. We begin with a
+presentation of our maintained assumptions.
+
+Assumption 3.1 (Model). The data generating process is as described in Section 2 with
+
+    (i) Xi continuously distributed with marginal density f (x) s.t. supxRdX f (x)  B3 < ;
+
+ (ii) supx1 ,x2 RdX E |Y12 |2 (X1 , X2 ) = (x1 , x2 ) · f (x1 )f (x2 )  B4 < ,
+      supx1 ,x2 ,x3 RdX E |Y12 Y13 | (X1 , X2 , X3 ) = (x1 , x2 , x3 ) · f (x1 )f (x2 )f (x3 )  B5 < .
+
+   Condition (i) is a standard condition in the context of kernel estimation, while (ii) ensures
+that various second moments appearing in our variance calculations are finite.
+
+Assumption 3.2 (Kernel, Part A). supwRdW |K (w)|  Kmax < ,                          wRdW
+                                                                                            |K (w)|dw 
+B1 < , and supxRdX |K (x, x )|dx  B2 < .
+
+
+                                                      5
+   Assumption 3.2 is satisfied by many widely-used multivariate kernel functions. Our first
+result holds under Assumptions 3.1 and 3.2.
+
+Theorem 3.1 (Variance Bound). Under Assumptions 3.1 and 3.2, and the bandwidth
+condition N hd
+             N   as N  , there exists a constant M0 <  such that for N sufficiently
+              X
+
+
+large
+                          Var  ^ N (w)  M0
+                                            N hd
+                                               N
+                                                 X
+
+
+
+for all w  RdW .
+
+    A proof is available in the appendix. Mirroring our risk bound results, two features of
+Theorem 3.1 merit comment. First, N not n = N × (N - 1) appears in the denominator.
+This is due to the effects of dependence across dyads sharing units in common. Second,
+the relevant dimension of the problem is dX , not dW = 2dX , this reflects the U-statistic
+like structure of kernel weighted averages and the partial mean like averaging this structure
+induces.
+    To establish uniform convergence, we need additional moment conditions on Yij as well as
+some smoothness conditions on the kernel K . As in Hansen (2008), we require the kernel to
+either have bounded support and be Lipschitz or have bounded derivatives and an integrable
+tail. See Hansen (2008) for additional discussion about these conditions. As with Assumption
+3.2 above, most commonly used kernels satisfy these conditions.
+
+Assumption 3.3 (Regularity Condition). (i) For some s > 2, E|Y12 |s <  and
+    supx1 ,x2 RdX E |Y12 |s (X1 , X2 ) = (x1 , x2 ) · f (x1 , x2 )  B4,s < ;
+
+ (ii) For some 1 <  and L < , either (a) or (b) holds
+
+      (a) K (w) = 0 for ||w|| > L, and |K (w) - K (w )|  1 ||w - w || for all w, w  R2d
+                                                                              
+      (b) K (w)    is   differentiable,      w
+                                               K (w)          1 ,   where     w
+                                                                                K (w)      =
+              w1
+                              
+                 K (w), . . . w2d
+                                  K (w)      , and for some  > 1,   w
+                                                                    
+                                                                      K (w)    1 ||w||- for
+                                          
+          ||w|| > L.
+
+    Part (ii) coincides with Assumption 3 in Hansen (2008). This assumption implies that
+for all ||w1 - w2 ||    L,
+
+                                 |K (w2 ) - K (w1 )|  K  (w1 ),
+
+where K  (u) satisfies Assumption 3.1. If case (a) holds, then K  (u) = 2d1 1(||u||  2L). If
+case (b) holds, then, K  (u) = 2d[1 1(||u||  2L) + (||u|| - L)- 1(||u|| > 2L)]. In both cases
+K  is bounded and integrable and therefore satisfies Assumption 3.1.
+
+                                                6
+   Define
+                                                                  1/2
+                                                      ln N
+                                             aN :=                      .
+                                                      N hd
+                                                         N
+                                                          X
+
+
+
+Theorem 3.2 (Weak Uniform Convergence). Under Assumptions 3.1, 3.2, 3.3,
+                                                                                                     1
+                                            dX - s-1                1                       1    -
+and the bandwidth conditions max min (aN h2
+                                          N )        , [N 2 (ln(ln N ))2 ln N ] s , aN s-1
+                3
+                    dX
+min a- 1 N
+     N , ln N hN
+               2
+                         and    N
+                                   hdX
+                               ln N N
+                                           , we have for any q > 0, cN = N q ,
+
+
+                                    sup     ^ N (w) - E
+                                                       ^ N (w) = OP (aN ).
+                                ||w||cN
+
+
+   This theorem establishes uniform convergence of    ^ N (w) to its mean in probability over
+an expanding set with radius growing at a polynomial rate.
+   In the proof, we decompose  ^ N (w) into two parts
+
+                                          ^ N (w) = 
+                                                    ~ N (w) + RN (w),
+
+          ~ N (w) =    1                                                                   ^
+in which            N (N -1)  1i=j N Yij · 1 (|Yij | < N ) Kij,N is a truncated version of N (w )
+with a carefully chosen threshold parameter N and RN (w) is a residual. The boundedness
+induced by this truncation is technically convenient as it facilitates the application of various
+concentration inequalities. To establish concentration of     ~ N , we apply Bernstein inequality
+to its H´
+        ajek Projection (i.e., to the first-order terms in the Hoeffding decomposition) and
+apply Arcones and Gine (1993)'s concentration inequalities for degenerate U-statistics to the
+second-order terms in the Hoeffding decompositon. Both these bounds requires the truncation
+threshold to be small enough. To bound the magnitude of the residual RN , we can either
+apply a triangular inequality to bound the sup of its first moment or use the Borel-Cantelli
+Lemma to bound its probability of being nonzero. Both these bounds requires the truncation
+threshold to be large.
+    A proper truncation threshold satisfying both requirements exists only if the bandwidth
+sequence satisfies the condition
+
+                  dX - s-1      1                             1         -   1
+                                                                                            N 2  3
+                                                                                                   d
+   max min (aN h2
+                N )        , [N 2 (ln(ln N ))2 ln N ] s , aN s-1                min a- 1
+                                                                                     N ,        hN X     .
+                                                                                           ln N
+
+The complicated form of this condition is technical in nature. When all (conditional) mo-
+ments of Y12 are bounded, such that s =  (of Assumption 3.3 above), this condition
+                    3
+               N      d
+                    2 X
+simplifies to ln  h
+                 N N
+                          1.
+    In order to state the weak uniform convergence result for the kernel regression estimator
+g
+^N , we need additional smoothness assumptions on the kernel. As in other applications of
+
+                                                      7
+kernel estimation, these assumptions are employed for bias reduction purpose.
+
+Assumption 3.4 (Kernel, Part B).
+
+                 l1        ld                   1, if l1 = · · · = ldW = 0
+                w1  · · · wdW
+                            W
+                              K (w)dw =
+          RdW                                   0, if (l1 , . . . , ldW )  Zd
+                                                                            + and l1 + · · · + ldX < 
+                                                                             W
+
+
+
+
+   We can now give a uniform convergence result for the NW regression estimator under
+dyadic dependence over a sequence of expanding sets.
+                                                                   -1 
+Theorem 3.3. Suppose fW , g  (, L) and N = inf ||w||CN fW (w) > 0, N aN  0 where
+                    1/2
+aN   :=     ln N
+               dX         + hN . Under the Assumptions of Theorem, 3.2 and Assumption 3.4
+           N hN
+
+
+                                                                  -1 
+                                       sup |g
+                                            ^N (w) - g (w)| = Op (N aN ).
+                                      ||w||CN
+
+
+The optimal convergence rate is
+                                                                               
+
+                                                               -1    ln N    2 +dX
+                                sup |g
+                                     ^N (w) - g (w)| = Op      N                     .
+                            ||w||CN                                   N
+
+    As in the iid case, the KW estimator achieves the optimal rate suggested by Theorem
+2.1 for a compact set with CN = C . If we look at a sequence of expanding sets approaching
+the entire space RdW , then there is an additional penalty term N due to the presence of the
+denominator fW (w).
+
+
+References
+Arcones, M. A. and Gine, E. (1993). Limit theorems for u-processes. The Annals of Proba-
+  bility, 21(3):1494­1542.
+
+Aronow, P. M., Samii, C., and Assenova, V. A. (2017). Cluster­robust variance estimation
+  for dyadic data. Political Analysis, 23(4):564­577.
+
+Boucheron, S., Lugosi, G., and Massart, P. (2013). Concentration Inequalities: A Nonasymp-
+  totic Theory of Independence. Oxford University Press.
+
+Chiang, H. D., Kato, K., Ma, Y., and Sasaki, Y. (2019). Multiway cluster robust dou-
+ ble/debiased machine learning. arXiv preprint arXiv:1909.03489.
+
+
+
+                                                         8
+Graham, B. S. (2020a). Network data. In Handbook of Econometrics volume 7. North-
+  Holland, Amsterdam.
+
+Graham, B. S. (2020b). Sparse network asymptotics for logistic regression. arXiv preprint
+  arXiv:2010.04703.
+
+Graham, B. S., Niu, F., and Powell, J. L. (2019). Kernel density estimation for undirected
+  dyadic data. arXiv preprint arXiv:1907.13630.
+
+Hansen, B. E. (2008). Uniform convergence rates for kernel estimation with dependent data.
+  Econometric Theory, 24(3):726­748.
+
+Ibragimov, I. A. and Has' Minskii, R. Z. (1982). Bounds for the risks of nonparametric
+  regression estimates. Theory of Probability and Its Applications, 16:84­99.
+
+Ibragimov, I. A. and Has' Minskii, R. Z. (1984). Asymptotic bounds on the quality of the
+  nonparametric regression estimation in lo . Journal of Soviet Mathematics, 25:540­550.
+
+Linton, O. and Nielsen, J. P. (1995). A kernel method of estimating structured nonparametric
+  regression based on marginal integration. Biometrika, 82:93­100.
+
+Newey, W. K. (1994). Kernel estimation of partial means and a general variance estimator.
+  Econometric Theory, pages 233­253.
+
+Stone, C. J. (1980). Optimal rates of convergence for nonparametric estimators. The Annals
+  of Statistics, 8(6):1348­1360.
+
+Stone, C. J. (1982). Optimal global rates of convergence for nonparametric regression. The
+  Annals of Statistics, 10(4):1040­1053.
+
+Tsybakov, A. B. (2008). Introduction to Nonparametric Estimation. Springer.
+
+
+
+Appendix
+All notation is as established in the main text unless noted otherwise. Equation numbering
+continues in sequence with that of the main text.
+
+
+
+
+                                             9
+Proof of Theorem 2.1
+Our method of proof follows the general approach outlined in Chapter 2 of Tsybakov (2008).
+To prove part (i) we use Le Cam's two-point method to find a lower risk bound for estimation
+of the regression function at a point. To prove statement (ii), which involves the infinity-norm
+metric, we use Fano's method.
+
+Proof of statement (i)
+
+Our proof of statement (i) essentially involves checking the conditions, as specially formulated
+for our dyadic regression problem, of Theorem 2.3 of (Tsybakov, 2008).
+    For k = 0, 1, let PkN be a probability measure for the observed data {(Xi , Yij )}1i=j N
+with regression function gkN . The general reduction scheme outlined in Section 2.2 of Tsy-
+bakov (2008), as well as his Theorems 2.1 and 2.2, imply that our Theorem 2.1 will hold if
+we can construct two sequences of hypotheses g0N , g1N such that
+
+ (a) the regression functions g0N , g1N are in the H¨
+                                                    older class (, L);
+                                                                     
+                                                                 - 2 +
+ (b) d (1 , 0 ) = |g1N (w) - g0N (w)|  2AN with N = N                  d
+                                                                       X     and 0 = g0N (w) and
+     1 = g1N (w) for some fixed w  X × X;
+
+ (c) the Kullback-Leibler divergence of P0N from P1N is bounded: KL(P0N , P1N )   < .
+
+   The "trick" of the proof is choosing these two sequences of hypotheses appropriately.
+Letting w = (x10 , x20 ) we choose the sequences:
+
+ g0N (x1 , x2 )  0
+                    Lh N        x1 - x10        x1 - x20         x2 - x10             x2 - x20
+ g1N (x1 , x2 ) =        K                 +K              +K                  +K
+                     2             hN              hN               hN                   hN
+                        1
+                    - 2 +
+where hN = c0 N           d
+                          X   and the function K : RdW  [0, ) satisfies
+
+             K   (, 1/2)  C  (RdX ) and K (x) > 0  ||x||  (-1/2, 1/2).                           (5)
+
+There exist functions K satisfying this condition. For example, for a sufficiently small a > 0,
+we can take
+
+                                                                             1
+     K (x) = d
+             i=1 (xi ), where (u) = a (2u) and  (u) = exp -
+              X
+                                                                                    1(|u|  1).
+                                                                           1 - u2
+
+See also Equation (2.34) in Tsybakov (2008).
+   We verify conditions (a), (b) and (c) in sequence.
+
+                                                 10
+Verification of (a) g0N , g1N  (, L)
+
+For s = (s1 , . . . , sdX , sdX +1 , . . . , s2dX ) with |s| =  , w = (x1 , x2 ) and w = (x1 , x2 ), the sth
+                S1               S2
+order derivative of g1N is
+
+                       x1 - x10           x1 - x20               x2 - x10                             x2 - x20
+Ds g1N (w) = LhN D K
+                    s
+                                  + Ds K             + Ds K                 + Ds K
+                          hN                 hN                     hN                                   hN
+             
+               0                                        if |S1 | / {0, |s|}
+              Lh- 
+                               -x10             -x20
+           =     N
+                  2
+                      DS1 K x1h N
+                                    + DS1 K x1h  N
+                                                        if |S1 | = |s|      .
+                  - 
+               Lh              -x10             -x20
+                      DS2 K x2h     + DS2 K x2h
+             
+                                                        if |S1 | = 0
+              N
+             
+                  2             N                N
+
+
+
+Therefore, if |S1 | / {0, |s|}, then |Ds g1N (w) - Ds g1N (w )| = 0; if |S1 | = |s|, then
+
+|Ds g1N (w) - Ds g1N (w )|
+       - 
+  LhN                       x1 - x10              x1 - x10                   x1 - x20                 x1 - x20
+=               D S1 K                 - D S1 K                 + D S1 K                  - D S1 K
+    2                          hN                    hN                         hN                       hN
+               -
+ L||x1 - x1 ||
+                     
+
+             -
+ L||w - w ||
+                     
+                        ;
+
+and, finally, if |S1 | = 0, then
+
+|Ds g1N (w) - Ds g1N (w )|
+       - 
+  LhN                       x2 - x10              x2 - x10                   x2 - x20                 x2 - x20
+=               D S2 K                 - D S2 K                 + D S2 K                  - D S2 K
+    2                          hN                    hN                         hN                       hN
+               -
+ L||x2 - x2 ||
+                     
+
+             -
+ L||w - w ||
+                     
+                        .
+
+Hence g1N  (, L). We also have that g0N  (, L) by inspection.
+
+                                                                                                         
+Verification of (b): d ( (P0N ) ,  (P1N )) = |g1N (w) - g0N (w)|  2AN with N = N - 2+d
+
+Here we check that our hypotheses are 2s-separated. We have that
+
+                         Lh                         x10 - x20            x20 - x10
+   |g1N (w) - g0N (w)| =    N
+                              2K (0) + K                         +K                      2LhN K (0)
+                          2                            hN                   hN
+                            = LK (0) c0 N ,
+
+
+
+
+                                                    11
+                                            LK (0)c
+and hence condition (b) holds with A =         2
+                                                   0
+                                                     .
+
+Verification of (c): KL(P0N , P1N )   < 
+
+This condition allows for the application of part (iii) of Theorem 2.2 in Tsybakov (2008). We
+begin by establishing some helpful notation. Let Y = [Yij ]1i,j N be the N × N adjacency
+matrix; Gk = [gkN (Wij )]1i,j N for k = 0, 1 the associated matrices of regression functions for
+the two sequences of hypotheses; and V = [Vij ]1i,j N the corresponding matrix of dyadic-
+specific disturbances. Note the diagonals of each of these matrices consist of "structural"
+zeros. Further let U = [Ui ]1iN be the N × 1 vector of agent-specific disturbances. Finally
+                                              Lh           -x10          -x20
+let K be the N × 1 vector with ith element 2N K Xih         N
+                                                                + K Xih   N
+                                                                               .
+    Let J denote a J × 1 vector of ones, 0K,J a K × J matrix of zeros, and IJ the J × J
+                                            ¯
+identity matrix. We also define the following selection matrices:
+                                                                       
+              N -1  0    0 ···          0    0           0N -1,1 IN -1
+                                                        ¯
+               0   N -2 0 · · ·         0    0          0N -2,2 IN -2 
+                                                                       
+         T1 =  ¯
+               .    .   ..   .          .    .   , T2 = ¯ .        .          ,
+                                                                       
+               .
+               .    .
+                    .      . .
+                             .          .
+                                        .    .
+                                             .           .  .      .
+                                                                   . 
+                                                                       
+
+               0    0    0 ···          1 0 N ×N           0       1
+                                            (2)                         (N
+                                                                         2)
+                                                                           ×N
+
+
+from which we form T = T1 + T2 and, finally, T = 2  T . Next let y = (vech(Y ) , vech(Y) )
+be the N (N - 1) × 1 vectorization of the dyadic outcomes. Similarly let gk for k = 0, 1 and
+v be the corresponding vectorizations of, respectively, Gk and V.
+    Using this notation we can write the N (N - 1) × 1 vector of composite regression errors
+eij = Ui + Uj + Vij as e = TU + v and its variance covariance matrix as
+
+                             = Var (e) = IN (N -1)×N (N -1) + TTT .
+
+Under P0N we have that
+
+                               g0 = 0, y = e, y|X  N (0, ) .
+
+While under P1N we instead have that
+
+                         g1 = TK, y = TK + e, y|X  N (TK, ) .
+
+                                                             1
+                                                         - 2 +
+   Let Kmax = maxu K (u) and recall that hN = c0 N             d
+                                                               X   . We can now evaluate the KL
+
+
+
+
+                                                 12
+divergence as follows:
+
+                                      dP0N
+               KL (P0N , P1N ) =    log     dP0N                                            (6)
+                                      dP1N
+                                      p0N (y|X)
+                               = log             dP0N
+                                      p1N (y|X)
+                                   1
+                               =-      y -1 y - (y - g1 ) -1 (y - g1 )dP0N
+                                   2
+                                 1
+                               =     g1 -1 g1 dP0N
+                                 2
+                                 1
+                               = EP0N K T (I + TT )-1 TK
+                                 2
+                                 1
+                                EP0N K K
+                                 2
+                                 1 2 2
+                                L Kmax B3 h2 N
+                                                +dX
+                                                     N
+                                 2
+                                 1
+                               = L2 Kmax
+                                      2
+                                         B3 c2
+                                             0
+                                                +dX
+                                                    ,
+                                 2
+                                                         2
+for N large enough such that N hd  N  1 and LKmax hN bounded above.
+                                     X
+
+
+    In the derivation above, the third equality follows from the form of the multivariate normal
+density. The weak inequality in line six holds because
+
+             K K - K T (I + TT )-1 TK = K                      IN - T (I + TT )-1 T K
+                                                                                -1
+                                                      =K       IN + T T              K
+                                                       0.
+
+Finally, the weak inequality in line seven holds because, using condition (5) above,
+
+                                                                2
+                         Xi - x10                 Xi - x20
+              E    K                +K
+                            hN                       hN
+                                              2                             2
+                             Xi - x10                        Xi - x20
+               2E        K                        + K
+                                hN                              hN
+                                          2                             2
+                          x - x10              x - x20
+              =2     K               + K                    dF (x)
+                            hN                    hN
+                  2          x - x10    1           x - x20     1
+               2Kmax     1                   +1                     dF (x)
+                               hN       2             hN        2
+                                      1
+                  2
+              = 2Kmax hd
+                       N
+                        X
+                             1 |u|        [f (x10 + hN u) + f (x20 + hN u)]du
+                                      2
+               4hd     2
+                 N B3 Kmax ,
+                  X
+
+
+
+
+                                                     13
+and where it is also helpful to remind oneself of the definition of K given earlier.
+                                      1
+                                    2 +d
+   If we take c0 = L2 K2    2
+                                     X
+                                       , then we obtain KL (P0N , P1N )  . This result, and
+                            max B3
+condition (b) above, gives ­ invoking equations (2.7) and (2.9) on p. 29 of Tsybakov (2008)
+as well as part (iii) of his Theorem 2.2:
+
+                                                                                         
+                                                                     1           1-      2
+        inf sup Eg [1 (|g1N (w) - g0N (w)|  AN )]  max                 exp (-) ,
+        g
+        ^N g (,L)                                                    4             2
+
+for N large enough. Some rearrangement and the Markov Inequality then yield
+
+                                                                                         
+                           2
+                                                    2       2         1           1-     2
+       inf sup Eg N      2 +dX
+                                 (g1N (w) - g0N (w))     A max          exp (-) ,            .
+       g
+       ^N g (,L)                                                      4             2
+
+Since the constant to the right of the inequality only depends on  and L part (i) of the
+Theorem follows after taking the limit inferior of the expression above as N  .
+
+Proof of statement (ii)
+
+Again let PkN be the probability measure of the observed data (Xi , Yij , 1  i = j  N ) with
+the regression function gkN . Theorem 2.5 of Tsybakov (2008) implies that part (ii) will hold
+if we can construct sequences of hypotheses P0N , P1N , . . . , PMN N such that
+
+ (a) g0N , gkN  (, L), k = 1, . . . , MN ;
+                                                              
+                                                         N - 2 +d
+ (b) d (k , l ) = ||gkN - glN ||  2AN , N =             ln N
+                                                                     and k = gkN and l = glN for
+     k = l and k, l = 1, . . . , MN ;
+        1   MN
+ (c)   MN   k=1   KL(PkN , P0N )   ln MN .
+
+Define the hypotheses:
+
+                    g0N :(x1 , x2 )  0
+                                                 x1 - xkN             x2 - xkN
+                    gkN :(x1 , x2 )  LhN K                      +K
+                                                    hN                   hN
+                                                            1
+                                                     N - 2 +dX                                  dX
+where k  IN = {1, 2, . . . , mN }dX , hN = c0       ln N
+                                                                 , mN =      h- 1
+                                                                              N , MN = |IN | = mN ,
+                                            k1 -1/2 k2 -1/2         -1/2
+and for k = (k1 , k2 , . . . , kd ), xkN =    mN
+                                                   , mN , . . . , kdmthe function K : RdX 
+                                                                      N
+                                                                         ,
+[0, ) satisfies (5). Notice the supports of these functions for the same N are disjoint. The
+results follows by verifying conditions (a), (b) and (c). We have already shown that condition
+
+
+
+                                                  14
+(a) holds in the proof of part (i). The condition (b) holds with A = LK (0)c0 because
+
+
+      ||gkN - glN ||  |gkN (xkN , xkN ) - glN (xkN , xkN )| = 2Lh                  
+                                                                 N K (0) = 2LK (0)c0 N .
+
+
+To verify condition (c) we evaluate the KL-divergence:
+
+      1                               1         1
+                 KL(PkN , P0N )                   EP Kk Kk
+     MN    kIN
+                                     MN   kIN
+                                                2 0N
+                                                               N
+                                  1                                         xi - xkN  1
+                                                2L2 h2  2
+                                                     N Kmax           1                        dF (xi )
+                                 MN       kIN                  i=1
+                                                                               hN     2
+                                                          N
+                                      1                                     xi - xkN  1
+                                =       2L2 h2  2
+                                             N Kmax                   1                       dF (xi )
+                                     MN                  i=1    kIN
+                                                                               hN     2
+
+                                     2L2 h2
+                                          N
+                                             +dX  2
+                                                 Kmax N
+                                = 2L2 Kmax
+                                       2
+                                           c2
+                                            0
+                                               +dX
+                                                   ln N.
+
+The first and second line are proved in part (i). The fourth line use the fact that the
+support of functions gkN , k  IN are disjoint and kIN 1 xi -  xkN
+                                                             hN
+                                                                   1 2
+                                                                          1. We have
+ln MN = ln(md            dX      N                       dX
+               N )  2 +dX ln ln N - dX ln c0  2 +dX +1 ln N for sufficiently large N . The
+                X
+
+
+condition is thus satisfied with sufficiently large c0 . The result follows from Theorem 2.5 of
+Tsybakov (2008).
+
+
+Proof of Theorem 3.1
+                                  ^ w) yields
+Applying the variance operator to (
+
+                                                                      -1
+                              ^ w) = 4 N - 2 VN,1 + N
+                            V (                                            VN,2
+                                     N N -1         2
+
+where, starting with the second term,
+
+            1                                            2  2
+VN,2 = V      [Y12 K12 + Y21 K21 ]     V (Y12 K12 )  E Y12 K12
+            2
+                                                         x - x1 x - x2
+    = h-
+       N
+         4dX          2
+                  E Y12 |(X1 , X2 ) = (x1 , x2 ) K 2           ,             f (x1 )f (x2 )dx1 dx2
+                                                           hN     hN
+    = h-
+       N
+         2dX          2
+                  E Y12 |(X1 , X2 ) = (x - hN s1 , x - hN s2 ) f (x - hN s1 )f (x - hN s2 )K 2 (s1 , s2 ) ds1 ds2
+
+     h-
+      N
+        2dX
+            B4 Kmax B1 .
+
+
+
+                                                    15
+Next, consider the first term. We get that
+
+            1                         1
+ VN,1 = C      (Y12 K12 + Y21 K21 ) , (Y13 K13 + Y31 K31 )
+            2                         2
+                1
+      =V E        (Y12 K12 + Y21 K21 ) X1 , U1
+                2
+        1                                   1
+       Var E Y12 K12 X1 , U1 + Var E Y21 K21 X1 , U1
+        2                                   2
+        1                         1
+       E (Y12 K12 Y13 K13 ) + E (Y21 K21 Y31 K31 )
+        2                         2
+        1 -4dX
+      = hN          E (Y12 Y13 |(X1 , X2 , X3 ) = (x1 , x2 , x3 ))
+        2
+                           x - x1 x - x2             x - x1 x - x3
+                     ·K             ,           K              ,        f (x1 )f (x2 )f (x3 )dx1 dx2 dx3
+                             hN         hN              hN         hN
+          1 4dX
+        + h-          E (Y21 Y31 |(X1 , X2 , X3 ) = (x1 , x2 , x3 ))
+          2 N
+                           x - x2 x - x1             x - x3 x - x1
+                     ·K             ,           K              ,        f (x1 )f (x2 )f (x3 )dx1 dx2 dx3
+                             hN         hN              hN         hN
+           dX 1
+      = h-
+         N         E (Y12 Y13 |(X1 , X2 , X3 ) = (x - hN s1 , x - hN s2 , x - hN s3 ))
+              2
+               · f (x - hN s1 )f (x - hN s2 )f (x - hN s3 )K (s1 , s2 ) K (s1 , s3 ) ds1 ds2 ds3
+             dX 1
+        + h-
+           N          E (Y21 Y31 |(X1 , X2 , X3 ) = (x - hN s1 , x - hN s2 , x - hN s3 ))
+                2
+                · f (x - hN s1 )f (x - hN s2 )f (x - hN s3 )K (s1 , s2 ) K (s1 , s3 ) ds1 ds2 ds3
+        -dX
+       hN   B5       |K (s1 , s2 ) ||K (s1 , s3 ) |ds1 ds2 ds3
+        -dX
+       hN   B5 B2 B1 .                                                                                (7)
+
+These two bounds imply the variance bound
+                                 -1
+                             N                          4(N - 2) -dX
+              ^ w) 
+            V (                       h-
+                                       N
+                                         2dX
+                                             B4 Kmax B1 +          h   B5 B2 B1
+                             2                          N (N - 1) N
+                                         N -2                     dX 4N
+                       = N -1 h-
+                               N
+                                 dX
+                                              4B5 B2 B1 + N -1 h-
+                                                                N         B4 Kmax B1 ,
+                                         N -1                        N -1
+
+                                                                                ^ w) 
+which, in turn, implies that for M0 = 4B5 B2 B1 +1 and sufficiently large N , V (                    M0
+                                                                                                       dX
+                                                                                                    N hN
+for all w  RdW as claimed.
+
+
+
+
+                                                      16
+Proof of Theorem 3.2
+For N a sequence of positive truncation parameters we consider the sum
+
+             ~ N (w) = 1               1                       1             w - Wij
+                       N
+                                         Yij · 1 (|Yij | < N ) dW K
+                          2   1i<j N
+                                       2                      hN               hN
+                                                                   1          w - Wji
+                                         +Yji · 1 (|Yji | < N )         K                     .
+                                                                  hd
+                                                                   N
+                                                                    W           hN
+
+We will use Z~N,ij to denote the summands in the above expression in what follows. The
+Hoeffding decomposition of this U -like statistic is
+
+                                                N
+                              ~ w) + 2
+                      ~ w) = E(
+                      (                               ¯N,i + 1
+                                                      Z                      N,ij ,
+                                                                             Z
+                                                             N
+                                     N          i=1          2    1i<j N
+
+                                               TN,1 (w)           TN,2 (w)
+
+
+where
+
+                 ¯N,i = E Z
+                 Z        ~N,ij Xi , Ui - EZ
+                                           ~N,ij
+
+                 N,ij = Z
+                 Z      ~N,ij - E Z
+                                  ~N,ij Xi , Ui - E Z
+                                                    ~N,ij Xj , Uj + EZ
+                                                                     ~N,ij .
+
+Notice that TN,1 (w) is an average of N iid mean-zero random variables while TN,2 (w) is a
+degenerate second-order U -like statistic.
+   To proceed further we require the following Lemma.
+
+Lemma 3.4. Under Assumptions 3.1 and 3.2, for any  > 0, there exists constant M such
+that
+
+ (i) if N     a- 1
+               N , then supwRdW P (|TN,1 (w )| > M aN ) = O (N
+                                                               -
+                                                                 );
+                  3
+ (ii) if N    N h 2 dX / ln N and aN = o(1), then supwRdW P (|TN,2 (w)| > M aN ) = O (N - );
+
+(iii) if for some s > 1, supx1 ,x2 RdX E |Y12 |s (X1 , X2 ) = (x1 , x2 ) · f (x1 , x2 )  B4,s <  and
+               - 1
+      N      a s-1 , then supwRdW E (   ^ w) - (  ~ w) = o (aN );
+             N
+
+                                                                                                   1
+(iv) if for some s > 1, E |Y12 |s                         B6,s and N                  (aN h2 dX - s-1
+                                                                                           N )        ,   then
+     supwRdW  ^ N (w) - ~ N (w) = oP (aN );
+
+                                           1
+ (v) if for some s > 2, N = (N 2 N ) s where N = (ln(ln N ))2 ln N , and E |Y12 |s  B6,s ,
+     then P ( ^N = ~N) = P ^ N (w) =  ~ N (w), w  R2dX  1 as N  .
+
+
+                                                    17
+    The proof of the above Lemma may be found below. The bandwidth conditions stated
+in the hypotheses of Theorem 3.2 ensure that we can pick truncation thresholds N which
+satisfy the following conditions
+
+  1. N       a- 1
+              N ;
+                   3
+              N      d
+                   2 X
+  2. N           h
+             ln N N
+                       ;
+                    1
+               -
+  3. N       aN s-1 ;
+                         1                           1
+                                             2dX - s-1
+  4. N       (N 2 N ) s or N            (aN hN  )      .
+
+These conditions allow for the application of Lemma 3.4. Denote RN (w) := ^ N (w) - ~ N (w).
+For any set CN  R2d ,
+
+ P     sup ^ N (w) - E^ N (w) > 8M aN
+      wCN
+
+  =P      sup ~ N (w) - E~ N (w) + RN (w) - ERN (w) > 8M aN
+         wCN
+
+  P       sup ~ N (w) - E~ N (w) > 6M aN                   +P     sup |RN (w) - ERN (w)| > 2M aN   . (8)
+         wCN                                                     wCN
+
+
+The second term in inequality (8) converges to zero because
+
+
+               P        sup |RN (w) - ERN (w)| > 2M aN
+                        wCN
+
+
+                   P          sup |RN (w) - ERN (w)| > 2M aN
+                             wRdW
+
+
+                   P          sup |RN (w)| > M aN           +1      sup |ERN (w)| > M aN             (9)
+                             wRdW                                 wRdW
+
+                   = o(1).
+
+The last line holds because
+
+
+                             1   sup |ERN (w)| > M aN             =0         for large N           (10)
+                                 wRdW
+
+
+                             P    sup |RN (w)| > M aN            = oP (1).                         (11)
+                                 wRdW
+
+
+     To see (10), notice part (iii) of Lemma 3.4 implies that supwRdW |ERN (w)| = o(aN ).
+
+
+                                                           18
+Hence 1 (supwR2d |ERN (w)| > M aN ) = 0 for large N . To see (11), notice the inequality
+
+
+         P   sup |RN (w)| > M aN            min 1 - P (^N = ~ N ), E supwRdW |RN (w)|        ,
+             wRdW                                                        M aN
+
+suggests we can bound either term on the right-hand side to bound the term on the left-hand
+side. The threshold we pick meets the conditions of both parts (iv) and (v) of Lemma 3.4,
+which ensures either 1 - P (  ^N =  ~ N ) = o(1) or E supwRdW |RN (w)| = o(1). This implies (11).
+                                                          M aN
+    To show the first term in inequality (8) converges to zero, we will use a covering argument
+to reduce finding the supremum over an infinite number points to finding the maximum over
+a finite number of points. We then invoke point-wise concentration bounds. This part closely
+follows the argument in Hansen (2008). Cover any compact region CN  RdW by finite number
+of balls of radius aN hN centered at grid points in the set LN = {wN,1 , wN,2 , . . . , wN,LN } (Here
+we abuse the notation a bit: LN is used to refer to both the set and its cardinality). Denote
+the ball AN,j = {w  RdW : ||w - wN,j ||  aN hN }. For N large enough such that aN < L
+(L is the constant appearing in Assumption 3.3), for any point w  AN,j within the ball,
+assumption 3.3 (ii) implies
+
+                        w - Wij              wN,j - Wij             wN,j - Wij
+                    K                 -K                   aN K                    .             (12)
+                           h                      h                      h
+
+Define
+
+               N (w) :=       1                                  1         w - Wij
+                                           Yij · 1 (|Yij | < N ) d K                   ,
+                          N (N - 1) 1i=j N                      hW            h
+
+                      ~ w) with K replaced by K  . The bound (12) implies
+which is a version of (
+
+                                 ~ N (w) - 
+                                           ~ N (wN,j )  aN  N (wN,j ),
+
+        N (wN,j )|  B4 B3 1/2   1/2
+with |E                               |K  (w)|dw < . Next bound the sup within the ball by a
+
+
+
+
+                                                   19
+value at the center and the sup discrepancy
+
+ sup       ~ N (w) - E
+                      ~ N (w)
+wAN,j
+
+ ~ N (wN,j ) - E~ N (wN,j ) + sup                       ~ N (w) - 
+                                                                  ~ N (wN,j ) + sup   E ~ N (w) - ~ N (wN,j )
+                                           wAN,j                              wAN,j
+
+ ~ N (wN,j ) - E~ N (wN,j ) + aN  N (wN,j ) + E N (wN,j )
+
+ ~ N (wN,j ) - E~ N (wN,j ) + aN  N (wN,j ) - E N (wN,j ) + 2aN E N (wN,j )
+
+ ~ N (wN,j ) - E~ N (wN,j ) +  N (wN,j ) - E N (wN,j ) + 2aN E N (wN,j ).
+
+The last inequality follow because aN  1 for N large enough. For any constant M 
+ 1/2 1/2                   N (wN,j ),
+B4 B3      |K  (w)|dw  E
+
+
+       P      sup    ~ N (w) - E
+                                ~ N (w) > 6M aN
+             wAN,j
+
+        P       ~ N (wN,j ) - E
+                               ~ N (wN,j ) +  N (w) - E N (w) + 2aN E N (w) > 6M aN
+
+        P       ~ N (wN,j ) - E
+                               ~ N (wN,j ) > 2M aN + P                    N (w) - E
+                                                                                    N (w) > 2M aN ,
+
+as well as
+
+                     P    sup ~ N (w) - E~ N (w) > 6M aN
+                         wCN
+                         LN
+                                P      sup        ~ N (w) - E
+                                                             ~ N (w) > 6M aN
+                                      wAN,j
+                         j =1
+
+
+                      LN            max           P      sup    ~ N (w) - E
+                                                                           ~ N (w) > 6M aN
+                                j {1,2,...,LN }         wAN,j
+
+                      LN            max           P     ~ N (wN,j ) - E
+                                                                       ~ N (wN,j ) > 2M aN
+                                j {1,2,...,LN }
+
+                           + LN           max           P    N (w) - E
+                                                                       N (w) > 2M aN .                    (13)
+                                      j {1,2,...,LN }
+
+
+We now bound the two terms in (13) using the same argument, as both K and K  satisfy
+Assumption 3.1, and this is the only property of the function K or K  we will use. For any
+
+
+
+
+                                                                20
+ > 0 and M as in Lemma 3.4, for any w  RdW
+
+     sup P        ~ N (w) - E
+                             ~ N (w) > 2M aN = sup P (|TN,1 (w) + TN,2 (w)| > 2M aN )
+   wRdW                                                 wRdW
+
+                                                     sup P (|TN,1 (w)| > M aN )
+                                                        wRdW
+
+                                                         + sup P (|TN,2 (w)| > M aN )
+                                                           wRdW
+
+                                                    = O N - .
+
+Hence
+
+                     P    sup ~ N (w) - E~ N (w) > 6M aN            O LN N - .
+                          wCN
+
+
+If we take CN = {w  RdW : ||w|| < cN } where cN = N q , then CN can be covered by
+                   dW
+           cN
+LN = 2    aN hN
+                        number of balls with radius aN hN . Hence we can take  large enough,
+                                                                   dW                  1
+                                                            cN
+e.g.  = (q + 1 )d + 3, so that O (LN N - ) = O
+             2 W                                           aN hN
+                                                                        N -   = O N (q+ 2 )dW +2- =
+O (N -1 ) = o(1). We have therefore shown that
+
+
+                          P     sup ~ N (w) - E~ N (w) > 6M aN          = o(1).                (14)
+                              wCN
+
+
+Together the two bounds (9) and (14) imply that the right-hand side of equal-
+ity (8) is o(1).      This is saying for sufficiently large M < , we have
+P supwCN   ^ N (w) - E ^ N (w) > 8M aN = o(1), which is sufficient for
+
+
+                                  sup     ^ N (w) - E
+                                                     ^ N (w) = O(aN ).
+                                ||w||cN
+
+
+as required.
+
+
+Proof of Lemma 3.4
+Proof of claim (i)
+
+To prove the first claim of the Lemma we will apply the classic Bernstein's inequality (see
+equation 2.10 on p. 36 of the textbook Boucheron et al. (2013)).
+
+     Let Q1 , . . . , QN be independent random variables with finite variance such that
+     Qi  b for some b > 0 almost surely for all i < N . Let S = N    i=1 (Qi - EQi ) and
+
+
+
+                                                   21
+               N
+      v=       i=1   E [Q2
+                         i ]. Then for any t > 0,
+
+
+                                                                   t2
+                                  P (S  t)  exp -                           .
+                                                              2(v + bt/3)
+
+                                                                 -1 dX ¯
+In order to invoke the inequality, we first show that Qi (w) := N   hN ZN,i (w) is bounded.
+In the following we will use the abbreviated notation Qi for Qi (w). Remember Z   ¯N,i is the
+mean-normalized version of E Z  ~N,ij Xi , Ui . Since
+
+
+-1 dX ~N,ij Xi , Ui            -1 dX         1
+N h E Z                       =N h E           [Yij · 1 (|Yij | < N ) Kij
+                                             2
+                                 +Yji · 1 (|Yji | < N ) Kji ] Xi , Ui
+                                    1
+                              hd N
+                                  X
+                                      E |Kij | + |Kji | Xi , Ui
+                                    2
+                                  dX 1          w - Wij            w - Wji
+                              =h-N      E K                   + K             Xi
+                                      2             hN               hN
+                                  dX 1            x - xi x - xj          x - xj x - xi
+                              =h-N          K            ,         + K          ,           f (xj )dxj
+                                      2             hN        hN           hN     hN
+                                1         x - xi                           x - xi
+                              =       K           , s f (x - hN s) + K s,           f (x - hN s)ds
+                                2           hN                               hN
+                              B2 B3 ,
+
+                 -1 dX ¯
+we have |Qi | = |N  hN ZN,i | < 2B2 B3 . Write P (TN,1 (w) > M aN ) in the form suitable for
+applying Bernstein's inequality
+
+                                                         N
+                                                 2            ¯N,i > M aN
+                   P (TN,1 (w) > M aN ) = P                   Z
+                                                 N      i=1
+                                                    N
+                                                        -1 dX ¯     M
+                                         =P             N hN ZN,i >   N hd    -1
+                                                                         N aN N
+                                                                          X
+
+
+                                                 i=1
+                                                                    2
+                                         = P (S  t),
+
+             N                M    dX  -1
+in which S = i=1 Qi and t = 2 N hN aN N . Applying Bernstein's inequality gives us
+                   t2
+P (S  t)  exp - 2(v+ bt/3)
+                           where v := N       2
+                                      i=1 E [Qi ] and b = 2B2 B3 . Since the function
+         t 2
+exp - 2(v+ bt/3)
+                      is increasing in v , we have for any v > v
+
+                                                      t2
+                                  P (S  t)  exp -                           .                (15)
+                                                  2(v + bt/3)
+
+
+                                                        22
+The upper bound v we are going to use is the following one
+
+           N                 N
+                                                   2
+                                       -1 dX ¯            -2 2dX
+    v=          E   Q2
+                     i   =         E   N hN ZN,i        = N            -2
+                                                            hN N VN,1  N  N hd
+                                                                             N B5 B2 B1 := v ,
+                                                                              X
+
+
+          i=1                i=1
+
+
+in which the inequality is an implication of (7). Plugging the expression of v , t, b, and aN
+into the RHS of (15) gives us
+
+                             t2                                     M2
+                exp -                      = exp -                                  ln N        .
+                         2(v + bt/3)                   8B5 B2 B1 + 8B2 B3 M aN N /3
+
+By assumption aN N  0 as N  , we can pick N0 such that 8B2 B3 aN N /3  1 for
+                                                                          2
+any N > N0 . For any  > 0, we can pick M large enough so that 8B5 BM              and
+                                                                         2 1 +M
+                                                                          B
+             2                                    + 2 +32B5 B2 B1 
+exp - 8B5 BM
+           2 B1 +M
+                   ln N < N  . In particular, M =      2
+                                                                   will work. This means
+we have proved
+
+                                       P (TN,1 (w) > M aN ) = O N - .
+
+We get the two-sided bound by applying the same argument twice for TN,1 (w) and -TN,1 (w).
+Moreover, because the derivation of the bound and the value of M doesn't depend on the
+specific point w, we have also proved our desired result
+
+                                   sup P (|TN,1 (w)| > M aN ) = O N - .
+                                   wRdW
+
+
+Proof of claim (ii)
+
+We will use Propsition 2.3(c), a concentration inequality, from Arcones and Gine (1993)2 to
+prove the second claim.
+
+       Let {Xi , i  N} and {Vi1 ,...,im , (i1 , . . . , im )  Im
+                                                               N
+                                                                 } be independent random samples;
+       ||f ||  c, E ]f (X1 , . . . , Xm , V1,...,m )] = 0,  = E [f 2 (X1 , . . . , Xm , V1,...,m )]; f is
+                                                               2
+
+       P-canonical, then there are constants ci depending only on m such that for any
+   2
+     There is a small modification compared to the original proposition. Since our statistic is not exactly a
+U-statistic as there are the iid Vij variables in our setup, we include this additional term in the statement
+of inequality. The proof of the inequality in our setup could follow the same steps of the original Arcones
+and Gine (1993) one. The reason this works is that the Vij terms are iid and won't affect the randomization
+inequality, decoupling inequality, and the hypercontractivity inequality used in the proof.
+
+
+
+
+                                                        23
+      t > 0,
+                                                                                 
+
+        P  N -m/2                        f (Xi1 , . . . , Xim , Vi1 ,...,im ) > t
+                                     N
+                       (i1 ,...,im )Im
+
+                                                                                           c2 t2/m
+                                                         c1 exp -                                      2/(m+1)
+                                                                                                                 .
+                                                                          2/m + (ct1/m N -1/2 )
+
+                                                     -1 2dX 
+In order to apply the inequality, we first show that N hN ZN,ij is bounded. Decompose
+
+                    N,ij = Z
+                    Z      ~N,ij - E Z
+                                     ~N,ij Xi , Ui - E Z
+                                                       ~N,ij Xj , Uj + EZ
+                                                                        ~N,ij .
+
+                                                                      -1 ~
+The last three terms on the right-hand side are bounded because N       EZN,ij =
+           -1                      -
+                ~N,ij Xi , Ui = O(h X ).
+                                     d               - 1 2 d ~N,ij | = 1 | -1 Yij ·
+O(1) and N E Z                     N      Moreover, |N hN X Z            2 N
+                      w-Wij                                    w-Wji
+1 (|Yij | < N ) K       hN
+                             |+ 1 | -1 Yji · 1 (|Yji | < N ) K
+                                2 N                             hN
+                                                                     |  Kmax . Hence, there exists
+                           -1 2dX 
+constant c > 0      s.t. |N  hN ZN,ij | < c. Applying the concentration inequality to TN,2 (w)
+then gives us
+
+                                                 1               N,ij > M aN
+      P (|TN,2 (w)| > M aN ) = P                 N
+                                                                 Z
+                                                 2    1i<j N
+
+                                                             -1 2dX         N - 1 2dX  -1
+                                   =P          N -1          N hN ZN,ij > M      hN aN N
+                                                      1i<j N
+                                                                              2
+
+                                                                 c2 t
+                                    c1 exp -                                   2/3
+                                                       + (ct1/2 N -1/2 )
+                                                                        c2 t
+                                   = c1 exp -                                        2/3
+                                                                                                  · ln N
+                                                       ln N + (ct1/2 N -1/2 )              ln N
+
+
+
+                          -1 2dX   -1                -1 2dX 
+where t = M N2               hN aN N  and  2 = Var N   hN ZN,ij . We will show that
+             c2 t
+                      2/3        as N   by showing both  ln N   and 1/2 -1t/2 2/3
+                                                          t
+                                                                                    
+ ln N +(ct1/2 N -1/2 )    ln N                                     (ct N     ) ln N
+ as N  .
+
+
+
+
+                                                            24
+   Beginning with the former claim:
+
+                             -1 2dX  -1
+         t                M N2 hN aN N                                     M (N - 1)aN                      M (N - 1)aN
+             =                                 1/2
+                                                                =                    1/2
+                                                                                                                 1/2
+        ln N      -1 2dX   N,ij                                            N,ij                              2VN,2 ln N
+                  N hN Var Z                         ln N            2 Var Z               ln N
+                                                                                                                   -1
+                                    M N aN                                      M                        ln N
+                                                                =                       aN
+                  4 h- 2dX
+                           B4 Kmax B1
+                                                   1/2
+                                                         ln N        4 (B4 Kmax B1 )1/2                  N hd
+                                                                                                            N
+                                                                                                             X
+
+                     N
+
+                             M
+              =                              a-1
+                                          1/2 N
+                  4 (B4 Kmax B1 )
+               , as N  .
+
+The latter claim follows because:
+
+                                                                 1/3                                                   1/3
+                                                                                   -1 2dX        -1 2
+                      t                           t2 N                         (M N2  hN aN N      )N
+                             2/3
+                                          =                            =
+           (ct1/2 N -1/2 )         ln N       c2 (ln N )3                            c2 (ln N )3
+                                                                                           1/3
+                                              M2 3
+                                                 2
+                                                   N (ln N )-3 h4 dX 2 -2
+                                                                N aN  N
+                                              16c
+                                                          1/3
+                                              M2                       3
+                                                                           d      -1
+                                                                                                   2/3
+                                          =                         2 X
+                                                                 N hN   (ln N )-1 N
+                                              16c2
+                                           , as N  .
+
+                                                                                           3
+                                                                    2 X
+                                                                                               d
+The last line above is an implication of the condition N         N hN   / ln N . Combining these
+                                        c2 t
+two limit results gives us                       2/3        as N  . Notice the bound again
+                            ln N +(ct1/2 N -1/2 )    ln N
+doesn't depend on w and the inequality still holds when we take the sup over w  RdW on
+the left-hand side. Hence for any M > 0 and any  > 0, supwRdW P (|TN,2 (w)| > M aN ) =
+O (N - ).
+
+
+
+
+                                                                25
+Proof of claim (iii)
+
+Direct evaluation yields
+
+           ^ w) - (
+                  ~ w)                                              1         w - Wij
+         E (                     = E Yij 1 (|Yij | > N )                K
+                                                                  h2
+                                                                   N
+                                                                     dX          h
+                                           -1             s-1                      1              w - Wij
+                                  E |Yij | N  Yij               1 (|Yij | > N )           K
+                                                                                  h2
+                                                                                   N
+                                                                                     dX             hN
+                                     -(s-1)                 1            w - Wij
+                                  N           E |Yij |s            K
+                                                          h2
+                                                           N
+                                                             dX             h
+                                     -(s-1)                                                   1
+                                 = N             E [|Y12 |s |(X1 , X2 ) = (x1 , x2 )]
+                                                                                          h2
+                                                                                           N
+                                                                                             dX
+
+                                       x - x1 x - x 2
+                                 K           ,                    f (x1 , x2 )dx1 dx2
+                                         hN     hN
+                                     -(s-1)
+                                 = N             E [|Y12 |s |(X1 , X2 ) = (x - hN s1 , x - hN s2 )]
+
+                              × f (x - hN s1 , x - hN s2 ) |K (s1 , s2 )| ds1 ds2
+                                     -(s-1)
+                                  N           B4,s B1 .
+
+                                                                 ^ w) - (
+Since the last expression doesn't depend on w, we have supwRdW E (      ~ w)                                          =
+o(aN ).
+
+Proof of claim (iv)
+
+First, we eliminate the sup by upper bounding the terms involving K by Kmax .
+
+
+        ^ N (w) - ~ N (w) = sup              1                                1                       w - Wij
+ sup                                                      Yij 1 (|Yij | > N ) dW K
+wRdW                             wRdW    N (N - 1) 1i=j N                    hN                         hN
+                                     1                                   1                                  w - Wij
+                                                  |Yij | 1 (|Yij | > N ) 2dX sup K
+                                 N (N - 1) 1i=j N                       hN wRdW                               hN
+                                                 -(s-1)       1
+                            Kmax h-
+                                  N
+                                    2dX
+                                        N                                  |Yij |s .
+                                                          N (N - 1) 1i=j N
+
+Then, taking expectation on both sides yields
+
+                                                          -(s-1)                                       -(s-1)
+E      sup   ^ N (w) - 
+                       ~ N (w)        Kmax h-
+                                            N
+                                              2dX
+                                                  N                E (|Yij |s )  Kmax B6,s h-
+                                                                                            N
+                                                                                              2dX
+                                                                                                  N             = o(aN ).
+    wRdW
+
+
+
+
+                                                          26
+Proof of claim (v)
+
+If all the |Yij |, 1  i = j  N are smaller than the truncation threshold N , then ^N = ~N,
+
+
+                            P ^N = ~N  P               max |Yij |  N              .
+                                                    1i<j N
+
+
+We now show that the RHS converges to 1. Observe
+
+      N -1                                               N -1
+                                                                                 -s              -s
+               [P (|YiN | > N ) + P (|YN i | > N )]                    E |YiN |s N  + E |YN i |s N
+    N =2 i=1                                           N =2 i=1
+                                                                         N -1
+                                                    = E (|YiN | )  s
+                                                                                  2N -2 -
+                                                                                        N
+                                                                                          1
+
+                                                                       N =2 i=1
+                                                                        
+                                                                                     2
+                                                     E (|YiN |s )
+                                                                       N =2
+                                                                            N (ln ln N )2 ln N
+                                                    < ,
+
+The Borel-Cantelli lemma implies P (Aij , i = j, i.o.) = 0 where the set Aij = { : Yij ( ) >
+max{i,j } }. This means, except for a null set N , for any   N c , there exists a N ( ) s.t. for
+all N  N ( ), YiN ( )  N . Since N   as N  , we can take N  ( )  N ( ) such that
+N  (w) > maxi,j N () |Yij ( )|. Then for any N  N  ( ), we have max1i<j N |Yij ( )|  N
+and hence     ^N =  ~ N . Define the set EN := { : N  ( )  N }  { :         ^N =   ~ N }. Since
+EN  N c and P (N c ) = 1, we have P (   ^N =   ~ N )  P (EN )  1 as N  .
+
+
+Proof of Theorem 3.3
+The proof follows the general approach used in Hansen (2008).                                 ^
+                                                                                       Denote f W,N (w ) =
+   1
+N (N -1) 1i=j N Kij,N (w ). We can write
+
+
+                                                     ^ N (w)
+                                                     
+                                         g
+                                         ^N (w) =              .
+                                                    ^
+                                                    f W,N (w )
+
+
+We examine the numerator and denominator separately. An application of Theorem 3.2
+yields
+
+                                 sup |^ N (w) - E^ N (w)| = Op (aN )
+                               ||w||CN
+
+                                    ^
+                               sup |f             ^
+                                      W,N (w ) - EfW,N (w )| = Op (aN ).
+                             ||w||CN
+
+
+
+
+                                                 27
+Standard bias calculations give
+
+                                  sup |E^ N (w) - (w)| = O(h )
+                                                            N
+                               ||w||CN
+
+                                     ^
+                               sup |Ef                           
+                                       W,N (w ) - fW (w )| = O (hN ).
+                            ||w||CN
+
+
+Combining these results we get
+
+                       sup |^ N (w) - (w)| = Op (aN ) + O(h ) = O(aN)
+                                                           N
+                     ||w||CN
+
+                         ^
+                    sup |f                                                
+                           W,N (w ) - fW (w )| = Op (aN ) + O (hN ) = O (aN ).
+                  ||w||CN
+
+
+   Uniformly over ||w||  CN we have
+
+    ^ N (w)
+                 ^ N (w)/fW (w)      g (w) + (^ N (w) - (w))/fW (w)       g (w) + Op (N -1 
+                                                                                          aN )
+              =                    =                                    =            - 1 
+   ^
+   f W,N (w )
+                ^
+                f W,N (w )/fW (w )   1 + (f^W,N (w ) - fW (w ))/fW (w )      1 + Op (N aN )
+                          -1 
+            = g (w) + Op (N aN )
+
+                                                                        1
+                                                               ln N
+as claimed. The optimal rate is obtained by setting hN          N
+                                                                      2 +dX
+                                                                              .
+
+
+
+
+                                               28
+

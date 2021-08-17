@@ -1,0 +1,2539 @@
+                              NBER WORKING PAPER SERIES
+
+
+
+
+          DATA-DRIVEN INCENTIVE ALIGNMENT IN CAPITATION SCHEMES
+
+                                        Mark Braverman
+                                        Sylvain Chassang
+
+                                      Working Paper 28429
+                              http://www.nber.org/papers/w28429
+
+
+                     NATIONAL BUREAU OF ECONOMIC RESEARCH
+                              1050 Massachusetts Avenue
+                                Cambridge, MA 02138
+                                    February 2021
+
+
+
+
+Braverman acknowledges support from NSF Award CCF-1215990, NSF CAREER award
+CCF-1149888, a Turing Centenary Fellowship, and a Packard Fellowship in Science and
+Engineering. Chassang acknowledges support from the Alfred P. Sloan Foundation. We are
+grateful to Ben Brooks, Janet Currie, Mark Duggan, Kate Ho, Amanda Kowalski, Roger
+Myerson, Phil Reny, Dan Zeltzer as well as seminar participants at Boston University, Princeton,
+and the Becker-Friedman institute at the University of Chicago, for helpful comments. The views
+expressed herein are those of the authors and do not necessarily reflect the views of the National
+Bureau of Economic Research.
+
+NBER working papers are circulated for discussion and comment purposes. They have not been
+peer-reviewed or been subject to the review by the NBER Board of Directors that accompanies
+official NBER publications.
+
+© 2021 by Mark Braverman and Sylvain Chassang. All rights reserved. Short sections of text, not
+to exceed two paragraphs, may be quoted without explicit permission provided that full credit,
+including © notice, is given to the source.
+Data-Driven Incentive Alignment in Capitation Schemes
+Mark Braverman and Sylvain Chassang
+NBER Working Paper No. 28429
+February 2021
+JEL No. C55,D82,H51,I11,I13
+
+                                          ABSTRACT
+
+This paper explores whether Big Data, taking the form of extensive high dimensional records, can
+reduce the cost of adverse selection by private service providers in government-run capitation
+schemes, such as Medicare Advantage. We argue that using data to improve the ex ante precision
+of capitation regressions is unlikely to be helpful. Even if types become essentially observable,
+the high dimensionality of covariates makes it infeasible to precisely estimate the cost of serving
+a given type: Big Data makes types observable, but not necessarily interpretable. This gives an
+informed private operator scope to select types that are relatively cheap to serve. Instead, we
+argue that data can be used to align incentives by forming unbiased and non-manipulable ex post
+estimates of a private operator's gains from selection.
+
+
+Mark Braverman
+Princeton University
+mbraverm@cs.princeton.edu
+
+Sylvain Chassang
+Department of Economics
+Princeton University
+Julis Romo Rabinowitz Building
+Princeton, NJ 08544
+and NBER
+chassang@princeton.edu
+Data-Driven Incentive Alignment in Capitation Schemes
+
+                        Mark Braverman                Sylvain Chassang
+                                     Princeton University
+
+                                        October 19, 2020
+
+
+
+                                              Abstract
+
+           This paper explores whether Big Data, taking the form of extensive high dimen-
+       sional records, can reduce the cost of adverse selection by private service providers in
+       government-run capitation schemes, such as Medicare Advantage. We argue that using
+       data to improve the ex ante precision of capitation regressions is unlikely to be help-
+       ful. Even if types become essentially observable, the high dimensionality of covariates
+       makes it infeasible to precisely estimate the cost of serving a given type: Big Data
+       makes types observable, but not necessarily interpretable. This gives an informed pri-
+       vate operator scope to select types that are relatively cheap to serve. Instead, we argue
+       that data can be used to align incentives by forming unbiased and non-manipulable ex
+       post estimates of a private operator's gains from selection.
+
+           Keywords: adverse selection, big data, capitation, health-care regulation, detail-
+       free mechanism design, delegated model selection.
+
+
+
+1      Introduction
+This paper explores the value of Big Data in reducing the cost of adverse selection by
+private service providers in government-run capitation or voucher schemes. We emphasize
+    
+    Braverman acknowledges support from NSF Award CCF-1215990, NSF CAREER award CCF-1149888, a
+Turing Centenary Fellowship, and a Packard Fellowship in Science and Engineering. Chassang acknowledges
+support from the Alfred P. Sloan Foundation.
+   
+    We are grateful to Ben Brooks, Janet Currie, Mark Duggan, Kate Ho, Amanda Kowalski, Roger Myerson,
+Phil Reny, Dan Zeltzer as well as seminar participants at Boston University, Princeton, and the Becker-
+Friedman institute at the University of Chicago, for helpful comments.
+
+                                                  1
+an application to healthcare insurance. School voucher programs are an other example.
+       In the context of public health-insurance, a capitation scheme pays private insurance
+plans an estimate of the cost of insurance for individuals they enroll. An example is Medicare
+Advantage, a program which lets US Medicare recipients switch to private health insurance
+plans. Capitation payments can be conditioned on agreed upon user characteristics (then,
+they are said to be risk-adjusted). While capitation programs are a popular way to outsource
+government mandated services to the private sector, they are often plagued by adverse
+selection. Private plans have strong incentives to select types that are cheaper to serve
+than their capitation payment, which increases the cost of serving the overall population.
+In the context of Medicare Advantage, Batata (2004) and Brown et al. (2014) report yearly
+overpayments in the thousands dollars for patients selected by private plans.
+       A natural strategy to reduce adverse selection is to increase the precision of risk-adjusted
+capitation schemes by reimbursing private plans for the expected cost of taking care of the
+specific patients they select. This suggests that Big Data -- i.e., the availability of high-
+dimensional patient records -- could be used to condition capitation payments on precise
+individual characteristics, and eliminate the scope for adverse selection. We take a different
+view and argue that in realistic Big Data environments, this na¨
+                                                               ive use of high-dimensional
+co-variates is likely to be of limited value. Instead, we suggest that data may be more
+successfully used to form unbiased ex post estimates of strategic selection by private plans.
+Correcting capitation formulas with these ex post estimates aligns the public and private
+plans' incentives.
+       Our model considers a single public plan p0 seeking to outsource the provision of health-
+care services to a single private plan p1 .1 The private plan may have a genuine comparative
+advantage in insuring certain types of patients so that some selection into plans may be
+welfare enhancing. For instance, plan p1 may have expertise in tobacco cessation, inducing
+a comparative advantage insuring current smokers. However, the private plan also has in-
+   1
+   In the case of Medicare Advantage, the private plan would correspond to a preferred provider organization
+(PPO) or a health management organization (HMO).
+
+
+                                                     2
+centives to select patients whose cost of care is overestimated; for instance, patients that are
+more healthy or less likely to use costly services than their official risk-rating suggests. This
+leads us to distinguish legitimate selection characteristics, which predict comparative ad-
+vantage, from illegitimate selection characteristics, which predict costs but not comparative
+advantage. Efficient selection strategies need only depend on legitimate selection characteris-
+tics. We assume that comparative advantage can be captured using a small set of legitimate
+characteristics, while the underlying set of types predicting cost of care is large. In addition,
+we assume that public plan p0 has access to a hold-out sample of cost realizations that is
+not observed by private plan p1 , such as cost realizations for the patients it serves.
+       Our modeling choices reflect both the opportunities and limitations presented by Big
+Data. We assume that high-dimensional records isomorphic to patients' types -- i.e. suffi-
+cient statistics for patients' cost of care -- are observable. However, we also recognize that
+the number of such possible types need not be small relative to the sample size of available
+cost data, thereby limiting their use for prediction.2 This leads us to study mechanism de-
+sign for environments where both the sample size and the number of relevant covariates are
+large. In such Big Data environments, sufficient statistics of types are observable but not
+interpretable : even conditional on type and cost data, it is not possible to form a precise
+estimate of a patient's cost of care. This creates a trade-off when setting capitation rates:
+"sparse" cost estimates, conditioned on a few patient characteristics, have low standard er-
+rors but high bias; in contrast "rich" cost estimates, conditioned on an exhaustive set of
+patient characteristics, have low bias, but large standard errors.
+       Concerns over estimation error are reflected in the capitation scheme employed by Medi-
+care Advantage, as well as in the risk-adjustment formula used to calculate transfers be-
+tween plans under the Affordable Care Act (ACA). The Medicare Advantage risk adjust-
+ment model, rolled out in 2004 by the Centers for Medicare and Medicaid Services (CMS),
+uses Hierarchical Condition Categories (HCCs) (Pope et al., 2004). The HCCs are groups
+   2
+    The statistics literature concerned with Big Data makes similar assumptions. See Belloni et al. (2013,
+2014) for recent examples in econometrics.
+
+
+                                                    3
+of conditions that can be inferred from the patient diagnosis data. The number of HCCs in
+the model varies between editions, but generally is under 100. HCCs are used in conjunction
+with condition severity modifiers and demographic factors to estimate individual patients'
+expected expenditures in the subsequent year. Thus the model falls under the "sparse capita-
+tion" category discussed above: there are relatively few categories, and a reasonably precise
+estimator can be formed for each category (Evans et al., 2011). The desire for "adequate
+sample sizes to permit accurate and stable estimates of expenditures" has been a design
+principle for the risk adjustment scheme, and a factor in keeping the number of patient
+types in the model relatively low (Pope et al., 2004).
+   The model used for risk-adjustment transfers under the ACA uses a somewhat expanded
+set of HCCs (114 in 2014), reflecting the fact that the ACA transfer model is a general-
+population model, while the Medicare Advantage model is primarily for patients above the
+age of 65 (Kautter et al., 2014). As in the case of the Medicare Advantage model, the need
+for statistical power to get good ex ante estimates is one of the design principles limiting
+the number of categories used (Centers for Medicare and Medicaid Services, 2016). We
+discuss implications of our analysis to the ACA setting, where no public option is available,
+in Section 5.
+   Our first set of results considers traditional capitation schemes, which, as emphasized
+by Brown et al. (2014), seek to reimburse private plans for the expected cost of treating
+patients given ex ante observables. Sparse capitation schemes condition cost estimates on
+a small set of patient characteristics, while rich capitation schemes condition cost estimates
+on the full set of characteristics made available by Big Data. We show that such schemes
+induce efficient selection when the private plan is constrained to select only on the basis
+of legitimate characteristics (determinants of comparative advantage). However, if private
+plans can engage in illegitimate selection, then patient assignment is bounded away from ef-
+ficiency in Big Data environments. Indeed, even though types are observable, cost-estimates
+conditional on types remain noisy even for large samples. As a result it is possible for the
+
+
+
+                                              4
+private plan to maintain an informational advantage which induces inefficient selection and
+increases the average cost of care.
+       In spite of these limitations, if legitimate selection characteristics are common knowledge,
+we can construct a prior-free mechanism that achieves efficient patient assignment at no
+excess cost for the public plan. Big Data is not used to obtain a more precise ex ante
+capitation formula. Instead, we augment the baseline capitation formula (based on legitimate
+characteristics) with a single additional term measuring ex post selection by the private
+plan. This additional term takes the form of an appropriately weighted covariance between
+the distribution of types selected by the private plan, and the residuals from the sparse
+capitation regression evaluated on out-of-sample costs. More concretely, it uses Big Data to
+form an unbiased estimate of the cost savings obtained by the private plan from selecting a
+non-representative sample of patients. This "strategic capitation scheme" induces efficient
+selection, and, importantly, does not give the public plan any incentive to bias its report of
+out-of-sample costs. This last property allows us to extend our approach to health exchanges
+for which out-of-sample cost realizations would be reported by competing healthcare plans
+(see Section 5).
+       Strategic capitation can be extended to environments where legitimate selection char-
+acteristics are not common knowledge. It is still possible to achieve a meaningful share of
+first-best efficiency by using generalized strategic capitation schemes that let private plans
+specify the characteristics they wish to select on. This flexibility comes at a cost related
+to the complexity of the class of models the private plan can use to select patients. We
+show that the performance guarantees of this indirect prior-free mechanism are essentially
+unimprovable by studying the unrestricted direct mechanism design problem in a specific
+environment.
+       The paper contributes to the theoretical literature on adverse selection in insurance mar-
+kets.3 Our work is particularly related to Glazer and McGuire (2000), who study optimal
+   3
+    See for instance Rothschild and Stiglitz (1976), Bisin and Gottardi (1999, 2006), Dubey and Geanakoplos
+(2002).
+
+
+                                                    5
+risk-adjustment in a Bayesian setting. They show that when selection is possible, optimal
+ex ante reimbursement schemes should deviate from simply reimbursing private plans the
+expected cost of taking care of patients. In particular, capitation schemes should adjust
+reimbursement rates to dull the effect of "cream-skimming" by private plans. We show how
+to induce efficient selection by using information about patient types and ex post cost data.
+      Our mechanism is closely related to that of Mezzetti (2004), which also uses noisy ex post
+information to provide accurate ex ante incentives. Also related is the work of Riordan and
+Sappington (1988) who show how to exploit noisy ex post signals to screen agents at no cost
+to the principal. As we clarify in greater detail in Section 6, our work differs for two main
+reasons. First, we are interested in prior-free mechanisms and do not make the identification
+assumptions required in Riordan and Sappington (1988). Second, ex post signals (here the
+public plan's hold-out cost data) need not be publicly observed and we must ensure that the
+relevant party has correct incentives for reporting. Third, unlike Mezzetti (2004), we require
+exact budget-balance.
+      Our work is motivated by a growing empirical literature which documents cream-skimming
+in health insurance markets, and studies the efficiency of various risk-adjustment schemes
+(Frank et al., 2000, Mello et al., 2003, Batata, 2004, Newhouse et al., 2012, Brown et al.,
+2014). Our analysis is inspired by Brown et al. (2014) which shows that increasing the
+number of covariates used in Medicare Advantage's capitation formulas has in fact led to
+an increase in the cost of adverse selection to the state.4 We complement their result by
+showing that na¨
+               ive uses of data are unlikely to resolve adverse selection, but progress can be
+made by using data to detect selection ex post.
+      The paper is structured as follows. Section 2 describes our framework, and in particular
+our approach to Big Data. Section 3 uses a simple example in which legitimate selection
+characteristics are common knowledge to delineate the mechanics of adverse selection under
+various capitation schemes. Section 4 generalizes the analysis to settings in which the private
+  4
+      Newhouse et al. (2012) argues that the cost of adverse selection may be overstated.
+
+
+
+
+                                                      6
+plan's comparative advantage is not common knowledge. Section 5 uses a stylized model
+to show how strategic capitation can help reduce adverse selection in healthcare exchanges.
+Section 6 and Appendix A present several extensions addressing potential risk inflation,
+dynamic selection, and reduced quality provision by private plans. Proofs are collected in
+Appendix B unless mentioned otherwise.
+
+
+
+2     Framework
+Our model seeks to capture three features of healthcare capitation. The first is selection by
+private healthcare plans, such as HMOs or PPOs, which we model as a reduced form cost for
+attracting different populations. Selection may be achieved through targeted advertisement
+and marketing (consistent with Starc (2014)), heterogenity in the quality of customer service
+during enrollment procedures, as well as targeted service bundles.
+    Second, public and private plans may have heterogeneous comparative advantages in
+treating patients. While there is controversy about the real value added of private plans over
+Medicare, there is evidence that insurance plans are more than mere financial intermediaries.
+Plans play an important role in selecting, monitoring and generally resolving agency problems
+vis `
+    a vis doctors and hospitals, as well as encouraging preventive care and healthy habit
+formation. Data from Bundorf et al. (2012) provides evidence for such comparative advantage
+across different plans. In their sample, HMOs have a comparative advantage over PPOs in
+insuring high risk patients. In our model, the possibility of comparative advantage creates
+a reason for both public and private plans to be active, and raises the question of efficient
+patient allocation.
+    Third, we seek to correctly capture the forces that make Big Data attractive but chal-
+lenging: we assume that high dimensional records make patients' types observable, but that
+as a result, even with a large sample of patients, it is not possible to form precise estimates of
+expected cost of treatment conditional on individual types (the concern for power is explicit
+in discussions of CMS formulas by Pope et al. (2004), Evans et al. (2011), Kautter et al.
+
+                                                7
+(2014)). In short, types are observable but not interpretable.
+   The lead example for our work is Medicare Advantage, a program that lets US Medicare
+recipients switch to private insurance plans such as HMOs and PPOs. Medicare Advantage is
+a large and growing program. It covers approximately 15 million patients, out of the roughly
+50 million enrolled in Medicare, and its size was multiplied by three from 2005 to 2015.
+Selection by private plans is an ongoing concern threatening the financial sustainability of
+the program (Batata, 2004, Brown et al., 2014).
+
+
+2.1    Players, Actions, Payoffs
+
+We study the relationship between a public health care plan p0 , responsible for the health
+expenses of a set I = {1, · · · , N } of patients, and an independent private plan p1 .
+
+
+Treatment costs. Each patient i  I has a type i  T  Rn where the set of types
+T is potentially very large, but finite. Type  is a sufficient statistic for a patient's cost
+of care, and is observable to both plans. For any sample J of patients, we denote by
+                                                                                      |J  |
+µJ  (T ) the empirical distribution of types  in sample J , defined by µJ ( )          |J |
+                                                                                            ,   where
+J   {j  J |j =  }, and |J | denotes the cardinal of J .
+   The realized cost of care for a patient i of type  insured by plan p is positive, bounded
+above, and denoted by ci (p)  [0, cmax ]. The distribution of potential costs (ci (p0 ), ci (p1 ))
+conditional on type  is distributed according to a c.d.f. F ( ). Treatment costs across
+patients i are exchangeable conditional on patient type  , cost distribution F , and plan p.
+We allow for aggregate uncertainty so that c.d.f. F is itself uncertain.
+
+
+Selection. The key difficulty is that private plan p1 may strategically seek to attract a
+targeted subset of patients. Specifically, private plan p1 can choose an expected selection
+policy  : T  [0, 1] at a cost K ()  0. A patient i enrolls with private plan p1 with
+probability (i ). Consistent with observations in Starc (2014), this reduced-form cost of
+
+
+
+                                                8
+selection may be thought of as a cost of advertisement.5 Realized selection   I is a mean
+preserving spread of intended selection  defined by
+
+
+                                            1i = (i ) + i .
+
+
+Error terms (i )iI have expectation equal to zero, and may be correlated across different
+types   T , but are otherwise independent of cost realization ci (p). For instance, a recruit-
+ment ad may unexpectedly attract a population different from the targeted one. Patients
+i  I \  that do not enroll with private plan p1 are insured by public plan p0 .
+
+
+Realized payoffs and preferences. Transfers   R from public plan p0 to private plan
+p1 are feasible. Given a selection decision  by private plan p1 , a realized selection , and a
+transfer , the realized surpluses U0 and U1 accruing to the public and private plans are
+
+
+                    U0 = - +           ci (p0 ) and U1 =  -              ci (p1 ) - K ().
+                                   i                                 i
+
+
+       Conditional on selection rule  and a distribution of costs F , surplus takes the form
+
+
+                         S () = -K () + EF                (i ) (ci (p0 ) - ci (p1 )) .
+                                                     iI
+
+
+Public plan p0 has lexicographic preferences: its main objective is to maximize surplus S
+in expectation; however, taking as given selection behavior  and surplus S , its secondary
+objective is to maximize cost savings U0 in expectation. Private plan p1 seeks to maximize
+its profits U1 in expectation.
+       Note that although we let the public plan care about surplus, we will seek mechanisms
+such that the expectation of cost savings U0 is approximately non-negative in equilibrium.
+   5
+     Cost K implicitly includes any information acquisition costs needed to implement . Under a more
+standard model of selection along the lines of Rothschild and Stiglitz (1976), the private plan would screen
+patients through a menu of discounts and benefits specifically appealing to desirable types. In a dynamic
+setting, plans may be able to select patients by offering better customer service to types they wish to retain.
+
+
+                                                      9
+This can be thought of as a financing constraint.
+
+
+2.2       Data
+
+We model explicitly the role that data plays in the contracting problem. We assume that in
+Big Data environments, the richness of covariates makes patients' types essentially observ-
+able, but prevents the public plan from forming a precise estimate of expected treatment
+costs conditional on types. A consequence illustrated in Section 3 is that even imprecise
+additional signals of costs may allow the private plan to profit from selecting patients.
+
+
+Samples. Both plans p0 and p1 observe a public dataset of types and cost realizations
+D0 = {(i, i , ci (p0 ))|i  D0 } for plan p0 , where i  D0 denotes a patient i whose record is
+                                            
+included in D0 . In addition, we denote by D0 = {(i, i , ci (p0 ))|i = , i  D0 } the cost data
+                                                                        
+relating to patients of type  . We assume that for every   T , the set D0 is non-empty,
+which implies |T |  |D0 |: the sample size of dataset D0 is at least as large as the type space.
+       Plan p1 privately observes a dataset D1 = {(i, xi , ci (p1 ))|i  D1 } reporting both her own
+costs, and side-signals xi for a sample of patients i  D1 . Side signal xi (which can include
+type i ) captures other signals beyond cost realizations that the plan may be able to use in
+order to select patients.
+       Finally, we assume that plan p0 has access to a hold-out sample H = {(i, i , ci (p0 ))|i  H }
+of its own costs, independent of data D1 conditional on the realization of cost distribution
+F . Hold-out sample H may consist of ex post cost realizations for the current set of patients
+enrolled by the public plan. Alternatively, H may correspond to past cost data, securely
+encrypted, and verifiably released only after patient selection has occurred.6 Contractual
+transfers  will be allowed to depend on hold-out sample H , but we will take seriously
+the public plan's incentive to reveal correct information. Specifically, we will address the
+public plan's incentives to bias its records in order to reduce payments to the private plan.
+   6
+    For instance, an encrypted version of the data can be released before selection occurs, with a decryption
+key publicized after patient enrollment has occurred.
+
+
+                                                     10
+For instance the public plan could down-code interventions happening to its own patients.
+Access to a hold-out sample is essential. It allows the public plan to obtain estimates of its
+own costs whose errors are uncorrelated to the private plan's information. We motivate the
+asymmetric treatment of data-sets D0 (publicly observed) and H (privately observed by the
+public plan) when we discuss the timing of actions.
+
+                                   |I  |
+Big Data. Recall that µI ( )        |I |
+                                           denotes the sample distribution of types  in patient
+population I . Our model of Big Data consists of two assumptions:
+
+ (i) types   T are publicly observed;
+
+(ii) even if sample data D0 is large, type space T is of comparable size; i.e. there
+     exists a fixed constant a > 0 such that
+
+                                                 1
+                                      EµI         
+                                                        > a.
+                                                |D0 |
+
+Points (i) and (ii) summarize what we think are the opportunities and limitations of Big
+Data. Point (i) captures the idea that high dimensional records make types observable.
+                                                                                           
+Point (ii) implies that even if sample D0 is very large, the size |D0 | of many subgroups D0
+remains bounded above. As a result the public plan's estimates of type-specific costs on the
+basis of data D0 remains noisy.
+   Note that all our results are non-asymptotic: we provide efficiency bounds that depend
+explicitly on EµI  1   |
+                           . Point (ii) clarifies the terms we consider negligible and non-
+                     |D0
+
+negligible when we provide performance bounds. Our large type-space model of Big Data
+contrasts with small type-space environments in which the sample size maybe considered
+large compared to the set of types.
+
+
+2.3    Beliefs, Contracts, and Equilibrium
+
+Beliefs. The plans' environment is described by: healthcare-cost distribution F ; data-sets
+D0 , D1 and H ; cost of selection K . All these objects are in principle random variables.
+
+
+                                                 11
+For simplicity, we assume that plans p0 and p1 share a common prior  over the tuple
+(F, D0 , D1 , H, K ).
+       Note that the capitation mechanisms we study do not rely on the common prior assump-
+tion. Our performance bounds remain valid in a non-common prior setting if expectations
+are taken under the private plan's prior.7
+
+
+Reporting of hold-out data. We allow mechanisms to depend on reports of hold out
+sample H made by public plan p0 . We denote by  : H  HR the public plan's strategy,
+mapping hold-out data H to (potentially biased) reported hold-out data HR . We note that 
+does not depend on realized selection . This can be thought of as a restriction on timing (the
+hold-out sample must be encrypted and shared before selection occurs), or a restriction on
+strategies (the public plan cannot tailor misreporting to simultaneous selection by the private
+plan). We denote by   (H )  H the truthful reporting strategy, and break indifferences in
+favor of truth-telling, reflecting small costs in misreporting.
+
+
+Contracts. For any set of patients J  I , let J  (i )iJ and cJ (p)  (ci (p))iJ de-
+note profiles of types and costs. We denote by HR = {(i, i , cR
+                                                              i (p0 )), i  H } the hold-out
+
+data reported ex post by public plan p0 . We emphasize that these are reports of privately
+observed costs, and that the public plan must be given appropriate incentives in order to
+report truthfully. A capitation contract between the public and private plan is a mapping
+(, HR )  R, specifying the aggregate transfer to private plan p1 as a function of realized
+selection , and reported hold-out sample data HR . Note that contract  implicitly depends
+on data D0 , but we suppress this dependency in the notation since D0 is common-knowledge
+between plans.
+   7
+    For recent work emphasizing prior-free approaches to mechanism design, see Segal (2003), Bergemann
+and Schlag (2008), Hartline and Roughgarden (2008), Chassang (2013), Carroll (2015), Madar´asz and Prat
+(2014), Brooks (2014), Antic (2014).
+
+
+
+
+                                                  12
+Timing and equilibrium. Given public data D0 and a common knowledge contract ,
+the timing of the interaction between public and private plans is as follows:
+
+  1. the public and private plans simultaneously pick a cost reporting strategy  , and a
+     selection strategy ;
+
+  2. potentially biased hold-out data HR is reported, and actual selection   I by the
+     private plan is realized, resulting in a contractual transfer (, HR ).
+
+We assume away potential incentive issues related to the revelation of data D0 by public plan
+p0 for simplicity. It is sufficient for our analysis that the contract  be common knowledge
+in stage 1. We only care about data D0 to the extent that it lets us specify contract .
+   Note that since the public plan's primary objective is to maximize surplus, there would be
+little incentive to misreport D0 : biased costs would distort the selection of patients  taking
+place at a later stage, and reduce surplus S . In contrast, sending a biased report HR of hold-
+out data H cannot influence the selection of patients , which takes place simultaneously.
+As a result, biasing hold-out data H does not affect surplus S ; it only affects the allocation
+of surplus across the public plan's cost savings U0 , and the private plan's profits U1 . This
+is why we take seriously strategic issues related to the reporting of hold-out data H , but
+simplify away strategic considerations pertaining to the release of initial data D0 .
+   Given a capitation contract , a selection strategy , and a reporting strategy  , the
+public and private plans' expected payoffs under common prior  are
+
+
+                          E U0 = E - +             ci (p0 ) ,  ,
+                                              i
+
+
+                          E U1 = E  -           ci (p1 ) ,  - K ().
+                                            i
+
+
+Given a contract , abstractly denoting by I0 and I1 the information available to plans p0
+
+
+
+
+                                              13
+and p1 , a strategy profile (, ) is an equilibrium if and only if  and  respectively solve
+
+
+            max E [- I0 , , ] and          max E  -            ci (p1 ) I1 , ,  - K ().
+                                             
+                                                           i
+
+
+In words, taking selection  as given, the public plan's reporting strategy  must minimize
+expected transfers to the private plan. Taking reporting  as given, the private plan picks
+the selection strategy that maximizes its expected profit.
+
+
+Design objectives. We seek contracts  such that for all priors  , data D0 , D1 , and all
+equilibria (,  ), surplus S and public and private plan payoffs U0 , U1 satisfy:
+
+
+                              E [S |] = E max E [S |, D0 , D1 ] - o(|I |);                     (1)
+                                                
+
+                     E U0 , , D0  -o(|I |);                                                    (2)
+
+                     E U1 , , D1  0,                                                           (3)
+
+
+where o(|I |) is the usual little-o notation for "negligible relative to |I |."
+    In words, we seek ex post budget-balanced prior-free mechanisms that: (i) maximize
+efficiency given available information up to a term negligible compared to the size |I | of the
+patient population; (ii) satisfy approximate interim individual rationality for the public plan
+(reflecting some willingness to subsidize the market); (iii) satisfy exact interim individual
+rationality for the private plan.
+
+
+
+3     Strategic Capitation
+In this section we clarify why existing ex ante capitation schemes may work under idealized
+conditions, but likely fail in a realistic Big Data setting. Still, we are able to exhibit a prior-
+free mechanism that achieves first-best allocation by using an ex post measure of selection to
+correct capitation payments. Since this indirect prior-free mechanism achieves the first-best,
+
+
+                                                 14
+there are no performance benefits from using a prior-dependent Bayesian mechanism.
+   To make the key forces more transparent we make a few simplifying assumptions that
+we relax in Section 4.
+
+
+Legitimate and illegitimate selection. We assume for now that there exists a common
+knowledge partition E of type space T , with typical element   E , such that treatment
+costs can be decomposed as
+                                    ci (p) = (i , p) + ei,i                                       (4)
+
+where error terms ei,i do not depend on provider p, and have mean zero conditional on i
+in the patient population:
+                                    E,µI [ei,i |i , D0 ] = 0.                                     (5)
+
+In the example of a private plan with expertise running smoking cessation programs, E would
+partition patients into smokers, and non-smokers;  would be a patient's smoking status.
+   Cost decomposition (4) implies that the comparative advantages of plans p0 and p1 ,
+described by (, ·), depend only on characteristics   E . We think of E as a small set
+compared to type space T , so that it is possible for each plan to form accurate estimates of
+its costs conditional on   E . For simplicity, we assume that the costs of the public plan
+(·, p0 ) are known by both plans, and that private plan p1 knows its own costs (·, p1 ). Error
+term ei, captures residual errors in cost estimates.
+   We assume (for this section) that the private plan can engage in arbitrary costless selec-
+tion:   [0, 1]T , K () = 0. Let M(E ) denote the set of selection rules measurable with
+respect to E .
+
+Remark 1. First-best surplus, Smax  max E              i ci (p0 )   - ci (p1 ) is attained by a selec-
+tion policy  ( ) = 1(,p0 )>(,p1 ) that is measurable with respect to partition E .
+
+   Accordingly, a selection rule is said to be legitimate if and only if it is measurable with
+respect to E (i.e.   M(E )). Selection rules that are not measurable with respect to
+
+
+                                               15
+type-space partition E depend on features of types  that do not matter for efficiency. They
+are referred to as illegitimate.
+
+
+A stylized example. The following very stylized example makes for simple computations
+in the proofs that follow. We denote by 0 the corresponding prior. We assume that |I | =
+|T | = |D0 | = |D1 |. Types   T take the form  = (, n,  ), with  in some finite set E ,
+n  {1, · · · , n} an integer, and   {-1, 1}. Sample I includes one patient per type   T .
+Data D0 (resp. D1 ) consists of a cost realization ci (p0 ) (resp. ci (p1 )). Thus |I | = 2 × n × |E |.
+   Comparative advantage is determined by (, p) = 0 +  ×  1p=p1 , where   [0, 0 /4]
+parameterizes the magnitude of comparative advantages, and   U {-1, 1} (uniformly
+distributed over {-1, 1}) indicates which plan has a comparative advantage. Error term
+ei, is distributed ei,  U {0, ,n 0 }, with ,n  U {-1, 1}. Every n is associated with
+two types (corresponding to  equal to 1 or -1), one whose idiosyncratic cost shocks has a
+positive average, and one with a negative average. Random variables  and ,n are drawn
+independently. Shocks ei, are drawn independently across individuals i conditional on ,n .
+   It is immediate that E,i µI [ei,i |D0 ,  ] = 0. Cost data for types (, n, 1) and (, n, -1) is
+either fully revealing of ,n or not at all, leading to straightforward conditional expectations.
+
+
+3.1     Why Ex Ante Capitation Schemes Fail
+
+Existing capitation mechanisms attempt to align incentives through capitation rates that
+are fixed ex ante. This removes concerns that the public plan may misreport its hold-out
+cost data H to reduce payments. We clarify when such schemes are potentially effective:
+when the private plan p1 is unable to engage in illegitimate selection, or when type-specific
+cost estimates are arbitrarily precise. We then show that in Big Data environments, if plan
+p1 is able to engage in illegitimate selection, such schemes are either bounded away from
+efficiency, or generate large losses for the public plan.
+   We consider sparse and rich capitation contracts that differ in the sophistication of the
+
+
+
+                                                  16
+information used to predict treatment costs. For simplicity, and since we mostly establish
+negative results, we allow these ex ante capitation schemes to depend on the common prior
+ .8 Transfers take one of the following forms:
+
+
+                 sparse () =         E,µI [ci (p0 )|i , D0 ] =       (i , p0 )                         (6)
+                                i                                i
+
+                   rich () =         E [ci (p0 )|i , D0 ] =       (i , p0 ) + E [ei,i |i , D0 ].       (7)
+                                i                             i
+
+
+In both schemes the private plan is paid the public plan's expected cost of treating selected
+patients, conditional on some set of ex ante observables. We denote by S sparse and S rich the
+associated surpluses in equilibrium.
+       Sparse capitation, like the existing CMS formulas, estimates patients' costs conditional
+on legitimate characteristics  alone. Rich capitation estimates patients' costs conditional
+on the full set of observables  -- i.e. it exploits Big Data to form targeted estimates.
+       Under sparse capitation, private plan p1 's expected payoffs for engaging in selection 
+can be decomposed as the sum of social surplus, and a rent equal to the covariance between
+selection profile  and the bias in cost estimates conditional on type  :
+
+
+                         (i ) [(i , p0 ) - (i , p1 )] +          (i )E [ei,i |D0 , D1 , i ] .9         (8)
+                    iI                                     iI
+
+                               social surplus                    rents from type selection
+
+
+
+
+Proposition 1 (sparse capitation). Consider capitation scheme sparse .
+
+        (i) If the private plan is constrained to use legitimate selection (  M(E )), then
+         efficient selection and truthful reporting ( ,   ) is the unique equilibrium.
+
+        (ii) Under prior 0 , if the private plan is not constrained to use legitimate selec-
+   8
+    In contrast, we establish positive results for mechanisms that do not depend on the prior  .
+   9
+    We include D0 in the information set of the private plan since this information is essentially conveyed
+by the capitation rate set by the public plan.
+
+
+                                                      17
+      tion rules, then E0 [Smax - S sparse ] = 3
+                                               8
+                                                 |I |.
+
+      If  = 0 so that there is no comparative advantage, the public plan makes expected
+                          3
+      losses E0 [U0 ] = - 16 0 |I |.
+
+   Since E,µI [ei,i |D0 , D1 , i ] = 0, rents from type selection in (8) are equal to zero whenever
+selection strategy  is measurable with respect to legitimate selection characteristics   E .
+Hence, under the constraint that   M(E ), sparse capitation leads to efficient selection.
+   When the private plan can select on the basis of illegitimate characteristics  , bias
+E [ei,i |D0 , D1 , i ] in cost estimates can be exploited. The private plan will seek to avoid
+under-reimbursed patients and recruit over-reimbursed patients, thereby deviating from ef-
+ficient selection. In addition, rents from such selection come at the expense of the public
+provider, potentially resulting in large losses to p0 if the gains from trade are small. The
+inefficiency loss due to selection does not vanish even for large samples D0 .
+   In order to correct bias E [ei,i |D0 , D1 , i ] in cost estimates, rich capitation rich conditions
+capitation rates on the full set of observables  . Unfortunately, this does not solve the
+problem in Big Data settings since conditional cost estimates remain noisy, allowing the
+private plan to exploit estimation error, instead of estimation bias.
+
+Proposition 2 (rich capitation).          (i) Under any prior  , efficiency loss Smax -
+      S rich satisfies E Smax - S rich  2cmax |I |EµI  1       |
+                                                             |D0
+
+                                                   3
+    (ii) Under prior 0 , E Smax - S rich =        32
+                                                     |I |.
+                                                                 3
+      If  = 0, the public plan makes expected losses E [U0 ] = - 64 0 |I |.
+
+   While sparse capitation schemes do not achieve efficiency, regardless of data D0 , rich
+capitation schemes may achieve near efficiency provided that EµI  1           |
+                                                                                   is small, i.e. for
+                                                                            |D0
+                                
+almost every type  , subsample D0 is large. This is ruled out in Big Data environments.
+Cost estimates E [e,i |D0 , i ] remain imprecise for a non-vanishing mass of types  (under
+the sample distribution of types µI ). As a result, the private plan's additional data D1 has a
+non-vanishing impact on cost estimate E [e,i |D0 , D1 , i ]. This result would arise even if the
+
+                                                18
+private plan did not observe data D0 but only observed the capitation rates E [ci (p0 )|i , D0 ]
+offered by the public plan for enrolling patients with type i .
+
+
+3.2       Aligning Plan Incentives via Strategic Capitation
+
+We now describe a capitation scheme that eliminates incentives for strategic selection by p1
+and strategic reporting by p0 . Payments take the form
+
+
+                                     strat (, HR )             (i ) +  (i , HR , ),                              (9)
+                                                        i
+
+
+where  ( )  (, p0 ) is the baseline capitation rate conditional on legitimate characteristics
+used in sparse capitation. Term  (, HR , ) is a correction dependent on reported hold-out
+data HR and selected sample . It correlates a measure of the private plan's deviation from
+legitimate selection with hold-out estimates of cost-prediction bias. It is equal to zero in
+expectation when the plan does not engage in illegitimate selection. Formally, it takes the
+form:
+                                                                           1
+                      (i , HR , )  covI (si , ri |i =  ) =                        s  r ,    where
+                                                                         |I  | iI  i i
+
+                µ (i |i )
+       · s i    µI (i |i )
+                             - 1 measures selected sample 's deviation from legitimate selection;10
+
+       · ri       1
+                   
+                |HRi |
+                                
+                             j HRi   cR
+                                      j (p0 ) - (, p0 )      is the average residual of costs for type i in the
+                                  i
+        reported hold-out sample HR  {(j, j , cR
+                                               j )|j  HR , j = i }.
+
+
+Strategic capitation satisfies the following key properties
+
+
+ ,        E [ (, HR , )|D0 , D1 ,   , ] = E                        (µ ( | ) - µI ( | ))E [e,i |D1 , D0 ,  ] , (10)
+                                                               
+
+                                 M(E ), ,   E,                     E [| | (, HR , )|D0 , D1 , , ] = 0. (11)
+
+  10                                                |J  |
+     Recall that for any sample J , µJ ( | )        |J  |   denotes the distribution of types  conditional on charac-
+teristic   T in sample J .
+
+
+
+                                                              19
+Condition (10) implies that under truthful reporting   , the strategic capitation adjustment
+is an unbiased estimate of the excess profits plan p1 may have obtained through illegit-
+imate selection (the adjustment is negative if private plan p1 overselects types that are
+comparatively cheaper to treat). This noisy ex post estimate provides an accurate ex ante
+correction and dissuades inefficient selection. Condition (11) ensures that regardless of the
+public plan's reporting strategy  , the private plan can guarantee itself expected capitation
+payments  ( ) = (, p0 ), provided it uses a legitimate selection strategy   M(E ).11
+Strategic capitation essentially turns illegitimate selection into a zero-sum game in which
+both the public and private plans can guarantee themselves a value of zero.
+
+Proposition 3. Strategic capitation contract strat induces a unique equilibrium ( ,   ).
+Private plan p1 selects patients efficiently, and public plan p0 truthfully reports hold-out
+sample H . Both plans get positive expected payoffs:
+
+
+                     E [U0 |D0 , D1 ,  ,   ]  0      and    E [U1 |D0 , D1 ,  ,   ]  0.
+
+
+      Section 6 discusses possible alternative mechanisms and clarifies the importance of dif-
+ferent moving parts needed to make strategic capitation work. In a nutshell, Big Data
+(i.e. observable types  ) is needed to measure the private plan's deviation from legitimate
+selection, and ensure that in equilibrium, public plan p0 does not benefit from misreport-
+ing hold-out sample costs. The hold-out sample is needed to ensure that residuals ri are
+uncorrelated to plan p1 's information.
+
+
+
+4       General Analysis
+The strategic capitation scheme presented in Section 3 relies on cost decomposition (4): the
+surplus maximizing policy depends on a small number of commonly known characteristics
+  E . This is not realistic. A private plan's dimensions of comparative advantage are likely
+ 11
+      This point plays a key role when studying incentives for truthful revelation in exchanges.
+
+
+                                                      20
+to be its private information. For instance, a private plan may be able to innovate and develop
+comparative advantages along new dimensions. In addition, it need not be the case that the
+optimal selection policy be measurable with respect to a small set of characteristics. Finally,
+in practice, the public plan's expected cost of treatment conditional on a characteristic  will
+have to be estimated from data. This creates additional room for selection by the private
+plan. This section extends strategic capitation to such environments.
+   We denote by ei the idiosyncratic cost shocks of a patient enrolled in public plan p0 ,
+conditional on cost distribution F : ei  ci (p0 ) - EF [ci (p0 )|i ]. By construction, it must be
+that ei  [-cmax , cmax ]. Finally, let
+
+
+                S (|D0 , D1 )  E,            ci (p0 ) - ci (p1 ) D0 , D1 - K (),   and
+                                         i
+
+                    SE |D0 ,D1  max S (|D0 , D1 )
+                                M(E )
+
+
+
+respectively denote the surplus achieved by selection rule  given data D0 , D1 , and the
+maximum surplus achievable using selection rules measurable with respect to a partition E
+of types.
+
+
+4.1    Generalized Strategic Capitation
+
+For any given collection E of partitions E  E ­ i.e. for any family of possible definitions
+of legitimate and non-legitimate characteristics ­ our goal is to approach the maximum
+achievable efficiency SE |D0 ,D1 with respect to partitions E  E . We take on two difficulties:
+first, the relevant partition E is no longer common knowledge, but must be elicited from the
+private plan; second the public plan's expected costs conditional on characteristics   E
+must estimated from data. We define the generalized strategic capitation scheme Gstrat
+                                                                                 E     as
+follows:
+
+   1. data D0 is shared with plan p1 ;
+
+
+                                                   21
+  2. plan p1 picks a partition E  E according to which it will be allowed to select patients;
+      we continue to refer to characteristics   E as legitimate selection characteristics;
+
+  3. plan p1 is rewarded using the strategic capitation scheme strat defined by
+
+
+                              strat (, HR )                 (i ) +  (i , HR , )
+                                                   i
+
+
+                                                    1
+      where  ( ) = (, p0 )               µI ( | ) |D |        
+                                                            iD0   ci (p0 ) is the empirical estimate (, p0 )
+                                                       0
+
+      (in sample data D0 ) of the public plan's expected treatment costs conditional on char-
+      acteristic   E . As in Section 3,  (, HR , ) takes the form:
+
+                                                                             1
+                          (, HR , )  covI (si , ri |i =  ) =                        s r ,
+                                                                           |I  | iI  i i
+
+      with
+                         µ (i |i )                1
+                  s i               - 1 and ri     i                       cR
+                                                                            j (p0 ) - (, p0 ) .
+                         µI (i |i )             |HR  |                  
+                                                                   j HRi
+
+
+An equilibrium of mechanism Gstrat
+                             E     is a triplet (E, ,  ) where E  E is private plan p1 's
+choice of the characteristics it can use for selection.
+   Mechanism Gstrat
+              E     expands on strategic capitation by letting the private plan specify the
+set of characteristics it wishes to use for selection. As we show below, this additional degree
+of freedom results in unavoidable losses related to the complexity of the class of models E
+the private plan is allowed to pick from. These losses are related to penalties encountered
+in the model selection literature (Vapnik, 1998, Massart and Picard, 2007), and indeed one
+can think of our problem as one of delegated model selection.
+
+Definition 1. For any class of partitions E and idiosyncratic errors e = (ei )iD0 , let (E , e)
+denote the random variable
+                                                                                 + 
+                                                                       1
+                   (E , e)  max               |I  |        µI ( | )     
+                                                                               ei   .                  (12)
+                               E E
+                                          E             
+                                                                      |D0 | iD
+                                                                             0
+
+
+
+                                                   22
+      Variable (E , e) is an upper-bound to the gains a perfectly informed private plan could
+obtain from selecting the partition E that lets it optimally target over-reimbursed types.
+The scope for selection comes from the fact that generalized capitation uses slightly noisy
+sample averages (, p0 ) to estimate the public plan's cost of service EF [ci (p0 )| ] conditional
+on legitimate characteristics   E . In Section 3 we simply assumed that the public plan
+knew its own cost (, p0 ) conditional on  .
+      Generalized capitation extends the performance bounds described in Proposition 3 up to
+a penalty of order E [(E , e)].
+
+Proposition 4 (efficiency bounds). Consider a collection E of partitions E  E . In any
+equilibrium (E, ,  ) of mechanism Gstrat
+                                   E     we have that
+
+
+                                             S ()  E max SE |D0 ,D1 - 2E [(E , e)] ;                        (13)
+                                                               E E
+
+
+                    E - +             ci (p0 ) D0  -E [(E , e)] ;                                           (14)
+                                  i
+
+
+                  E  -           ci (p1 ) D0 , D1  0.                                                       (15)
+                             i
+
+
+      Note that Proposition 4 takes as given the class of models E . Corollary 2 will show how
+to endogenize the class of models E , provided E can be chosen before data D0 is shared with
+the private provider.
+      To operationalize the performance bounds of Proposition 4 we need to evaluate term
+E [(E , e)], which depends depends on prior  through error term e. Lemma 1 provides prior-
+                                                     |I  | |D0 |
+free bounds for E [(E , e)]. Let   EµI              |D0  | |I |     1 denote the average representativeness
+of data D0 for patients in I .12 Let M                E E      2|E | - 1 .
+
+Lemma 1 (bounds on penalties).                    (i) Let (ei )iI denote i.i.d. random variables
+        uniformly distributed over {-cmax , cmax }. For any class E and any centered error
+ 12
+      The fact that   1 follows from the observation that  = EµI [µI ( )/µD0 ( )]  1/EµI [µD0 ( )/µI ( )] = 1.
+
+
+
+                                                         23
+         terms (ei )iI arbitrarily distributed over [-cmax , cmax ], we have that
+
+
+                                     E [(E , e)]  E [(E , e )]  E .                                (16)
+
+
+        (ii) Regardless of the distribution of error terms (ei )iI ,
+
+
+                                                            2
+                              E [(E , e)]  |I |cmax              1+     log M .                    (17)
+                                                           |D0 |
+
+       Bound (16) is a tight bound that can be computed through numerical simulation. We
+denote by E the corresponding upper-bound, which does not depend on prior  . Bound
+(17) is a more explicit but coarser bound. While it may seem overly conservative, we now
+show that it delivers non-trivial results in a setting of interest: the class of sparse linear
+classifiers.
+
+
+Example: sparse linear classifiers. We now evaluate bound (17) for a natural class of
+partitions E : those generated by sparse linear classifiers. This is consistent with the use of
+LASSO and other penalized regression techniques for prediction in Big Data settings. We
+assume that type space T is a subset of Rf (we will use the inequality f  |T |  |D0 |). For
+d  {1, · · · , f }, a d-sparse vector v = (vk )k{1,··· ,f }  Rf is a vector with at most d non-zero
+coordinates. The family of partitions E induced by d-sparse classifiers is defined as
+
+
+                     + -
+             E {Ev  {v , v }|v  Rf , v is d-sparse}
+                        +                         -
+                  where v = {  T s.t. , v  0} and v = {  T s.t. , v < 0}.
+
+
+                                                                                       -
+For any d-sparse vector v  Rf , Ev is the partition of Rf in the two half-spaces v
+                                                                                 +
+                                                                                   and v
+defined by direction v .13
+       The private plan is allowed to use any d-sparse linear classifier to decide whether or not
+  13
+       Note that affine hyperplanes can be generated by including a constant in the type vector.
+
+
+
+                                                      24
+to select a particular set of types or not.
+
+Corollary 1. When the class of possible partitions E consists of partitions induced by d-
+sparse classifiers, penalty E [(E , e)] satisfies
+
+
+                                                                    d log |D0 |
+                                    E [(E , e)]  4cmax |I |                     .                                (18)
+                                                                      |D0 |
+
+       Corollary 1 follows from a direct application of Lemma 1(ii) and the fact that |T |  |D0 |.
+Indeed, the number of possible partitions of |T | points generated by d-sparse linear classifiers
+                           f       |T |                        m
+is bounded by 2d ×         d
+                               ×    d
+                                          <1
+                                           4
+                                             |T |3d , where    n
+                                                                   =     m!
+                                                                       (m-n)!n!
+                                                                                .14   Since each E  E contains
+two elements, we obtain that M  K 2d . Applying bound (17) implies (18).
+       Note that for all practical purposes, term             log |D0 | may be treated as a constant between
+4 and 5. For |D0 | = 48 × 106 , approximately the size of the US Medicare population,
+   log |D0 |    4.2. For |D0 | = 7 × 109 , roughly the current world population,                    log |D0 |     4.8.
+
+
+Endogenizing E . While Proposition 4 takes as given the class E of type partitions, it is
+possible to endogenize E . Consider the following extension of generalized strategic capitation:
+
+   1. private plan p1 picks a class of partitions E , and pays a price pE = E (where E is
+      defined within bound (16));
+
+   2. the private and public plan play mechanism Gstrat
+                                                  E     .
+
+Note that the private plan must choose E before information D0 is shared. The proof of
+Proposition 4 implies the following corollary.
+
+  14
+      To obtain this bound, observe that there are f           d ways to choose the d non-zero coordinates in the d-
+sparse classifier. For each such choice, the classifier can be written in the form a1 x1 + . . . + ad xd < 1, where
+x1 , . . . , xd are the relevant coordinates, and a1 , . . . , ad  R are appropriately chosen coefficients. The set of
+appropriate d-tuples (a1 , . . . , ad ) forms a polytope A in Rd , with each of the |T | points representing a linear
+constraint on the possible values of (a1 , . . . , ad ). A node of such a polytope is an intersection of d constraints,
+and thus A can be identified using d points from T along with the signs of the d constraints. This gives at
+most 2d × |T      d
+                    |
+                      choices.
+
+
+
+
+                                                          25
+Corollary 2. Let P (T ) denote the set of partitions of type space T . In any equilibrium
+(E , E, ,  ) of the extended generalized strategic capitation mechanism,
+
+
+                    E [S (|D0 , D1 )]  max E max SE |D0 ,D1 - 2E .                          (19)
+                                         E P (T )    E E
+
+
+
+   By charging the private plan a price taking the form of a complexity penalty, it is possible
+to let the private plan choose the class of models it can use to select patients. Note that if
+the upfront price pE is transferred to the public provider, then the public provider makes no
+losses in expectation.
+
+
+4.2    Unimprovability of Strategic Capitation
+
+In the spirit of Hartline and Roughgarden (2008), we now provide a lower-bound for the min-
+imal efficiency losses that any mechanism can guarantee, even if the mechanism is allowed to
+depend on prior  . The proof will construct a specific prior  over the tuple (F, D0 , D1 , H, K )
+for which we establish minimal efficiency losses under any direct mechanism, along the lines
+of Myerson and Satterthwaite (1983). Sample size |D0 |, as well as the distributions of types
+µI  (T ) in the patient population I , and µD0  (T ) in public data D0 , are known.
+   We consider the problem of Bayes-Nash implementation using budget-balanced direct
+mechanisms g of the following form:
+
+   · data D0 is publicly observable;
+
+   · plan p1 sends a message m1 = (D1
+                                    m
+                                      , K m ), reporting its data and selection costs;
+
+   · the mechanism suggests a selection g (D0 , m1 )  [0, 1]T by private plan p1 ;
+
+   · plan p1 makes a selection decision   [0, 1]T , with realized selection   I ;
+
+   · plan p0 sends a message m0 = HR corresponding to a reported hold-out sample;
+
+   · transfers (D0 , m1 , m0 , ) from p0 to p1 are implemented.
+
+   We denote by G the set of incentive compatible direct revelation mechanisms under prior
+
+
+                                                26
+ . For any mechanism g , we denote by g the equilibrium selection by private plan p1 that
+maximizes social surplus.
+
+Proposition 5. For any class of partitions E , there exists a prior  such that
+
+                                                                           1
+              max E S (g )  E max SE |D0 ,D1 - |I |cmax max EµI             
+                                                                                  .         (20)
+              g G                  E E                        E E         |D0 |
+
+where    is a fixed constant independent of E and sample size |D0 |.
+
+    In particular, the efficiency loss achieved by strategic capitation for linear classifiers
+(Corollary 1) is tight up to an order    log |D0 |, which, for all plausible values of |D0 |, can
+be treated as a constant less than 5.
+
+
+
+5       Extension: Adverse Selection in Exchanges
+So far, we have studied adverse selection in a setting with a single private plan and a single
+public plan. Adverse selection is also a significant concern in insurance markets consisting
+of multiple private plans, such as the ones organized by the American Healthcare Act.
+If regulation constrains prices to depend only on a subset of observables (as is the case
+with community rating), plans have incentives to select patients that are cheaper to serve
+given characteristics excluded from legal pricing formulas. This increases the cost of serving
+patients and can result in limited entry. A simple example suggests that strategic capitation
+may help improve market outcomes in such environments.
+
+
+A stylized model. As in Section 2, a set I of patients with types   T has inelastic
+unit demand for insurance, where insurance corresponds to a single standardized insurance
+contract. Plan p0 is now an incumbent private plan, while p1 is a potential entrant. For
+simplicity, we assume that each plan's cost technology is the same: i  I , ci (p0 )  ci (p1 ).
+Here the objective is not to improve the allocation of patients to plans, but rather to increase
+
+
+                                              27
+competition so that insurance is priced at marginal cost. By law, each plan p is constrained
+to offer insurance at prices p ( ) that depend only on a coarse set of patient characteristics
+  E , where E is a partition of type-space T . Prices are bounded above by  .15
+       We assume that the private plans both know their common expected cost of treatment
+( )  E[ci |i =  ] conditional on type  . Let ( )  EµI [( )| ] denote the expected cost
+of treatment conditional on legitimate characteristics. Each plan p has access to a hold-out
+sample of its own costs Hp . We assume that both plans have lexicographic preferences over
+maximizing their own revenue and minimizing that of their competitor.16 The timing of
+decisions is as follows:
+
+   1. potential entrant p1 decides to enter the market or not;
+
+   2. each plan p active in the market submits a price formula p :   p ( );
+
+   3. each plan p active in the market chooses a selection p  [-1/2, 1/2]T of patients;
+
+   4. if p0 ( ) = p1 ( ), patients of type  purchase insurance from the cheapest plan;
+      if p0 ( ) = p1 ( ), plan p serves a patient of type    with probability
+
+                                                  1
+                                      µI ( ) ×      + p ( ) - ¬p ( ) ,
+                                                  2
+
+         where ¬p denotes the other plan.
+         We assume that the cost of selection K (p ) is positive, strictly convex, continuously
+         differentiable, and equal to 0 when p is constant and equal to 0: K (0) = 0. In addition,
+         K () is sufficiently steep around  = 0 that 1/2 + p - ¬p  0 for all individually
+         rational selection policies.
+
+       The cross-price elasticity of patient demand is infinite, so that patients always go to the
+cheapest plan. As a result an entrant will make at most zero profits when entering. We
+assume that whenever the entrant can guarantee itself zero profits it enters.17 We denote
+the realized selected sample of patients purchasing from plan p by p .
+  15
+     Parameter  may be viewed as the patients' (common) value for insurance.
+  16
+     This could be because reducing a competitor's profits reduces its ability to expand and compete in the
+future.
+  17
+     This could be due to small subsidies for entry, or high but finite cross-price elasticities.
+
+                                                    28
+   The following result holds.
+
+Proposition 6. The market entry game described above has a unique subgame perfect equi-
+librium. The potential entrant does not enter, and the incumbent charges price p0 ( ) =  .
+   In the off-equilibrium subgame following entry, both the entrant and the incumbent make
+equilibrium losses -K ( ) < 0 where  solves max[0,1]T E                i   (i ) - (i ) - K ().
+
+   Indeed, because cross-price elasticities are infinite, in equilibrium, both plans price at
+marginal cost conditional on  : p ( ) = ( ). Furthermore, since the marginal cost of
+selection at p = 0 is zero, both players find it profitable to engage in non-zero selection. In
+aggregate however, selection efforts by the two plans cancel one another and merely destroy
+surplus.
+
+
+Strategic capitation. Consider now the following extension of the strategic capitation
+scheme introduced in Section 3. The market entry game is modified in two ways:
+
+   · at stage 2 each active plan p submits a pricing formulas p , and a report HR,p of its
+     hold-out sample;
+
+   · after selection has occurred, for each type  it serves, plan p receives price p ( ) and
+     capitation adjustment  (, HR,¬p , p ) taking the form:
+                                                                       1
+                   (i , HR,¬p , p )  covI (si ,p , ri ,p |i =  ) =            s ,p r ,p ,
+                                                                     |I  | iI  i i
+     with
+                      µp (i |i )                  1                        ¬p
+             si ,p               - 1 and ri ,p    i                    cR,
+                                                                        j     (p0 ) - p ( ) .
+                      µI (i |i )                |HR,¬p |        i
+                                                            j HR, ¬p
+
+
+
+Proposition 7. The market game with strategic capitation described above has an efficient
+truthful equilibrium in which: the potential entrant enters; both plans submit prices p ( ) =
+( ); both plans select a representative population in expectation (p = 0); both plans submit
+their hold-out sample costs truthfully (HR,p = Hp ); and expected ex post adjustments are
+equal to 0 (Ep = 0).
+
+                                              29
+    The intuition for Proposition 7 result is identical to that of Proposition 3. Given ex ante
+representative selection, a plan's expected capitation adjustment is equal to zero regardless of
+messages sent by the other plan. Given truthful revelation of costs, representative selection
+is a best-response. This reduces the costs of adverse selection and encourages entry.
+
+
+
+6     Discussion
+This paper explores the value of Big Data in reducing the extent of adverse selection in
+government-run capitation schemes. We argue that in realistic Big Data environments,
+including a large number of covariates in an ex ante capitation formula is unlikely to succeed.
+Instead, we suggest that Big Data may be used to align incentives by using ex post capitation
+adjustments that interact an unbiased estimate of counterfactual costs to the public plan,
+with the private plan's deviation from legitimate selection.
+    This section discusses alternative mechanisms, as well as extensions dealing with dynamic
+selection, risk-inflation, and heterogeneity in the quality of care.
+
+
+6.1    Alternative Mechanisms
+
+Generalized strategic capitation deals with three different difficulties: common values, ex-
+act budget balance, and prior-free implementation. As Proposition 5 shows, using prior-
+dependent mechanisms does not imply large performance improvements. Still, in order to
+clarify the economic forces at work in our analysis it is useful to delineate the mechanics of
+other relevant mechanisms.
+
+
+Mechanisms from the literature. Other work has emphasized the value of ex post noisy
+signals in environments with quasi-linear preferences. Riordan and Sappington (1988) show
+that it is possible to efficiently regulate a monopoly with unknown costs by exploiting public
+signals correlated to the monopoly's type. Using a construction related to that of Cremer
+and McLean (1988), they show how to extract all the surplus by offering the monopoly
+
+                                               30
+appropriately chosen screening contracts. Strategic capitation also exploits the fact that
+noisy ex post signals (here, hold-out cost realizations) can be used to construct accurate ex
+ante incentives, but our environment differs in key ways. First, signals are not public, and we
+need to take care of the public plan's incentives to reveal its hold-out cost data H . Second,
+the identification condition at the heart of Riordan and Sappington (1988) is not satisfied:
+neither the distribution of the public plan's cost, nor the private plan's beliefs thereover, are
+sufficient statistics of the private plans' costs.
+   Mezzetti (2004) shows that it is possible to obtain efficiency in common value environ-
+ments using ex post reports of the players' realized payoffs. In our application the mechanism
+proposed by Mezzetti (2004) would proceed by making the private plan a negative ex post
+transfer equal to the public plan's realized cost, and a positive ex ante transfer to cover
+expected costs. This mechanism does not satisfy budget balance (the public plan does not
+receive the private plan's transfer ­ if it did truthful reporting of hold-out data H by the
+public plan would not be incentive compatible) and relies on priors to set ex ante transfers.18
+   The differences between our environment and that of Mezzetti (2004) help clarify the role
+played by the Big Data assumption, i.e. the assumption that types are observable but not
+interpretable. We align incentives under budget balance by forming a measure of the private
+plan's deviation from legitimate selection, and interacting this measure with an unbiased
+estimate of the public plan's counterfactual costs. This ensures that in equilibrium, neither
+the private nor the public plan can affect their expected payoffs by deviating from legitimate
+selection and truthful reporting. The observability of types is used to compute the private
+plan's deviation from legitimate selection, as well as correctly reweight the distribution of
+types in the hold-out sample H to obtain estimates of counterfactual costs in the sample 
+of patients selected by the private plan.
+  18
+     Budget balanced expected externality mechanisms along the lines of d'Aspremont and G´
+                                                                                         erard-Varet
+(1979) or Athey and Segal (2013) require private values. They are also prior-dependent.
+
+
+
+
+                                                31
+Intuitive alternative mechanisms. A key step in strategic capitation is to use hold-out
+data to form estimates of counterfactual costs for the public plan. The assumption that
+types are observable is needed to reweight the distribution of types in the hold-out sample to
+match that of the selected sample. There may be other ways to form an unbiased estimate
+of counterfactual costs to public plan p0 . For instance, if it were possible to assign patients
+selected by the private plan back to the public plan with a fixed uniform probability, one
+could form an estimate of counterfactual costs without observing types. Beyond feasibility
+issues (patients would likely object), a difficulty with this approach is that it does not take
+care of the public plan's incentives to bias its own cost reports.
+   Strategic capitation dissuades illegitimate selection by forming unbiased estimates of the
+private plan's excess profits. An alternative way to dissuade illegitimate selection is to impose
+                                                    µ (i |i )
+sufficiently large penalties, say proportional to   µI (i |i )
+                                                                 - 1 , when the sample selected by
+the private plan deviates from legitimate selection. This scheme requires the observability
+of types but does not require the availability of a hold-out sample. If the private plan
+can perfectly select patients at no cost (K () = 0 for all ), this schemes induces efficient
+legitimate selection. However this scheme induces an efficiency loss if it is costly for private
+provider p1 to ensure that realized selection  is perfectly representative of population I .
+Strategic capitation avoids the issue by using hold-out data to form an unbiased estimate of
+the profits from selection.
+
+
+6.2    Extensions and Implementation Concerns
+
+We now briefly discuss various realistic challenges with capitation programs like Medicare
+Advantage, and how they can be addressed within our framework. Details are provided in
+Appendix A.
+
+
+Dynamic selection and risk-inflation. The process of selection is dynamic. In the
+context of Medicare Advantage, patients have the opportunity to switch back and forth
+
+
+
+                                               32
+between public and private plans once a year. This implies that costs of care need to be
+evaluated over time. Plans with low short-term cost of care may end up generating greater
+longer term costs if they skimp on quality, and encourage patients to disenroll once they get
+sick enough (Ellis, 1998). Appendix A shows how to adjust strategic capitation to address
+this issue. It becomes important to keep track of the counterfactual distribution of types
+over time, had the patient remained with the public plan.
+   A key insight from Appendix A is that correct dynamic capitation fees remove incentives
+for risk-inflation by private plans. Indeed, if a patient with legitimate characteristic t enrolls
+in the private plan at time t, then baseline repayments t+s to the private plan at all times
+t + s where the patient remains with the private plan take the form
+
+
+                             t+s =  (t + s, t )  E[ci,t+s (p0 )|t ].
+
+
+In other words, target repayments depend only on the type t of the patient when she enrolls
+with the private plan, and on elapsed time t + s. Target repayments do not depend on the
+patient's type t+s after enrollment time t. As a result, the private plan has no incentives
+to exaggerate the medical condition of patients it enrolls (for instance by running a battery
+of tests detecting mild conditions). Plans may have incentives to exaggerate the medical
+condition of patients it enrolls when repayments t+s depend on types t+s at time t + s.
+
+
+Quality. Throughout the paper we assume that the quality of actual healthcare delivery is
+homogeneous across plans. In practice, insurance plans may differ in the quality of care they
+deliver to their enrollees. It may be important to take into account this quality dimension
+when designing capitation schemes. Otherwise, costs could be kept low at the expense
+of quality. Appendix A describes an extension of strategic capitation that correctly reflects
+differences in the quality of care. An important limitation is that it requires health outcomes
+(including death) to be observable and assigned monetary values.
+
+
+
+
+                                               33
+Surplus Extraction. The paper focuses on the efficient allocation of patients across public
+and private plans. However, if there is a deadweight loss of public funds, it may be welfare
+improving for the public plan to extract some of the surplus. Since the private plan has
+private information over its costs conditional on patient types, this is a difficult multidimen-
+sional screening problem. Two observations are helpful to make progress on this issue. First,
+given that we consider prior-free mechanisms, the argument of Carroll (2017) suggests there
+may not be much value in complex multidimensional screening. It may be near-optimal to
+focus on separable one-dimensional screening mechanisms that associate a discounted base-
+line capitation rate ( )(, p0 ) to each patient with characteristics  , with ( )  [0, 1] a
+discount factor. A second useful observation is that strategic capitation adjustments used to
+prevent selection of mispriced types can be applied to any baseline repayment scheme. This
+suggests using capitation schemes of the form
+
+
+                           (, HR )             ( )(, p0 ) +  (i , HR )
+                                           i
+
+
+                           1
+where  (i , HR , ) =     |I  |   iI    si ri , with
+
+                   µ (i |i )                1
+            s i               - 1 and ri     i (i )                cR
+                                                                    j (p0 ) - (, p0 ) .
+                   µI (i |i )             |HR |               
+                                                           j HRi
+
+
+
+This separates the problems of extracting revenue and preventing illegitimate selection.
+
+
+Ethical concerns. Regulators frequently ban indexing ex ante capitation rates on certain
+observables, such as ethnicity or income. One rationale for such bans is that the law has
+expressive content that affects social norms, and it is desirable to reinforce the norm that all
+citizens deserve equal treatment. We believe that these ethical concerns admit an important
+refinement: differential treatment on the equilibrium path weakens the norm of equality;
+differential treatment off of the equilibrium path does not. The latter is the case for strategic
+capitation: it punishes plans off of the equilibrium path for non-representative selection of
+
+
+                                                      34
+types.
+
+
+Volatility of revenues and profits. One concern with strategic capitation is that capi-
+tation payments to the private plan are uncertain at the interim stage. If correlated noise i
+in selection causes the private plan to enroll types that are relatively cheap (resp. expensive)
+to treat for the public plan, it receives lower (resp. higher) payments than anticipated. This
+increases the volatility of revenues, but may in fact reduce the volatility of profits. Indeed,
+types that are relatively cheap (resp. expensive) to treat to the public plan are also likely to
+be cheap (resp. expensive) to treat for the private plan. If noise in selection causes a plan to
+overselect types that are relatively cheap to treat for the public plan, it receives a negative
+capitation adjustment. However, it is likely that the cost of treating these types is also rel-
+atively cheap for the private plan, keeping net profits stable. A similar reasoning applies if
+the plan overselects types that are relatively expensive to treat for the public plan. Positive
+capitation adjustments may well compensate a corresponding increase in the private plan's
+cost of care. In other words, strategic capitation can serve as insurance against selection
+shocks.
+
+
+
+Appendix
+
+A        Extensions
+
+A.1       Dynamic Selection and Risk-Inflation
+
+In dynamic settings, capitation schemes need to control for differential transitions in health
+status across plans. For simplicity, as in Section 3, we assume that comparative advantage
+depends on a commonly known set E of legitimate selection characteristics   E , and that
+expected costs conditional on legitimate characteristics are known. We denote by i,t the
+type of patient i at date t  N, by i,t her legitimate selection characteristics at date t, and
+
+
+                                              35
+by ci (t, p) her realized cost of care if treated by plan p at time t. Types (t )t{0,··· ,T } and
+characteristics (t )t{0,··· ,T } follow Markov chains, whose process p depends on the plan p
+in which the patient is enrolled. Future costs are discounted using discount factor   (0, 1],
+and T denotes an upper bound to the duration of patients' lives in the system.
+   For a patient i of type i enrolled with the public plan from time t to time T , we define
+
+                            T
+             Ci (t, p0 )           s-t ci (s, p0 ) and C (t, , p0 )  E Ci (t, p0 ) t =  .
+                            s=t
+
+
+   In dynamic environments, strategic capitation must accommodate the possible reenroll-
+ment of patients with the public plan. As a result, transfers must occur at the reentry of
+patients into the public system. Let us denote by t the selection of patients enrolled with
+the private plan at time t, and by re
+                                   t the selection of patients disenrolling from the private
+
+plan and re-enrolling with the public plan at time t. The following scheme extends strategic
+capitation. At initial time of enrollment t = 0, the public plan commits to the following
+baseline payments conditional on legitimate characteristics   E :
+
+   · A capitation payment  (t, 0 ) = E [ci (t, p0 )|i,0 = 0 ] whenever patient i with initial
+      type 0 is enrolled with the private plan at time t;
+
+      Note that because transfers depend only on type 0 , there is no incentive for risk-
+      inflation by the plan, i.e. an incentive to requalify the patient as a different type;
+
+   · A signed transfer i
+                       re
+                          (with positive transfers being made from the public plan to the pri-
+                                                                       re
+      vate plan) at every time T patient i returns to the public plan: i  = E [Ci (T, p0 )|i,0 ] -
+      C (T, i,T , p0 ).
+
+Provided that the private plan does not engage in illegitimate selection, this scheme induces
+efficient dynamic behavior by the private plan. To dissuade illegitimate selection, dynamic
+strategic capitation makes payment adjustments  (t, 0 ) and  re (T, 0 ) using reported
+dynamic hold-out data HR as follows:
+
+
+                                                    36
+   ·  (t, 0 ) =        1
+                    |I 0 |     iI 0   si,t ri,t , with
+
+                    µt (i,0 |i,0 = 0 )                                   1
+            si,t                       - 1,               and ri,t                            cR
+                                                                                               j (t, p0 ) -  (t, 0 ).
+                    µI (i,0 |i,0 = 0 )                                 |HRi,0 |         
+                                                                                    j HRi,0
+
+
+
+   ·  re (t, t ) =      1
+                      |I t |    iI t   sre   re
+                                        i,t ri,t , with
+
+
+               µre  (i,t |i,t = t )                                 1
+       sre
+        i,t 
+                 t
+                                    - 1,               re
+                                                  and ri,t          
+                                                                                                           R
+                                                                                       C (T, i,T , p0 ) - Cj (t, p0 ) .
+                µI (i,t |i,t = t )                                |HRi,t |       
+                                                                             j HRi,t
+
+
+
+A.2     Quality
+
+If the private and public plan differ in the quality of health outcomes they deliver to patients,
+the value associated with different health outcomes needs to be reflected in capitation trans-
+fers. We assume that health outcomes (including death) for each patient i  I treated by
+plan p are observable and associated with realized monetary values vi (p). As in the case of
+costs, we assume that the private plan's comparative advantage is measurable with respect
+to a relatively small set of characteristics i . Given selection rule  and transfers , the
+surpluses accruing to the public and private plans take the form
+
+
+                         E U0 = E - +                      ci (p0 ) + vi (p1 ) - vi (p0 )  ,
+                                                     i
+
+
+                         E U1 = E  -                     ci (p1 )  - K ().
+                                                  i
+
+
+Differences in quality of care are isomorphic to a change in the public plan's cost of care.
+Since we assume that health outcomes are observable, data D0 should now include values
+vi (p0 ) of patients in D0 . Health outcomes vi (p1 ) of patients in  (selected by private plan
+p1 ) should be visible to the public plan. Strategic capitation can be extended by setting
+
+
+
+
+                                                            37
+transfers:
+
+
+                              (, HR )             vi (p1 ) +  (i ) +  (i , HR )
+                                            i
+
+
+where                                                                                
+                                                         1
+                               ( )        µI ( | )        
+                                                                 ci (p0 ) - vi (p0 )
+                                       
+                                                        |D0 | iD
+                                                                  0
+
+
+and  (, HR ) takes the form:
+
+                                                                1
+                                       (i , HR , )                     s r ,
+                                                              |I  | iI  i i
+
+             µ (i |i )
+with si      µI (i |i )
+                          - 1 and
+
+                                                                        
+                                        1 
+                               ri        i             cR
+                                                        j (p0 ) - vj (p0 ) -  ( ).
+                                                                          
+                                      |HR  |      
+                                               j HRi
+
+
+
+
+                                                         38
+Online Appendix, Not for Publication
+
+B      Proofs
+
+B.1     Proofs for Section 3
+
+Proof of Proposition 1: We begin with point (i). Reports from plan p0 do not affect
+reimbursements so that truth-telling strategy   is dominant. In turn, for any selection 
+measurable with respect to characteristics   E , the private plan's expected payoffs from
+selection take the form
+
+
+       E         1i ((i , p0 ) - (i , p1 ) + ei,i ) = E        1i ((i , p0 ) - (i , p1 ))
+            iI                                            iI
+
+
+where we use the fact that E,µI [ei,i |i ] = 0. It follows that the optimal selection rule is
+indeed ( ) =  ( ) = 1(,p0 )>(,p1 ) .
+    Let us turn to point (ii). Under environment 0 , the public plan sets a fixed capitation
+payment 0 for every patient. For  = (, n,  ), the private plan's conditional expectation
+about error shock ei,i is E [ei, |D1 ,  ] = 0 if both types (, n, 1) and (, n, -1) have real-
+ized costs (, p1 ) in data D1 ­ this happens with probability 1/4. In the complementary
+event, the private plan is informed, and E [ei, |D1 ,  ] = ,n 0 /2. Since the magnitude
+ of comparative advantage is less than 0 /4, the optimal selection scheme for the private
+plan consists of: selecting only the relatively cheap type with characteristics (, n) when the
+private plan is informed about ,n (proba 3/4); and selecting type  on the basis of com-
+parative advantage when the private plan is uninformed about n (proba 1/4). This implies
+that in expectation, the efficiency loss is equal to
+
+                                                        3
+                                 E0 [Smax - S sparse ] = |I |.
+                                                        8
+
+
+
+
+                                               39
+   When  = 0, the private plan only profits from selecting the relatively cheap type with
+                                                                                           3
+characteristics (, n). This yields an aggregate expected profit equal to                      |I |.
+                                                                                           16 0
+                                                                                                       Since there
+is no comparative advantage, this profit comes entirely at the expense of public plan p0 .
+
+
+Proof of Proposition 2: We first establish point (i). Given selected set , and data D0 ,
+D1 , private plan p1 gets payoff
+
+
+       E[U1 |, D0 , D1 ] =        (p0 , i ) - (p1 , i ) + E [ei ,i |i , D0 ] - E [ei ,i |i , D0 , D1 ].
+                              i
+
+
+Using the fact that a - |b|  a + b  a + |b|, we have that
+
+
+        - +         (p0 , i ) - (p1 , i )  E[U1 |, D0 , D1 ]   +                   (p0 , i ) - (p1 , i )
+                i                                                            i
+
+
+with
+                             = E             |E [ei ,i |D0 , D1 ] - E [ei ,i |D0 ]| .
+                                        iI
+
+   The private plan's optimal selection  must yield a higher payoff than the surplus-
+maximizing selection  = 1(,p0 )>(,p1 ) . Hence it follows that
+
+
+                         (p0 , i ) - (p1 , i )  -2 +                (p0 , i ) - (p1 , i ).
+                     i                                        i
+
+
+   Since |ei, | < cmax , it follows that
+
+
+                                                                                           1/2
+  E |E [ei ,i |D0 , D1 ] - E [ei ,i |D0 ]|  E (E [ei ,i |D0 , D1 ] - E [ei ,i |D0 ])2            
+                                                                                                 1/2
+                                                                             1/2        c2                 cmax
+                                              E (ei ,i - E [ei ,i |D0 ])2                max
+                                                                                           i           =     i
+                                                                                                                   .
+                                                                                        |D0  |             |D0 |
+
+
+   Hence   cmax |I |EµI  1          |
+                                        . This establishes point (i).
+                                  |D0
+
+
+
+
+                                                       40
+   Point (ii) follows directly from Proposition 1(ii) and the observation that: with proba-
+bility 3/4 the public plan is fully informed of ,n , in which case the capitation rate is set
+precisely, and the private plan selects types efficiently; with probability 1/4, the public plan
+is uninformed about ,n and sets capitation rate (, p0 ). In this last event, the analysis of
+Proposition 1(ii) applies as is.
+
+
+Proof of Proposition 3: We begin by establishing (10) and (11). We begin with (10). We
+have that
+
+                                              1         µ (i | )
+    E [ (, HR , )|D0 , D1 ,   , ] = E                             - 1 E [ei ,i |D0 , D1 ,  ]
+                                            |I  | iI    µI (i | )
+
+                                                            µ ( | )
+                                     = E         µI ( | )            - 1 E [e,i |D0 , D1 ,  ]
+                                             
+                                                            µI ( | )
+
+                                     = E         (µ ( | ) - µI ( | )) E [e,i |D0 , D1 ,  ] .
+                                             
+
+
+We turn to (11). Using the fact that  is measurable with respect to E (allowing us to define
+( ) = ( )), and the fact that selection error i is orthogonal to ri have that
+
+
+                                                             |I  | 
+      E [| | (, HR , )|D0 , D1 ,  , ] = E               | | -  | | r
+                                                     
+                                                             |I |
+
+                                                                     |I  |
+                                           = E          ( )|I  | -         ( )|I  | r = 0.
+                                                     
+                                                                     |I  |
+
+
+   We now return to the proof of Proposition 3. In equilibrium, the public plan will get a
+payoff at most equal to 0. By condition (10), it follows that the public plan can guarantee it-
+self a payoff of 0 by reporting costs truthfully:  =   . Hence, it must be that in equilibrium
+the public plan gets a payoff of 0. Since we break indifferences towards truthtelling, it must
+be that the public plan reports truthfully in equilibrium. This implies that the private plan
+gets a payoff equal to E       i   (p0 , i ) - (p1 , i ) , which is maximized by using optimal
+
+
+                                               41
+selection policy  =  .
+
+
+
+
+B.2     Proofs for Section 4
+
+Proof of Proposition 4: Given a cost distribution F , let (, p)  EµI ,F [ci (p)|i =  ]
+denote the expected cost of service for plan p conditional on legitimate selection characteristic
+ in patient population I . We also denote by (, p)  EF [ci (p)|i =  ] the expected cost of
+treatment by plan p conditional on type  .
+   Given a partition E and a selection rule , plan p1 's expected returns are
+
+
+       E [U1 |D0 , D1 ] =E        (i ) [(i , p0 ) +  (i , HR , ) - (i , p1 )] D0 , D1 - K ()
+                             iI
+
+
+                     =E           (i ) [(i , p0 ) - (i , p1 )] D0 , D1 - K ()
+                             iI
+
+
+                     +E           (i ) [(i , p0 ) +  (i , HR , ) - (i , p0 )] D0 , D1
+                             iI
+
+
+                     +E           (i ) [(i , p0 ) - (i , p0 )] D0 , D1
+                             iI
+                       A    B    C
+                     =U1 + U1 + U1 .
+
+
+       A    B      C
+where U1 , U1 and U1 are defined as the three respective terms in the expression above.
+           A
+Note that U1 = S (|D0 , D1 ). The key steps of the proof are the following,
+
+                                   B
+ (i) in any equilibrium (E, ,  ), U1  0;
+
+                                                                               B
+(ii) for any reporting strategy  , if  is measurable with respect to E , then U1 = 0;
+
+(iii) for any E and ,
+                                          C
+                                      E [U1 |D0 ]  E [(E , e)].
+
+
+Let us first show that points (i), (ii) and (iii) imply properties (13), (14) and (15). We have
+
+
+                                                   42
+that under equilibrium strategies (E, ,  ),
+
+
+                                                 B                       C
+            E [U1 |D0 , D1 ] S (|D0 , D1 ) + E [U1 |D0 , D1 , ,  ] + E [U1 |D0 , D1 , ,  ]
+                                               C
+                           S (|D0 , D1 ) + E [U1 |D0 , D1 , ,  ].
+
+
+In addition, from the fact that the private plan is weakly better off using (E, ) over any
+strategy (E ,  ) where  is measurable with respect to E , it follows that
+
+
+                            E [U1 ] E max SE |D0 ,D1 - E [(E , e)].
+                                          E E
+
+
+
+Altogether, this implies that S (|D0 , D1 )  E maxE E SE |D0 ,D1 - 2E [(E , e)]. Condition
+(14) follows from the fact that truthful reporting   (c,  ) guarantees that
+
+
+-E         (i ) [(i , p0 ) +  (i , HR , ) - (i , p0 )]  -E            (i ) [(i , p0 ) +  (i , HR , ) - (i , p0 )]
+      iI                                                         iI
+                                                                                        =0
+
+
+                                                          - E         (i ) [(i , p0 ) - (i , p0 )] .
+                                                                 iI
+
+                                                                          -E [(E ,e)]
+
+
+Finally, condition (15) follows from the fact that plan p1 can choose a selection strategy
+measurable with respect to E , which guaranteed p1 positive expected payoffs.
+    Let us return to the proofs of points (i), (ii) and (iii) above. Point (i) follows from the
+fact that in equilibrium the expected transfers of p0 to plan p1 under equilibrium reporting
+strategy  must be weakly lower than under truthful reporting strategy   , i.e. E [| ] 
+E [|  ]. This implies that
+
+
+            E         (i ) [(i , p0 ) +  (i , HR , )]  E             (i ) [(i , p0 ) +  (i , HR , )]   , so that
+                 iI                                             iI
+
+
+E         (i ) [(i , p0 ) +  (i , HR , ) - (i , p0 )]  E             (i ) [(i , p0 ) +  (i , HR , ) - (i , p0 )]   .
+     iI                                                         iI
+
+
+
+
+                                                 43
+Using
+
+
+    E [ (i , HR , )|i  ,   ] = E                 (µ ( |i ) - µI ( |i )) ((, p0 ) - (i , p0 )) i  ,  
+                                             i
+
+
+                                     = E         (µ ( |i ) - µI ( |i )) ((, p0 ) - (i , p0 )) i  ,  
+                                             i
+
+
+                                     = E         µ ( |i )((, p0 ) - (i , p0 )) i  ,  
+                                             i
+
+
+and
+                                                                                                               
+
+E         (i , p0 ) - (i , p0 ) +  (i , HR , ) = E              | |  (, HR ) +        µ ( | )[(, p0 ) - (, p0 )] 
+      i                                                     E                      
+
+
+we obtain that indeed,
+
+
+                      E        (i ) [(i , p0 ) +  (i , HR , ) - (i , p0 )]   = 0,
+                          iI
+
+
+                                          B
+and hence, for any reporting strategy  , U1  0, which yields point (i).
+    Point (ii) follows from the fact that whenever  is measurable with respect to E , then
+for all reporting strategies 
+
+
+                                 E         (i )((i , p0 ) - (i , p0 )) = 0
+                                      iI
+
+
+and
+                      E [ (, HR , )] = E                [µ ( | ) - µI ( | )]r = 0,
+                                                     
+
+                1
+where r =     |H  |   iH    cR
+                             i (p0 ) - (, p0 ) denotes the mean residual of the baseline capitation
+
+formula computed in the reported hold-out sample.
+
+
+
+
+                                                      44
+   Finally,
+
+
+                      C
+                     U1        max        E          (i )((i , p0 ) - (i , p0 ))
+                            [0,1]T ,E E
+                                                iI
+
+
+                               max        E           (i )((i , p0 ) - (i , p0 ))
+                            M(E ),E E
+                                                iI
+                                                                               +
+
+                          max E                      (i , p0 ) - (i , p0 )         ,
+                            E E
+                                        E     iI 
+
+
+which yields point (iii).
+
+
+Proof of Lemma 1: We begin with point (i) and show that E [(E , e)]  E[(E , e )] using
+a coupling argument, i.e. by carefully jointly sampling original errors e and Rademacher
+errors e .
+   Consider the following process for generating errors e and e . Errors e are generated
+according to the original distribution of ei (where the different ei 's are independent of one
+another). In turn, each error term ei is generated from ei as follows: conditional on ei ,
+ei  {-cmax , cmax } is chosen so that E [ei |ei ] = ei . This is possible since ei  [-cmax , cmax ],
+and there is a unique such distribution. Since error terms (ei )iD0 are independent, so are
+error terms (ei )iI . In addition,
+
+
+                                E [ei ] = Eei E [ei |ei ] = Eei ei = 0,
+
+
+which implies ei  U {-cmax , cmax }.
+   We now show that E [(E , e)]  E [(E , e )]. Note that (E , e) can be viewed as the
+maximum value for S  E  E of
+                                                                            
+                                                                 1
+                            S          |I  |         µI ( | )     
+                                                                         ei  .19               (21)
+                                   S             
+                                                                |D0 | iD
+                                                                        0
+
+
+
+
+                                                     45
+Fix e, and assume that (E , e) is realized by S for some set S of  's. We have by linearity
+of expectation that
+                                                                                                                            
+                                                                                                           
+                                       |I |                                                           |I |
+        (E , e) =        |I  |             
+                                                          ei  = E               |I  |              
+                                                                                                                         ei  e
+                     S             
+                                    |I  ||D0 | iD                           S              
+                                                                                            |I  ||D0 | iD
+                                                 0                                                       0
+
+
+                  E [(E , e )|e] .
+
+
+Using the law of iterated expectations, this completes the proof of point (i).
+      We now turn to point (ii). Let E  E be any partition, and let S  E be a selection of
+elements in partition E . We first show that for all t,
+
+                                                                           t2 |D0 |
+                                   prob (S > t)  exp -                                                                                (22)
+                                                                        2c2     2
+                                                                          max  |I |
+                                                                                    2
+
+
+
+where S is defined by (21). Using Hoeffding's inequality (see Hoeffding (1963) or Cesa-
+Bianchi and Lugosi (2006), Lemma 2.2) we have
+                                                                                
+                                                               2
+                                                          2t
+        prob (S > t) = exp -                                        |I  |2
+                                                                                
+                                                               2
+                                          S,                 4cmax
+                                                          iD0           |2
+                                                                   |D0
+                                                                                                                                   
+                                                  2                                                           2
+                                                  t                                                        t
+                          exp -                          |I  |2
+                                                                     = exp -
+                                                                                          |I |2                |I  | |D0 | |I  |
+                                                                                                                                   
+                                      2c2
+                                        max            T |D0|                      2c2
+                                                                                     max |D0 |              T |D0  | |I | |I |
+
+
+                                            t2
+                          exp -              |I | 2       .
+                                      2c2
+                                        max |D0 | 
+
+
+
+Since there are at most M =             E E      2|E | - 1 possible non-empty sets S , this implies
+
+
+                                                                                    t2
+                              prob ((E , e) > t)  M exp -                          |I |    2      .
+                                                                            2c2
+                                                                              max |D0 | 
+
+
+                                                                                      +
+To complete the proof, we use the fact that E [(E , e)] =                            0
+                                                                                               prob((E , e) > t)dt. Pick t0
+ 19                                                                                                 1
+      Indeed, the corresponding set S will only select  s such that                      µI ( | ) |D |              
+                                                                                                                  iD0   ei > 0.
+                                                                                                       0
+
+
+
+
+                                                                   46
+                        t2                                                2 log M
+such that M exp -     2
+                         0
+                          |I |2
+                                       = 1, i.e. t0 = |I |cmax             |D0 |
+                                                                                  .   We have
+                    2cmax |D | 
+                             0
+
+
+
+                            t0                                        +
+        E [(E , e)]              prob((E , e) > t)dt +                    prob((E , e) > t)dt
+                        0                                         t0
+                                   +
+                                                             t2
+                     t0 +               M exp -        |I |       2
+                                  t0            2c2
+                                                  max |D0 | 
+                                                 
+                                       2 log M     2                                            t2
+                     |I |cmax                  +      |I |cmax                      M exp -        |I |2
+                                        |D0 |     2                           |D0 |         2c2
+                                                                                              max |D0 | 
+
+                                        2
+                     |I |cmax                      log M + 1 .
+                                       |D0 |
+
+
+
+
+Proof of Corollary 2: Let E  be defined as
+
+
+                                 E   arg max E [max SE |D0 ,D1 ] - 2E .
+                                         EP (T )        E E
+
+
+
+It follows from the proof of Proposition 4 that, net of payments pE , the payoff U1 to the
+private plan in equilibrium (E , E, ,  ) must satisfy:
+
+
+                                               E [U1 ]  E S (|D0 , D1 ),              and
+
+                     E  P (T ),                E [U1 ]  E max SE |D0 ,D1 - 2E .
+                                                                  E E
+
+
+
+This implies that
+
+
+                     E S (|D0 , D1 )  max E max SE |D0 ,D1 - 2E .
+                                                 E P (T )         E E
+
+
+
+
+                                                            47
+Proof of Proposition 5: Let E be the partition maximizing               E 1+
+                                                                               1
+                                                                                       µI ( ). We start
+                                                                               |D0 |
+with the following simple claim:
+
+Claim 1 (hard to distinguish distributions). For each integer d  0, there exists a pair
+of distributions l , h taking finitely many values c  [0, cmax ] and such that El c = d l,
+                                                                   
+Eh c = d           d   d                       d   d
+          h , with h , l  [cmax /4, 3cmax /4], h - l  k cmax /(1 +   d), and dl is hard to
+
+distinguish from d
+                 h , in the sense that their statistical distance is less than 1/4:
+
+
+
+                                    sup        d        d
+                                               l (S ) - h (S )  1/4,                              (23)
+                                S [0,cmax ]d
+
+
+
+for some universal constant k > 0, where d     d
+                                         l and h denote the d-product measures.
+
+
+    We defer the proof of Claim 1 until after the proof of the proposition. The following class
+of environments  lets us establish our results.
+
+    · Selection cost K is identically equal to 0.
+
+    · Cost distributions F for the public and private plans are determined as follows. Let
+      (b )E be independent Bernoulli draws over {0, 1} such that prob(b = 1) = 1/2.
+      For patients i with characteristic   E costs ci (p0 ) are independent and identically
+                                                |D |
+      distributed according to the distribution b 0 described in Claim 1. Its expected value
+                             |D |   |D |
+       is denoted by  0  l
+                               0
+                                 , h 0 . Note that illegitimate selection characteristics  are
+       independent of costs, and play no role in this construction.
+
+    · For patients with characteristic   E , costs ci (p1 ) are deterministic and equal to
+                             
+                   |D0 |   |D0 |
+       1      0
+              
+                +  l     + h     3.
+
+    · Holdout set H contains sufficient information to identify (b )E . Hence, we can let
+      messages m0 be reports of (b )E .
+
+    · Private plan p1 knows (b )E . Hence, we can also let messages m1 be reports of
+      (b )E .
+
+    Since only legitimate characteristics  are correlated to costs, making illegitimate types 
+irrelevant, we can restrict attention to suggested selection strategies (D0 , m1 ) taking values
+in [0, 1]E .
+
+                                                   48
+Step 1: exploiting incentive compatibility to obtain monotonicity constraints.
+                                                                         
+Fix a characteristic  (there are µI ( )|I | such patients), and let d  |D0 |. We establish
+minimum performance losses that any direct mechanism must accumulate with respect to
+patients with characteristic  . Our first step is to exploit incentive compatibility constraints
+to derive a monotonicity condition.
+   Let m       
+        0 and m1 denote the truthful reporting strategies by plans p0 and p1 . Let m0 ,
+
+m1 (resp. m0 , m1 ) denote the reporting strategies in which the two plans correctly report
+(b ) = but always report b = 1 (resp. report b = 0).
+   Fix a realization of D0 . In principle, D0 is an argument of transfer function , and of
+suggested selection . We suppress this dependency for now since D0 is held constant. We
+denote by m1 ( ) the selection intensity of patients with characteristic  given message m1 .
+   We define plans p0 and p1 's conditional expected values U0 and U1 given messages and a
+value of b as
+
+
+         U0 (m0 , b |D0 )  E -(m0 , m1 , m1
+                                            )+           |I  | × 0 × m1
+                                                                        ( ) D0 , b
+                                                     E
+
+
+         U1 (m1 , b |D0 )  E (m0 , m1 , m1 ) -          |I  | × 1 × m1 ( ) D0 , b .
+                                                    E
+
+
+   By incentive compatibility of plan p1 's messages if b = 1, we must have
+
+
+                           U1 (m1 , b = 1|D0 )  U1 (m1 , b = 1|D0 ).                       (24)
+
+
+Incentive compatibility of plan p0 's message when b = 0 implies that
+
+
+                           U0 (m0 , b = 0|D0 )  U0 (m0 , b = 0|D0 ).
+
+
+
+
+                                              49
+Since the true value of b does not affect expected transfers, this inequality simplifies to
+
+
+                     E (m0 , m1 , m1 ) D0  E (m0 , m1 , m1 ) D0 .                         (25)
+
+
+Combining (24) and (25) implies
+
+
+        E (m0 , m1 , m1 ) - (m0 , m1 , m1 ) D0                                            (26)
+
+                             E          |I  | × 1 × m1 ( ) - m1 ( ) D0 , b = 1 .
+                                    E
+
+
+A symmetric argument implies
+
+
+        E (m0 , m1 , m1 ) - (m0 , m1 , m1 ) D0                                            (27)
+
+                             E          |I  | × 1 × m1 ( ) - m1 ( ) D0 , b = 0 .
+                                    E
+
+
+
+By construction, b affects the value                   
+                                     1 but not that of 1 for  =  . Hence, (26) and (27)
+
+imply
+                        2d   d
+                         l + h  2d + d
+              E |I  |          - h   l
+                                                × m1 ( ) - m1 ( ) D0  0.
+                           3       3
+
+This yields the following monotonicity condition:
+
+
+                             E m1 ( ) D0  E m1 ( ) D0 .                                   (28)
+
+
+Step 2: establishing a lower bound on performance losses. Under first-best pa-
+tient selection, the unconditional expected cost of treatment for a patient with legitimate
+characteristic  is
+
+                                               1     1   1 d 2 d           2d   d
+                                                                            l + h
+           E [c(p0 ) +  ( )(c(p1 ) - c(p0 ))] = dl +       + h         =          .       (29)
+                                               2     2   3 l 3                3
+
+
+
+
+                                              50
+Monotonicity condition (28) implies that under any selection  induced by a direct mecha-
+nism, the expected cost of treatment for a patient with characteristic  satisfies:
+
+
+    E c(p0 ) + ( )(c(p1 ) - c(p0 )) = E E c(p0 ) + ( )(c(p1 ) - c(p0 ))|D0
+                                            2d    d
+                                              l + h
+           =E prob(b = 0|D0 ) × E m1 ( ) ×          + (1 - m1 ( )) × dl D0
+                                                3
+                                               2d + d
+                + prob(b = 1|D0 ) × E m1 ( ) × h     l
+                                                       + (1 - m1 ( )) × dh D0
+                                                  3
+            2d + d    d - d
+           = l    h
+                    + h    l
+                             × E prob(b = 0|D0 )E [m1 ( )|D0 ]
+               3        3
+                                            + prob(b = 1|D0 )E [1 - m1 ( )|D0 ]
+              2d   d
+               l + h  d - d
+                     + h   l
+                             × E prob(b = 0|D0 )E [m1 ( )|D0 ]
+                 3       3
+                                            + prob(b = 1|D0 )E [1 - m1 ( )|D0 ]
+              2d   d
+               l + h  d - d
+                     + h   l
+                             × E [min {prob(b = 0|D0 ), prob(b = 1|D0 )}]
+                 3       3
+
+Step 3: quantify the lower bound using Claim 1. Since prob(b |D0 ) only depends
+                                                                  
+on D0 , it suffices to bound E [min {prob(b = 0|D0 ), prob(b = 1|D0 )}].
+                        
+   Recalling that d = |D0 |, Bayes rule and Claim 1 imply that
+
+
+                                       
+  E [min {prob(b = 0|D0 ), prob(b = 1|D0 )}] =
+                                                                 
+                                       d l (D0 )          d h (D0 )
+                            E min                  ,                       =
+                                    (d      d           d
+                                     l + h )(D0 ) (l + h )(D0 )
+                                                               d
+
+                                 1 |d   (D ) - d        
+                                                   h (D0 )|      1         |d         d   
+                                                                            l (D0 ) - h (D0 )|   1
+                             E     - l d0        d             = -                             >
+                                 2     2(l + h )(D0 )            2                  4            4
+                                                                   D0
+
+
+                                                                       1                       
+where we used the fact that the statistical distance satisfies         2
+                                                                            
+                                                                           D0   |d         d
+                                                                                 l (D0 ) - h (D0 )| =
+
+supS [0,cmax ]d d        d
+                l (S ) - h (S ).
+
+   Altogether, it follows that for patients with characteristic  , the per-patient efficiency
+
+
+
+
+                                                 51
+loss is least
+                                     1 d   d
+                                       h - l  k     cmax
+                                                ×        
+                                                            .
+                                     4   3    12 1 + |D0  |
+Setting k = k /12 completes the proof.
+
+
+   We now prove Claim 1.
+Proof of Claim 1: Given d  1, let l  cmax B1/2- , and h  cmax B1/2+ , where Bq
+denotes Bernoulli variables taking values in {0, 1}, and equal to 1 with probability q . Set
+  so that 0 <          < 1/4 (with the relationship between   and d to be specified below). The
+Kullback-Leibler divergence D(d   d           d     d
+                              l ||h ) between l and h satisfies (see Cover and Thomas
+
+(2012) for a reference)
+
+
+                     D(d d                                                  2
+                       l h ) = d × D (l h ) = d × D (B1/2- B1/2+ ) = d × O ( ),
+
+
+
+By Pinsker's Inequality (e.g. Csiszar and K¨
+                                           orner (2011), Section 3) the statistical distance
+between d     d
+        l and h satisfies
+
+
+                                                                                          
+ 2×      sup         d        d        d   d
+                     l (S ) - h (S ) = l - h   1      2 × D(d d
+                                                            l h ) =   d × O( 2 ) < k1 ×   d, (30)
+      S [0,cmax ]d
+
+
+where k1  2 is a constant.
+                                                               
+  Choose = 1/(2k1 d)  1/4. Claim 1 holds with d   d
+                                              h - l = 2 = 1/(k1 d). Setting
+
+k  1/k1 completes the proof.
+
+
+
+
+B.3       Proofs for Section 6
+
+Proof of Proposition 6: Consider the subgame following entry. For any continuation
+pricing equilibrium (p0 , p1 ), the usual Bertrand competition argument implies that price
+
+
+
+
+                                                      52
+formulas must satisfy
+                                      , 0 ( ) = 1 ( ) = ( ).
+
+Given these prices, profits are determined by the plans' selection behavior (p0 , p1 ). Given
+the selection rule ¬p of its competitor, plan p chooses
+
+                                                          1
+             p  arg max            (( ) - ( ))µI ( )        + ( ) - ¬p ( ) - K ()
+                     [0,1]T    T
+                                                          2
+
+                     = arg max        µI ( )( )(( ) - ( )) - K ().
+                        [0,1]T    T
+
+
+Since K is strictly convex, minimized at 0, and smooth, it follows that its gradient K|0 at
+0 is equal to 0. As a result both plans engage in the same non-zero amount of selection  ,
+and in aggregate selection has no effect on each plan's treated sample. Strict convexity of K
+implies that K ( ) > 0. The entrant gets strictly negative expected profits following entry.
+   It follows that the unique equilibrium involves no entry, allowing the incumbent to charge
+prices equal to  .
+
+
+Proof of Proposition 7: Consider the subgame following entry. For any continuation
+pricing equilibrium (p0 , p1 ), the usual Bertrand competition argument implies that price
+formulas must satisfy
+                                      , 0 ( ) = 1 ( ) = ( ).
+
+   Assuming truthful reporting by plan ¬p, strategic capitation ensures that plan p does
+not benefit from selecting a non representative sample of types. Hence plan p's payoff is
+equal to
+                                                       1
+                              (( ) - ( ))µI ( )          - ¬p ( ) - K (p ).
+                          T
+                                                       2
+
+It is therefore optimal for plan p to set p = 0 and minimize selection cost. Given this choice,
+it is indeed optimal for plan ¬p to report its hold-out sample truthfully.
+
+
+
+                                                  53
+References
+Antic, N. (2014): "Contracting with Unknown Technologies," unpublished paper, Princeton
+  University.
+
+Athey, S. and I. Segal (2013): "An efficient dynamic mechanism," Econometrica, 81,
+  2463­2485.
+
+Batata, A. (2004): "The effect of HMOs on fee-for-service health care expenditures: evi-
+  dence from Medicare revisited," Journal of health economics, 23, 951­963.
+
+                                     ´ ndez-Val, and C. Hansen (2013): "Pro-
+Belloni, A., V. Chernozhukov, I. Ferna
+  gram evaluation with high-dimensional data," arXiv preprint arXiv:1311.2645.
+
+Belloni, A., V. Chernozhukov, and C. Hansen (2014): "Inference on Treatment Ef-
+  fects after Selection among High-Dimensional Controls," The Review of Economic Studies,
+  81, 608­650.
+
+Bergemann, D. and K. H. Schlag (2008): "Pricing without priors," Journal of the
+  European Economic Association, 6, 560­569.
+
+Bisin, A. and P. Gottardi (1999): "Competitive equilibria with asymmetric informa-
+  tion," Journal of Economic Theory, 87, 1­48.
+
+------ (2006): "Efficient competitive equilibria with adverse selection," Journal of political
+  Economy, 114, 485­516.
+
+Brooks, B. (2014): "Surveying and selling: Belief and surplus extraction in auctions," .
+
+Brown, J., M. Duggan, I. Kuziemko, and W. Woolston (2014): "How Does Risk
+  Selection Respond to Risk Adjustment? New Evidence from the Medicare Advantage
+  Program," American Economic Review, 104, 3335­3364.
+
+
+
+
+                                             54
+Bundorf, M. K., J. Levin, and N. Mahoney (2012): "Pricing and Welfare in Health
+  Plan Choice," American Economic Review, 102, 3214­48.
+
+Carroll, G. (2015): "Robustness and linear contracts," American Economic Review, 105,
+  536­63.
+
+------ (2017): "Robustness and separation in multidimensional screening," Econometrica,
+  85, 453­488.
+
+Centers for Medicare and Medicaid Services (2016): "HHS-operated risk adjust-
+  ment methodology meeting: discussion paper," Tech. rep.
+
+Cesa-Bianchi, N. and G. Lugosi (2006): Prediction, Learning, and Games, Cambridge
+  University Press.
+
+Chassang, S. (2013): "Calibrated incentive contracts," Econometrica, 81, 1935­1971.
+
+Cover, T. M. and J. A. Thomas (2012): Elements of information theory, John Wiley
+  & Sons.
+
+Cremer, J. and R. P. McLean (1988): "Full extraction of the surplus in Bayesian and
+  dominant strategy auctions," Econometrica: Journal of the Econometric Society, 1247­
+  1257.
+
+                    ¨ rner (2011): Information theory: coding theorems for discrete
+Csiszar, I. and J. Ko
+  memoryless systems, Cambridge University Press.
+
+                           ´rard-Varet (1979): "Incentives and incomplete infor-
+d'Aspremont, C. and L.-A. Ge
+  mation," Journal of Public economics, 11, 25­45.
+
+Dubey, P. and J. Geanakoplos (2002): "Competitive pooling: Rothschild-stiglitz re-
+  considered," Quarterly Journal of Economics, 1529­1570.
+
+
+
+
+                                           55
+Ellis, R. P. (1998): "Creaming, skimping and dumping: provider competition on the
+  intensive and extensive margins," Journal of health economics, 17, 537­555.
+
+Evans, M. A., G. C. Pope, J. Kautter, M. J. Ingber, S. Freeman, R. Sekar,
+  and C. Newhart (2011): "Evaluation of the CMS-HCC Risk Adjustment Model," CfMM
+  Services, Editor.
+
+Frank, R. G., J. Glazer, and T. G. McGuire (2000): "Measuring adverse selection
+  in managed health care," Journal of Health Economics, 19, 829­854.
+
+Glazer, J. and T. G. McGuire (2000): "Optimal risk adjustment in markets with
+  adverse selection: an application to managed care," American Economic Review, 1055­
+  1071.
+
+Hartline, J. D. and T. Roughgarden (2008): "Optimal Mechanism Design and Money
+  Burning," in Symposium on Theory Of Computing (STOC), 75­84.
+
+Hoeffding, W. (1963): "Probability Inequalities for Sums of Bounded Random Variables,"
+  Journal of the American Statistical Association, 58, 13­30.
+
+Kautter, J., G. C. Pope, M. Ingber, S. Freeman, L. Patterson, M. Cohen,
+  and P. Keenan (2014): "The HHS-HCC risk adjustment model for individual and small
+  group markets under the Affordable Care Act," Medicare & Medicaid research review, 4.
+
+     ´ sz, K. and A. Prat (2014): "Screening with an Approximate Type Space,"
+Madara
+  Working Paper, London School of Economics.
+
+Massart, P. and J. Picard (2007): Concentration inequalities and model selection, vol.
+  1896, Springer.
+
+Mello, M. M., S. C. Stearns, E. C. Norton, and T. C. Ricketts (2003): "Under-
+  standing biased selection in Medicare HMOs," Health services research, 38, 961­992.
+
+
+
+                                            56
+Mezzetti, C. (2004): "Mechanism design with interdependent valuations: Efficiency,"
+  Econometrica, 72, 1617­1626.
+
+Myerson, R. B. and M. A. Satterthwaite (1983): "Efficient mechanisms for bilateral
+  trading," Journal of economic theory, 29, 265­281.
+
+Newhouse, J. P., M. Price, J. Huang, J. M. McWilliams, and J. Hsu (2012):
+  "Steps to reduce favorable risk selection in Medicare advantage largely succeeded, boding
+  well for health insurance exchanges," Health Affairs, 31, 2618­2628.
+
+Pope, G. C., J. Kautter, R. P. Ellis, A. S. Ash, J. Z. Ayanian, M. J. Ingber,
+  J. M. Levy, and J. Robst (2004): "Risk Adjustment of Medicare Capitation Payments
+  Using the CMS-HCC Model," Healthcare Financing Review, 25, 119.
+
+Riordan, M. H. and D. E. Sappington (1988): "Optimal contracts with public ex post
+  information," Journal of Economic Theory, 45, 189­199.
+
+Rothschild, M. and J. Stiglitz (1976): "Equilibrium in Competitive Insurance Mar-
+  kets: An Essay on the Economics of Imperfect Information," The Quarterly Journal of
+  Economics, 90, 629­649.
+
+Segal, I. (2003): "Optimal pricing mechanisms with unknown demand," The American
+  economic review, 93, 509­529.
+
+Starc, A. (2014): "Insurer pricing and consumer welfare: Evidence from medigap," The
+  RAND Journal of Economics, 45, 198­220.
+
+Vapnik, V. (1998): Statistical learning theory, Wiley New York.
+
+
+
+
+                                            57
+

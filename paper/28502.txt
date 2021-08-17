@@ -1,0 +1,2034 @@
+                             NBER WORKING PAPER SERIES
+
+
+
+
+A SIMPLE BUT POWERFUL SIMULATED CERTAINTY EQUIVALENT APPROXIMATION
+               METHOD FOR DYNAMIC STOCHASTIC PROBLEMS
+
+                                        Yongyang Cai
+                                       Kenneth L. Judd
+
+                                     Working Paper 28502
+                             http://www.nber.org/papers/w28502
+
+
+                    NATIONAL BUREAU OF ECONOMIC RESEARCH
+                             1050 Massachusetts Avenue
+                               Cambridge, MA 02138
+                                   February 2021
+
+
+
+
+Cai and Judd appreciate the financial support from United States Department of Agriculture
+NIFA-AFRI grant 2015-67023-22905; Cai acknowledges the financial support from the National
+Science Foundation (SES-1463644 and SES-1739909) and USDA-NIFA-AFRI grant
+2018-68002-27932. This paper originates from Cai et al. (2020), which has been separated into
+this methodological paper and another paper focusing on applications to large natural resource
+allocation problems. The views expressed herein are those of the authors and do not necessarily
+reflect the views of the National Bureau of Economic Research.
+
+NBER working papers are circulated for discussion and comment purposes. They have not been
+peer-reviewed or been subject to the review by the NBER Board of Directors that accompanies
+official NBER publications.
+
+© 2021 by Yongyang Cai and Kenneth L. Judd. All rights reserved. Short sections of text, not to
+exceed two paragraphs, may be quoted without explicit permission provided that full credit,
+including © notice, is given to the source.
+A Simple but Powerful Simulated Certainty Equivalent Approximation Method for Dynamic
+Stochastic Problems
+Yongyang Cai and Kenneth L. Judd
+NBER Working Paper No. 28502
+February 2021
+JEL No. C61,C63,C68,E31,E52,Q54,Q58
+
+                                        ABSTRACT
+
+We introduce a novel simulated certainty equivalent approximation (SCEQ) method for solving
+dynamic stochastic problems. Our examples show that this method only requires a desktop
+computer to solve high-dimensional finite- or infinite-horizon, stationary or nonstationary
+dynamic stochastic problems with hundreds of state variables, a wide state space, and
+occasionally binding constraints. The SCEQ method is simple, stable, and efficient, which makes
+it suitable for solving complex economic problems that cannot be solved by other algorithms.
+
+
+Yongyang Cai
+Agricultural, Environmental and
+Development Economics
+The Ohio State University
+Columbus, OH 43210
+US
+cai.619@osu.edu
+
+Kenneth L. Judd
+Hoover Institution
+Stanford University
+Stanford, CA 94305-6010
+and NBER
+kennethjudd@mac.com
+
+
+
+
+A data appendix is available at
+http://www.nber.org/data-appendix/w28502
+A Code is available at
+https://drive.google.com/file/d/1SP-YyhKE6o1ZpHpdxo4HJ72lPYplWpej/view
+1       Introduction
+    Dynamic stochastic general equilibrium (DSGE) problems are often studied using
+stationary models, which are relatively easy to solve using local approximation meth-
+ods.1 Stationary problems have time-invariant decision rules, so in low-dimensional
+models, projection methods can be used to compute global solutions for value func-
+tions and/or decision rules.2
+    However, neither stationarity nor low dimensionality are reasonable simplifications
+for real-world problems. Life-cycle models often have time-varying endowments and
+preferences, and the population, technology, resource stock, and climate all change
+over time, making those problems nonstationary. Computing the full set of state-
+contingent decisions and prices is often too computationally costly, and may also
+produce more information than is needed for the question at hand. In addition, it
+is challenging to compute global solutions for non-smooth value functions and/or
+decision rules of DSGE problems with occasionally binding constraints. This pa-
+per proposes a simple but powerful Simulated Certainty Equivalent (SCEQ) method
+which only uses the standard tools available to economists to compute the properties
+of interest of many high-dimensional, nonstationary models, and/or problems with
+occasionally binding constraints.
+    The key reason for the advantages of SCEQ is its notion of "solution". Most
+methods for solving dynamic economic models solve for value functions, decision
+rules, and/or price functions. Solving for unknown functions requires e cient ways
+to approximate functions, a di cult challenge for complex high-dimensional prob-
+lems. However, the solutions are often used only to compute stochastic properties of
+the problem, such as means, variances, covariances, and trends, as well as optimal de-
+cisions at the initial periods for policy makers. Moreover, a low-degree approximation
+of value or policy functions, such as linear or log-linear approximation from pertur-
+bation methods, may create large approximation errors and lead to large errors in
+estimating the stochastic properties of the solution. Instead, SCEQ focused directly
+on computing a set of simulations of the solution without approximating functions,
+and use them to directly compute the statistical properties of the solution. The key
+    1
+     See e.g.,Magill (1977); Blanchard and Kahn (1980); Kydland and Prescott (1982); Judd and
+Guu (1993); Jin and Judd (2002).
+   2
+     See e.g. Haan and Marcet (1990); Judd (1992, 1998); Marcet and Lorenzoni (1998); Miranda
+and Fackler (2002)
+
+
+
+                                             2
+reason of SCEQ's desirable properties is that it's concept of solution is more limited
+than other methods but often su cient to deliver the information a researcher wants
+to have.
+    SCEQ is simple, for several reasons. First, SCEQ does not use complicated com-
+putational methods like (adaptive) sparse grids, or require extensive resources like
+a supercomputer. Second, SCEQ does not need to use the "trial and guess" tricks
+that are often used in other methods. For example, projection methods often have to
+guess an approximation domain and an approximation method, then check if these
+can solve the problem, but this process may have to be repeated many times. Third,
+SCEQ only requires a numerical optimization solver, as it does not use a value or
+policy function approximation or numerical integration. Fourth, SCEQ is easy to
+program in common languages like GAMS (General Algebraic Modeling System)3
+and Matlab.4 Fifth, it is easy and quick for SCEQ to check if its solution has the
+desired accuracy.
+    SCEQ is also powerful. First, SCEQ does not suer from the so-called "curse of
+dimensionality": its accuracy is independent of the state space's dimensionality, and
+its computational time is at worst a cubic function of the state space's dimensionality.5
+In fact, when we increase the number of countries in our real business cycle prob-
+lems from N to 2N , the total computational time of the SCEQ algorithm increases at
+only a nearly linear speed. Second, SCEQ e ciently solves high-dimensional dynamic
+stochastic problems with occasionally binding constraints: it only took hours on a
+standard computer to provide 1,000 simulation paths of solutions for 400-dimensional
+real business cycle problems with a lower bound on investments. Third, SCEQ ef-
+ficiently solves nonstationary dynamic stochastic problems, even those with high di-
+mensionality and occasionally binding constraints. Fourth, SCEQ can solve problems
+with a wide state space domain, even if high dimensionality, occasionally binding
+constraints, and nonstationarity are also present. Fifth, SCEQ's e ciency (computa-
+   3
+     There are many reliable and e cient professional solvers available using GAMS (McCarl et al.,
+2016), such as CONOPT (Drud, 1994) and SNOPT (Gill, Murray, and Saunders, 2005) for solving
+nonlinear programming problems. Moreover, these solvers are provided in the NEOS server (Czyzyk,
+Mesnier, and More, 1998) (https://neos-server.org/neos/solvers/index.html) and are free to use with
+GAMS.
+   4
+     SCEQ can be implemented with Dynare (Adjemian et al., 2011), a Matlab toolbox for solving
+DSGE models, particularly stationary problems in macroeconomics.
+   5
+     The "curse of dimensionality" refers to the case where computational cost grows exponentially
+with the dimensionality of state space.
+
+
+
+                                                3
+tional time and accuracy) is independent of the number of exogenous state variables,
+because there are no numerical approximation or integration over them in SCEQ.
+Sixth, SCEQ can be very fast. In our applications, using a Mac Pro desktop com-
+puter, SCEQ only took minutes to provide all possible simulation paths of solutions
+for a 200-country real business cycle problem (Section 4.2.2), and only took hours to
+provide 1,000 simulation paths of solutions for larger 200-country real business cycle
+problems with 201 or 400 state variables (Sections 4.2.1 and 4.2.3). Seventh, SCEQ is
+stable and can solve both stochastic dynamic programming problems and stochastic
+dynamic competitive equilibrium problems. Lastly, SCEQ is highly accurate, provid-
+ing solutions with an accuracy of 0.1-1% for all examples in this paper.
+    In this paper, we show that the SCEQ is highly accurate and achieves stable
+numerical solutions for dynamic stochastic problems. Our first numerical example
+is for illustration only. The second example is a multi-country real business cycle
+model with occasionally binding constraints. We solve cases with 10, 20, 50, 100,
+and 200 countries, each of which only takes minutes or hours on a Mac Pro desktop
+computer. The computational time is nearly linear to the number of countries, and
+increasing the dimensionality has little impact on the solution's accuracy. The third
+example is a nonstationary stochastic integrated assessment model of climate and
+the economy with six continuous endogenous state variables and one discrete state
+variable. Moreover, the model has occasionally binding constraints that make it
+challenging to solve with standard methods, but SCEQ took less than two hours to
+provide 1,000 simulation paths of solutions such as the optimal carbon taxes on a Mac
+Pro desktop computer. The last example applies SCEQ to solve a New Keynesian
+model with a zero lower bound, showing that SCEQ can solve stochastic competitive
+equilibrium problems. All the examples demonstrate that SCEQ can solve dynamic
+stochastic problems with a 0.1-1% degree of accuracy, which is within the acceptable
+range of accuracy for most dynamic stochastic economic problems.
+    The paper is organized as follows. Section 2 compares SCEQ with existing meth-
+ods. Section 3 introduces the SCEQ method. Section 4 provides numerical examples.
+Section 5 discusses some properties of SCEQ. Section 6 concludes.
+
+2    Comparison with Existing Methods
+To solve stationary and smooth problems, perturbation or projection methods are
+commonly used, which each have their limitations. Perturbation methods can only
+
+                                          4
+provide locally accurate solutions around the non-stochastic steady state, which are
+then treated as if they were globally valid. But it is often not su cient for decision-
+making purposes because the non-stochastic steady state may be far away from the
+initial state. A practical dynamic optimization problem aims to provide initial-period
+decisions that are based on those periods' states, rather than states in the far fu-
+ture (although future dynamics can aect initial-period solutions; see Cai, Judd, and
+Steinbuks 2017 for further discussion of this issue), which imply a wide approxima-
+tion domain for approximating value or policy functions. But a wide approximation
+domain requires a high-degree approximation of value or policy functions to obtain
+accurate solutions around the initial periods' states, implying that these problems will
+also be di cult for projection methods. Moreover, projection methods face challenges
+when solving high-dimensional problems or problems with strong nonlinearity.
+    Value function iteration (VFI) and time iteration are two common methods to
+solve dynamic stochastic problems. For nonstationary problems, time-varying approx-
+imation domains can be used to obtain accurate solutions while keeping a low-degree
+approximation for each period. For example, Cai, Judd, and Lontzek (2017) and Cai
+and Lontzek (2019) apply the parallel VFI method to solve many large-scale dynamic
+stochastic integrated models of climate and the economy (DSICE). However, VFI
+and time iteration both face challenging issues such as high-dimensional state spaces,
+shape-preservation of value functions, appropriate approximation domains, and oc-
+casionally binding constraints. Brumm and Scheidegger (2017) introduce adaptive
+sparse grids in time iteration to overcome the kink problem, but their method re-
+quires complicated coding and still requires a large number of approximation points
+around the kinks. Moreover, if the problem is nonstationary, then the adaptive sparse
+grid method would be less e cient as it cannot reuse the last iteration's grids.6
+    Cai, Judd, and Steinbuks (2017) propose a stable and e cient nonlinear certainty
+equivalent approximation method (NLCEQ) for solving stationary dynamic stochas-
+tic problems. NLCEQ applies the concept of certainty equivalent approximation to
+transform an infinite-horizon stochastic problem into a finite-horizon deterministic
+problem, solves it to obtain the optimal solution of decisions for each approximation
+   6
+    See Rust (1996), Judd (1998), Ljungqvist and Sargent (2000), Miranda and Fackler (2002),
+Bertsekas (2005, 2007), Aruoba, Fernandez-Villaverde, and Rubio-Ramirez (2006), Kollmann et al.
+(2011), Juillard and Villemot (2011), Guerrieri and Iacoviello (2015), Fernandez-Villaverde, Rubio-
+Ramirez, and Schorfheide (2016), Fernandez-Villaverde and Levintal (2018), Levintal (2018), and
+Cai (2019) for more discussion on the conventional methods.
+
+
+
+                                                5
+node in the state space at the initial time, then fits the solutions with a globally non-
+linear approximation to the optimal policy function. Cai, Judd, and Steinbuks (2017)
+demonstrate that NLCEQ can be used to achieve accurate solutions to a variety of
+problems, including high-dimensional problems such as a real business cycle model
+with many countries, and problems with kinks such as a New Keynesian model with a
+zero lower bound. For high-dimensional problems, NLCEQ uses sparse grids approxi-
+mation (see, e.g., Smolyak 1963; Malin, Krueger, and Kubler 2011; Judd et al. 2014),
+which can work well for smooth policy functions. For problems with kinks, NLCEQ
+can use high-degree approximations or adaptive sparse grids to reduce approximation
+errors caused by kinks.
+    Similar to NLCEQ, the SCEQ method uses the certainty equivalent approximation
+idea to transform infinite- or finite-horizon stochastic problems into deterministic
+finite-horizon problems in order to solve them, so it inherits the stability and e ciency
+properties of NLCEQ. However, SCEQ uses a period-by-period approach to construct
+one simulation path of solutions: first, it solves the transformed deterministic problem
+starting with a given initial state at the initial time s = 0, and uses the solution at
+s = 0 to simulate the shocks, generating a simulated state at time s = 1. It then
+solves the new transformed deterministic problem starting with the simulated state at
+time s = 1 to obtain the solution at s = 1, which is used together with new simulated
+shocks to generate a new simulated state at time s = 2. This process is iterated for
+each period until the time of interest to generate one simulation path. SCEQ obtains
+a set of simulation paths by repeating the period-by-period approach with dierent
+realization paths of the shocks, thus obtaining distributions of states and decisions
+for economic analysis.
+    Compared to the NLCEQ method, SCEQ has the following advantages:
+    (i) SCEQ can solve problems that are challenging for NLCEQ. If a problem has
+both a high-dimensional state space and kinks in the optimal policy function, then
+NLCEQ will have to choose a large number of approximation nodes in the state space
+to approximate this policy function with a su cient level of accuracy. It will then take
+too much time to solve the large-scale optimization problems corresponding to the
+approximation nodes. In contrast, SCEQ is very suitable for solving such problems.
+    (ii) NLCEQ needs to specify an approximation domain in the state space a priori,
+whereas SCEQ does not. NLCEQ requires this specification to choose approximation
+nodes, but we often do not know how wide a domain we should choose. If it is too
+
+
+                                           6
+wide, then it requires too many approximation nodes to obtain a good approximation
+to the policy function, implying too many large-scale optimization problems. If it is
+too narrow, then next period's optimal state will often be beyond the approximation
+domain, which limits the subsequent economic analysis. In contrast, if we want to
+construct a policy function optimization using simulated solutions from SCEQ, we
+can easily define an approximation domain with the minimum and maximum of the
+simulated solutions, or we can use a small set of "representative" points to cover the
+support of the simulated solutions and then use projection techniques (Maliar and
+Maliar, 2015).7
+    (iii) To obtain the same solution accuracy as SCEQ, NLCEQ suers from the
+"curse of dimensionality" of the state space, both in endogenous and exogenous state
+variables.
+    (iv) NLCEQ only solves infinite-horizon stationary problems,8 while SCEQ can
+solve both stationary and nonstationary problems in an infinite or a finite horizon.
+    (v) SCEQ can quickly check if its solution is accurate: it can just obtain one or
+several simulated paths at first and measure their accuracy. But NLCEQ has to wait
+until all of its optimization problems are solved, which incurs a larger computational
+cost.
+    In certain contexts, NLCEQ has its advantages. For example, NLCEQ could be
+faster than SCEQ for low-dimensional stationary problems with smooth policy func-
+tions, and NLCEQ can be applied to find optimal policy functions for deterministic
+problems.
+    VFI and time iteration have similar disadvantages when compared with SCEQ.
+They face even worse challenges than NLCEQ when solving problems with both a
+high-dimensional state space and kinks in the optimal policy function: they have to
+choose (time-varying) approximation domains in the state space a priori; they suer
+   7
+     SCEQ's solution could have a wide domain, particularly if its initial state is far away from the
+non-stochastic steady state for a stationary problem. For example, in our real business cycle model,
+the initial levels of capital range from 0.1 to 10 across countries, while the steady state level is 1.
+   8
+     NLCEQ can be adapted to solve nonstationary problems by iterating the process. That is,
+we apply NLCEQ for the first period with a given approximation domain and use its solution to
+generate an approximation domain for the second period. We then apply NLCEQ for the second
+period and use its solution to generate an approximation domain for the third period, and repeat
+this process for each subsequent period until the end of the required time period. This iterative
+method may incur a large computational cost, as NLCEQ has to solve a large number of large-scale
+optimization problems for every period.
+
+
+
+
+                                                  7
+the "curse of dimensionality" for both endogenous and exogenous state variables;9
+they are less flexible in checking whether they work or not, as they have to wait
+until the iteration converges for a stationary problem before checking their solution;
+and they require more complicated coding in low-level programming languages like
+Fortran or C, sparse grids, or parallelism for high-dimensional problems. In addition,
+VFI or time iteration are generally not stable.10
+    SCEQ has advantages over other proposed solution methods. Judd, Maliar,
+and Maliar (2011) suggest a generalized stochastic simulation algorithm (GSSA),
+and Judd, Maliar, and Maliar (2012) and Maliar and Maliar (2015) propose an -
+distinguishable set (EDS) method to merge projection approaches and simulation.
+However, both methods only solve infinite-horizon stationary problems. Moreover,
+their methods are less flexible in checking whether they work or not, as they have to
+obtain a large number of simulated results before they can approximate policy func-
+tions. Grune, Semmler, and Stieler (2015) apply a nonlinear model predictive control
+method for solving dynamic problems, which only solves infinite-horizon stationary
+dynamic programming problems and focuses on deterministic problems. It does not
+provide a distribution of solutions or policy function approximation, nor accuracy
+measures for stochastic problems.
+
+
+3     The SCEQ Method
+   Let xt be a vector of state variables (e.g., capital), and at be a vector of decision
+variables (e.g., consumption) at each time t. The transition law of the state vector x
+is
+                                  xt+1 = gt (xt , at , t )
+
+where t is a serially uncorrelated random vector process11 and gt is a vector of
+functions which could be time-varying: its i-th element, gt,i , returns the i-th state
+variable at time t + 1: xt+1,i .
+   9
+     There are methods to alleviate or even avoid the "curse of dimensionality" for some problems,
+see e.g. Rust (1997, 2019), Judd et al. (2014), Brumm and Scheidegger (2017), Cai (2019), and
+Scheidegger and Bilionis (2019).
+  10
+     Note that VFI can be stable if it uses a shape-preserving approximation method (Cai and Judd,
+2013).
+  11
+     If a dynamic model has serially correlated random variables, they are exogenous state variables,
+and we can use an uncorrelated vector t in their transition laws.
+
+
+
+                                                 8
+    Without loss of generality, we assume the mean or median of t is 0. For notational
+simplicity we keep the same mathematical representation of a transition function
+even if some of its elements are redundant. For example, if gt,i is deterministic, i.e.,
+xt+1,i = gt,i (xt , at ), since it can be rewritten as xt+1,i = gt,i (xt , at ) + 0 · t , we will still
+denote it as xt+1,i = gt,i (xt , at , t ). Similarly, if there are some unused elements of t
+or some redundant arguments in a function gt,j , we can multiply them by zero in gt,j
+and thus still use xt+1,j = gt,j (xt , at , t ) .
+    We solve the following social planner's problem:
+
+                                          (T 1                                                )
+                                           X
+                           max        E               t
+                                                          ut ( x t , a t ) +   T
+                                                                                   VT (xT )                           (1)
+                             at
+                                            t=0
+                             s. t .   xt+1 = gt (xt , at , t ), t = 0, 1, 2, ..., T                1,
+                                      ft (xt , at )         0, t = 0, 1, 2, ..., T            1,
+
+where ut is a utility function which could be time-varying, 2 (0, 1) is the discount
+factor, E is the expectation operator, T is the horizon (T = 1 if it is an infinite-
+horizon problem), VT (xT ) is a given terminal value function depending on the terminal
+state xT (it is zero everywhere for an infinite-horizon problem), and ft (xt , at )     0
+represents the feasibility constraints for actions at (e.g., nonnegativity constraints
+at 0).12 We assume that the initial state x0 is given, as it can usually be observed
+or estimated.
+    We assume that the social planner is interested in solutions for the first T  periods.
+Macroeconomists are often interested in obtaining solutions around the non-stochastic
+steady state. However in reality, the initial state could be far away from the steady
+state, and a policymaker may be more interested in the solutions for the initial periods
+in the forward-looking model (1) than the far future states that could be around the
+steady state. For example, in environmental and climate change economics, we are
+often interested in solutions for the coming century rather than longer time periods.
+The following SCEQ algorithm obtains solutions for the first T  periods.
+     12
+          An equality constraint f (x, a) = 0 can be written as a combination of f (x, a)               0 and   f (x, a)
+0.
+
+
+
+
+                                                                   9
+Algorithm 1 SCEQ for Stochastic Dynamic Programming Problems
+Step 1. Initialization step. Given the initial state x0 and a time of interest T  ,
+     choose a time-varying number of periods s and a time-varying "terminal" value
+     function Vs+ s (xs+ s ) for each time s. Simulate a sequence of t to get m paths,
+                                                
+     denoted i t for path i, from t = 0 to T        1. Let xi
+                                                            0 = x0 and iterate forward
+                                                   
+     through steps 2 and 3 for s = 0, 1, 2, ..., T    1.
+
+Step 2. Optimization step. Solve the following deterministic model starting at
+     time s and simulated node xi
+                                s:
+
+                              s+Xs 1
+                                       t s
+                    max                      ut ( x t , a t ) +   s
+                                                                      V s+ s ( x s+ s )        (2)
+                     at
+                                t =s
+                     s. t .   xt+1 = gt (xt , at , 0), t = s, s + 1, ..., s + s           1,
+                              ft (xt , at ) 0, t = s, s + 1, ..., s + s 1,
+
+      where xs is given by xi
+                            s , for each i = 1, ..., m.
+
+Step 3. Simulation step. Set xi              i    i i             i
+                                  s+1 = gt (xs , as , s ), where as is the optimal decision
+     at time s of the problem (2), for each i = 1, ..., m.
+
+
+
+     Algorithm 1 obtains simulated pathways of optimal decisions and states. It con-
+tains three steps: (i) the initialization step, which chooses an appropriate s and
+"terminal" value function Vs+ s (xs+ s ) and simulates the shocks; (ii) the optimiza-
+tion step, which solves the finite-horizon deterministic optimization problems (2);
+(iii) the simulation step, which uses the optimal decision of (2) at time s to generate
+simulated states at time s + 1.
+     Note that the inside loop across i can be switched with the outside loop across
+time, that is, for each i, we can obtain one simulation path by iteratively solving (2)
+                                                                   
+and simulating xi             i    i i
+                   s+1 = gt (xs , as , s ) for s = 0, 1, 2, ..., T  1. In addition, with a fixed
+initial state, the solutions at s = 0 are independent of simulation, so the optimization
+step just needs to solve the case with i = 1 and assign its solutions to the other
+cases with i = 2, ..., m. Algorithm 1 can also be applied to problems without a fixed
+initial state, as sometimes the initial state might be uncertain or hard to evaluate
+accurately. In this paper, we always assume that the initial state is fixed, without
+loss of generality.
+
+
+
+
+                                                   10
+3.1     Initialization
+In the initialization step of Algorithm 1, for a finite T -horizon problem, we can set
+  s = T     s so that Vs+ s (xs+ s ) is always the true terminal value function VT (xT ).
+For an infinite horizon problem, s and Vs+ s (xs+ s ) are chosen such that the solution
+of (2) at its starting time s is almost identical to a solution with a larger s for every
+state at s. Vs+ s (xs+ s ) is chosen to be an approximation of the cumulative optimal
+welfare from time s + s to time T 1, i.e.,
+                                             (    T 1
+                                                                                                         )
+                                                  X
+           Vs+ s (xs+ s )  max           E                   t
+                                                                 ut ( x t , a t ) +     T
+                                                                                            VT (xT )                 (3)
+                                at
+                                                 t =s+   s
+
+                                s. t .   xt+1 = gt (xt , at , t ), t = s +                         s , ..., T   1,
+                                         ft (xt , at )       0, t = s +               s , ..., T        1,
+                                                                 P 1
+One example of such an approximation is Vs+ s (xs+ s ) = T         t = s+ s
+                                                                            t
+                                                                              ut ( x t , a t (xt )) +
+  T
+    VT (xT ), where a t (xt ) is a guess of the optimal policy function at t. For an infinite
+horizon stationary problem, we can use Vs+ s (xs+ s ) = u (xs+ s , a (xs+ s )) /(1                  ).
+The dierence between Vs+ s (xs+ s ) and the true optimal welfare since time s + s
+(the "truncation error") may impact the solution at time s. If s is large, then the
+"terminal" value function Vs+ s (xs+ s ) often has little impact on the solution of (2)
+at its starting time s so the truncation error is small,13 but it also implies that (2) is
+a larger optimization problem and takes more computational time to solve.
+     Thus, for an infinite-horizon problem, in the initialization step of Algorithm 1 we
+first choose a large s and a reasonable Vs+ s (xs+ s ). For a few test nodes in the
+state space at time s (e.g., some reasonable extreme points), we let xs be given by a
+test node and then solve (2), to make sure that a much larger s will not change the
+solutions. We use these solutions as the "true" solutions. We then choose a smaller s
+and a dierent Vs+ s (xs+ s ), re-solve (2) at the same test nodes, and compare these
+solutions with the "true" solutions to estimate the truncation error. For a stationary
+problem, we suggest choosing a constant s and a time-invariant "terminal" value
+  13
+    Most infinite-horizon dynamic economic models assume that the system asymptotically evolves
+towards its stationary state, so the discount factor < 1 makes the terms t s ut (xt , at ) small in
+magnitude for t     s + s with a large s , and a smaller implies that we can choose a smaller
+  s in SCEQ. Such a truncation is often used in the literature, see e.g. Nordhaus (2008); Grune,
+Semmler, and Stieler (2015); Cai, Judd, and Steinbuks (2017); Cai, Judd, and Lontzek (2017); Cai
+and Lontzek (2019); Maliar et al. (2020).
+
+
+
+                                                     11
+function. In the end, we choose the best pair of s and Vs+ s (xs+ s ) in terms of
+computational speed and size of the truncation error.
+
+
+3.2    Optimization
+The optimization step of Algorithm 1 applies the original certainty equivalent approx-
+imation idea of the NLCEQ method: for a given state at time s, xi          s , we replace all
+future stochastic variables by their corresponding certainty equivalent approximation
+(e.g. expectations or medians) conditional on the current state xi     s , and convert the
+dynamic stochastic problem (1) into the deterministic finite-horizon dynamic problem
+(2).
+    Since t is a serially uncorrelated stochastic process, if all transition laws are con-
+tinuous we can replace t in (2) by its (zero) mean or median for simplicity. Generally
+we can replace t by a deterministic function of its standard deviation, so SCEQ may
+provide a more accurate solution or even solve problems such as stochastic volatility
+(see, e.g., Caldara et al. (2012)).
+    For problems with a discrete Markov chain in transition laws, to obtain the cor-
+responding deterministic model (1) we can use the same technique as described in
+Cai, Judd, and Steinbuks (2017) for NLCEQ with a discrete stochastic state. That
+is, given the Markov chain realization at time s, we can compute expectations of the
+Markov chain at all times after s conditional on the value at time s, then replace
+the stochastic process by the path of the conditional expectations in the optimization
+step of Algorithm 1.
+    We implement the optimal control method (see, e.g., Cai 2019) to solve (2) nu-
+merically: we view (2) as a large-scale nonlinear constrained optimization problem
+with {ai t : t   s} and {xi t : t   s} as its variables, and the transition equations and
+feasibility restrictions as its constraints. The problem can be directly solved with an
+appropriate nonlinear optimization solver such as CONOPT (Drud, 1994).
+
+
+3.3    Simulation
+In the simulation step of Algorithm 1 we use the optimal decision ai         s to generate
+the next-period state, xi          i    i i                                        i
+                        s+1 = gt (xs , as , s ), given the realization of shocks, s . Once
+we reach the state xi
+                    s+1 at time s + 1, we come back to implement the optimization
+step and then the simulation step. In other words, Algorithm 1 uses an adaptive
+
+                                             12
+management strategy: decisions are made for the current period in the face of future
+uncertain shocks; once the next-period shock is observed, decisions for the next period
+are made by re-optimizing given the observed shock and new state. Observe that the
+serial correlation of random variables has been captured in their associated transition
+laws. By repeating this process iteratively T  times, we compute one simulated path
+                            T 1                 i T 1
+of optimal decisions, {ais }s=0 , and states, {xs }s=0 , which corresponds to the realized
+                      T 1
+path of shocks, {i s }s=0 . Repeating over i, we compute m simulated paths of optimal
+states and decisions, and then obtain their distributions.
+
+
+3.4    Parallelism
+Relative to other methods, SCEQ could take longer to run low-dimensional problems,
+as it requires solving m  T  optimization problems (2). But for high-dimensional
+problems, SCEQ can take much less time to run. Moreover, since simulation paths are
+independent of each other, Algorithm 1 can be naturally parallelized across simulation
+paths: e.g., one simulation path per compute core, so the wall clock time could be
+around the time spent to solve T  optimization problems (2), which could be fast
+with modern hardware and optimization solvers. For example, it took seconds or at
+most several minutes in all of our examples, including the real business cycle problem
+with 200 countries (201 or 400 state variables) and s = 50, to solve T  optimization
+problems (2) on a standard computer. Therefore, we solve the large scale dynamic
+stochastic problems in minutes or hours, using parallelism on six compute cores of a
+Mac Pro desktop. Moreover, the running time can be reduced to seconds or minutes
+if we use many compute cores in a supercomputer.
+
+
+3.5    SCEQ for Competitive Equilibrium
+Like NLCEQ, the SCEQ method can also be adapted to solve competitive equilib-
+rium problems with transition laws of states xt+1 = gt (xt , at , t ), where xt is the state
+vector, at is the action vector, and t is a serially uncorrelated random vector pro-
+cess. We first use the certainty equivalent approximation idea to make the stochastic
+problem deterministic. A deterministic model's equilibrium solution should satisfy a
+set of equations and inequalities (including transition laws of states, feasibility con-
+straints for actions, Euler equations, market clearing conditions, and other first-order
+
+
+
+                                            13
+conditions):       8
+                   >
+                   > x = gt (xt , at , 0),     t = 0, 1, 2, ..., T   1,
+                   >
+                   < t+1
+                     f t ( xt , a t ) 0,       t = 0, 1, 2, ..., T   1,                (4)
+                   >
+                   >
+                   >
+                   :H (x , a , x , a ) = 0, t = 0, 1, 2, ..., T
+                          t    t     t t+1 t+1                       1,
+
+where ft (xt , at ) 0 represents the feasibility constraints for actions at period t, and
+Ht (xt , at , xt+1 , at+1 ) = 0 represents the Euler equations, market clearing conditions,
+and other first-order conditions for the transformed deterministic model. If there
+are occasionally binding constraints, then the arguments of Ht should also contain
+corresponding Lagrange multipliers, which we omit here without loss of generality. We
+can truncate infinite-horizon problems into finite-horizon problems with a terminal
+condition, such as (xT , aT ) = (xss , ass ) where the pair (xss , ass ) is the steady or
+asymptotic state and its associated action. For a finite-horizon problem, we also
+need a terminal condition for (xT , aT ). Without loss of generality, we assume that
+the terminal condition is that the terminal policy function is given (i.e., as+ s =
+a                                   
+ s+ s (xs+ s ) with a given as+ s ). Algorithm 2 summarizes the SCEQ method for
+solving stochastic competitive equilibrium problems.
+
+
+
+
+                                            14
+Algorithm 2 SCEQ for Stochastic Competitive Equilibrium Problems
+Step 1. Initialization step. Given the initial state x0 and a time of interest T  ,
+     choose a time-varying number of periods s and a time-varying "terminal"
+     policy function as+ s (xs+ s ) for each time s. Simulate a sequence of t to get
+                                                         
+     m paths, denoted i t for path i, from t = 0 to T       1. Let xi
+                                                                    0 = x0 and iterate
+                                                           
+     forward through steps 2 and 3 for s = 0, 1, 2, ..., T    1.
+
+Step 2. Optimization step. Solve the following deterministic model starting at
+     time s and simulated node xi
+                                s:
+
+               max        1                                                                (5)
+                 at
+                 s. t .   xt+1 = gt (xt , at , 0), t = s, s + 1, ..., s + s 1,
+                          ft (xt , at ) 0, t = s, s + 1, ..., s + s 1,
+                          Ht (xt , at , xt+1 , at+1 ) = 0, t = s, s + 1, ..., s + s   1,
+                          a s+ s = a    s+ s ( x s + s ) ,
+
+      where xs is given by xi
+                            s , for each i = 1, ..., m.
+
+Step 3. Simulation step. Set xi              i    i i             i
+                                  s+1 = gt (xs , as , s ), where as is the optimal decision
+     at time s of the problem (5), for each i = 1, ..., m.
+
+
+
+    The objective of the maximization problem (5) is a constant, as we are finding a
+feasible solution for competitive equilibrium and a nonlinear constraint optimization
+solver (e.g., CONOPT in GAMS, or fmincon in Matlab) can solve such problems. If
+(5) do not have inequality conditions or they are not binding at the solution, then it
+can also be solved by an equation solver (e.g., fsolve in Matlab). Like Algorithm 1,
+Algorithm 2 can also be naturally parallelized.
+
+
+3.6    Policy Function Approximation
+Note that the SCEQ method does not need to approximate a value or policy function.
+After we obtain the simulated paths, we can use them to conduct economic analysis
+directly. For example, we can compute the expectation, distribution, and moments
+from the simulated solutions. Section 4.3 shows that we can use the SCEQ method
+to estimate the social cost of carbon in the first 100 years in the presence of economic
+risk. However, if necessary, we can employ a projection approach like the least-squares
+method to construct a policy function approximation from simulated solutions if
+
+                                               15
+there are a large number of simulated results. This method is particularly e cient
+for stationary problems, because all simulated decisions ai  s follow the same policy
+function for all s and i. Moreover, the simulated results often locate inside a narrow
+domain, so a low-degree approximation often has enough approximation accuracy
+over the domain if the policy function is smooth. Furthermore, we can follow the
+method of Maliar and Maliar (2015) to construct a fixed grid covering the support
+of the simulated solution, then use a projection approach to obtain a policy function
+approximation.
+
+
+3.7    Accuracy Measures
+It is important to check the accuracy of solutions obtained with SCEQ, because
+we cannot a priori determine how the certainty equivalence assumption aects the
+solution's accuracy.
+    A standard accuracy measure method computes errors in equilibrium conditions
+(see e.g., Jin and Judd (2002) and Kollmann et al. (2011)), with the major errors for
+dynamic problems often being Euler or Bellman equation errors. For example, Cai,
+Judd, and Lontzek (2017) and Cai and Lontzek (2019) apply value function itera-
+tion to obtain value/policy function approximations in each period. They randomly
+choose a set of points in the state space at period t, compute new solutions at the
+points from the Bellman equation using the value function approximation at t + 1,
+then compare those true values with the values of the period-t value/policy function
+approximation at these points. This procedure produces Bellman equation errors for
+accuracy measures.
+    Cai, Judd, and Steinbuks (2017) apply NLCEQ to obtain policy function approx-
+imations. As in Cai, Judd, and Lontzek (2017) and Cai and Lontzek (2019), they
+randomly choose a set of points, , in the current-period state space, use the ap-
+proximate policy function to compute the next-period states and decisions for each
+point in , then compute Euler equation errors at those points. The same proce-
+dure was employed in Jin and Judd (2002) and Kollmann et al. (2011) to investigate
+the solution accuracy of the approximate global decision rule along a simulated path
+for stationary problems. Those error estimation procedures require a global value
+or policy function approximation, which could be challenging for high-dimensional
+problems, particularly if there are kinks in the value or policy functions. The key
+
+
+                                         16
+challenge is to adapt those error accuracy measures, developed to evaluate global
+solutions of dynamic problems, to the SCEQ method, which produces only simulated
+paths.
+    In SCEQ, we follow the idea of Jin and Judd (2002) and Kollmann et al. (2011)
+to measure the Euler equation errors at the simulated states without constructing a
+global function approximation. Instead, we develop an error formula that implicitly
+constructs a local policy function approximation for each simulated state we use in
+error checking.
+    For each simulated state at period t, we choose a set of quadrature nodes and then
+use the state transition laws to obtain a set of states at period t +1, denoted St+1 . For
+each state in St+1 , we use it as the starting state and t + 1 as the starting period, then
+solve the optimization problem (2) in Algorithm 1 for dynamic programming prob-
+lems, or (5) in Algorithm 2 for competitive equilibrium problems. Thus, we obtain
+decisions in t + 1 for all states in St+1 , then use the corresponding quadrature rules
+to estimate the Euler equation error at the time-t simulated state. The quadrature
+formulas are called "interpolatory rules" because they implicitly use local information
+to construct a local approximation adequate for the purpose of integration. That is,
+we can compute the Euler equation errors at the simulated states without explicitly
+constructing a policy function approximation.14
+    Note that for an infinite horizon problem, if we choose s = T    b s then the infinite
+horizon problem is viewed as a finite T   b-horizon problem in SCEQ, so the truncation
+error is not reflected in the Euler errors. However, for an infinite-horizon stationary
+problem, if we choose a constant s and a time-invariant "terminal" value function,
+then the truncation error is reflected in the Euler errors (see Appendix A.1 for more
+details). For some special cases like the example in Section 4.2.2, we can compute all
+possible paths within a time of interest T  , and use them to compute Euler equation
+errors, with little computational cost.
+    If there are many shocks, a large number of quadrature nodes are required to
+compute Euler equation errors, running the above accuracy measure method could
+be computationally expensive. Here we also provide a weaker but no-cost indicator
+  14
+    For low-dimensional problems with smooth policy functions, we can also compute Euler equation
+errors by explicitly constructing policy function approximations as discussed in Section 3.6. This
+method's computational cost is low, but it requires extra coding for approximating policy functions.
+More importantly, it would be challenging for problems with high dimensionality or non-smooth
+policy functions.
+
+
+
+                                                17
+for checking accuracy: we use the Monte Carlo simulation idea to estimate the Euler
+equation error at the initial state only. Note that the initial state is given and fixed,
+so Algorithm 1 or 2 has already applied the Monte Carlo simulation to generate m
+simulated states in the second period and their corresponding decisions. That is, if
+we use the Monte Carlo quadrature rule, then we have already had the next-period
+states and decisions, so we can evaluate the Euler equation error at the initial state
+by simply taking the average across the simulated solutions for the second period.
+Following the Law of Large Numbers, the accuracy of the Euler equation error is
+                    p
+proportional to 1/ m. Our real business cycle examples show that the Euler error
+at the initial state is close to the Euler errors across other periods.15
+
+
+4      Numerical Examples
+We apply SCEQ to solve four dynamic stochastic problems. The first is a simple op-
+timal growth problem for illustration purposes only. The second example shows that
+SCEQ can solve high-dimensional multi-country real business cycle problems with
+occasionally binding constraints. The third example solves nonstationary stochastic
+integrated assessment models with seven state variables (six of them are continuous)
+and occasionally binding constraints. The last example shows that SCEQ can solve
+stochastic competitive equilibrium problems like New Keynesian models with a zero
+lower bound. All the examples show that SCEQ can obtain an accuracy of 0.1-1%. For
+all examples, we use the GAMS programming language (McCarl et al., 2016) with the
+CONOPT optimization solver (Drud, 1994), and run the SCEQ code in parallel on a
+Mac Pro desktop computer with six cores.16 It took minutes or at most hours to solv-
+ing each example. To further illustrate the implementation of SCEQ, we also provide
+Matlab code with the fmincon optimization solver for the first simple example. The
+code files are available on https://sites.google.com/site/yycai01/research.
+  15
+     In some rare cases, the Euler error in the first period may not be enough. See Appendix A.3 for
+an example.
+  16
+     We run one GAMS procedure per core, while each procedure uses a dierent seed for generating
+dierent pseudo random number sequences used in SCEQ and its accuracy measures.
+
+
+
+
+                                                18
+4.1     Application to Optimal Growth Model
+To illustrate the SCEQ method, our first example is a simple optimal growth problem
+with stochastic discrete total factor productivity (TFP), Aet . We assume A et = t At ,
+where At is the deterministic trend, and t evolves according to the following stochas-
+tic process
+                              ln(t+1 ) =  ln(t ) + "t+1                            (6)
+
+where "t is a standard normal random variable,  = 0.95, and                       = 0.02. We solve the
+following optimal growth problem:
+                                (   1
+                                                         )
+                                    X
+                max         E             t
+                                              u( c t )                                             (7)
+                  ct
+                                    t=0
+                 s. t .     Kt+1 = (1               )Kt + t At Kt    ct , t = 0, 1, 2, ...
+
+where Kt is capital and ct is consumption at time t, = 0.96 is the discount factor,
+   = 0.1 is the depreciation rate,  = 0.3, and u(c) = c 1 is the utility function.
+The initial states are K0 = 1 and 0 = 1. For simplicity, we assume At  A :=
+(1 (1       ) )/( ), so the non-stochastic steady state of capital is Kss = 1.
+    Assume that we are interested in the solutions for the first 20 periods (T  = 20).
+Using the notation from Section 3, x := (K, ) is the vector of state variables, a := c
+is the decision variable, and the transition laws are
+
+                           K
+                   Kt+1 = gt (xt , at , t ) = (1                  )Kt + t AKt       ct
+                              
+                       t+1 = gt ( x t , a t , t )
+
+which can be written as xt+1 = gt (xt , at , t ), where t is standard normal and gt =
+  K    
+(gt , gt ) is a vector of two functions. Here we use t+1 = g  (xt , at , t ) to represent the
+transition law of t , (6).
+
+4.1.1   Implementation of SCEQ
+
+In the initialization step of SCEQ, we choose s = 30 and the "terminal" value
+                               
+function Vs+ s (xs+ s ) = u(AKs + s  Ks+ s )/(1    ). We assume that consumption
+                               
+after time s + s is always AKs + s  Ks+ s so that capital after the "terminal" time
+
+
+
+
+                                                             19
+s + s is always the "terminal" capital Ks+ s , as long as t = 1.0 for all t s + s .17
+In the optimization step of Algorithm 1 for solving problems at time s, the transition
+equation xt+1 = gt (xt , at , 0) has t replaced by its median conditional on the realized
+                         t s
+        i            i 
+value s   , denoted (s ) , for simulation path i. That is, the optimization step of
+Algorithm 1 solves the following problem:
+
+                   s
+                   X +29
+                           t s               30       
+         max                     u( ct ) +        u(AKs +30     Ks+30 )/(1       )                    (8)
+          ct
+                   t =s
+                                                i     t   s
+          s. t .   Kt+1 = (1            ) Kt +  s             AKt   ct , t = s, s + 1, ..., s + 29,
+
+                                                                  i i
+and the dynamic system starts with the simulated values (Ks        , s ) at time s for the
+ith simulation path. We solve the deterministic finite-horizon problem (8) using the
+CONOPT optimization solver to obtain the optimal consumption ci          s.
+                                                    i i i
+    The simulation step of Algorithm 1 uses (Ks , s , cs ) to simulate the state values
+                  i               i    i      i                       i 
+at time s + 1: Ks   +1 = (1    ) Ks + s  A ( Ks )    ci      i                   i
+                                                      s and s+1 = (s ) exp ( s ), where
+is is a realized value of s for the simulation path i. We generated 1,000 simulated
+paths for the periods of interest (the first 20 periods),18 and the GAMS code took 4.2
+minutes to run on a Mac Pro desktop computer.19
+
+4.1.2    Accuracy Measures
+
+The normalized Euler error for this problem is
+                                 
+                                    u0 (ct+1 )
+                    1       E                  1       + t+1 AKt+1
+                                                                  1
+                                                                    | (Kt , t )                       (9)
+                                     u0 ( ct )
+  17
+     We tried s = 50 and found that it has little impact on the solutions obtained with s = 30.
+  18                                                   i i i
+     Since the problem is stationary, the solutions {(Ks , s , cs ) : 0  s < 20, 1  i  1000} follow the
+same consumption policy function across time, so we can use them to construct our policy function
+approximation. Since the domain of simulated states is narrow, we can use a degree-3 complete
+Chebyshev polynomial of ln(K ) and ln() to have a good approximation of the policy function, in
+which we use the least-squares fitting method to estimate the Chebyshev coe cients.
+  19
+     If we do not implement parallelism on the six compute cores, then the runtime is 18 minutes,
+so the parallel e ciency is 71%. We also tried a parallel Matlab code, which was much slower than
+the GAMS code, taking 11 minutes to run on the same computer.
+
+
+
+
+                                                       20
+We can estimate it at the initial state by replacing the expectation with the average
+across 1,000 simulated solutions in the second period:
+
+                        1000  0
+                        X    u ( ci ) 
+                                     1           i    i        1
+                                                                   
+           1                              1    + 1 A K1               | (K0 = 1, 0 = 1)           (10)
+                 1000   i=1
+                               u0 ( ci
+                                     0)
+
+
+The estimated normalized Euler error at the initial state is 1.9  10 4 . We also employ
+the accuracy measure method in Appendix A.1 and find that the L1 Euler error over
+the 1,000 simulated paths is 5.7  10 4 , only slightly larger than the Euler error at
+the initial state.
+
+4.1.3    Comparison with Value Function Iteration
+
+We also solve this simple problem via value function iteration (VFI) to obtain the
+optimal policy function for consumption, using the 7-node Gauss-Hermite quadrature
+rule to compute the conditional expectation of the value function in the Bellman
+equation (Bellman, 1957):
+
+                              V (xt ) = max      u(ct ) + Et {V (xt+1 )}                          (11)
+                                          ct
+
+
+subject to the transition laws of the state variable vector xt = (Kt , t ).
+    To make sure that next period's  is inside the approximation domain of  for the
+value function for all Gauss-Hermite quadrature nodes, we have to choose it from the
+interval [0.223, 4.482].20 With this wide range for , we have to choose a wide range for
+K ([0.04, 29.1]) so that next period's capital will be inside the approximation domain
+of K for all possible values of .21 That is, the two-dimensional approximation domain
+for the state variable vector (K, ) is [0.04, 29.1]  [0.223, 4.482], much wider than the
+ranges of the simulated states ([0.76, 1.3]  [0.81, 1.25]).
+    This wide approximation domain requires a very high-degree approximation. For
+this specific example we can do a nonlinear change of variables so that the value
+function can be approximated with a lower degree approximation. Using ln(K ) and
+  20
+     The range is proportional to /(1 ), so if  or is larger, then the range has to be wider.
+Moreover, if we use more Gauss-Hermite quadrature nodes, then the range will also be wider.
+  21
+     If we use a narrower range for K , then next period's capital could be binding at its bounds, which
+creates kinks when approximating the value function, so the solution may be inaccurate (particularly
+for those states near the bounds). Moreover, the kinks might prevent the value function iteration
+process from converging.
+
+
+                                                  21
+ln() as the state variables, we approximate the value function as a degree-30 complete
+Chebyshev polynomial of ln(K ) and ln() (see, e.g., Cai and Judd (2014)). We also
+approximate the corresponding consumption policy functions by a degree-30 complete
+Chebyshev polynomial of ln(K ) and ln(), denoted C VFI (K, ). The normalized L1
+Euler error of the solution C VFI (K, ), defined as
+                            "                                                            #
+                            u0 C VFI (K+ , + )
+           max 1          E                            1          
+                                                            + + AK+        1
+                                                                               | (K, )
+              K,             u0 (C VFI (K, ))
+
+is 1.2  10 4 , where + is next period's productivity shock conditional on the current
+period's , and K+ is next period's capital: K+ = (1          )K + AK  C VFI (K, ).
+Thus, we see the VFI solution is accurate enough for checking the accuracy of our
+SCEQ solution.
+    For comparison with the VFI solution, we use the superscript "SCEQ" to denote
+the SCEQ solution. We then compare ci,   t
+                                           SCEQ
+                                                and C VFI (Kti,SCEQ , Ai,
+                                                                       t
+                                                                          SCEQ
+                                                                               ) for all 1 
+i  1000 and t < 20. We find the L1 relative error of the SCEQ solution, defined as
+
+                                       ci,
+                                        t
+                                           SCEQ
+                                                   C VFI (Kti,SCEQ , Ai,
+                                                                      t
+                                                                         SCEQ
+                                                                              )
+                           max
+                      0t<20,1i1000          C VFI (Kti,SCEQ , Ai,
+                                                               t
+                                                                  SCEQ
+                                                                       )
+
+is 0.0016, and the L1 relative error, defined as
+
+
+                     1       X        ci,
+                                       t
+                                          SCEQ
+                                                   C VFI (Kti,SCEQ , Ai,
+                                                                      t
+                                                                         SCEQ
+                                                                              )
+                   20000 0t<20,1i1000        C VFI (Kti,SCEQ , Ai,
+                                                                t
+                                                                   SCEQ
+                                                                        )
+
+is 8.0  10 4 .22 The relative errors are close to the Euler errors in Section 4.1.2, so
+SCEQ's own accuracy measures are also good for checking solution accuracy.
+
+
+4.2     Application to Multi-Country Real Business Cycle Mod-
+        els
+Den Haan, Judd, and Juillard (2011) introduce a multi-country real business cycle
+model. Here we apply SCEQ to solve its modified version. We assume that there are
+  22
+    We view the VFI optimal consumption policy to be the "true" solution as there is no analytical
+solution for the optimal growth problem.
+
+
+
+                                                  22
+N countries with a capital stock state vector Kt = (Kt,1 , ..., Kt,N ), and the production
+function for the j th country at time t is
+
+                                 Yt,j = t,j At,j (Kt,j ) (`t,j )1                    
+                                                                                        ,            (12)
+
+where `t,j is labor supply,  is the expenditure share of capital in production, At,j is
+the deterministic productivity trend, and t,j is a country-specific productivity shock.
+The law of motion of capital is:
+
+                                   Kt+1,j = (1                   )Kt,j + It,j                        (13)
+
+where It,j is investment and is the depreciation rate of capital.
+  The utility function for the j th country is
+                                                                 1                             1
+                                                        1                                   1+ 
+                                              (ct,j )            j            (`t,j )            j
+                          uj (ct,j , `t,j ) =                1           Bt,j                1       (14)
+                                                1            j
+                                                                                1+           j
+
+
+where ct,j is consumption, j is the inter-temporal elasticity of substitution, j is the
+Frisch elasticity of labor supply, and Bt,j is the relative weight of consumption and
+leisure in the welfare function.
+    We solve the social planner's problem, where aggregate utility is defined as
+
+                                                     N
+                                                     X
+                                  U ( ct , ` t ) =           j uj (ct,j , `t,j )
+                                                      j =1
+
+
+with ct = (ct,1 , ..., ct,N ) and `t = (`t,1 , ..., `t,N ), where j are country-specific weights.
+The social planner has the following aggregate world resource constraint:
+
+                               N
+                               X                                             N
+                                                                             X
+                                       (ct,j + It,j +            t,j )   =          Yt,j .           (15)
+                                j =1                                         j =1
+
+
+where                                                                          2
+                                                                 It,j
+                                       t,j          Kt,j                                             (16)
+                                                2                Kt,j
+is an adjustment cost with             as the intensity of the friction. There is also a lower
+bound for investment:
+                                             It,j     Imin , 8t, j                                   (17)
+
+                                                       23
+That is, the social planner solves
+
+                                         1
+                                                                     !
+                                         X
+                               max E            t
+                                                    U ( ct , ` t )                   (18)
+                                c,`,I
+                                         t=0
+
+
+subject to the transition law (13) and feasibility constraints (15) and (17), for each t
+and j , where is the discount factor.
+    We set     = 0.99,  = 0.33, = 0.025, and             = 0.5. While SCEQ can also
+solve real business cycle problem with heterogeneous preferences, for convenience, we
+also let j  = 0.5, j =  = 0.5, j  1, At,j  A = (1 (1                     ) )/( ), and
+                         1/
+Bt,j  (1 )A(A )              so that the problem has a symmetric and stationary model
+specification and the non-stochastic steady state for each country is Kss = 1, with
+associated decisions `ss = 1, css = A      , and Iss = .
+    The initial state for the j th country is set as
+
+                                                                     j   1
+                         K0,j = Kmin + (Kmax             Kmin )
+                                                                     N   1
+
+with Kmin = 0.1 and Kmax = 10 for j = 1, ..., N . Note that we choose a wide range for
+the initial capital levels across countries, to more closely replicate real-world cross-
+country dierences. In contrast, most other methods for high-dimensional problems
+solve around the steady state, assuming that all countries have similar levels of capital.
+We choose Imin = 0.9Iss so the inequality (17) will bind frequently.
+    Since our policy functions in this example have kinks, it will be challenging to
+apply other methods to solve our problem, as they will require a high-degree approx-
+imation or an adaptive sparse grids approximation. Here we apply SCEQ to solve
+three cases of our high-dimensional model with occasionally binding constraints and
+a wide-ranging state space.
+
+4.2.1   Case 1: Systematic Shock
+
+Our first case assumes t,j  t is independent of country j and instead is a systematic
+shock aecting all countries. We assume that t is a Markov chain with three possible
+
+
+
+
+                                           24
+values: 0.9, 1.0, and 1.1, and its transition probability matrix is
+                                                     2             3
+                                                  0. 8 0 . 2
+                                                6                  7
+                                            P = 4 0. 2 0 . 6 0 . 2 5 .                              (19)
+                                                       0. 2 0 . 8
+
+    For SCEQ, we choose s = 50 and the "terminal" value function Vs+ s (xs+ s ) =
+                                                             
+U (0.75AKs  + s , 1)/(1   ), where Ks + s = Ks+ s ,1 , ..., Ks+ s ,N . We assume that
+the labor supply after time s + s is always 1, and that consumption after time s + s
+is always 75% of the deterministic output at time s + s , with s+ s = 1.0. In the
+optimization step of Algorithm 1, we replace t by its mean conditional on the realized
+values of s for all t s:
+                                  E (t | s ) = &t,s ,
+
+where & = (0.9, 1.0, 1.1) is the vector of all possible values of t , and t,s is a column
+vector representing the probability distribution conditional on the realized values of
+s . If the realized value of s is the k th element of & , we have t,s = P t s s,s , where
+s,s is a length-3 column vector with 1 for the k th element and 0 everywhere else.
+The optimization problem (2) thus becomes
+
+                      s
+                      X +49
+                              t                      50            
+           max                    U ( ct , ` t ) +        U (0.75AKs +50 , 1)/(1   )                (20)
+            c,`,I
+                      t =s
+             s.t.     Kt+1,j = (1      )Kt,j + It,j ,
+                      N
+                      X                         XN
+                         (ct,j + It,j + t,j ) =       E t | s
+                                                            i
+                                                              A(Kt,j ) (`t,j )1          
+                                                                                            ,
+                      j =1                                   j =1
+                      t = s, s + 1, ..., s + 49,
+
+                                 i            i
+with the starting state Ks = Ks    and s = s    at time s for the ith simulation path.
+   We first solve the problem with N = 10 countries and generate 1,000 simulated
+paths of the first 20 periods, which are assumed to be the periods of interest. It took
+11 minutes on a Mac Pro desktop computer. Figure 1 displays the distributions of
+                                     i
+country 1's optimal investments, Is,   1 . From period 18 onwards, more than 10% of
+investments are binding at the lower bound Imin = 0.09.23 The L1 Euler error on the
+  23
+     The other countries have a greater percentage of binding investments because they have higher
+initial levels of capital. These countries have less incentive to invest as their capital levels are close
+to the non-stochastic steady state in the long run, especially if their initial capital levels are higher
+
+
+                                                             25
+                   Figure 1: Distribution of Investment for Country 1
+                                                            Country 1
+
+                                      0.1                                Range of sample paths
+                                                                         Average
+                                     0.09
+                                                                         10% quantile
+                                                                         25% quantile
+                                                                         50% quantile
+                                     0.08
+                                                                         75% quantile
+                                                                         The lower bound
+
+
+                        Investment
+                                     0.07
+
+
+                                     0.06
+
+
+                                     0.05
+
+
+                                     0.04
+
+
+                                     0.03
+
+
+                                     0.02
+
+                                            0   2   4   6   8     10    12    14     16    18
+
+                                                                Time
+
+
+
+simulated paths is 0.0069 and the L1 Euler error is 0.0037, demonstrating that SCEQ
+works well for high-dimensional problems with kinks in the policy function. We can
+improve accuracy further by increasing s , which reduces the truncation error. With
+                  1
+   s = 100, the L   Euler error is 0.0024 and the L1 Euler error is 0.0011, but running
+time increases to 19 minutes.
+     We also use SCEQ to solve problems with N = 20, 50, 100, and 200 countries,
+for s = 50. Solutions are similar to the ones derived for N = 10 countries. Table 1
+reports the running times (in hours) of Algorithm 1 on a Mac Pro desktop computer,
+i.e., the time taken to generate 1,000 simulation paths of the first 20 periods and the
+Euler errors in L1 and L1 with s = 50. The errors are almost identical to those for
+N = 10, demonstrating that SCEQ's accuracy is independent of dimensionality, as
+SCEQ does not need to approximate value or policy functions. Even with N = 200
+countries, SCEQ just needs 16.1 hours to run on a Mac Pro desktop computer. More-
+over, an increase from N countries to 2N countries did not increase computational
+time exponentially, showing that the SCEQ's computational time is nearly linear to
+the problem's dimensionality.24
+     The last column of Table 1 also reports the Euler error at the initial state, which is
+computed with the average across the 1,000 simulated solutions for the second period.
+than the steady state level. For example, the initial capital of country 10 is Kmax = 10, much larger
+than the steady state Kss = 1, so its level of investment is always binding at Imin in the initial
+periods, until its capital is close to the steady state level.
+  24
+     As with N = 10, the solutions' accuracy for larger N can also be improved by setting s = 100
+to reduce truncation error, though it increases the computational time.
+
+
+                                                            26
+                     Table 1: Running Times and             Errors for Case 1
+                 N    Time (in hours)                       Euler Error
+                         for SCEQ        L1                    L1     Initial State
+                 10         0.18       6.9( 3)              3.7( 3)     6.7( 3)
+                 20         0.37       7.1( 3)              3.7( 3)     6.9( 3)
+                 50          1.1       7.1( 3)              3.7( 3)     7.1( 3)
+                 100         3.4       7.1( 3)              3.7( 3)     7.1( 3)
+                 200        16.1       7.1( 3)              3.7( 3)     6.8( 3)
+                 Note: a( n) means a  10 n .
+
+
+The Euler errors at the initial state are close to those in L1 across all simulated states,
+because the largest error usually happens at the most extreme states and the first
+period has the widest range of initial capital levels across countries.25 Thus we can
+also use the Euler errors at the initial state to measure accuracy, as computing them
+has almost no additional cost.
+
+4.2.2    Case 2: Irreversible Risk
+
+Sometimes a risk is irreversible, meaning that a shock leads to a permanent change to
+the system. Irreversible risks often have a significant impact on decisions, so it might
+seem like SCEQ would not be a suitable method, but here we show that SCEQ can
+solve these problems with a high level of accuracy and only take several minutes of
+computational time on a standard computer, much faster than Case 1 where the risk
+was reversible.26
+    Our second case assumes that t,j  t is a systematic shock independent of
+country j , described as a Markov chain with two possible values: &1 = 1.0 and
+&2 = 0.95 and the following transition probability matrix:
+                                               "            #
+                                                   0.99 0
+                                         P =                    .                                  (21)
+                                                   0.01 1
+
+The initial state is 0 = 1.0. This shock represents a global risk that results in a
+  25
+     The Euler errors at the initial state could be slightly larger than those in L1 across all simulated
+states, because they use dierent methods of estimation: Euler errors at the initial state have
+a standard error when using the average across the simulated solutions at the second period to
+estimate the expectation.
+  26
+     Appendix A.3 shows that SCEQ can also solve problems with an irreversible risk and endogenous
+probabilities.
+
+
+                                                   27
+permanent 5% damage to economic output, with a 1% probability of occurrence in
+each period (the shock can only occur once). This problem is nonstationary as t will
+converge to 0.95. For this specific example, there are only T  dierent paths within
+the time interval of interest T  : the first path has t = 1.0 for all 0  t < T  , the
+second path assumes that the shock happens in the second period, i.e., 0 = 1.0 and
+1 = ... = T  1 = 0.95, and so on, with the last path having 0 = ... = T  2 = 1.0
+and T  1 = 0.95. Thus, we can solve all dierent paths using SCEQ. Since the
+stochastic problem becomes deterministic once the shock happens, we just need to
+solve 2T  1 optimization problems characterized by (2), i.e., solve problem (20) with
+                                 8
+                                 <P t s & + (1      t s
+                                                   P11           i
+                                                        )&2 , if s = &1
+                                    11 1
+                   E t |   i
+                           s   =
+                                 :& ,                            otherwise
+                                    2
+
+
+where P11 = 0.99 is element (1, 1) of the transition probability matrix P .
+   With T  = 20 and s = 50, SCEQ took only seconds for N  50, 3 minutes for
+N = 100, and 17 minutes for N = 200 on a Mac Pro desktop computer without using
+parallelism. The solutions show that investments bind frequently, and the Euler error
+in L1 is around 0.0068 for each N , close to those from Case 1.
+
+4.2.3   Case 3: Country-Specific Shocks
+
+The last case assumes that every country has a country-specific shock t,j , which is
+also correlated with a systematic shock aecting all countries ("t+1 ). We assume t,j
+is a continuous exogenous state variable, following the stochastic process
+
+                        ln(t+1,j ) =  ln(t,j ) +   1 t+1,j   +   2 "t+1
+
+
+for each j = 1, ..., N , where t+1,j , "t+1  i.i.d. N (0, 1) (i.e., t+1,j and "t+1 are in-
+dependent and identical standard normal distributions across time and countries),
+ = 0.95, and 1 = 2 = 0.01. Thus, an N -country real business cycle model has 2N
+state variables, of which N are exogenous, while Cases 1 and 2 have N endogenous
+state variables and only one exogenous discrete state variable.
+    In the optimization step of Algorithm 1, we still solve (20) but replace E (t | s   i
+                                                                                          )
+        i   t s                                                                      i
+with (s,j ) , the median of t,j at time t conditional on the realized value s,j         at
+                                          i           i
+time s, with the starting state Ks = Ks and s,j = s,j at time s for the ith simulation
+
+
+                                            28
+                      Table 2: Running Times and Errors for Case 3
+                      N        Time (in hours)      Euler Error at
+                                  for SCEQ         the Initial State
+                      10             0.18              6.7( 3)
+                      20             0.33              6.8( 3)
+                      50             0.97              7.1( 3)
+                      100             3.3              7.3( 3)
+                      200            16.4              7.2( 3)
+                                               n
+                      Note: a( n) means a  10 .
+
+path. We generate 1,000 simulated paths of the first 20 periods. The solutions show
+that investments bind frequently an the lower bound Imin for each country.
+    Table 2 reports the running times (in hours) and Euler errors at the initial state,
+for the number of countries N = 10, 20, 50, 100, and 200 with s = 50. We see that
+SCEQ solves the problems within minutes or hours, close to the computational times
+in Case 1, although their dimensions are nearly double those in Case 1. Moreover, the
+Euler errors at the initial state are close to those in Case 1. This example shows that
+SCEQ's e ciency is independent of the number of exogenous state variables, because
+exogenous state variables are replaced by their certainty equivalent approximation
+(e.g. mean or median) in SCEQ so have almost no impact on SCEQ's computational
+time or accuracy.
+
+
+4.3       Application to DSICE
+Cai, Judd, and Lontzek (2017) and Cai and Lontzek (2019) solve a dynamic stochastic
+integrated model of climate and economy (DSICE) that has economic and climate
+risks. DSICE is a DSGE extension of DICE (Nordhaus, 2008, 2017), which has
+exogenous paths for the population, TFP, land emissions, abatement cost, carbon
+intensity, and exogenous radiative forcing. Cai, Judd, and Lontzek (2017) and Cai
+and Lontzek (2019) employ Epstein-Zin preferences (Epstein and Zin, 1989), long-run
+economic risk (Bansal and Yaron, 2004), and climate tipping risks (Lenton et al., 2008)
+with endogenous tipping probabilities, uncertain duration, and uncertain damage.
+Here we apply SCEQ to solve a simpler version of DSICE, in which we follow the
+same deterministic economic and climate systems, but we assume a simple economic
+risk and do not use Epstein-Zin preferences.27 All exogenous paths and parameter
+ 27
+      Appendix A.3 shows that SCEQ can solve another simpler version of DSICE with climate tipping
+
+
+                                                29
+values follow Cai, Judd, and Lontzek (2017) and Cai and Lontzek (2019), except
+those specified below.
+
+4.3.1    Model Overview
+
+We briefly describe the deterministic version of DSICE. Let Mt = (MAT,t , MUO,t , MLO,t )>
+be the carbon concentrations in the atmosphere, and upper and lower levels of the
+ocean respectively. These concentrations evolve over time according to:
+
+                               Mt+1 =       M Mt    + (Et , 0, 0)> ,                        (22)
+
+where M is a linear transition matrix, and Et = EInd,t + ELand,t is the annual total
+carbon emissions, where EInd,t is industrial emissions and ELand,t is exogenous land
+emissions. Let Tt = (TAT,t , TOC,t )> be temperature anomalies of the atmosphere and
+ocean, following the law of motion
+
+                                 Tt+1 =     T Tt   + (1 Ft , 0)> ,                          (23)
+
+                                                                                 
+where T is a linear transition matrix and 1 is a parameter. Ft =  log2 (MAT,t /MAT )+
+                                                              
+FEX,t is global radiative forcing, where  is a parameter, MAT is the pre-industrial
+atmospheric carbon concentration, and FEX,t is the exogenous radiative forcing.
+   The economic system has a state variable, capital (Kt ), which is used to define
+gross economic output Yt = At Kt L1 t
+                                      
+                                       , where  is a parameter, At is exogenous TFP,
+and Lt is the exogenous global population size at time t. Output is reduced by the
+temperature anomaly according to the damage factor
+
+                                                     1
+                            (TAT,t ) =                              ,
+                                          1 + 1 TAT,t + 2 (TAT,t )2
+
+where 1 and 2 are parameters. Economic production has industrial emissions
+EInd,t = t (1 µt )Yt , which is proportional to gross output but can be reduced
+by mitigation, measured by the emission control rate µt 2 [0, 1], and t is exogenous
+carbon intensity. The mitigation cost is t = 1,t µ t Yt , where 1,t is the exogenous
+                                                    2
+
+
+
+risks and endogenous tipping probabilities. It took only two minutes on a single compute core and
+gave an acceptable solution accuracy.
+
+
+
+
+                                               30
+abatement cost and 2 is a parameter. Thus the transition law of capital is
+
+                      Kt+1 = (1           )Kt +  (TAT,t ) Yt               Ct      t,   (24)
+
+where is the depreciation rate and Ct is consumption. Note that the emission control
+rate µt may be binding at its upper bound, so this problem has an occasionally binding
+constraint.
+   The deterministic model solves the following social planner's problem
+                                              1
+                                              X
+                                                        t
+                                 max                        u(Ct /Lt )Lt                (25)
+                                 Ct ,µt
+                                              t=0
+
+
+subject to the transition laws (22)-(24) of six state variables: Mt , Tt , and Kt , where
+Ct and µt are decision variables, is the discount factor, and u is a power utility
+function u(c) = c1 /(1        ) with = 1.45 denoting the elasticity of marginal utility
+of per capita consumption c as in DICE-2016 (Nordhaus, 2017). The initial states
+are observed and given.
+    Now we add a simple economic risk. We assume that TFP, A            et , is stochastic:
+Aet = t At , where At is the deterministic trend and t is a Markov chain representing
+a productivity shock. For simplicity, we assume that t follows the same distribution
+and transition probabilities as in Section 4.2, that is, t has three possible values: 0.9,
+1.0, and 1.1, and its transition probability matrix is given by (19). Gross economic
+output is Yt = A et Kt L1
+                        t
+                          
+                           , and we solve the social planner's problem
+                                              (   1
+                                                                               )
+                                                  X
+                            max           E                 t
+                                                                u(Ct /Lt )Lt            (26)
+                             Ct ,µt
+                                                  t=0
+
+
+subject to the transition laws (22)-(24) and the Markov chain of t .
+
+4.3.2   Implementation of SCEQ
+
+Because DSICE is a nonstationary stochastic problem with six endogenous continu-
+ous state variables, one exogenous discrete state variable, and occasionally binding
+constraints, it is challenging to solve it using standard methods like VFI unless we
+can choose the appropriate approximation methods and time-varying approximation
+domains as in Cai, Judd, and Lontzek (2017) and Cai and Lontzek (2019). Here we
+
+
+                                                    31
+                 Figure 2: Carbon Tax for DSICE with Economic Risk
+                                                                  Carbon Tax
+                               300
+                                            Range of sample paths
+                                            Average
+                                            10% quantile
+                               250          25% quantile
+                                            50% quantile
+                                            75% quantile
+                                            90% quantile
+                               200
+                                            Deterministic solution
+
+                        $/tC
+                               150
+
+
+
+
+                               100
+
+
+
+
+                               50
+
+                                     2010    2020   2030   2040    2050   2060   2070   2080   2090   2100
+
+                                                                     Year
+
+
+
+can apply SCEQ to overcome these challenges.28 As in Section 4.1, in the optimiza-
+tion step of Algorithm 1we replace t by its mean conditional on the realized value of
+s for all t s.
+    Figure 2 displays distributions of the optimal carbon taxes in the first T  = 100
+years from 1,000 simulation paths obtained by SCEQ, which took 1.8 hours to run
+on a Mac Pro desktop computer. The economic risk has little impact on the initial
+carbon tax, and the average or median path is almost identical to the deterministic
+solution. These results are dierent from those in the stochastic growth benchmark
+example of Cai, Judd, and Lontzek (2017) and Cai and Lontzek (2019), but Figure
+2 still shows that the optimal carbon tax is stochastic and has a wide range in 2100:
+$185 to $282 per ton of carbon, although the range in Cai, Judd, and Lontzek (2017)
+and Cai and Lontzek (2019) is much wider. The dierences from the results of Cai,
+Judd, and Lontzek (2017) and Cai and Lontzek (2019) arise because here we do not
+use long-run economic risk or Epstein-Zin preferences.
+  28
+    We follow DICE by truncating the infinite-horizon problem to a 600-year problem with the
+terminal value function being zero everywhere, as reasonable terminal conditions at the 600th year
+have little impact on the solution in the first 100 years -- the time of interest -- due to the small
+compound discount factor and a small magnitude of utility in the long run (as consumption will be
+large and the elasticity of marginal utility > 1). In SCEQ, we let s = 600 s and the terminal
+value function is V600 (x600 )  0.
+
+
+
+
+                                                                   32
+4.3.3    Accuracy Measures
+
+We compute the Euler errors, specified in Appendix A.2, at the simulated states using
+the accuracy measure method in Appendix A.1. We find that the L1 Euler error is
+0.0011 and the L1 Euler error is 1.1  10 4 . We also compare the SCEQ solution with
+the solution obtained from VFI for the first 100 years, as in Cai, Judd, and Lontzek
+(2017) and Cai and Lontzek (2019). We use time-varying approximation domains
+and degree-6 complete Chebyshev polynomials for approximating value functions in
+VFI. As in Section 4.1, we use the policy functions from VFI to compute the decisions
+at the realized SCEQ simulated states, then compare them with the corresponding
+SCEQ simulated decisions. For the optimal carbon taxes in the first 100 years, the
+relative L1 error is 0.023 and the relative L1 error is 0.0031, if we treat the VFI
+solution as the "true" solution.29 In addition, the relative L1 error is 0.0028 and
+0.013 for Ct and µt respectively, and the relative L1 error is 0.0024 and 0.0017 for Ct
+and µt respectively.30
+
+
+4.4     Application to a New Keynesian Model with Zero Lower
+        Bound
+We have shown that with Algorithm 1, SCEQ can solve stationary or nonstationary
+stochastic dynamic programming problems with high dimensionality and occasionally
+binding constraints. Here we show that using Algorithm 2, SCEQ can also solve
+stochastic competitive equilibrium problems with occasionally binding constraints.
+Our example uses the New Keynesian model with a zero lower bound (ZLB), from
+Guerrieri and Iacoviello (2015) and Cai, Judd, and Steinbuks (2017).31
+  29
+     The VFI solutions only have an accuracy of 0.1-1% because we use degree-6 complete Cheby-
+shev polynomial approximations, so the relative errors are biased. Obtaining an additional digit of
+accuracy from VFI will require a much higher degree approximation, making it too time consuming
+to run it on a desktop computer. For instance, we use a degree-30 complete Chebyshev polynomial
+approximation to obtain the L1 Euler error 1.2  10 4 for the VFI solution of the example in Section
+4.1, while it only requires a degree-10 complete Chebyshev polynomial approximation to obtain the
+L1 Euler error 6.4  10 4 , or a degree-20 complete Chebyshev polynomial approximation to obtain
+the L1 Euler error 3.9  10 4 .
+  30
+     Note that the carbon tax is 10001,t 2 µ  t
+                                                2 1
+                                                    / t , so the relative error of µt is amplified when
+computing the relative error of carbon taxes.
+  31
+     New Keynesian DSGE models have been studied frequently in the literature, see e.g., Woodford
+(2003); Negro et al. (2007); Smets and Wouters (2007); Gali (2008); Fernandez-Villaverde et al.
+(2015); Maliar and Maliar (2015).
+
+
+
+                                                  33
+4.4.1   Model Overview
+
+Since we use the exact same New Keynesian model as in Cai, Judd, and Steinbuks
+(2017), we only give a brief description here. The model consists of a representative
+household, a government, a final-good firm, and intermediate firms. The government
+consumes a fraction sg of the final good and issues bonds every period with a nom-
+inal interest rate rt which has a zero lower bound. The final-good firm purchases
+intermediate goods from intermediate firms to produce the final good yt and sell it
+at the price pt . The intermediate firms are assumed to have Calvo-type prices for
+the intermediate goods: in each period a fraction 1  of the firms have optimal
+prices and the remaining fraction keep the same price as the previous period. At
+each period t, the representative household consumes the remaining fraction 1 sg
+of the final good, buys newly issued bonds, sells the expired bonds, earns wages from
+labor supply, receives a lump-sum transfer from the government, and receives profits
+from all firms. The representative household wants to maximize the present value
+of expected utilities subject to a budget constraint. The discount factor t is the
+stochastic process
+
+                                                         
+                       ln(   t+1 )   = (1    ) ln(          ) +  ln( t ) + t+1   (27)
+
+where t  i.i.d. N (0, 1), and  is the non-stochastic steady state discount factor.
+    The New Keynesian model has one endogenous state variable (vt ) that represents
+price dispersion:
+                             vt+1 = (1 )qt  + t   
+                                                    vt                         (28)
+
+where t  pt /pt   1   is the gross inflation rate, and
+
+                                                              1 1
+                                                                    1
+                                                1    t                  
+                                      qt =                                       (29)
+                                                    1 
+
+where  is a parameter in the production function of the final-good firm. Appendix
+A.5 derives the following equilibrium equations:
+
+
+
+
+                                                    34
+                               1    1+
+                      1 =          yt   vt+1 + Et t+1 t 
+                                                         +1        t+1,1                (30)
+                               t,1
+                                                                           
+                              1        1
+                      1 =                    + Et t+1 t
+                                                       1
+                                                        +1        t+1,2                 (31)
+                               t,2  1    s g
+                                  t,1
+                     qt =                                                               (32)
+                             ( 1) t,2
+                                 
+                                       1 + rt y t
+                      1 =    Et    t+1                                                  (33)
+                                        t+1 yt+1
+                                         y  y
+                                          t         t
+                     zt =    (1 + r )               
+                                                        1                               (34)
+                                                  y
+                     rt =    max(zt , 0)                                                (35)
+
+where t,1 and t,2 are defined in Appendix A.5, and   , r , and y  are the steady-state
+gross level of inflation, nominal interest rate, and output, respectively.
+      We apply Algorithm 2 to solve this stochastic competitive equilibrium problem.
+The state vector is xt = ( t , vt ), with the transition laws (27) and (28). The variables
+  t,1 , t,2 , and yt are viewed as action variables at , while the other variables qt , t ,
+
+zt and rt can be substituted by expressions of t,1 , t,2 , and yt , according to (29),
+(32), (34), and (35). Except the transition laws, the equilibrium conditions are (29)-
+(35). The initial states are 0 =  and v0 = v  , where v  is the steady state price
+dispersion. We choose s = 200 and let the "terminal" decision rule a          s+ s ( x s+ s )
+be given as s+ s ,1  1 , s+ s ,2  2 , and ys+ s = y , where 1 , 2 , and y  are
+                                                                             
+
+the steady state values of t,1 , t,2 , and yt respectively. In the optimization step
+of Algorithm 2, we replace the expectations in (30), (31), and (33) by their median
+conditional on the realized values of s . That is, (30), (31), and (33) are defined as
+
+                                   1                             
+                        1 =        yt1+
+                                         vt+1 +  et+1 t
+                                                        +1 t+1,1                        (36)
+                              t,1
+                                                               
+                             1         1
+                        1 =                 +  et+1 t+1 t+1,2
+                                                        1
+                                                                                        (37)
+                              t,2   1 sg
+                                  1 + max(zt , 0) yt
+                        1 = et+1                                                        (38)
+                                        t+1       yt+1
+
+where                                                                   
+                          et+1 = exp (1      ) ln(   
+                                                        ) +  ln( et )
+
+
+                                             35
+                   Figure 3: Simulated Interest Rates and the Policy Function for Interest Rate
+                              Range of sample paths
+                  0.03        Average
+                              2% quantile
+                              10% quantile
+                 0.025
+                              25% quantile
+                              50% quantile
+                  0.02        75% quantile
+ interest rate
+
+
+
+
+                              The lower bound
+                 0.015
+
+
+
+                  0.01
+
+
+
+                 0.005
+
+
+
+                     0
+
+
+
+                 -0.005
+                          0   2     4     6      8      10   12   14   16   18
+
+                                                      Time
+
+
+
+for t = s, s + 1, ..., s + s 1, and es = s     i
+                                                 is the realized value of s in the ith
+simulation path.
+    We assume that the time of interest, T  , is 20 periods. We generated 1,000 sim-
+ulation paths using Algorithm 2, which only took 4 minutes on a Mac Pro desktop
+computer. Using the simulated solutions, we also construct a policy function approx-
+imation for zt using a degree-4 complete Chebyshev polynomial Z ( , v ), and then
+determine the interest rate as r = max(Z ( , v ), 0). Figure 3 displays the distribu-
+tion of interest rates (the left panel) and the policy function approximation for the
+interest rate (the right panel), showing that some interest rates are binding at zero.
+The Euler error over the simulated solutions is 0.0032 in L1 . This example shows
+that SCEQ can solve a stochastic competitive equilibrium problem with occasionally
+binding constraints.
+
+
+5                         Discussion
+If utility ut is a common power function with a relative risk aversion parameter ,
+then plays two roles: risk aversion and the inverse of the intertemporal elasticity
+of substitution (IES) for time-separable power utilities. The role of the risk aversion
+parameter disappears in the certainty equivalent approximation model (2), but the
+inverse of IES, 1/ , still aects the solution to the deterministic model (2). For this
+reason, the SCEQ method cannot work for dynamic portfolio problems, where the
+
+
+                                                                            36
+degree of risk aversion is important for risky portfolio choices, dynamic stochastic
+problems with Epstein­Zin preferences in which the risk aversion and the IES are
+separated (e.g., Cai, Judd, and Lontzek (2017); Cai and Lontzek (2019)), or static
+problems, where only represents risk aversion. However, for many dynamic stochas-
+tic problems with time-separable power utilities, the role of the inverse of IES often
+dominates the role of risk aversion in aecting the solutions, so the SCEQ method
+can solve them accurately.
+    When we solve a dynamic stochastic problem, the first step is to choose the com-
+putational method. Unfortunately we cannot know which method can work or is
+more e cient a priori. It will be frustrating to spend an enormous amount of time
+and resources to try one method but finally discover it does not work well. For exam-
+ple, before checking Euler errors, NLCEQ has to first solve all optimization problems
+corresponding to the approximation nodes, VFI or time iteration has to wait until
+it converges before obtaining optimal value or policy functions, and GSSA and the
+EDS method have to run a large number of simulated paths to approximate policy
+functions.
+    With SCEQ, we can apply the accuracy measure method to do an early and fast
+check with only a small amount of computational time and resources. For example, we
+can just assume the time of interest to be T  = 2 and obtain m simulated paths with
+only two periods using Algorithm 1 or 2, then compute the Euler equation error at
+the initial state. If it is not small (with a large s ), then we switch to other solution
+methods. That is, a small Euler equation error at the initial state is a necessary
+condition for choosing SCEQ. Alternatively, we can just solve only one or several
+simulated paths (i.e., choosing a small m), and compute the Euler equations errors
+along the small number of simulated paths. If they are not small (with a large s ),
+then we switch to other solution methods. These two methods can also be applied to
+check if the SCEQ code has bugs or s is large enough: we suggest using the same
+code but changing the variances of the random variables t to be nearly zero.32 Since
+SCEQ solves deterministic models very accurately, if the computed Euler equation
+errors for the nearly-zero-variance case are not nearly zero, it implies that there are
+bugs in the code or that s is not large enough (i.e., the truncation error is large).
+  32
+    If the problem is stationary and the initial state is equal or close to the non-stochastic steady
+state, then we suggest changing the initial state for debugging. Otherwise, with the nearly zero
+variances and some terminal conditions, the simulated states could be always close to the non-
+stochastic steady state so then the Euler equation errors would be small.
+
+
+                                                 37
+Thus, we can know almost a priori if SCEQ works for a specific problem.
+     For some special cases, such as problems with an irreversible risk (Section 4.2.2),
+the number of all dierent possible paths within a timeframe of interest T  may
+be smaller than m, the number of (dierent) simulated paths. In such cases, we
+can compute the solutions along all dierent paths in the time of interest and use
+them to generate m simulation paths with little computational cost. For example,
+in Section 4.2.2, the number of all dierent possible paths in the first 20 periods is
+just 19, so we solve them all and use these 19 paths to simulate 10,000 paths with
+little additional cost. Thus, for that example, SCEQ took only minutes on a Mac
+Pro desktop computer to solve a DSGE with 201 state variables and occasionally
+binding constraints, much faster than NLCEQ or other methods like VFI, even if
+they use sparse grid methods. But for general problems, the number of all dierent
+possible paths within a timeframe of interest is often much larger than m, which is
+often chosen to be 1,000 or 10,000. For example, if there is a binary stochastic state
+variable and none of its transition probabilities are zero, then there are 220  106
+dierent paths in the first 20 periods.
+     Some rare cases may require high-accuracy solutions that SCEQ cannot provide,
+but we can still use SCEQ to provide (time-varying) approximation domains and
+initial guesses for other methods that may have higher accuracy (and much higher
+computational costs). For example, in the simulation step of SCEQ, we can always
+choose the worst scenario or the best scenario to obtain a lower or upper bound
+of states for constructing (time-varying) approximation domains, which can then be
+used for other methods.
+
+
+6    Conclusions
+This paper introduces a novel computational method, SCEQ, for solving dynamic
+stochastic problems. We have shown that SCEQ can be much more e cient and stable
+than other common computational methods such as NLCEQ and VFI, while retaining
+a solution accuracy of 0.1-1%. We have also shown that SCEQ can solve problems
+that other existing methods cannot, such as problems with both high dimensionality
+and occasionally binding constraints.
+   SCEQ is simple but powerful. It avoids complicated computational techniques for
+approximation and integration to make it as simple as perturbation methods, but it
+
+                                          38
+still provides globally valid solutions while perturbation methods provide only locally
+valid solutions. Using a standard computer and an e cient optimization solver, SCEQ
+is stable and can provide accurate solutions for many dynamic stochastic problems
+with high dimensionality, occasionally binding constraints, nonstationarity, and/or a
+wide range of state space, without using an extensive amount of resources. Moreover,
+SCEQ does not suer from the curse of dimensionality. SCEQ provides distributions
+of solutions which can be used to compute stochastic properties, such as means,
+variances, covariances, and trends, so it can have extensive use in economic analysis.
+For example, structural estimation such as the GMM method can apply SCEQ to
+estimate structural parameters.
+
+
+References
+Adjemian, St´
+            ephane, Houtan Bastani, Michel Juillard, Fr´
+                                                       ederic Karam´
+                                                                   e, Junior Maih,
+ Ferhat Mihoubi, George Perendia, Johannes Pfeifer, Marco Ratto, and S´   ebastien
+ Villemot. 2011. "Dynare: Reference Manual Version 4." Dynare Working Papers 1,
+ CEPREMAP. URL https://www.dynare.org.
+
+Aruoba, S. Boragan, Jesus Fernandez-Villaverde, and Juan F. Rubio-Ramirez. 2006.
+  "Comparing solution methods for dynamic equilibrium economies." Journal of
+  Economic Dynamics and Control 30 (12):2477­2508.
+
+Bansal, Ravi and Amir Yaron. 2004. "Risks for the Long Run: A Potential Resolution
+  of Asset Pricing Puzzles." The Journal of Finance 59 (4):1481­1509.
+
+Bellman, Richard. 1957. Dynamic Programming. Princeton University Press.
+
+Bertsekas, D. 2005. Dynamic Programming and Optimal Control, vol. I. Athena
+  Scientific, Nashua.
+
+------. 2007. Dynamic Programming and Optimal Control, vol. II. Nashua: Athena
+  Scientific.
+
+Blanchard, Olivier Jean and Charles M. Kahn. 1980. "The Solution of Linear Dier-
+  ence Models under Rational Expectations." Econometrica 48 (5):1305­1311.
+
+Brumm, Johannes and Simon Scheidegger. 2017. "Using Adaptive Sparse Grids to
+  Solve High-Dimensional Dynamic Models." Econometrica 85 (5):1575­1612.
+
+                                          39
+Cai, Yongyang. 2019. "Computational methods in environmental and resource eco-
+  nomics." Annual Review of Resource Economics 11:59­82.
+
+Cai, Yongyang and Kenneth L. Judd. 2013. "Shape-preserving Dynamic Program-
+  ming." Mathematical Methods of Operations Research 77 (3):407­421.
+
+------. 2014. "Advances in Numerical Dynamic Programming and New Applica-
+  tions." In Handbook of Computational Economics, vol. 3, edited by Kenneth L.
+  Judd and Karl Schmedders. Amsterdam: Elsevier, 479­516.
+
+Cai, Yongyang, Kenneth L. Judd, and Thomas S. Lontzek. 2017.     "The
+  social cost of carbon with economic and climate risks." Hoover eco-
+  nomics working paper 18113.    URL https://www.hoover.org/research/
+  social-cost-carbon-economic-and-climate-risk.
+
+Cai, Yongyang, Kenneth L. Judd, and Jevgenijs. Steinbuks. 2017. "A Nonlinear
+  Certainty Equivalent Approximation Method for Dynamic Stochastic Problems."
+  Quantitative Economics 8 (1):117­147.
+
+Cai, Yongyang and Thomas S. Lontzek. 2019. "The social cost of carbon with eco-
+  nomic and climate risks." Journal of Political Economy 127 (6):2684­2734.
+
+Cai, Yongyang, Jevgenijs Steinbuks, Kenneth L. Judd, Jonas Jaegermeyr, and
+  Thomas W. Hertel. 2020. "Modeling Uncertainty in Large Natural Resource Allo-
+  cation Problems." World Bank Policy Research Working Paper 9159.
+
+Caldara, Dario, Jesus Fernandez-Villaverde, Juan F. Rubio-Ramirez, and Wen Yao.
+  2012. "Computing DSGE models with recursive preferences and stochastic volatil-
+  ity." Review of Economic Dynamics 15 (2):188­206.
+
+Czyzyk, J., M. P. Mesnier, and J. J. More. 1998. "The NEOS server." IEEE Com-
+  putational Science & Engineering 5:68­75.
+
+Den Haan, Wouter J., Kenneth L. Judd, and Michel Juillard. 2011. "Computational
+  suite of models with heterogeneous agents II: Multi-country real business cycle
+  models." Journal of Economic Dynamics and Control 35 (2):175­177.
+
+Drud, A. S. 1994. "CONOPT ­ A Large Scale GRG Code." ORSA Journal on
+  Computing 6:207­216.
+
+                                       40
+Epstein, Larry G. and Stanley E. Zin. 1989. "Substitution, Risk Aversion, and the
+  Temporal Behavior of Consumption and Asset Returns: A Theoretical Framework."
+  Econometrica 57 (4):937­969.
+
+Fernandez-Villaverde, Jesus, Grey Gordon, Pablo Guerron-Quintana, and Juan F.
+  Rubio-Ramirez. 2015. "Nonlinear adventures at the zero lower bound." Journal of
+  Economic Dynamics and Control 57:182­204.
+
+Fernandez-Villaverde, Jesus and Oren Levintal. 2018. "Solution Methods for Models
+  with Rare Disasters." Quantitative Economics 9:903­944.
+
+Fernandez-Villaverde, Jesus, Juan Rubio-Ramirez, and Frank Schorfheide. 2016. "So-
+  lution and Estimation Methods for DSGE Models." In Handbook of Macroeco-
+  nomics, vol. 2, edited by John B. Taylor and Harald Uhlig, chap. 9. Elsevier,
+  527­724.
+
+Gali, Jordi. 2008. Monetary Policy, Inflation, and the Business Cycle: An Intro-
+ duction to the New Keynesian Framework. Princeton, N.J: Princeton University
+ Press.
+
+Gill, Philip E., Walter Murray, and Michael A. Saunders. 2005. "SNOPT: An SQP
+  Algorithm for Large-Scale Constrained Optimization." SIAM Review 47 (1):99­
+  131.
+
+Grune, Lars, Willi Semmler, and Marleen Stieler. 2015. "Using nonlinear model pre-
+  dictive control for dynamic decision problems in economics." Journal of Economic
+  Dynamics and Control 60:112­133.
+
+Guerrieri, Luca and Matteo Iacoviello. 2015. "OccBin: A toolkit for solving dy-
+ namic models with occasionally binding constraints easily." Journal of Monetary
+ Economics 70:22­38.
+
+Haan, Wouter J. den and Albert Marcet. 1990. "Solving the Stochastic Growth
+  Model by Parameterizing Expectations." Journal of Business & Economic Statis-
+  tics 8 (1):31­34.
+
+Jin, H.-H. and K.L. Judd. 2002. "Perturbation methods for general dynamic stochas-
+  tic models." Working paper, Stanford University.
+
+
+                                       41
+Judd, Kenneth L. 1992. "Projection methods for solving aggregate growth models."
+  Journal of Economic Theory 58 (2):410­452.
+
+------. 1998. Numerical Methods in Economics. The MIT press.
+
+Judd, Kenneth L. and Sy-Ming Guu. 1993. "Perturbation Solution Methods for Eco-
+  nomic Growth Models." In Economic and Financial Modeling with Mathematica,
+  edited by Hal R. Varian. New York, NY: Springer, 80­103.
+
+Judd, Kenneth L., Lilia Maliar, and Serguei Maliar. 2011. "Numerically stable and
+  accurate stochastic simulation approaches for solving dynamic economic models."
+  Quantitative Economics 2 (2):173­210.
+
+------. 2012. "Merging Simulation and Projection Approaches to Solve High-
+  Dimensional Problems." Tech. Rep. w18501, National Bureau of Economic Re-
+  search. URL https://www.nber.org/papers/w18501.
+
+Judd, Kenneth L., Lilia Maliar, Serguei Maliar, and Rafael Valero. 2014. "Smolyak
+  method for solving dynamic economic models: Lagrange interpolation, anisotropic
+  grid and adaptive domain." Journal of Economic Dynamics and Control 44:92­123.
+
+Juillard, Michel and Sebastien Villemot. 2011. "Multi-country real business cycle
+  models: Accuracy tests and test bench." Journal of Economic Dynamics and
+  Control 35 (2):178­185.
+
+Kollmann, Robert, Serguei Maliar, Benjamin A. Malin, and Paul Pichler. 2011. "Com-
+ parison of solutions to the multi-country Real Business Cycle model." Journal of
+ Economic Dynamics and Control 35 (2):186­202.
+
+Kydland, Finn E. and Edward C. Prescott. 1982. "Time to Build and Aggregate
+ Fluctuations." Econometrica 50 (6):1345­1370.
+
+Lenton, T. M., H. Held, E. Kriegler, J. W. Hall, W. Lucht, S. Rahmstorf, and H. J.
+  Schellnhuber. 2008. "Tipping elements in the Earth's climate system." Proceedings
+  of the National Academy of Sciences 105 (6):1786­1793.
+
+Levintal, Oren. 2018. "Taylor Projection: A New Solution Method for Dynamic
+  General Equilibrium Models." International Economic Review 59:1345­1373.
+
+
+                                        42
+Ljungqvist, L. and T.J. Sargent. 2000. Recursive Macroeconomic Theory. Cambridge:
+  MIT Press.
+
+Magill, Michael J. P. 1977. "A local analysis of N-sector capital accumulation under
+ uncertainty." Journal of Economic Theory 15 (1):211­219.
+
+Maliar, Lilia and Serguei Maliar. 2015. "Merging simulation and projection ap-
+ proaches to solve high-dimensional problems with an application to a new Key-
+ nesian model." Quantitative Economics 6 (1):1­47.
+
+Maliar, Lilia, Serguei Maliar, John B. Taylor, and Inna Tsener. 2020. "A tractable
+ framework for analyzing a class of nonstationary Markov models." Quantitative
+ Economics 11 (4):1289­1323.
+
+Malin, Benjamin A., Dirk Krueger, and Felix Kubler. 2011. "Solving the multi-
+ country real business cycle model using a Smolyak-collocation method." Journal
+ of Economic Dynamics and Control 35 (2):229­239.
+
+Marcet, Albert and Guido Lorenzoni. 1998. "Parameterized Expectations Ap-
+ proach: Some practical issues." In Computational Methods for Study of Dynamic
+ Economies, edited by R. Marimon and A. Scott. New York: Oxford University
+ Press, 143­171.
+
+McCarl, B., A. Meeraus, P. van der Eijk, M. Bussieck, S. Dirkse, and F. Nelissen.
+ 2016. McCarl Expanded GAMS User Guide Version 24.6. URL https://www.
+ gams.com/mccarlGuide. Accessed on December 19, 2020.
+
+Miranda, Mario J. and Paul L. Fackler. 2002. Applied Computational Economics and
+ Finance. The MIT Press.
+
+Negro, Marco Del, Frank Schorfheide, Frank Smets, and Rafael Wouters. 2007. "On
+  the Fit of New Keynesian Models." Journal of Business & Economic Statistics
+  25 (2):123­143.
+
+Nordhaus, William D. 2008. A Question of Balance: Weighing the Options on Global
+  Warming Policies. Yale University Press.
+
+------. 2017. "Revisiting the social cost of carbon." Proceedings of the National
+  Academy of Sciences of the United States of America 114 (7):1518­1523.
+
+                                        43
+Rust, John. 1996. "Numerical Dynamic Programming in Economics." In Handbook
+ of Computational Economics, vol. 1, edited by H. M. Amman, D. A. Kendrick, and
+ J. Rust. Elsevier, 619­729.
+
+------. 1997. "Using Randomization to Break the Curse of Dimensionality." Econo-
+  metrica 65 (3):487­516.
+
+------. 2019. "Has Dynamic Programming Improved Decision Making?" Annual
+  Review of Economics 11 (1):833­858.
+
+Scheidegger, Simon and Ilias Bilionis. 2019. "Machine learning for high-dimensional
+  dynamic stochastic economies." Journal of Computational Science 33:68­82.
+
+Smets, Frank and Rafael Wouters. 2007. "Shocks and Frictions in US Business Cycles:
+  A Bayesian DSGE Approach." American Economic Review 97 (3):586­606.
+
+Smolyak, S.A. 1963. "Quadrature and interpolation formulas for tensor products of
+  certain classes of functions." Soviet Mathematics Doklady 4:240­243.
+
+Woodford, Michael. 2003. Interest and Prices: Foundations of a Theory of Monetary
+ Policy. Princeton, N.J. ; Woodstock, Oxfordshire England: Princeton University
+ Press.
+
+
+
+
+                                        44
+

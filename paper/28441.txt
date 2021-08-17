@@ -1,0 +1,2108 @@
+                             NBER WORKING PAPER SERIES
+
+
+
+
+                     UNCOVERING THE HIDDEN EFFORT PROBLEM
+
+                                      Azi Ben-Rephael
+                                       Bruce I. Carlin
+                                           Zhi Da
+                                      Ryan D. Israelsen
+
+                                     Working Paper 28441
+                             http://www.nber.org/papers/w28441
+
+
+                    NATIONAL BUREAU OF ECONOMIC RESEARCH
+                             1050 Massachusetts Avenue
+                               Cambridge, MA 02138
+                                   February 2021
+
+
+
+
+We are grateful for feedback from Tom Bates, Alex Butler, Alan Crane, Jeff Coles, David De
+Angelis, Gene Fama, Simon Gervais, Jessica Jeffers, Steve Kaplan, Mike Lemmon, William
+Mann, Kevin Murphy, Stefan Nagel, Lubos Pastor, David Robinson, James Weston, David
+Yermack, and Luigi Zingales. Also, we acknowledge helpful feedback from seminar participants
+at the University of Chicago, Washington University in St. Louis, University of Texas, Notre
+Dame, Drexel University, and Rice University, and conference attendees at the ASU Sonoran
+Winter Finance Conference the 2020 Northern Finance Meetings, and the 2021 American
+Finance Meetings. We also appreciate the advice and counsel from Richard Zansitis (Vice
+President and General Counsel for Rice University). This study was approved by the IRB at Rice
+University and by Bloomberg Finance L.P. The views expressed herein are those of the authors
+and do not necessarily reflect the views of the National Bureau of Economic Research.
+
+NBER working papers are circulated for discussion and comment purposes. They have not been
+peer-reviewed or been subject to the review by the NBER Board of Directors that accompanies
+official NBER publications.
+
+© 2021 by Azi Ben-Rephael, Bruce I. Carlin, Zhi Da, and Ryan D. Israelsen. All rights reserved.
+Short sections of text, not to exceed two paragraphs, may be quoted without explicit permission
+provided that full credit, including © notice, is given to the source.
+Uncovering the Hidden Effort Problem
+Azi Ben-Rephael, Bruce I. Carlin, Zhi Da, and Ryan D. Israelsen
+NBER Working Paper No. 28441
+February 2021
+JEL No. D22,D82,G32,M52
+
+                                          ABSTRACT
+
+We use machine learning to analyze minute-by-minute Bloomberg online status data and study
+how the effort provision of top executives in public corporations affects firm value. While
+executives likely spend most of their time doing other activities, Bloomberg usage data allows us
+to characterize their work habits. We document a positive effect of effort on unexpected earnings,
+cumulative abnormal returns following firm earnings announcements, and credit default swap
+spreads. We form long-short, calendar-time, effort portfolios and show that they earn significant
+average daily returns. Finally, we revisit several agency issues that have received attention in the
+prior academic literature on executive compensation.
+
+
+Azi Ben-Rephael                                  Zhi Da
+Rutgers Business School                          University of Notre Dame
+1 Washington Park                                239 Mendoza College of Business
+Newark, NJ 07102                                 Notre Dame, Indiana 46556-5646
+abenrephael@business.rutgers.edu                 zda@nd.edu
+
+Bruce I. Carlin                                  Ryan D. Israelsen
+Jones School of Business                         Michigan State University
+Rice University                                  Broad College of Business
+1900 Rice Boulevard                              667 N Shaw Ln Rm 307
+Houston, TX 77005                                East Lansing, MI 48824
+and NBER                                         USA
+carlin@rice.edu                                  israels4@msu.edu
+1. Introduction
+        The moral hazard problem due to hidden effort is ubiquitous in economics and two
+fundamental ideas are generally accepted. First, principals are tasked with an inference problem
+regarding their agent's effort provision. Second, they can (or should) try to ameliorate the conflict
+with compensation contracts or ownership grants (Holmstrom and Milgrom, 1987).
+        But studying whether this actually works in Corporate America or if high effort provision
+is indeed valuable is nearly impossible. If the principal in any organization cannot observe the
+effort provision made by their managers, it is unlikely that outsiders like an economic empiricist
+or a market investor would have better information. Both can perform statistical inference, much
+like the principal, based on compensation contracts and firm outcomes (e.g., stock prices or
+earnings). But these calculations are limited because they face the hidden action problem too.
+        How could one calibrate a manager's work activities without inducing an observer effect
+(i.e., changing executive behavior) or covertly spying on them? 1 A good prospect would be to find
+something that is highly correlated with the time they spend working, like the amount of time their
+office lights are on (at home or work), their computer is active, or their office phone (cell phone)
+is in use. Certainly, none of these is perfect, but they do convey some information about an
+executive's daily work habits.
+        In this paper, we hand-collect minute-by-minute usage data from personal Bloomberg
+accounts for CEO's, CFO's, and top executives from publicly traded firms, many of which are in
+the S&P500 and are not financial firms. We use machine learning to estimate their work habits as
+measures of effort provision, and perform cross-sectional and time series tests to examine how
+effort affects firm value. We also revisit several agency issues that have received attention in the
+past, such as the effect of compensation discontinuities and leisure activities on executive behavior.
+        Bloomberg terminals are typically located at work, but its platform can be accessed
+remotely. It is not an attractive source of leisure. It is obvious by mere inspection of the platform
+that it is for work use and does not provide any sort of entertainment. But, three hundred and
+ninety-five firms (97 financial and 298 non-financial) in the S&P500 use Bloomberg in their
+business activities and it is often used by executives in Corporate America as source of financial
+
+
+
+1
+ Direct monitoring has been used to assess how executives spend their time (e.g., Mintzberg, 1973; Bandiera, Hansen,
+Pratt, and Sadun, 2020). But explicit monitoring and self-reported data present obstacles when trying to quantify how
+compensation affects moral hazard problems like effort provision.
+
+
+                                                         1
+information, and for risk management, investor relations, communications with analysts, and
+competitive industry analysis. 2
+         What is under-appreciated though, especially by academics, is that Bloomberg is also a
+powerful social network that significantly pre-dates platforms like Facebook. The platform gives
+all users access to each other via texting and encourages the exchange of information between
+traders and among corporate leaders. When individuals sign user agreements, they are given the
+opportunity to communicate with each other via messaging technology. Users are readily identified
+as "online" to others if they are logged into their personal account. So, whether someone is actively
+using the software is publicly observable.
+         We collect minute-by-minute user data during 2017-2020. Figure 1 provides an example
+of where we obtained this activity. 3 The green dot by Michael Bloomberg's name indicates that
+he is actively using his personal account. If he were to become inactive for greater than 15 minutes,
+the dot would turn yellow. If an executive is offline, the dot is red, and if a telephone icon appears,
+it indicates he/she is using the mobile application.
+         We use this dataset to detect how often each executive is engaged in a work-related task
+and estimate the length of time they work each day. 4 We do not use the intensity or total time on
+the terminal in our tests, because we expect top executives to have a diverse set of responsibilities
+that do not involve being on Bloomberg all day. But, as we describe, the machine learning
+algorithm that we employ uses the login patterns over time to describe typical work habits, which
+parameterizes their effort provision.
+         We start by providing evidence that supports the plausibility of Bloomberg usage as an
+effort measure. We show that Bloomberg activity spikes around earnings announcements for both
+CEO's and CFO's, and that its intensity of use was higher during the COVID pandemic when
+
+
+
+2
+  See https://www.bloomberg.com/professional/expertise/c-suite/
+3
+  It is important to note that we did not collect any private information about what the executives actually did on the
+terminal: we did not observe any information about messaging, news search, or trading-related activities. As we are
+only interested in the simple usage of the terminal as a proxy for work effort, we do not collect any sensitive
+information from corporate firms and keep all identities anonymous in our analysis.
+4
+  Use of this data was approved by Bloomberg Finance L.P. Additionally, we carefully reviewed the following
+contracts and disclosures with General Counsel at Rice University: Bloomberg's user agreement with Michigan State,
+Bloomberg's Terms of Service, and Bloomberg's Privacy Policy. See "Disclosure of Your Personal Information" in
+https://www.bloomberg.com/notices/privacy/ and https://www.bloomberg.com/notices/tos/. Once subjects were
+matched to compensation and firm information, their identities were anonymized and the investigators were made
+blind as to particular identities and results. We do not disclose subject identities in any of the results reported in this
+paper.
+
+
+                                                            2
+exectuives were confined at home. Importantly, we show that the account activity that we measure
+directly depends on the owner of each account, not someone else at the firm. We amass a dataset
+of events where an executive is participating or speaking, and document almost no simultaneous
+activity on the Bloomberg platform. For example, we show that during analyst and investor days,
+the Bloomberg account for every single executive in our sample is inactive.
+        Figure 2 shows a histogram of the annual daily usage for an executive in our sample. For
+each minute of a 24-hour period, the y-axis measures the probability that the executive is active
+on their Bloomberg account during the course of a year. As is common in our data, there is a peak
+mid-morning and in the afternoon, with a dip during lunchtime. The machine learning algorithm
+uses the observation that this function appears to be similar to a mixed distribution of two normal
+distributions, one for the morning and one in the afternoon. The estimation-maximization (EM)
+algorithm provides estimates of the underlying moments of the two distributions and we construct
+a distance measure called the Gaussian Mixture Length (GML) to proxy for the length of each
+executive's workday. 5
+         We investigate the effect of effort on firm performance in several ways. To make causal
+statements, we include individual executive fixed effects to control for all time-invariant,
+unobserved characteristics. We also include measures of insider trading to account for the
+influence that private information potentially has on earnings surprises and abnormal returns. First,
+using a measure of standardized unexpected earnings (SUE; Foster, Olsen, and Shevlin, 1984), we
+find that higher effort is associated with subsequent earnings surprises.
+        Then, we show that effort provision has a positive and persistent effect on cumulative
+abnormal returns (CAR) following earnings announcements. A one-hour increase in the average
+workday length is associated with a CAR of 25-50 basis points that persists for 10 weeks following
+the announcement. Motivated by this result, we form calendar-time portfolios using a trading
+strategy based on extreme changes in quarterly executive effort relative to past effort. We
+document that a risk-adjusted, long-short effort portfolio yields 7.33 basis points per day (37 bps
+over 5 days), a quantity that is plausible, robust, and statistically significant.
+        Not surprisingly, fifty percent of the firms in our sample are from the finance industry. One
+concern is that this is driving our results. To address this, we separately analyze the subset of non-
+
+
+5
+  Besides GML, as we discuss in the paper, we have also constructed three other measures of daily workday effort and
+find our main results to be robust.
+
+
+                                                         3
+financial firms and find that our SUE and CAR results are at least as strong, if not stronger. For
+non-financial firms, a one-hour increase in the average GML is associated with a CAR of 80-100
+basis points at 7-10 weeks following an earnings announcement.
+         Another consideration is that executives are frequently compensated based on their firm's
+earnings or stock price. These measures might be subject to some degree of manipulation. To
+address this, we collect data on credit default swaps that are traded on the firms in our sample. To
+our knowledge, no executive is explicitly given incentives to improve the default risk of their firm
+as measured by the credit default swap spread. Consistent with the earnings findings, we find that
+an increase in average GML in one quarter is associated with an improvement in the firm's CDS
+spreads in the next quarter. 6
+         Our ability to estimate executive effort allows us to investigate several agency issues that
+have received attention in the academic literature. The first is how executives behave when there
+are discontinuities in their compensation (Healy, 1985; Degeorge, Patel, and Zeckhauser, 1999;
+Murphy, 2000). 7 The mere presence of goals and targets induces kinks, whereby earning
+compensation may be outside an executive's locus of control.
+         To investigate this, we study changes in executive GML in response to firm performance
+within the fiscal year. Specifically, we consider whether firm performance in the 1st half of the
+year affects whether earning a cash bonus is within an executive's locus of control for the second
+half. 8 We document a large, positive, and statistically significant change in GML when midyear
+performance is on pace with set targets. But, when midyear earnings are either exceeding or
+lagging behind compensation targets, executives employ less effort. Since the targets do not
+change, but beliefs about achieving them do, this within-executive result is a causal effect.
+         The next agency issue deals with the possibility that executives engage in leisure activities,
+rather than employ effort (Yermack, 2014; Biggerstaff, Cicero, and Puckett, 2017). 9 To capture
+
+
+6
+  The magnitudes are small, but statistically significant. A one hour increase in average GML is associated with a
+reduction of -1.50 basis points. Firms in our sample have an average of $34.7 billion in long-term debt. This amounts
+to an annual savings of $5.2 million. While small, this does appear to be an economically plausible effect.
+7
+  For example, Healy (1985) shows that floors and caps in compensation plans give executives the incentive to manage
+earnings.
+8
+  For the executives in our sample, their compensation contracts did not change within the year. We confirm this by
+reviewing 8-K filings for the firms in our sample and screening for disclosures under item 5.02.
+9
+  Both Yermack (2014) and Biggerstaff, Cicero, and Puckett (2017) find evidence consistent with an agency cost
+hypothesis by studying leisure activities like vacation travel and golf habits. However, both acknowledge that it may
+be impossible to precisely identify what business activities potentially took place during those times because
+monitoring executive behavior explicitly is challenging.
+
+
+                                                         4
+conditions that may encourage such activity, we examine the local weather. Specifically, we study
+cloud cover, daylight hours, precipitation, as well an adjusted temperature index ­ the Universal
+Thermal Climate Index (UTCI) ­ that is designed to capture the human physiological reaction to
+the outdoor thermal environment (i.e., temperature, radiation, humidity, and wind speed). 10 We
+find that executive effort is reduced during quarters in which weather is more favorable for outdoor
+activities. We find the result to be the most pronounced among CEOs and CFOs where a one-
+standard-deviation improvement in good weather is associated with 18-20 fewer hours in the office
+during the quarter.
+           The remainder of the paper is organized as follows. In Section 2, we describe the data
+collection and provide sample statistics. There we construct our variables of interest and provide
+support for using our measure of effort. Section 3 provides an analysis of executive effort and firm
+outcomes. In Section 4, we study agency and other incentives to employ effort. Section 5
+concludes.
+
+
+2. Data and Sample Statistics
+2.1 Sample Construction and Summary Statistics
+
+
+User Data: When Bloomberg users are assigned accounts, the company records their "status" by
+default. 11 Status is either designated as "online", "idle", "offline", or "mobile". When users first
+log on to the platform, their status changes from offline to online, and it remains that way while
+they use Bloomberg. However, if they stop using it for 15 minutes, the user's status automatically
+changes to "idle". Eventually, and depending on the users' settings, a user is logged off after a
+long period of inactivity. Also, when users are logged in via the "Bloomberg Anywhere"
+application on their mobile device, the status is listed as "mobile". While using the mobile app,
+access to an assigned desktop terminal is restricted, so there is no possibility of double-counting.
+           Other users of the terminal can detect the status of any other Bloomberg user by employing
+the "PEOP" function, the "BIO" function, or by directly navigating to a user's profile. Figure 1
+gives an example of a profile search for Michael Bloomberg. The green dot by Michael
+Bloomberg's name indicates that he is online and active. Other status indicators are as follows: a
+
+
+10
+     See Bröde et al. (2012).
+11
+     Users may set their profile status to "private", but only 9.5% of Executives do so.
+
+
+                                                             5
+red dot means that a user is offline, a yellow dot means that a user is idle, and a gray dot indicates
+that a user has chosen to be private. If a user is online via the mobile app, a mobile phone icon
+appears. Note the full functionality of the software to contact people who use the platform.
+       During 2017-2020, we used the profile search and followed 2,734 users with executive in
+their title (e.g., "Chief Financial Officer", "Chief Executive Officer", etc.). We recorded their
+name, title, location, firm name, and followed their user status continuously over the entire time
+series. At no time did we collect the content of their use: we did not observe their text messaging,
+news search, or trading activity. The only data we collected is the time that each person actually
+uses the platform.
+       The majority of the 2,734 executives in our user dataset work in private firms. Of that
+number, 474 are "named executives" at 308 unique public firms. Executives list their geographic
+location in their profile. While there are concentrations in the Northeast, Texas, Chicago, and
+California, there is a large geographic dispersion. Forty-three states plus the District of Columbia
+are represented. When we analyze the effect of effort on abnormal returns, we analyze 1128
+executive-quarter observations. To study the effect of contracting on effort, we use the ISS
+Incentive Lab database, which collects compensation information from proxy statements and
+provides it in tabular format. After merging the set of named executives with the Incentive Lab
+database, we are left with 252 top executives from 174 publicly-traded companies, and 520
+executive-year observations. In our sample, 27% of executive-year observations are for CEOs
+while 45% are for CFOs. The remainder are named executives with other roles.
+       Table 1 provides summary statistics at the executive-fiscal year level for the executives in
+our sample. Panel 1.A presents statistics on firm characteristics. Size is the market capitalization
+(in millions of dollars) of the firm's stock (CRSP item prc times shrout) at the end of the previous
+fiscal year; Q is Tobin's Q; leverage is long term debt (Compustat item dltt) plus debt in current
+liabilities (Compustat item dlc) all divided by total assets (Compustat item at); productivity is
+revenues (Compustat item sale) divided by total assets. The mean market capitalization for the
+executives' firms is $43 Billion, with a median of $12.9 Billion. We use the natural logarithm of
+size in our regressions (ln_size). Tobin's Q is about 1.58, on average. The average ratios of debt
+to assets is 0.31, and average ratio of revenues to assets is 0.35.
+       Panel 1.B breaks executive-year observations into industries based on the 4-digit SIC code
+of their firms according to the Fama-French 12 industry classifications. The panel shows that
+
+
+
+                                                  6
+roughly half of the observations are from executives at financial firms, which is not surprising
+given the nature of Bloomberg terminals. The next most common industry (12.5% of the
+observations) is "Other", which consists of firms in industries with fewer firms that do not fit into
+the remaining 11 industries. "Energy" is the third most common industry (9.2% of observations),
+followed by Utilities (6.3%), and Healthcare (6.2%). Business Equipment, Chemicals,
+Manufacturing, Telecommunications, Consumer NonDurables, Consumer Durables, and
+Wholesale and Retail collectively make up the remaining 11.2% of observations.
+
+
+
+2.2 Patterns of Bloomberg Usage
+        First, we examine patterns in the raw activity data and then provide evidence that the user
+data captures a plausible measure of effort provision. While we collect data through 2020, much
+of our analysis uses data from 2017-2019. This is due to the need to collect other variables and the
+highly unusual events that arose during the COVID pandemic.
+        Table 2 provides some summary statistics of user activity. For the 520 executive-year
+periods that we collect between September 2017 and December 2019, we have an average of 178
+days of data per executive-year. On average, 129 of those are workdays, which we define as
+Monday through Friday. There is an average of 31 weeks per executive-year.
+        The "Bloomberg Usage" section of Table 2 provides statistics for active platform and
+mobile usage for various timeframes. On average, executives in our sample are actively using
+Bloomberg for 6.92 hours per week and they spend much less time on the mobile app than on the
+platform ­ about 30 minutes per week, on average. They spend very little time on Bloomberg on
+the weekend or at night, which we define as 6pm on a given day to 3am the following morning. 12
+Also, executives tend to spend little time on Bloomberg on holidays, about thirty minutes per day
+on average.
+        These patterns tend to suggest that Bloomberg use is a work activity, rather than one of
+leisure. To see this visually, Figure 3 presents the average percentage of executives that actively
+use the platform during each minute of workdays. Active use is very limited, on average, before
+about 7am, and after about 6pm. There is also a drop in activity during the lunch hour. Thus, the
+general activity level is concentrated during the traditional 9 to 5 workday. In Figure 4, we examine
+
+12
+  These times are based on each executive's local time. We extend the nighttime window to include 3 am in case
+they work late and because activity on the platform is at a daily minimum at 3am.
+
+
+                                                        7
+average activity throughout the week. The histogram shows that activity is generally higher at the
+beginning of the workweek and declines throughout the week. During a typical workweek, effort
+is typically lowest on Friday. 13
+           To further explore the plausibility of Bloomberg usage as a proxy for time spent at work,
+we next examine whether activity is higher on days with important firm-level events. Figure 5
+Panel A shows the average number of active hours in event time for all executives, relative to their
+firm's quarterly earnings announcement. A trend line is fitted (using OLS) separately for the
+periods before and after the announcement date. The day with the highest amount of activity is the
+earnings announcement date. Following the announcement, activity drops and steadily increases
+until the next announcement. Panel B shows the same figure for the subset of Chief Financial
+Officers, where the pattern is more pronounced. Panel C presents the figure for the subset of
+CEOs. Again, activity is the highest on the announcement date, but is also high the following day.
+           It is also constructive how usage changed during the COVID-19 pandemic of 2020, once
+executives experienced restricted travel, less access to leisure activities, and more time at home.
+Figure 6 provides a comparison of daily activity in 2020 with previous years (2018 and 2019) for
+the months of March, April, May, and June. By inspection, it is apparent that Bloomberg activity
+increased during the pandemic and use of the platform extended later into the evening hours. These
+findings are consistent with more remote work habits and substituting time on a computer for travel
+or leisure when they are made less available. Also, this appears to provide support for the idea that
+Bloomberg usage is in fact helpful in describing the work habits of its users.
+           Finally, we attempt to rule out the possibility that an executive's personal account is being
+accessed by other people such as their assistants or underlings. To investigate this, we look at usage
+habits by excecutives during key firm level events where we they are not only likely to be in
+attendance, but speaking as an active participant. These include shareholder meetings, earnings
+releases, and conference calls.
+           We collect this information using the Bloomberg corporate events calendar (function
+"EVTS") which includes the name, type, and timing of each event as well as a description.
+Categories include earnings calls, earnings releases, annual meetings, investment banking
+conferences/presentations, analst days, and investor days, among others. For each event for which
+we know the date and start time, we examine executive activity on the terminal during the first 30
+
+13
+     In the figure, we use GML as our measure of activity. We describe this variable in detail in Section 2.3.
+
+
+                                                             8
+minutes of the event. We use a short window since the lengths of the events vary and the end-time
+is not always documented. We count the number of executives who are not active on the terminal
+at any point during that 30 minute window and aggregate by executive role and event.
+       We use Bloomberg's categories and descriptions to categorize events. For the investment
+banking conferences/presentations and analyst and investor days, we examine the event transcripts
+on Factiva in order to determine who was present. Executives who were not present are excluded
+from those two categories. The vast majority of annual meetings do not have transcripts on Factiva.
+Table 3 provides terminal usage statistics for each of these categories.
+       The results are striking. For the analyst and investor days, the Bloomberg account for every
+every single executive is inactive. During investment banking conferences, more than 99% of
+excecutives are not active on the terminal. In the full sample of almost 1,500 observations, there
+are only 6 cases (4 unique executives) where there is activity on an executives' Bloomberg account
+during an event. For annual meetings, more than 90% of the time, there is no activity on the
+terminal for CEOs, CFOs, and other executives. These results are overwhelmingly consistent with
+the notion that activity on the terminal is typically carried out by the executive him- or herself.
+       For reference, Table 3 also presents results for two other events where the executive may
+or may not have access to the Bloomberg terminal, depending on the situation ­ earnings releases
+and earnings calls. The data suggest that there is relatively less inactivity during an earnings
+release: 74.6% of CEOs are inactive, 72.4% for CFOs, and 81.3% for other excecutives. Finally,
+during earnings calls, about 87% of CEOs, 89% of CFOs and 87% of other executives are not
+actively using their Bloomberg account.
+
+
+2.3 Effort Measures and Machine Learning
+       At first glance, it might be attractive to create simple measures based on examining
+individual days to evaluate when an executive is on the terminal, such as the average number of
+days per week or the average daily time between the first and last login. However, while these
+measures provide similar results and are intuitive, they underestimate the executives' work habits
+if executives log into Bloomberg intermittently and at different times of the day. This is why we
+aggregate each executive's activity across a fixed time period (one year or one quarter) and use
+unsupervised machine learning to construct a distributional measure that better controls for the
+intermittent, and perhaps erratic, usage of the terminal.
+
+
+
+                                                  9
+        Inspection of Figures 2 and 3 reveals that the overall usage pattern looks like a distribution
+that results from the mixture of two normal distributions, one for the morning and one after lunch.
+Clearly, the pattern in the data is not derived from a distribution per se, but we use this observation
+to construct our primary workday length measure, Gaussian Mixture Length (GML), which is
+based on a mixture of normal distributions that we construct as follows.
+                                                                        
+        For each executive and year, we know the probability  that the executive is logged on
+every minute of the day     {12: 00 , 11: 59 }. We construct a pdf by computing
+                                                           
+                                                            
+                                               =         
+                                                          
+                  
+By construction,   = 1. We then assume that the constructed distribution is a mixture of
+                                                                 2
+two normal distributions   {1, 2}, each with mean µ and variance   , where µ2 > µ1 . This
+captures the idea that executives may have different morning and afternoon work habits. Also, as
+described above, a dip in activity around lunchtime is very frequent in our sample.
+        For the mixed distribution, there is a probability  that any realization is drawn from
+distribution 1 and probability (1 -  ) that it was drawn from distribution 2. The mixed distribution
+                           2
+has mean µ1,2 and variance 1,2 , which can be measured for each executive. We also have the
+
+following relationships:
+                                          1,2 = 1 + (1 -  )2
+                             2     2          2                  2
+                             1,2 = 1 + (1 -  )2 + 1 -  )(2 - 1 )
+
+Using these two equations, we perform an expectation-maximization (EM) algorithm to estimate
+                                                  2 2
+all five parameters for each executive (, 1 , 2 , 1 , 2 ).
+        The EM algorithm consists of two steps: the estimation step (E-Step) and the maximization
+step (M-Step). In the E-Step, the expectation of the log likelihood function is calculated for a
+given set of candidate parameters. In the M-Step, the parameters are re-chosen in order to
+maximize the expectation. The process continues, iterating between the E-Step and the M-Step
+until the sequence converges. In our case, the likelihood function involves the likelihood of
+observing the data given that there are two unobservable Gaussian distributions generating the
+data. We implement the procedure using the scikit-learn library for Python. 14
+
+
+14
+  We use the sklearn.mixture.GaussianMixture method with a convergence threshold of 0.001 and K-Means clustering
+to initialize the parameters.
+
+
+                                                      10
+       For each executive, we create the daytime length measure GML with the estimated vector
+          2 2
+(1 , 2 , 1 , 2 ), which is computed as follows:
+                                    = (2 - 1 ) + 1 + 2
+The distance GML measures the difference between the means of the two distributions and adds a
+standard deviation on each side. As such, it allows for the more diverse work habits that are present
+in our executive sample.
+       Figure 7 provides three visual examples of how GML is constructed. The shaded blue area
+is each executive's underlying Bloomberg activity, which has been converted into a pdf. The two
+yellow curves are the normal distributions derived from the EM algorithm and the red curve is the
+resultant mixed distribution. As can be appreciated, the estimated mixture closely approximates
+the underlying activity, and captures differences in morning versus afternoon work activity. The
+variable GML is the distance between the two solid lines in the plot.
+       The last panel in Table 2 also provides summary statistics for GML. The mean level of
+GML during the sample is about 9.5 hours with a standard deviation of about 2 hours. This is likely
+to be a superior measure of executive work habits as its magnitude is more consistent with what
+we would intuitively expect. Figure 8 provides a histogram that provides a distribution of GML for
+executives in our sample.
+
+
+3. Effort Provision and Firm Outcomes
+       Now, we address a long-standing question whether and how much incentives and effort
+provision improve firm value. From a theoretical perspective, higher effort should increase the
+probability of good outcomes. Alternatively, effort may be inefficient in many cases or misguided.
+Either way, as Murphy (1999) points out, studying this has been challenging in the past: because
+changes in executive compensation or ownership grants are public information, equity prices
+adjust quickly (i.e., markets are efficient). Therefore, previous studies have been constrained
+because investigators had to connect incentives to firm value directly, without measuring the
+intermediate step of effort provision. That is, investigators had no better information than equity
+market participants. However, since we are able to measure executive effort directly here and this
+is not observable to (or followed by) equity market participants, we can now revisit these issues.
+       We start by examining whether executives' effort provision during the fiscal quarter affects
+firm earnings surprises. We use Standardized Unexpected Earnings (SUE), which is defined as the
+
+
+
+                                                  11
+difference in the current quarterly earnings per share and the earnings per share 4 quarters prior,
+divided by the standard deviation of these differences measured over the previous eight quarters
+(Foster, Olsen, and Shevlin, 1984).
+         The independent variable is D_GML, which is defined as the difference in GML during the
+fiscal quarter minus the same measure during the fiscal quarter 4 quarters prior. In our regression,
+we focus on CEOs and CFOs and include measures of insider trading to control for private
+information that may be related to both effort provision and earnings. The variables D_purchase
+and D_sell are defined as the change in the log value of open market insider purchases and sells
+that the executive made, relative to 4 quarters prior. Two analogous variables D_purchase_all and
+D_sell_all capture changes in buying and selling by all insiders at the firm. Because we take
+differences in both the key independent and dependent variables, we are in essence studying a
+within-executive effect that controls for time-invariant, unobservable characteristics. 15
+         According to Table 4, effort has a positive effect on SUE in all specifications. Roughly, a
+one standard deviation increase in D_GML leads to a 0.13 standard deviation increase in SUE. In
+the final specification of Table 4, we examine whether this result is present in non-financial firms,
+which make up about half of the sample. The results are significant and the point estimates are in
+fact larger when focusing on this subset of executives. 16
+         Next, we study the effect of effort provision on cumulative abnormal returns (CARs)
+around firm earnings announcements. To measure abnormal returns, we use a Fama French 3-
+Factor model to estimate factor loadings using a year of past returns (after skipping the most recent
+week) and create daily alphas. Then, we regress cumulative abnormal returns on GML from day
+1 post-earnings announcement through 50 trading days (10 weeks), just prior to the next earnings
+announcement season. We include standardized unexpected earnings, SUE, to capture the impact
+of the earnings surprise on returns. Additionally, to capture information that may be known to
+insiders at the firm, but not yet public, we include our four measures of insider trading by the
+executive and other insiders (log_purchase, log_sell, log_purchase_all, and log_sell_all). We
+include executive individual fixed effects to control for time-invariant executive characteristics.
+
+
+
+15
+   We have also run regressions using quarterly GML levels with an executive fixed effects and find similar qualitative
+results.
+16
+   In untabulated resuts, we verify that our results also hold for non-financial firms using the first 7 specifications
+from Table 3.
+
+
+                                                         12
+       Table 5 shows that effort has a positive and persistent effect on returns. Panel 4.A examines
+all executives. The coefficients indicate that an increase in the length of the executive's workday
+by an hour is associated with a one-day abnormal return of 27.35 basis points. This increases over
+time and plateaus in a persistent 30-50 basis point CAR at 4-10 weeks. In Panel 4.B, we focus on
+executives at non-financial firms and find larger coefficients, though statistical significance is
+slightly lower over some horizons. These findings imply that unobserved effort that is not fully
+anticipated by an efficient market becomes incorporated into asset prices over time. Before now,
+where hidden effort was undetectable, this effect could not be appreciated. But, as we document,
+it is significant and independent of other executive attributes.
+       Motivated by the results in Table 5, we study the effect of effort on stock returns by forming
+calendar-time portfolios. We form portfolios using an implementable trading strategy based on
+extreme changes in quarterly executive effort relative to past effort. We create two portfolios,
+High_Effort, and Low_Effort. To be included in the high effort portfolio on a given day, we require
+(1) the change in GML for a stock's executive relative to GML four quarters prior to be in the top
+10% for all executives for the same fiscal quarter end; and (2) the earnings announcement must
+have occurred within the past five trading days. The low effort portfolio is defined analogously,
+with the change in GML in the bottom 10% of all executives with the same fiscal quarter end. To
+reduce noise, when there are fewer than 2 stocks satisfying the two criteria on a given day, we
+substitute the risk free rate of return. Portfolio returns are value-weighted using each stock's
+market capitalization. We also form a portfolio that is long High_Effort and short Low_Effort.
+Both raw returns and risk-adjusted returns are reported. We use the Fama-French 3-factor model
+to adjust for risk. Factor loadings are estimated using a year of past daily stock returns (skipping
+the most recent week).
+       Table 6 presents the mean returns and standard errors in basis points per day. According to
+the results, the risk-adjusted long-short portfolio yields 7.33 basis points per day, or 37 bps over 5
+days. This quantity is plausible and statistically significant.
+       One concern that might arise is that measuring the effect of effort on firm value using
+earnings or stock prices might be confounded by the fact that executives are typically given
+bonuses based on these metrics. In some circumstances, these quantities may be subject to
+manipulation. To address this, we study the relationship between GML and a firm's credit default
+
+
+
+
+                                                  13
+swap spread. To our knowledge, no executive in our sample is compensated based on this, so it is
+not subject to management or manipulation.
+         We obtain CDS spread data from DataStream for the firms in our sample. We use the 5-
+year CDS contracts, which have the broadest coverage. For each firm and quarter, we keep the
+spread quote from the last available day in the quarter. Since not all firms have active contracts
+during our sample period, our final sample includes 574 observations over 89 executives and 57
+firms.
+         We report the results in Table 7, where we run regressions of firm CDS spreads in quarter
+t+1 on executive effort (GML) in quarter t, the firm's CDS spread (Spread) in quarter t, measures
+of insider trading in quarter t, and other firm characteristics. In Specifications 1-3, we only include
+Spread during quarter t and the GML during quarter t. A one hour increase in GML is associated
+with a reduction of -0.79 to -0.929 basis points in CDS spreads. Once we control for firm
+characteristics and include executive fixed effects (Specification 5), the magnitudes increase to
+negative 1.50 basis points. Including executive fixed effects ensures that we measure the impact
+of the individual executive effort on CDS spreads.
+         Next, controlling for insider trading activity during quarter t (Specifications 6 and 7) does
+not alter our findings. This alleviates the concerns that GML is high (or low) due to the firm
+performance during the quarter, which is associated with subsequent CDS spreads. In the last two
+specificaitons we exclude financial firms. Note that the coefficient estimates are not materially
+different from what is reported in the other specificaitons. However, the low number of
+observations makes the estimation noiser, which reduces the statistical significance levels. Finally,
+although we use an AR1 model throughout our specifications (i.e., controlling for Spread t), a first
+differences model (i.e., Spread t+1 ­ Spread t) virtually provides the same set of results.
+
+
+4. Effort Provision and Agency
+4.1 Incentives and the Locus of Control
+
+
+         Healy (1985) was the first to consider how executives behave when there are
+discontinuities in their compensation. When targets and goals are included in employment
+contracts, this introduces kinks into the compensation that executives may earn based on
+performance. Healy (1985) and others focused on how these discontinuities affected earnings
+
+
+
+                                                  14
+management and investment within the firm (Degeorge, Patel, and Zeckhauser, 1999; Murphy,
+2000).
+         A natural question to consider is how executives employ effort in similar circumstances.
+What is at issue is whether earning more money is within their locus of control. If firm performance
+is such that an executive is far from attaining a goal or is well past a target, then employing extra
+effort is unlikely to yield a marginal benefit. In such cases, earning compensation is outside of
+their locus of control. In contrast, if an executive is on pace to earn extra compensation (i.e., at a
+compensation kink), there is a higher marginal benefit of effort and securing extra compensation
+is within their locus of control. 17
+         In the Definitive Proxy Statement (SEC form DEF 14A), public firms disclose their
+compensation contracts from the previous fiscal year for "named executives". Proxy statements
+are filed in advance of each firm's annual shareholder meeting, which typically are released during
+Q1. Item 402(a)(3) in SEC Regulation S-K defines the named executives as the CEO, the CFO,
+and at least three other executives with the highest compensation, and up to two former executives
+that served during the year and would have been in the previous category.
+         Proxy statements provide information on the type of compensation that each executive
+would receive ­ fixed wage, cash bonus, equity, option grant ­ as well as the target metric that
+would be used to compute end-of-year compensation (e.g., EBITDA, EPS, or Sales). While each
+proxy statement is backward looking, this allows us to study how ex ante contracting affects
+subsequent effort. For example, the 2019 proxy statement for a particular firm describes the
+compensation package and goals that its top executives received at the beginning of 2018.
+         For our purposes here, we use the ISS Incentive Lab database, which collects compensation
+information from proxy statements and provides it in tabular format. After merging the set of
+named executives with the Incentive Lab database with our Bloomberg data, we are left with 252
+top executives from 174 publicly-traded companies, and 520 executive-year observations.
+         Table 8 provides statistics on these executives' compensation contracts. We define the
+following variables: value_stock_owned as the dollar value of the executive's stockholdings in the
+firm measured using price at the beginning of the fiscal year; salary is the executives' fixed salary
+
+
+
+17
+   As noted earlier, Healy (1985) describes this as the presence of floors and caps in compensation plans. An executive
+is outside their locus of control when they earn the floor or the cap and are well away from the incentive zone of their
+compensation scheme.
+
+
+                                                          15
+during the fiscal year; cash_perf is the target dollar amount of the cash-based performance
+incentive bonus from the executive's compensation contract for the fiscal year; stock_perf is the
+target dollar amount of the stock-based performance incentive bonus from the contract; stock_time
+and option_time are the values of the time-based stock and option grants, respectively, from the
+contract; Predicted compensation, pred_comp, is the sum of salary, cash_perf, stock_perf,
+stock_time, and option_time.
+       The top section of Table 8 indicates that 27% of executive-year observations are for CEOs
+while 45% are for CFOs. The remainder are named executives with other roles. The middle section
+of the panel provides summary statistics on compensation contracts. The mean value of the firm's
+own stock held by the executive is about $69 Million, with a median of $10.7 Million. Executives
+in the sample own about 0.77% of the firm, on average, but this is highly skewed with a median
+of only 0.07% The average annual predicted compensation is roughly $7.2 million, and is broken
+into incentive compensation of roughly $3.7 million that depends on attaining particular targets
+(cash_perf and stock_perf) and fixed compensation of roughly $3.5 million that is guaranteed
+while the executive is employed by the firm (salary, stock_time, and option_time).
+       The final section of Table 8 provides a breakdown of the average weights of the metric
+types that determine the performance-based cash bonuses. While Incentive Lab provides many
+metrics (e.g., EBIT, customer satisfaction, etc.) as well as the metric types (e.g., Accounting), it
+does not provide the value-weight of each metric in the compensation formula. That is, for a
+particular executive, Incentive Lab determines the frequency with which a target or metric is used,
+not the proportion of the bonus that is linked to that particular measure. Consequently, we gather
+this information manually from the proxy statements. We find that accounting metrics make up
+about 62.8% of the metric types in the performance formulas in our sample. Metrics in the "Other"
+category make up about 27.6% of the formulas, on average. These are non-accounting based
+metrics that are typically industry- or firm-specific. Individual (stock price) performance makes
+up about 7.1% (2.5%) of the weight on average in our sample.
+       The way we investigate the effect of locus of control on effort is to examine changes in
+GML in response to firm performance within a fiscal year. Specifically, we study whether
+executive effort varies based on how close or far away from the targets firm performacnce is as
+the year goes on. When achieving bonuses is within the locus of control for an executive, we would
+expect them to exert more effort to secure higher compensation.
+
+
+
+                                                16
+        While compensation contracts are known to executives in advance and are typically not
+subsequently changed, firms do occasionally modify contracts during the year for various reasons.
+Such material changes necessitate the filing of Form 8-K with the SEC. If these changes are present
+in our sample, it may affect the interpretation of our results. To address this issue, we examine all
+8-K filings issued by firms from the sample used in Table 9. We focus on Item 5.02 in the 8-K
+which includes changes in compensation. Within that subset of filings, we identify those that
+include the words "compensation", "change" or "modify". Next, we carefully read the resulting
+filings to identify the exact nature of the event that triggered the 8-K as well as the specific
+executive associated with the event, if any. We find no evidence of any changes in contracts during
+the year in this sample.
+        We proceed to examine whether and when executives increase effort in the 2nd half of the
+fiscal year, in response to firm performance in the 1st half. We posit that when earnings per share
+in the first half of the year are on pace to finish close to the annual EPS target specified in the
+executive's cash bonus contract, executives will employ more effort to ensure that they attain their
+set EPS goals. For each executive whose cash bonus contract includes an earnings-per-share target,
+and for whom we have Bloomberg profile activity data for at least one fiscal quarter in the first
+half of the year and one quarter in the second half of the year, we measure the quantity
+2  1 + 2 -  / , where 1 and 2 are the firm's earnings per
+
+share in the 1st and 2nd fiscal quarter, and EPS Target is the executive's annual EPS target. This
+measures the absolute percentage projected deviation from the earnings target based on the first
+half of the year. The variable target_1_pct is equal to 1 when this quantity is less than 1% and 0
+otherwise.
+        In Table 9, we regress the change in GML from the first half of the fiscal year to the second
+half on the interaction between target_1_pct and pct_cash_perf and other control variables. The
+coefficient on the interaction term is positive, large in magnitude, and statistically significant. This
+implies that when a firm's midyear performance is far from compensation targets (high or low),
+and achievement of a bonus is outside their locus of control, they employ less effort in the second
+half of the year. It is when success or failure is within their potential control that they exert more
+
+
+
+
+                                                  17
+effort. Also, because we study changes in GML ­ a within-executive effect ­ this supports a causal
+relationship.
+
+
+4.2 Effort and Leisure
+
+        As noted earlier, both Yermack (2014) and Biggerstaff, Cicero, and Puckett (2017) study
+leisure activities like vacation travel and golf habits and find evidence consistent with an agency
+cost hypothesis. Here, we add to this by studying the effect of weather conditions on effort
+provision. The primary question is whether executives tend to shirk when weather conditions make
+it attractive to engage in outside activities.
+        Clearly, this will depend on the locale in which the executive tends to reside. For example,
+a 50-degree, partly cloudy day in February will be perceived differently by an executive who
+resides in Chicago than one who is in San Diego. So, simply regressing temperatures or sunny
+days on effort provision is insufficient to capture executives' tendencies to employ less effort.
+        To this end, we construct a comfort/weather measure based on local weather conditions.
+We use the Universal Thermal Climate Index (UTCI) which is designed to capture the human
+physiological reaction to the outdoor thermal environment (i.e., temperature, radiation, humidity,
+and wind speed; Bröde et al., 2012). In contrast to other comfort indexes, it was designed to
+capture thermal comfort in an outdoor setting. Moreover, it's highly correlated with survey-based
+measures of human thermal comfort (e.g., Zare et al., 2018).
+        Using meteorological data from the website Weather Underground, we gather temperature,
+humidity, and wind speed data in order to calculate UTCI. 18 We identify the hours during the
+quarter in which UTCI falls in the "thermal comfort zone", which is between 18°C and 26°C
+(64.4°F to 78.8°F). 19 Additionally, we gather data from Weather Underground on precipitation,
+cloud cover, and daylight hours. Then, we create the variable good_weather which is defined as
+the percentage of hours during a time interval in which (a) UTCI is in the "thermal comfort zone",
+(b) there is no precipitation, (b) the sky is not overcast, and (c) and the sun is up.
+        For illustrative purposes, Figure 9 plots good_weather at the month frequency for 4 cities
+­ San Diego, CA, Honolulu, HI, New York, NY, and Houston, TX. The figure shows that the
+
+
+18
+  To calculate UTCI, we use the Python pythermalcomfort package (Tartarini and Schiavon, 2020).
+19
+  See The Commission for Thermal Physiology of the International Union of Physiological Sciences (2003) and
+Bröde et al., 2012
+
+
+                                                      18
+percentage of hours considered to be "good" varies greatly by location and by time. Summer
+months in New York and San Diego tend to have the most good weather hours. By contrast, in
+Honolulu and Houston, summer months are too hot or humid to fall within the thermal comfort
+zone. In those cities, spring, fall, or winter (especially in Honolulu) tend to provide more
+opportunity to enjoy the weather. Across the 1,593 executive-quarter observations in our sample,
+good_weather has an mean (median) of 8.6% (7.1%) and a standard deviation of 7.7%.
+        To examine whether executives are less likely to spend as much time in the office when
+the weather is particularly good, we regress quarterly GML on good_weather, as well as a
+combinations of year, executive role, location, and executive fixed effects. Specifications (1)
+through (5) in Table 10 include the full sample of 1,593 executive-quarter observations. The
+coefficient on good_weather varies between about -2.3 and -2.5 and is statistically significant at
+1% across all five specifications, suggesting that executives shorten their work day length in
+quarters in which the weather is particularly favorable for outdoor activities. The coefficient
+indicates that a one-standard-deviation increase in good_weather in a given quarter is associated
+with about 10 fewer minutes per day in the office. With about 66 weekdays in a quarter, this
+translates to about 12 hours out of the office.
+        In the specifications (6), (7), and (8), we examine whether this behavior varies across
+executive roles. The results indicate that it is particularly strong for CEOs and CFOs, and not
+significant for other named executives. For a CEO and CFO, a one-standard-deviation increase in
+good_weather is associated with about 20 and 18 fewer hours in the officer per quarter,
+respectively.
+
+
+4.3 Effort and Competition
+
+        The last consideration that we explore is how executives respond to competition in the
+product market place. To measure competition, we focus on the firm's growth in quarterly sales
+relative to its peers. The idea is that an increase in peer firm sales relative to the firm should induce
+more effort since executive performance is also assessed by market share. To construct a
+representative set of peers, for each firm, we include up to 10 closest peers (when the data allows),
+using the GICS6 industry classification. Closest peers are defined based on the smallest absolute
+difference in firm market cap.
+
+
+
+
+                                                   19
+        Our measure of growth in quarterly sales (%Chng_Sales) is defined as the percentage
+change in the firm's sales during fiscal quarter t relative to the firm's quarterly sales 4 quarters
+prior [(Sales t - Sales t-4)/Sales t-4)] in %. In a similar manner, %Chng_PeerSales is defined as
+the percentage change in the firm's peers' sales during fiscal quarter t relative to the firm's peers'
+quarterly sales 4 quarters prior. We then calculate the market-cap value-weighted average across
+all peers.
+        We report the results in Table 11. Following the same methodology in Table 4, we run
+quarterly regressions of changes in executive effort (D_GML) on lagged changes in quarterly firm
+sales and lagged changes in quarterly peer firms' sales. As in Table 4, change in executive effort
+(D_GML) is defined as the difference in GML during the fiscal quarter minus the same measure
+during the fiscal quarter 4 quarters prior.
+        All specifications include executive fixed effects, thus the analysis is conducted at the
+executive level. In Specifications 1-3, we explore the effect of both firm growth in sales and peer
+growth in sales on changes during quarter t-1 on GML over the next quarter. Strikingly, while the
+firm's own growth in sales does not predict subsequent changes in GML, growth in peer firms'
+sales has a positive and significant effect on GML. The effect is economically significant. A 5%
+increase in peer firms sales is associated with an increase of 0.40 hours during the next quarter
+(0.078 x 5=0.40). Note that the quarterly financial results are reported toward the end of the first
+month of the subsequent quarter. Thus, our estimates likely underestimate the true effect, since
+GML is estimated over the entire quarter period.
+        Controlling for firm characteristics slightly attenuates the effect of peer firms (0.06,
+Specification 6). Including changes in sales in quarter t-2 confirms that executives do respond to
+the changes in sales of the most recent quarter (i.e., t-1). In the last two specificaitons, we exclude
+financial firms. The coefficient estimates are not materially different from what is reported in the
+other specificaitons. However, as in Table 7, the low number of observations makes the estimation
+noiser, which reduces statistical significance.
+
+
+5. Conclusion
+
+        While hidden action problems are ubiquitous in firms and markets, technology is making
+it easier to assess hidden action problems. Indeed, the use of cookies and web traffic surveillance
+
+
+
+
+                                                  20
+makes it easier to follow peoples' actions, even when they do not suspect it. We predict that such
+monitoring may eventually shed light on many unresolved issues in economics.
+       In this paper, we do not employ such tactics, but rely on a publicly-available measure to
+characterize how effort affects firm-value. While we are careful not to collect information about
+the nature of how actually executives use Bloomberg (for privacy reasons), we are able to conclude
+that higher attention to their firm and higher work intensity appear to be associated with positive
+earnings surprises and abnormal stock returns. This was not obvious ex ante, since it could have
+been the case that effort was inefficient or possibly misguided.
+       Finally, we consider several agency issues that have been highlighted in the academic
+literature. We find that executives do decrease effort when the benefit of receiving higher
+compensation is outside of their locus of control and when weather conditions make it attractive
+to engage in outside activities. In contrast, effort provision does appear to respond positively to
+competition within an executive's industry, measured by sales growth by competing firms.
+
+
+
+
+                                                21
+References
+
+Aboody, D., Johnson, N. B., and Kasnik, R. "Employee stock options and future firm
+performance: Evidence from option repricings". Journal of Accounting and Economics 50: 74­
+92, 2010.
+
+Bandiera, O., Hansen, S., Pratt, A., and Sadun, R. "CEO Behavior and Firm Perfomance". Forth
+coming in Journal of Political Economy.
+
+Bebchuk, L. A., and Fried, J. M. "Executive Compensation as an Agency Problem". Journal of
+Economic Perspectives 17: 71­92, 2003.
+
+Bennett, B., Bettis, J. C., Gopalan, R. and Milborn, T. "Compensation goals and firm
+performance". Journal of Financial Economics 124: 307­330, 2017.
+
+Berle, A., A. and Means, G. C. The Modern Corporation and Private Property, New York, 1932.
+
+Bertrand, M. and Mullainathan, S. "Are CEO's rewarded for luck? The ones without principals
+are". Quarterly Journal of Economics 116(3): 901-932, 2001.
+
+Biggerstaff, L., Ciceero, D.C., and Puckett, A. "FORE! An Analysis of CEO Shirking".
+Management Science 63(7): 2302-2322, 2017.
+
+Bröde, P., Fiala, D., Blaejczyk, K., Holmér, I., Jendritzky, G., Kampmann, B., Tinz, B., and
+Havenith, G. "Deriving the operational procedure for the Universal Thermal Climate Index
+(UTCI)." International Journal of Biometeorology 56, no. 3 (2012): 481-494.
+
+Cogwill, B. and Zitzewitz, E. "Incentive Effects of Equity Compensation: Employee-level
+evidence from Google". Working paper, Dartmouth College.
+
+Coughlan, A. T. and Schmidt, R.M. "Executive compensation, management turnover, and firm
+performance". Journal of Accounting and Economics 7: 43­66, 1985.
+
+Core, J. and Guay, W. "The Use of Equity Grants to Manage Optimal Equity Incentive Levels".
+Journal of Accounting and Economics 28: 151­84, 1999.
+
+Core, J. and Guay, W. "Estimating the Value of Employee Stock Option Portfolios and Their
+Sensitivities to Price Volatility". Journal of Accounting Research 40: 613­30, 2002.
+
+Degeorge, F., Patel, J. and Zeckhauser, R. "Earnings management to exceed thresholds." Journal
+of Buriness 72(1): 1-33, 1999.
+
+Edmans, A. and Gabaix, X. "Executive Compensation: A Modern Primer". Journal of Economic
+Literature 54(4), 1232-1287, 2016.
+
+
+
+
+                                               22
+Edmans, A., Gabaix, X., and Jenter, D. "Executive Compensation: A Survey of Theory and
+Evidence". Chapter 9 in Benjamin E. Hermalin and Michael S. Weisbach (eds.), Handbook of
+the Economics of Corporate Governance, Elsevier: Amsterdam, 383-539, 2017.
+
+Foster, G., Olsen, C. and Shevlin, T. "Earnings releases, anomalies, and the behavior of security
+returns." Accounting Review 59(4): 574-603, 1984.
+
+Frydman, C. and Saks, R.E. "Executive Compensation: A New View from a Long-Term
+Perspective, 1936­2005". Review of Financial Studies 23(5): 2099- 2138, 2010.
+
+Gormley, T. A., Matsa, D. A., and Milborn, T. "CEO compensation and corporate risk: Evidence
+from a natural experiment". Journal of Accounting and Economics 56: 79-101, 2013.
+
+Hall, B. J., and Liebman, J. B. "Are CEOs Really Paid Like Bureaucrats?" Quarterly Journal of
+Economics 113: 653­91, 1998.
+
+Hall, B.J. and Murphy, K.J. "Stock Options for Undiversified Executives". Journal of
+Accounting and Economics 33(1): 3-42, 2002.
+
+Hayes, R.M., Lemmon, M., and Qui, M. "Stock options and managerial incentives for risk-
+taking: Evidence from FAS 123R". Journal of Financial Economics 105: 174-190, 2012.
+
+Healy, P.M. "The Effect of Bonus Schemes on Accounting Decisions". Journal of Accounting
+and Economics 7: 85-107, 1985.
+
+Holmstrom, B. and Milgrom, P. "Aggregation and Linearity in the Provision of Intertemporal
+Beliefs". Econometrica 55(2): 303-328, 1987.
+
+Jensen, M. C. and Murphy, K.J. "Performance Pay and Top-Management Incentives". Journal of
+Political Economy 98(2): 225-264, 1990.
+
+Mehran, H. "Executive compensation structure, ownership, and firm performance". Journal of
+Financial Economics 38: 163­184, 1995.
+
+Mintzberg, H. The Nature of Managerial Work Harper and Row., New York, 1973.
+
+Morck, R., Shleifer,A., and Vishny, R.W. "Management owenership and market valuation: An
+empirical analysis". Journal of Financial Economics 20: 293-315, 1988.
+
+Murphy, K. J. "Corporate Performance and Managerial Remuneration: An Empirical Analysis".
+Journal of Accounting and Economics 7:11­42, 1985.
+
+Murphy, K.J. "Executive Compensation" in Orley Ashenfelter and David Card (eds.) Handbook
+of Labor Economics, Vol. 3b, Elsevier Science North Holland, Chapter 38: 2485-2563, 1999.
+
+
+
+
+                                               23
+Murphy, K. J. "Performance Standards in Incentive Contracts," Journal of Accounting and
+Economics 30 (3): 245-78, 2000.
+
+Tartarini, F., Schiavon, S., 2020. pythermalcomfort: A Python package for thermal comfort
+research. SoftwareX 12, 100578. https://doi.org/10.1016/j.softx.2020.100578
+
+The Commission for Thermal Physiology of the International Union of Physiological Sciences
+(2003) Glossary of terms for thermal physiology. Journal of Thermal Biology 28:75­106.
+doi:10.1016/S0306-4565 (02)00055-4
+
+Yermack, D. "Do corporations award CEO stock options effectively?". Journal of Financial
+Economics 39: 237-269, 1995.
+
+Yermack, D. Tailspotting: "Identifying and profiting from CEO vacation trips". Journal of
+Financial Economics 113: 252-269, 2014.
+
+Zare, S., Hasheminejad, N., Shirvan, H. E., Hemmatjo, R., Sarebanzadeh, K., and Ahmadi, S.
+"Comparing Universal Thermal Climate Index (UTCI) with selected thermal
+indices/environmental parameters during 12 months of the year." Weather and Climate
+Extremes 19 (2018): 49-57.
+
+
+
+
+                                              24
+Tables and Figures:
+
+Table 1. Summary Statistics:
+
+The table reports the summary statistics of firm characteristics (Panel A) of executives' firms, executives' and
+their industries (Panel B). Our full sample includes data 520 executive-year observations for 252 named
+executives online on Bloomberg with accounting data on Compustat. Size is the market capitalization of the
+firm's stock (measured in millions of dollars), Q is Tobin's Q, Leverage is long term debt (Compustat item dltt)
+plus debt in current liabilities (Compustat item dlc) all divided by total assets (Compustat item at). productivity
+is revenues (Compustat item sale) divided by total assets. Industries in Panel B are defined using the Fama
+French 12 industry definitions which are available on Kenneth French's website.
+
+
+
+Panel 1.A ­ Firm Characteristics
+
+           Variable                   N        Mean       Std Dev 25th Pctl Median 75th Pctl
+           size                      520       43,194      68,842   5,389   12,894  51,390
+           Q                         520        1.588       1.102   1.018    1.179   1.755
+           Leverage                  520        0.314       0.239   0.118    0.269   0.455
+           productivity              520        0.353       0.393   0.060    0.237   0.494
+
+
+
+
+                                                        25
+Panel 1.B ­ Industries
+
+                  Industry                    N OBS   Pct of Sample
+                  Finance                      284        54.6%
+                  Other                         65        12.5%
+                  Energy                        48         9.2%
+                  Utilities                     33         6.3%
+                  Healthcare                    32         6.2%
+                  Business Equipment            17         3.3%
+                  Chemicals                     10         1.9%
+                  Consumer NonDurables          10         1.9%
+                  Telecommunications            9          1.7%
+                  Manufacturing                 8          1.5%
+                  Wholesale and Retail          3          0.6%
+                  Consumer Durables             1          0.2%
+
+
+
+
+                                         26
+Table 2. Effort Measures
+
+The table reports the summary statistics of terminal usage by executives as well as the derived effort measure.
+Our sample includes data for 252 named executives that are online on Bloomberg during sample period at firms
+with data in the Compustat database. Summary statistics for Bloomberg usage are presented for both "Active"
+and "Mobile", where Active indicates that the executive is actively using the Bloomberg terminal and Mobile
+indicates that the executive is actively using the Bloomberg Professional mobile application. The effort measure
+GML (Gaussian Mixture Length) is our measure of workday length (in hours) during the fiscal year. See Section
+2.3 for details on the construction of GML. Data used in the table cover the period from September 2017 to
+December 2019 and effort and usage variables are measured over the fiscal year of a given executive's firm.
+
+
+
+Sample Coverage:
+         named executives:                        252
+         executive-year obs:                      520
+         mean days:                               178
+         mean workdays (Mon-Fri):                 129
+         mean weeks:                               31
+                                                             Active                         Mobile
+Bloomberg Usage:                                 Mean        Median    St Dev     Mean      Median     St Dev
+        weekly                                   6.92         5.31      5.81      0.45       0.15       0.96
+        evenings (Mon-Fri)                       0.13         0.06      0.29      0.05       0.01       0.11
+        weekend (per day)                        0.06         0.00      0.19      0.02       0.00       0.08
+        holidays                                 0.54         0.14      0.86      0.04       0.00       0.27
+
+Effort Measure:                                  Mean        St Dev   25th pctl   Median 75th Pctl
+          GML (Gaussian Mixture Length)          9.47         2.10      8.13       9.19   10.46
+
+
+
+
+                                                        27
+Table 3. Executive Activity During Events
+
+The table provides statistics on executive activity on Bloomberg Terminals during investment banking
+conferences/presentations, analyst days, investor dayss, annual meetings, earnings releases, and earnings calls.
+Executives are considered "inactive" if they are not actively using the Bloomberg Terminal at any point during
+the 30 mintues following the beginning of the event. For the Conference/Presentation and Analyst/Investor Day
+events, we examine transcripts of the events on Factiva to determine whether the executive was present. For
+those two events, we exclude any active executives who are not listed as participants in the event. Data on event
+descriptions, dates, start times, and other details are collected from the Bloomberg terminal using the "EVTS"
+function. Data cover the fiscal years 2017 ­ 2019.
+
+
+                                       CEOs                          CFOs                      Other
+                              events inactive pct           events inactive pct        events inactive pct
+Conference/Presentation        410      408   99.5%          784      783   99.9%       287     284    99.0%
+Analyst/Investor Day            35       35  100.0%           55       55  100.0%        27      27   100.0%
+Annual Meeting                  70       66   94.3%          122      111   91.0%        67      61    91.0%
+Earnings Release               327      244   74.6%          543      393   72.4%       316     257    81.3%
+Earnings Call                  312      271   86.9%          544      486   89.3%       303     263    86.8%
+
+
+
+
+                                                       28
+Table 4. Effort and Earnings Surprise
+
+The table provides results of regressions of earnings surprises on changes in CEO and CFO effort, measures of
+insider trading, and firm characteristics. The measure of earnings surprise is Standardized Unexpected Earnings
+(SUE), which is defined as the difference in the current quarterly earnings per share and the earnings per share
+4 quarters prior divided by the standard deviation of these differences measured over the previous eight quarters.
+Change in effort (D_GML) is defined as the difference in GML during the fiscal quarter minus the same measure
+during the fiscal quarter 4 quarters prior. The first 7 specifications include executives in all industires while
+specification 9 is limited to those in non-financial firms. Four measures of insider trading are included in the
+regressions based on differences in insider trading between the fiscal quarter and the fiscal quarter 4 quarter
+prior. The variables D_purchase, and D_sell, are the differences in log dollar amount of open market insider
+purchases and sales, respectively, by the executive during the fiscal quarter associated with the earnings
+announcement minus the amounts 4 quarters prior. The variables D_purchase_all and D_sell_all are the log
+dollar amount of open market insider purchases and sales by all insiders at the firm during the fiscal quarter
+minus the amounts 4 quarters prior. Insider trading data are from the SEC Edgar database. Terminal activity are
+from Bloomberg, analyst forecast and earnings per share data are from I/B/E/S, and Fama-French 12 industry
+definitions are from Ken French's website. Firm characteristics, size, leverage, productivity, and Tobin's Q are
+from CRSP and Compustat and are included where indicated. An intercept is estimated in each regression, but
+not reported. Standard errors are clustered by executive and are reported in parentheses. Statistical significance
+at the 10%, 5%, and 1% level is indicated with *, **, and ***, respectively.
+
+
+
+Variable                  (1)          (2)          (3)         (4)          (5)         (6)          (7)          (8)          (9)
+D_GML                   0.063        0.058        0.078       0.075       0.062        0.054        0.062        0.053        0.077
+                      (0.027) **   (0.026) **   (0.025) *** (0.024) *** (0.026) **   (0.025) **   (0.026) **   (0.025) **   (0.035) **
+D_purchase             -0.008        0.022       -0.015       0.016       -0.018       0.008       -0.018        0.008       -0.106
+                      (0.054)      (0.051)      (0.055)     (0.052)      (0.051)     (0.047)      (0.051)      (0.047)      (0.030) ***
+D_sell                 -0.011       -0.001       -0.009      -0.001       -0.015      -0.003       -0.015       -0.003        0.002
+                      (0.014)      (0.013)      (0.012)     (0.011)      (0.011)     (0.010)      (0.011)      (0.010)      (0.020)
+D_purchase_all                      -0.030                   -0.031                   -0.027                    -0.027       -0.049
+                                   (0.012) **               (0.012) **               (0.013) **                (0.013) **   (0.020) **
+D_sell_all                          -0.011                   -0.007                   -0.015                    -0.015       -0.028
+                                   (0.008)                  (0.009)                  (0.009) *                 (0.009) *    (0.015) *
+Non-Fin Firms Only?    NO           NO           NO          NO           NO          NO           NO           YES          YES
+Firm Controls?         NO           NO           YES         YES          YES         YES          YES          YES          YES
+Industry FE?           NO           NO           NO          NO           YES         YES          YES          YES          YES
+Executive Role FE?     NO           NO           NO          NO           NO          NO           YES          YES          YES
+N OBS                  436          436          436         436          436         436          436          436          187
+R-Squared             0.010        0.026        0.100       0.115        0.166       0.184        0.166        0.184        0.287
+
+
+
+
+                                                               29
+Table 5. Effort and Earnings Announcement Returns
+
+The table provides results of regressing cumulative abnormal stock returns (in basis points) around earnings
+announcements on executive effort measured during the fiscal quarter associated with the earnings as well as
+standardized unexpected earnings (SUE), and measures of insider trading during the fiscal quarter. Panel A
+provides results for all executives. Panel B provides results for executives at non-financial firms. Each reported
+coefficient represents a single regression using GML. Cumulative returns are measured using the Fama-French
+3 Factor model where factor loadings are estimated using a year of past daily stock returns (skipping the most
+recent week). Cumulative abnormal returns are presented for ranges of 1 through 50 trading days where the first
+day is the trading day that includes the announcement. Terminal activity are from Bloomberg and stock price
+data are from CRSP. Fama French factor portfolios are from Ken French's website. SUE is defined as the
+difference in the current quarterly earnings per share and the earnings per share 4 quarters prior divided by the
+standard deviation of these differences measured over the previous eight quarters. Four measures of insider
+trading are included in the regressions. The variables log_purchase, and log_sell, are the log dollar amount of
+open market insider purchases and sales, respectively, by the executive during the fiscal quarter associated with
+the earnings announcement. The variables log_purchase_all and log_sell_all are the log dollar amount of open
+market insider purchases and sales by all insiders at the firm during the fiscal quarter. Insider trading data are
+from the SEC Edgar database. To be included in the sample, an executive must have been active on Bloomberg
+for at least four fiscal quarters. 1,128 observations are included in the regressions. All regressions include
+individual executive fixed effects. Standard errors, clustered by executive, are reported in parentheses. Statistical
+significance at the 10%, 5%, and 1% level is indicated with *, **, and ***, respectively.
+
+
+
+
+                                                        30
+Panel 5.A ­ All Executives
+Variable            1-day         2-day      3-day      4-day     5-day      6-day      7-day      8-day      9-day
+GML                   27.35         29.46      25.99      23.27     25.07      27.79      27.21      28.56      31.90
+                   (14.01) *     (13.37) ** (12.12) ** (12.24) * (12.42) ** (12.12) ** (12.68) ** (14.00) ** (14.86) **
+SUE                   19.43         21.52      20.27      20.49     19.73      19.11      17.79      17.16      17.72
+                     (8.68) **   (10.29) ** (10.60) * (10.84) * (11.51) * (12.77)      (12.79)    (13.14)    (13.64)
+log_purchase          20.45         21.05      15.56       5.33      9.04       3.92       8.15      10.89       7.50
+                   (10.74) *     (13.84)    (11.25)    (13.75)   (14.19)    (12.69)    (14.31)    (15.92)    (17.23)
+log_sell               1.74          2.50       2.48       1.55      1.63       1.20      -0.06       0.64       2.42
+                     (3.96)        (4.25)     (4.10)     (4.21)    (4.36)     (4.52)     (4.67)     (4.73)     (4.98)
+log_purchase_all       2.91          3.60       3.40       4.15      1.59       4.42       5.84       3.75       1.98
+                     (4.41)        (4.84)     (5.09)     (4.92)    (4.91)     (4.87)     (5.40)     (5.36)     (5.52)
+log_sell_all           0.23         -0.53      -1.70      -1.14     -0.89      -1.95      -2.03      -0.57      -0.29
+                     (2.49)        (2.70)     (2.85)     (2.94)    (3.06)     (3.16)     (3.42)     (3.38)     (3.46)
+Executive FE?         YES           YES        YES        YES       YES        YES        YES        YES        YES
+N OBS               1,128         1,128      1,128      1,128     1,128      1,128      1,128      1,128      1,128
+R-Squared            0.16          0.16       0.15       0.13      0.13       0.13       0.12       0.13       0.13
+
+Variable           2-week        3-week      4-week     5-week 6-week         7-week     8-week       9-week    10-week
+GML                   26.72         26.73       32.85      39.51     44.36       47.05      47.34        47.26     49.16
+                   (14.96) *     (14.34) *   (16.63) ** (18.20) ** (20.23) ** (22.68) ** (23.06) **   (24.57) * (26.09) *
+SUE                   15.91         20.90       30.39      26.07     14.47       19.43      14.41        17.35     17.46
+                   (13.24)       (14.48)     (15.39) * (14.29) * (16.72)      (17.37)    (18.12)      (18.40)    (19.54)
+log_purchase           5.31         -4.79       -6.92      -6.08    -21.11     -21.79     -14.80       -24.49     -22.02
+                   (19.15)       (20.63)     (23.07)    (25.84)    (25.85)    (29.91)    (30.02)      (31.07)    (32.68)
+log_sell               2.35          3.58        4.55       4.19       3.34       2.03       3.15         1.35      -2.35
+                     (5.39)        (5.47)      (6.36)     (7.14)    (7.49)      (7.24)     (7.15)       (7.58)    (8.10)
+log_purchase_all       1.93          4.45        5.24       5.26     11.17       12.73      16.64        21.07     19.47
+                     (5.63)        (5.81)      (6.30)     (7.60)    (8.64)      (8.74)     (9.43) *   (10.22) ** (10.85) *
+log_sell_all          -0.95         -2.57       -4.92      -7.45      -7.57      -7.55      -7.92        -9.13    -10.52
+                     (3.61)        (4.02)      (4.50)     (4.86)    (5.09)      (5.28)     (5.27)       (5.61)    (5.79) *
+Executive FE?         YES           YES         YES        YES       YES         YES        YES          YES       YES
+N OBS               1,128         1,128       1,128      1,128      1,128      1,128      1,128        1,128      1,128
+R-Squared            0.13          0.13        0.14       0.15       0.14       0.15       0.15         0.14       0.12
+
+
+
+
+                                                            31
+Panel 5.B ­ Executives at Non-Financial Firms
+Variable           1-day          2-day        3-day      4-day             5-day          6-day          7-day      8-day           9-day
+GML                   43.91          43.19        33.64      33.91             33.61          35.18          35.33      42.05            49.16
+                    (19.33) *      (21.67) *    (18.07) * (15.26) *          (15.57) *      (15.77) *      (16.61) * (20.88) *         (24.13) *
+SUE                   34.64          41.87        44.85      45.59             47.96          49.14          44.28      42.16            39.93
+                    (17.02) *      (25.21)      (28.07)    (27.63)           (27.56)        (28.71)        (28.60)    (25.68)          (27.94)
+log_purchase          25.34          11.49        15.82      -1.15              4.13          -2.29           1.77       6.05            -3.70
+                     (6.12) ***    (11.34)       (8.93)    (14.48)           (10.95)        (18.59)        (16.59)    (18.80)          (24.51)
+log_sell               1.18           2.96         1.74       0.56              2.29           3.51           3.25       2.85             6.36
+                     (6.26)         (6.35)       (6.29)     (7.63)            (7.29)         (6.42)         (6.63)     (6.51)           (6.10)
+log_purchase_all       3.32           5.25         5.27       7.78              2.63           6.71           7.17       5.54             3.52
+                    (10.28)         (9.98)      (11.06)    (10.73)           (10.23)         (9.56)        (11.32)    (10.42)          (10.37)
+log_sell_all          -2.42          -3.71        -5.98      -6.16             -6.03          -8.08          -8.83      -6.30            -5.98
+                     (5.13)         (4.68)       (6.10)     (6.19)            (5.53)         (4.99)         (6.47)     (5.07)           (4.82)
+Executive FE?        YES            YES          YES        YES               YES            YES            YES        YES              YES
+N OBS                457            457          457        457               457            457            457        457              457
+R-Squared           0.196           0.19        0.175       0.15              0.15           0.15           0.14       0.14            0.14
+
+
+Variable           2-week         3-week       4-week        5-week         6-week         7-week         8-week        9-week       10-week
+GML                   39.16          42.05        58.50         69.11          88.63          95.07          91.33         96.37        104.38
+                    (22.00)        (20.94) *    (29.94) *     (29.49) **     (28.90) **     (26.85) ***    (27.33) **    (26.83) *** (26.61) ***
+SUE                   39.69          42.64        50.16         49.77          24.43          35.23           9.51         14.76          11.47
+                    (29.89)        (37.26)      (30.21)       (29.56)        (28.83)        (27.83)        (33.68)       (67.41)       (75.52)
+log_purchase         -12.69         -29.57       -44.45        -57.07         -66.04         -80.73         -72.36        -81.99        -90.72
+                    (32.33)        (35.57)      (37.47)       (43.39)        (50.01)        (61.47)        (50.40)       (56.71)       (61.07)
+log_sell                6.34           2.10        3.63          0.85           0.58           -1.97          0.42          -0.94         -7.32
+                     (5.81)         (4.96)       (6.20)        (5.18)         (5.08)         (4.64)         (6.15)        (4.66)         (8.17)
+log_purchase_all        4.53           1.58        1.39          1.66           5.62            8.08         13.07         26.26          19.93
+                     (9.09)         (9.62)       (7.82)        (8.29)        (10.10)         (7.69)        (10.24)       (16.78)       (14.85)
+log_sell_all           -6.73          -8.84      -14.09        -16.00         -18.07         -20.43         -21.77        -22.44        -22.74
+                     (3.85)         (4.44) *     (5.35) **     (3.59) ***     (4.11) ***     (5.65) ***     (6.56) **     (6.43) ***     (6.67) ***
+Executive FE?         YES            YES          YES           YES            YES            YES            YES           YES          YES
+N OBS                 457            457          457           457            457            457            457           457          457
+R-Squared            0.14           0.13         0.15          0.18           0.16           0.18           0.17          0.17         0.14
+
+
+
+
+                                                                     32
+Table 6. Calendar Time Portfolio Returns
+
+The table reports mean returns of calendar time portfolios around earnings announcements based on changes in
+executive effort during the fiscal quarter relative to the fiscal quarter one-year prior, where effort is defined using
+GML. We report results for two portfolios, High_Effort and Low_Effort, as well as a portfolio that is long High
+Effort and short Low Effort. To be included in the High Effort portfolio on a given day, we require the change
+in GML for the stock's executive to be in the top 10% for all executives in the sample with the same fiscal quarter
+end, and the earnings announcement corresponding to the fiscal quarter must have occurred within the past five
+trading days. The Low Effort portfolio is defined analogously, with change in GML in the bottom 10%. The
+High minus Low portfolio is the return of the High Effort portfolio minus the return of the Low Effort Portfolio.
+Portfolio returns are value-weighted using market capitalization weights. To reduce noise, if the number of
+stocks on any given day in a portfolio drops below 2, we replace the portfolio return with the risk free rate. Both
+raw returns and risk adjusted returns are presented in basis points. The Fama-French 3-factor model is used to
+adjust for risk. Factor loadings are estimated using a year of past daily stock returns (skipping the most recent
+week). Terminal activity are from Bloomberg and stock price data are from CRSP. Fama French factor portfolios
+are from Ken French's website. Newey-West standard errors using 5 lags are reported in parentheses. Statistical
+significance at the 10%, 5%, and 1% level is indicated with *, **, and ***, respectively.
+
+
+
+
+                                                                    Mean
+                                    Portfolio                       (bps)
+                                    Raw Return
+                                        High_Effort                 4.678
+                                                                   (2.498) *
+                                        Low_Effort                 -2.520
+                                                                   (2.822)
+                                        High minus Low              7.198
+                                                                   (3.686) *
+                                    Risk-Adjusted Return
+                                        High_Effort                 4.579
+                                                                   (1.569) ***
+                                        Low_Effort                 -2.751
+                                                                   (2.355)
+                                        High minus Low              7.330
+                                                                   (3.129) ***
+
+
+
+
+                                                         33
+Table 7. Effort and Credit Default Swap Spreads
+
+The table provides results of regressions of firm CDS spreads in quarter t+1 on executive effort (GML) in quarter
+t, the firm's CDS spread (Spread) in quarter t, measures of insider trading in quarter t, and other firm
+characteristics. Daily data of 5-year CDS spreads are obtained from DataStream. For each firm and quarter, we
+keep the last trading day in that quarter. We keep firms with active CDS contracts during our sample period and
+end up with 574 observations over 89 executives and 57 firms. Due to the persistence in CDS spreads, we control
+for lagged Spread (i.e., an AR1 model). However, using first difference (Spread t+1 ­ Spread t) virtually provides
+the same results. To reduce the effect of outliers, we trim observations where the quarterly changes in spread are
+at the top and bottom 1% of their distribution. We include four measures of insider trading include Purchase
+(Sell), which is the log dollar amount of open market insider purchases (sales) by the executive during quarter
+q, and Purchase_All (Sell_All), which is the log dollar amount of open market insider purchases (sales) by all
+insiders during quarter q. Insider trading data are from the SEC Edgar database. Terminal activity are from
+Bloomberg, analyst forecast and earnings per share data are from I/B/E/S, and Fama-French 12 industry
+definitions are from Ken French's website. Firm characteristics, size, sales, leverage, productivity, and Tobin's
+Q are from CRSP and Compustat and are included where indicated. An intercept is estimated in each regression,
+but not reported. All specifications include year fixed effects. Standard errors are clustered by executive and are
+reported in parentheses. Statistical significance at the 10%, 5%, and 1% level is indicated with *, **, and ***,
+respectively.
+
+
+Variable                     (1)         (2)         (3)         (4)         (5)         (6)         (7)         (8)         (9)
+GML                      -0.791      -0.879      -0.929      -0.976      -1.504      -1.486      -1.410      -0.964      -1.113
+                        (0.320) ** (0.330) *** (0.380) ** (0.390) ** (0.600) ** (0.600) ** (0.590) ** (0.720)           (0.690)
+Spread                    0.996       0.995       0.998       0.994       0.700       0.700       0.704       0.672       0.591
+                        (0.040) *** (0.040) *** (0.040) *** (0.040) *** (0.150) *** (0.150) *** (0.150) *** (0.194) *** (0.185) ***
+log_Purchase                                                                         -0.277
+                                                                                    (0.730)
+Log_Sell                                                                             -0.104
+                                                                                    (0.100)
+Log_Purchase_all                                                                                 -0.269
+                                                                                                (0.240)
+Log_Sell_All                                                                                     -0.097
+                                                                                                (0.130)
+Firm Controls?           NO          NO          NO          YES         YES         YES         YES         NO          YES
+Industry FE?             NO          NO          YES         YES         YES         YES         YES         YES         YES
+Executive FE?            NO          NO          NO          NO          YES         YES         YES         YES         YES
+Excluding Financials?    NO          NO          NO          NO          NO          NO          NO          YES         YES
+N OBS                    574         574         574         574         574         574         574         260         260
+R-Squared                0.924       0.924       0.923       0.925       0.928       0.928       0.928       0.940       0.943
+
+
+
+
+                                                              34
+Table 8. Ex-Ante Incentive Contracts
+The table reports the summary statistics of the excutives' compensation and targets. This sample consists of
+252 executives with compensation data in ISS Incentive Lab. value_stock_owned is the dollar value of the
+executive's stockholdings in the firm. salary is the executives' fixed salary during the fiscal year. cash_perf is
+the target dollar amount of the cash-based performance incentive bonus from the executive's compensation
+contract for the fiscal year. stock_perf is the target dollar amount of the stock-based performance incentive
+bonus from the contract. stock_time and option_time are the values of the time-based stock and option grants,
+respectively, from the contract. Predicted compensation, pred_comp, is the sum of salary, cash_perf,
+stock_perf, stock_time, and option_time. The cash performance metric types Accounting, Individual, Stock
+Price, and Other are the weights of the categories for the metrics that determine the executive's cash based
+incentive program. Metrics are categorized by incentive lab and the weights of each metric are collected from
+the proxy statements.
+
+
+
+      Variable                              N         Mean        Std Dev      25th Pctl   Median       75th Pctl
+Executive Role
+     CEO                                   520         27%
+     CFO                                   520         45%
+Compensation Contracts
+     value_stock_owned                     520       68,952       239,370       3,081       10,693       38,826
+     pct_firm_owned                        520       0.77%         3.81%        0.02%       0.07%        0.21%
+     pred_comp                             520        7,227        14,706       2,203        4,178        7,696
+     salary                                520         783          452          500          675         1,000
+     cash_perf                             520        1,180        1,944         138          643         1,350
+     stock_perf                            520        2,530        3,963         360         1,239        3,016
+     stock_time                            520        2,154        12,269          0          345         1,295
+     option_time                           520         566         1,304           0           0           497
+Cash Performance Metric Types
+     Accounting                            520       62.79%
+     Other                                 520       27.60%
+     Individual                            520        7.08%
+     Stock Price                           520        2.53%
+
+
+
+
+                                                        35
+Table 9. Incentive Contracts and Effort ­ Earnings Targets
+The table provides results of regressions of changes in GML between the 1st half of the fiscal year and the 2nd
+half of the fiscal year on a target_1_pct, which indicates that earnings per share in the 1st half of the fiscal year
+are on an annualized pace to finish within 1% of the annual target in the executive's cash bonus compensation
+contract, on the variable pct_cash_perf, and on an interaction between the two variables. target_1_pct is equal
+to 1 if the quantity 2  1 + 2  -  /  is less than 1%, where Q1 and Q2
+indicate the first two fiscal quarters of the year and EPS Target is the EPS target in the executive's bonus contract.
+Additional control variables include the logarithm of predicted compensation, log_pred_comp, the logarithm of
+the value of shares of the firm's stock owned by the executive, and the firm characteristics leverage, size,
+productivity, and Tobin's Q, as well as executive role fixed effects, industry fixed effects, and fiscal year fixed
+effects, where indicated. The final specification includes GML (measured over the entire fiscal year) as a
+dependent variable. The prefixes log on the compensation variable indicates a natural logarithm of the variable
+while the prefix pct indicates that the variable has been scaled by predicted compensation, pred_comp. CEO and
+CFO fixed effects indicate whether the executive's role is that of the Chief Executive Officer or Chief Financial
+Officer, respectively. Terminal activity data are from Bloomberg. Target bonus award amounts and other
+compensation data are from ISS Incentive Lab and variables are defined in Table 2. Twelve Fama French
+Industry Fixed Effects and Fiscal Year fixed effects are included. Data from 55 executives with profile activity
+data on Bloomberg for at least one quarter in the first half of a fiscal year and one quarter in the second half are
+included in the regressions. Standard errors are clustered by executive and are reported in parentheses. Statistical
+significance at the 10%, 5%, and 1% level is indicated with *, **, and ***, respectively.
+
+
+
+
+                                                         36
+                                          GML_CHANGE                   GML
+Variable                      (1)           (2)          (3)          (4)
+pct_cash_perf*target_1_pct    21.068        22.724       19.669
+                             (7.251) **    (7.715) **   (7.769) **
+target_1_pct                  -5.193        -5.495       -4.575
+                             (1.949) **    (2.141) **   (2.257) **
+log_pred_comp                  0.471         0.822        0.739       -0.129
+                             (0.417)       (0.449) *    (0.581)      (0.483)
+pct_cash_perf                 -1.617        -1.911       -1.378        2.720
+                             (2.253)       (2.262)      (2.153)      (1.470) *
+log_shares_owned              -0.033        -0.061       -0.076       -0.057
+                             (0.236)       (0.271)      (0.281)      (0.192)
+Firm Characteristics           YES           YES          YES          YES
+Executive Role FE?             NO            YES          YES          YES
+Industry FE?                   NO            NO           YES          YES
+Fiscal Year FE?                NO            NO           YES          YES
+N OBS                          91            91           91            91
+R-Square                      0.13          0.17         0.25          0.39
+
+
+
+
+                                    37
+Table 10. Effort and Leisure
+The table provides results of regressions of changes quarterly GML on the variable good_weather, as well as
+various fixed effects. The effort measure GML (Gaussian Mixture Length) is a measure of workday length (in
+hours) during the fiscal year. See Section 2.3 for details on the construction of GML. The variable good_weather
+is the percentage of hours during the fiscal quarter in the executive's work location in which (a) the Universal
+Thermal Climate Index (UTCI) is in the "thermal comfort zone", (b) there is no precipitation, (c) the sky is not
+overcast, and (d) it is a daylight hour. Year fixed effects, Executive Role fixed effects (CEO, CFO, or other),
+location fixed effects, and executive fixed effects are included where indicated. Specifications (1) through (5)
+include regressions across the full sample of executives. Specifications (6), (7), and (8) are the subsamples of
+CEOs, CFOs, and other executives, respectively. Terminal activity data are from Bloomberg. Data from 1596
+executive-quarter observations are included. Standard errors are reported in parentheses. Statistical significance
+at the 10%, 5%, and 1% level is indicated with *, **, and ***, respectively.
+
+
+                                           All Executives                          CEOs         CFOs       Others
+Variable             (1)           (2)          (3)         (4)        (5)          (6)          (7)         (8)
+good_weather        -2.512        -2.373      -2.541      -2.324      -2.404        -4.030      -3.637      0.242
+                   (0.860) ***   (0.863) *** (0.859) *** (0.836) *** (0.715) ***   (1.340) *** (1.171) *** (1.180)
+Year FE?             NO            YES         YES         YES         YES           YES         YES         YES
+Exec Role FE?        NO            NO          YES         YES         NO            NO          NO          NO
+Location FE?         NO            NO          NO          YES         NO            NO          NO          NO
+Executive FE?        NO            NO          NO          NO          YES           YES         YES         YES
+N OBS               1597          1597        1597          1597      1597          416         717          460
+R-Squared           0.01          0.01        0.02          0.22      0.51          0.54        0.48         0.55
+
+
+
+
+                                                            38
+Table 11. Effort and Industry Competition
+
+The table provides results of quarterly regressions of changes in executive effort (D_GML) on lagged changes
+in quarterly firm sales and lagged changes in quarterly peer firms' sales. Change in effort (D_GML) is defined
+as the difference in GML during the fiscal quarter minus the same measure during the fiscal quarter 4 quarters
+prior. %Chng_Sales is defined as the percentage change in the firm's sales during fiscal quarter t relative to the
+firm's quarterly sales 4 quarters prior [(Sales t - Sales t-4)/Sales t-4)] in %. In the table, Lag1 (Lag2) means the
+%Chng_Sales in quarter t-1 (t-2). In a similar manner, %Chng_PeerSales is defined as the percentage change
+in the firm's peers' sales during fiscal quarter t relative to the firm's peers' quarterly sales 4 quarters prior. For
+each firm, include up to 10 closest peers based on the GICS6 industry classification, where closest peers are
+defined based on the smallest absolute difference in firm market cap. To aggregate the peer information, we
+calculate the market-cap value-weighted average across all peers. To reduce the effect of outliers, we trim
+%Chng_Sales and %Chng_PeerSales at the top and bottom 1% of their distribution. Terminal activity are from
+Bloomberg, analyst forecast and earnings per share data are from I/B/E/S, and Fama-French 12 industry
+definitions are from Ken French's website. Firm characteristics, size, leverage, productivity, and Tobin's Q are
+from CRSP and Compustat and are included where indicated. An intercept is estimated in each regression, but
+not reported. All specifications include year fixed effects. Standard errors are clustered by executive and are
+reported in parentheses. Statistical significance at the 10%, 5%, and 1% level is indicated with *, **, and ***,
+respectively.
+
+
+Variable                       (1)       (2)           (3)          (4)       (5)           (6)          (7)          (8)        (9)
+Lag1_%Chng_Sales            0.003                  -0.006       -0.003                  -0.008       -0.015       -0.026     -0.023
+                                                  (0.017)      (0.016)                 (0.016)      (0.019)      (0.042)    (0.034)
+Lag1_%Chng_PeerSales                   0.075        0.078                   0.057        0.060        0.054        0.081      0.040
+                                     (0.030) **   (0.034) **              (0.025) **   (0.027) **   (0.026) **   (0.053)    (0.048)
+Lag2_%Chng_Sales                                                                                     -0.016
+                                                                                                    (0.013)
+Lag2_%Chng_PeerSales                                                                                  0.029
+                                                                                                    (0.027)
+Firm Controls?              NO        NO           NO           YES        YES          YES          YES          NO         YES
+Industry FE?                YES       YES          YES          YES        YES          YES          YES          YES        YES
+Executive FE?               YES       YES          YES          YES        YES          YES          YES          YES        YES
+Excluding Financials?       NO        NO           NO           NO         NO           NO           NO           YES        YES
+N OBS                       506       506          506          506        506          506          493          180        180
+R-Squared                   0.063     0.082        0.080        0.077      0.086        0.084        0.092        0.138      0.170
+
+
+
+
+                                                               39
+Figure 1. Bloomberg Screenshot
+
+The figure provides a screenshot for Michael Bloomberg that was obtained using the profile search on the
+Bloomberg terminal. The green dot by Michael Bloomberg's name indicates that he is online. Other possible
+status indicators are a red dot (offline), a yellow dot (idle), a gray dot (private, opted out), and a mobile phone
+icon indicates (user is on the mobile Bloomberg app).
+
+
+
+
+                                                        40
+Figure 2. Example of an Executive's Annual Terminal Activity
+
+This figure describes the Bloomberg terminal activity for a CFO in our sample. The x-axis is each time
+(minute) during 24-hours. The y-axis measures the probability during the year that the CFO is active on the
+terminal at each time, given that the day is not a holiday and it is a weekday.
+
+
+
+
+                                                      41
+Figure 3. Executive Intraday Terminal Activity
+
+The figure provides the average percentage of executives that are active on the Bloomberg terminal at a given
+time on weekdays (Monday through Friday) across the sample period. Panel A averages based on the Eastern
+time zone, while Panel B includes averages based on the local time zone of the Executive. Data are from
+Bloomberg.
+
+
+
+
+                                                     42
+Figure 4. Effort by Day of the Week
+
+The figure provides the average GML measure for each day of the week for the full sample.
+
+
+                                                              GML by Day of the Week
+                                      10.00
+                                                     9.05           9.20               9.19
+                                                                                                      8.88
+                                       9.00                                                                         8.39
+                                       8.00
+
+                                       7.00
+
+                                       6.00
+                                GML
+
+
+
+
+                                       5.00
+
+                                       4.00
+
+                                       3.00
+
+                                       2.00
+
+                                       1.00
+
+                                       0.00
+                                                    Monday         Tuesday         Wednesday        Thursday        Friday
+
+
+Figure 5. Executive Activity and the Earnings Announcement Cycle
+
+The figure includes executive terminal activity through the quarter relative to the firm's earnings announcement.
+Effort is defined as hours online on the terminal. Panel A presents results for all executives in the sample while
+Panel B presents results for CFOs and Panel C presents results for CEOs.
+
+Panel 5A: Executive Activity
+                         3.0
+
+
+
+
+                         2.5
+
+
+
+
+                         2.0
+  Average Active Hours
+
+
+
+
+                         1.5
+
+
+
+
+                         1.0
+
+
+
+
+                          .5
+
+
+
+
+                          .0
+                               -50            -40     -30    -20           -10         0       10      20      30            40   50
+                                                                                 Event Time
+
+
+
+
+                                                                                  43
+Panel 5B: CFO Activity
+                        3.5
+
+
+
+
+                        3.0
+
+
+
+
+                        2.5
+ Average Active Hours
+
+
+
+
+                        2.0
+
+
+
+
+                        1.5
+
+
+
+
+                        1.0
+
+
+
+
+                         .5
+
+
+
+
+                         .0
+                              -50   -40   -30   -20   -10       0        10   20   30   40   50
+                                                            Event Time
+
+
+
+
+Panel 5C: CEO Activity
+                        2.5
+
+
+
+
+                        2.0
+ Average Active Hours
+
+
+
+
+                        1.5
+
+
+
+
+                        1.0
+
+
+
+
+                         .5
+
+
+
+
+                         .0
+                              -50   -40   -30   -20   -10       0        10   20   30   40   50
+                                                            Event Time
+
+
+
+
+                                                            44
+                       0
+                                  0.1
+                                               0.2
+                                                                                                                               0
+
+
+
+
+                           0.05
+                                        0.15
+                                                     0.25
+                                                            0.3
+                                                                                                                                   0.05
+                                                                                                                                          0.1
+                                                                                                                                                0.15
+                                                                                                                                                       0.2
+                                                                                                                                                             0.25
+                                                                                                                                                                    0.3
+             0:01:00                                                                                                 0:01:00
+             0:26:00                                                                                                 0:26:00
+             0:51:00                                                                                                 0:51:00
+             1:16:00                                                                                                 1:16:00
+             1:41:00                                                                                                 1:41:00
+             2:06:00                                                                                                 2:06:00
+             2:31:00                                                                                                 2:31:00
+             2:56:00                                                                                                 2:56:00                                                                                         from Bloomberg.
+             3:21:00                                                                                                 3:21:00
+             3:46:00                                                                                                 3:46:00
+             4:11:00                                                                                                 4:11:00
+             4:36:00                                                                                                 4:36:00
+             5:01:00                                                                                                 5:01:00
+             5:26:00                                                                                                 5:26:00
+             5:51:00                                                                                                 5:51:00
+             6:16:00                                                                                                 6:16:00
+             6:41:00                                                                                                 6:41:00
+             7:06:00                                                                                                 7:06:00
+             7:31:00                                                                                                 7:31:00
+
+
+
+
+                                                                          Panel 6B ­ Activity during April
+             7:56:00                                                                                                 7:56:00
+                                                                                                                                                                                  Panel 6A ­ Activity during March
+
+
+
+
+             8:21:00                                                                                                 8:21:00
+             8:46:00                                                                                                 8:46:00
+             9:11:00                                                                                                 9:11:00
+             9:36:00                                                                                                 9:36:00
+            10:01:00                                                                                                10:01:00
+
+
+
+
+     2018
+                                                                                                             2018
+            10:26:00                                                                                                10:26:00
+            10:51:00                                                                                                10:51:00
+            11:16:00                                                                                                11:16:00
+            11:41:00                                                                                                11:41:00
+
+
+
+
+45
+            12:06:00                                                                                                12:06:00
+
+
+
+
+                                                                  April
+                                                                                                                                                                          March
+
+
+
+
+     2019
+                                                                                                             2019
+            12:31:00                                                                                                12:31:00
+            12:56:00                                                                                                12:56:00
+            13:21:00                                                                                                13:21:00
+            13:46:00                                                                                                13:46:00
+            14:11:00                                                                                                14:11:00
+            14:36:00                                                                                                14:36:00
+
+
+
+
+     2020
+                                                                                                             2020
+            15:01:00                                                                                                15:01:00
+            15:26:00                                                                                                15:26:00
+            15:51:00                                                                                                15:51:00
+            16:16:00                                                                                                16:16:00
+            16:41:00                                                                                                16:41:00
+            17:06:00                                                                                                17:06:00
+            17:31:00                                                                                                17:31:00
+            17:56:00                                                                                                17:56:00
+            18:21:00                                                                                                18:21:00
+            18:46:00                                                                                                18:46:00
+            19:11:00                                                                                                19:11:00
+            19:36:00                                                                                                19:36:00
+            20:01:00                                                                                                20:01:00
+            20:26:00                                                                                                20:26:00
+            20:51:00                                                                                                20:51:00
+                                                                                                                                                                                                                                                                                                                                      Figure 6. Executive Intraday Terminal Activity during the COVID-19 Pandemic
+
+
+
+
+            21:16:00                                                                                                21:16:00
+            21:41:00                                                                                                21:41:00
+            22:06:00                                                                                                22:06:00
+            22:31:00                                                                                                22:31:00
+            22:56:00                                                                                                22:56:00
+            23:21:00                                                                                                23:21:00
+            23:46:00                                                                                                23:46:00
+                                                                                                                                                                                                                     The figure provides the average percentage of executives that are active on the Bloomberg terminal at a given
+
+                                                                                                                                                                                                                     C), and June (Panel D) for the years 2018, 2019, and 2020. Averages are based on the local time zone. Data are
+                                                                                                                                                                                                                     time on weekdays (Monday through Friday) for the months of March (Panel A), April (Panel B), May (Panel
+                       0
+                                                                                                                             0
+
+
+
+
+                           0.05
+                                  0.1
+                                        0.15
+                                               0.2
+                                                     0.25
+                                                            0.3
+                                                                                                                                 0.05
+                                                                                                                                        0.1
+                                                                                                                                              0.15
+                                                                                                                                                     0.2
+                                                                                                                                                           0.25
+                                                                                                                                                                  0.3
+             0:01:00                                                                                               0:01:00
+             0:26:00                                                                                               0:26:00
+             0:51:00                                                                                               0:51:00
+             1:16:00                                                                                               1:16:00
+             1:41:00                                                                                               1:41:00
+             2:06:00                                                                                               2:06:00
+             2:31:00                                                                                               2:31:00
+             2:56:00                                                                                               2:56:00
+             3:21:00                                                                                               3:21:00
+             3:46:00                                                                                               3:46:00
+             4:11:00                                                                                               4:11:00
+             4:36:00                                                                                               4:36:00
+             5:01:00                                                                                               5:01:00
+             5:26:00                                                                                               5:26:00
+             5:51:00                                                                                               5:51:00
+             6:16:00                                                                                               6:16:00
+             6:41:00                                                                                               6:41:00
+             7:06:00                                                                                               7:06:00
+             7:31:00                                                                                               7:31:00
+                                                                                                                                                                              Panel 6C ­ Activity during May
+
+
+
+
+                                                                         Panel 6D ­ Activity during June
+             7:56:00                                                                                               7:56:00
+             8:21:00                                                                                               8:21:00
+             8:46:00                                                                                               8:46:00
+             9:11:00                                                                                               9:11:00
+             9:36:00                                                                                               9:36:00
+            10:01:00                                                                                              10:01:00
+
+
+
+
+                                                                                                           2018
+
+
+
+
+     2018
+            10:26:00                                                                                              10:26:00
+            10:51:00                                                                                              10:51:00
+            11:16:00                                                                                              11:16:00
+            11:41:00                                                                                              11:41:00
+
+
+
+
+46
+                                                                                                                                                                        May
+
+
+
+
+            12:06:00                                                                                              12:06:00
+
+
+
+
+                                                                  June
+                                                                                                           2019
+
+
+
+
+     2019
+            12:31:00                                                                                              12:31:00
+            12:56:00                                                                                              12:56:00
+            13:21:00                                                                                              13:21:00
+            13:46:00                                                                                              13:46:00
+            14:11:00                                                                                              14:11:00
+            14:36:00                                                                                              14:36:00
+                                                                                                           2020
+
+
+
+
+     2020
+            15:01:00                                                                                              15:01:00
+            15:26:00                                                                                              15:26:00
+            15:51:00                                                                                              15:51:00
+            16:16:00                                                                                              16:16:00
+            16:41:00                                                                                              16:41:00
+            17:06:00                                                                                              17:06:00
+            17:31:00                                                                                              17:31:00
+            17:56:00                                                                                              17:56:00
+            18:21:00                                                                                              18:21:00
+            18:46:00                                                                                              18:46:00
+            19:11:00                                                                                              19:11:00
+            19:36:00                                                                                              19:36:00
+            20:01:00                                                                                              20:01:00
+            20:26:00                                                                                              20:26:00
+            20:51:00                                                                                              20:51:00
+            21:16:00                                                                                              21:16:00
+            21:41:00                                                                                              21:41:00
+            22:06:00                                                                                              22:06:00
+            22:31:00                                                                                              22:31:00
+            22:56:00                                                                                              22:56:00
+            23:21:00                                                                                              23:21:00
+            23:46:00                                                                                              23:46:00
+Figure 7. Gaussian Mixture Length Examples
+
+The figure provides an example of the GML measure for three executive-year observations. The blue bars
+represent the empirical probability density function based on activity on Bloomberg. The red curve is the
+estimated Gaussian Mixture Model pdf using the iterative Expectation-Maximization (EM) algorithm. The two
+orange curves are the two underlying Gaussian pdfs. The dashed vertical bars are the estimated means of the
+two distributions. The two black lines represent the beginning and end of the GML measure, or the interval
+(1 - 1 , 2 + 2 ).
+
+Panel 7.A - Example 1
+
+
+
+
+                                                    47
+Panel 7.B - Example 2
+
+
+
+
+Panel 7.C - Example 3
+
+
+
+
+                        48
+Figure 8. Effort Measure Histogram
+
+The figure provides a histogram of the effort measure GML (Gaussian Mixture Length)
+
+
+
+
+                                                   49
+Figure 9. Effort and Leisure
+
+This figure provides an example of the measure good_weather calculated monthly for 4 cities ­ San Diego, CA,
+Honolulu, HI, New York, NY, and Houston, TX. The variable good_weather is the percentage of hours during
+the month in which (a) the Universal Thermal Climate Index (UTCI) is in the "thermal comfort zone", (b) there
+is no precipitation, (c) the sky is not overcast, and (d) it is a daylight hour.
+
+
+                                                                                           good_weather by Month for 4 Cities
+                 50%
+
+                 45%
+
+                 40%
+
+                 35%
+
+                 30%
+  good_weather
+
+
+
+
+                 25%
+
+                 20%
+
+                 15%
+
+                 10%
+
+                 5%
+
+                 0%
+                                                                                                                 Jul-18
+
+
+
+
+                                                                                                                                                                                                                             Jul-19
+
+
+
+
+                                                                                                                                                                                                                                                                                                                                         Jul-20
+                                         Nov-17
+
+
+
+
+                                                                                                        Jun-18
+
+
+
+
+                                                                                                                                                     Nov-18
+
+
+
+
+                                                                                                                                                                                                                    Jun-19
+
+
+
+
+                                                                                                                                                                                                                                                                 Nov-19
+
+
+
+
+                                                                                                                                                                                                                                                                                                                                Jun-20
+                                                                                      Apr-18
+                                                                                               May-18
+
+
+
+
+                                                                                                                                                                                                  Apr-19
+                                                                                                                                                                                                           May-19
+
+
+
+
+                                                                                                                                                                                                                                                                                                              Apr-20
+                                                                                                                                                                                                                                                                                                                       May-20
+                                                  Dec-17
+                                                           Jan-18
+
+
+                                                                             Mar-18
+
+
+
+
+                                                                                                                          Aug-18
+
+
+
+
+                                                                                                                                                                                                                                      Aug-19
+
+
+
+
+                                                                                                                                                                                                                                                                                                                                                  Aug-20
+                       Sep-17
+
+
+
+
+                                                                    Feb-18
+
+
+
+
+                                                                                                                                   Sep-18
+
+
+
+                                                                                                                                                              Dec-18
+                                                                                                                                                                       Jan-19
+                                                                                                                                                                                Feb-19
+                                                                                                                                                                                         Mar-19
+
+
+
+
+                                                                                                                                                                                                                                               Sep-19
+
+
+
+                                                                                                                                                                                                                                                                          Dec-19
+                                                                                                                                                                                                                                                                                   Jan-20
+                                                                                                                                                                                                                                                                                            Feb-20
+                                                                                                                                                                                                                                                                                                     Mar-20
+
+
+
+
+                                                                                                                                                                                                                                                                                                                                                           Sep-20
+                                Oct-17
+
+
+
+
+                                                                                                                                            Oct-18
+
+
+
+
+                                                                                                                                                                                                                                                        Oct-19
+
+
+
+
+                                                                                                                                                                                                                                                                                                                                                                    Oct-20
+                                                                                                                                                                                     Month
+
+
+                                                            San Diego                                                                Honolulu                                                              New York                                                                Houston
+
+
+
+
+                                                                                                                                                                                50
+

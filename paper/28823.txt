@@ -1,0 +1,1789 @@
+                              NBER WORKING PAPER SERIES
+
+
+
+
+     AUTOMATED ENFORCEMENT OF IRRIGATION REGULATIONS AND SOCIAL
+                 PRESSURE FOR WATER CONSERVATION
+
+                                       Jeremy D. West
+                                       Robert W. Fairlie
+                                        Bryan E. Pratt
+                                          Liam Rose
+
+                                      Working Paper 28823
+                              http://www.nber.org/papers/w28823
+
+
+                     NATIONAL BUREAU OF ECONOMIC RESEARCH
+                              1050 Massachusetts Avenue
+                                Cambridge, MA 02138
+                                     May 2021
+
+
+
+
+We thank WaterSmart Software and William Holleran in particular for sharing data. This work
+benefited from comments from Joshua Abbott, Hunt Allcott, Kelly Bishop, Daniel Brent,
+Lopamudra Chakraborti, Jesse Cunha, Lucas Davis, Carlos Dobkin, Daniel Friedman, Brent
+Haddad, Katrina Jessoe, Nicolai Kuminoff, Natalia Lazzati, Justin Marion, Jonathan Meer, Adam
+Millard-Ball, Steven Puller, Jonathan Robinson, Jason Scorse, Kerry Smith, John Sorrentino,
+Alan Spearot, Forrest Williams, and seminar participants at Arizona State University, the
+Middlebury Institute, UC Santa Cruz, and the 2018 AERE Summer Conference. This research
+was supported in part by the U.S. Department of Agriculture, Economic Research Service. The
+findings and conclusions in this work are those of the authors and should not be construed to
+represent any official USDA or U.S. Government determination or policy. Any errors and
+conclusions are our own and do not necessarily represent the views of WaterSmart Software nor
+any other parties. The authors have no material financial interests related to this research. The
+views expressed herein are those of the authors and do not necessarily reflect the views of the
+National Bureau of Economic Research.
+
+NBER working papers are circulated for discussion and comment purposes. They have not been
+peer-reviewed or been subject to the review by the NBER Board of Directors that accompanies
+official NBER publications.
+
+© 2021 by Jeremy D. West, Robert W. Fairlie, Bryan E. Pratt, and Liam Rose. All rights
+reserved. Short sections of text, not to exceed two paragraphs, may be quoted without explicit
+permission provided that full credit, including © notice, is given to the source.
+Automated Enforcement of Irrigation Regulations and Social Pressure for Water Conservation
+Jeremy D. West, Robert W. Fairlie, Bryan E. Pratt, and Liam Rose
+NBER Working Paper No. 28823
+May 2021
+JEL No. D04,L98,Q25,R22
+
+                                         ABSTRACT
+
+This study evaluates two interventions for residential water conservation. Comparing households
+across an enforcement algorithm's cutoff using a regression discontinuity design, we find that
+automated irrigation violation warnings cause substantial water conservation but also shift some
+consumption from regulated to unregulated hours within the week. In contrast, we show using
+data from a randomized experiment with the same customers that normative Home Water Reports
+reduce water use by a much smaller amount, but that this social pressure is effective during all
+hours both before and after automating irrigation policy enforcement. Our findings highlight the
+merits of implementing multidimensional conservation programs.
+
+
+Jeremy D. West                                 Bryan E. Pratt
+Department of Economics                        Department of Economics
+University of California at Santa Cruz         University of California at Santa Cruz
+1156 High Street                               1156 High Street
+Santa Cruz, CA 95064                           Santa Cruz, CA 95064
+westj@ucsc.edu                                 bryan.pratt@usda.gov
+
+Robert W. Fairlie                              Liam Rose
+Department of Economics                        liamrose@stanford.edu
+Engineering 2 Building
+University of California at Santa Cruz
+Santa Cruz, CA 95064
+and NBER
+rfairlie@ucsc.edu
+1       Introduction
+Fresh water availability remains one of the most pressing environmental and economic chal-
+lenges in many regions around the world. The United Nations forecasts that two-thirds of
+the world's population will live with water stressed conditions by 2025, and that this outlook
+will only worsen with climate change.1 At more local levels, concerns are also growing about
+cities sinking from over-extracting underground water resources.2 And, as weather patterns
+become more erratic and severe droughts more frequent, this will continue to increase the
+prevalence of prolonged water shortages such as those recently experienced in California,
+other Southwestern states, and in many regions around the world.
+    In conventional market settings, the response to a severe supply shortage is that prices will
+increase and demand will adjust accordingly; however, prices in water markets are rarely set
+competitively and governments are typically constrained in implementing Pigouvian remedies
+to curtail water consumption (Olmstead et al., 2007). Instead, policymakers rely heavily on
+water use regulations such as irrigation restrictions and social pressure ­ the influence on
+people by their peers ­ to encourage voluntary water conservation.
+    The efficacy of social pressure is often limited. For instance, many water utilities provide
+residential customers with Home Water Reports (HWR) that compare each household's
+water consumption with that of their neighbors. Evaluations of randomized HWR typically
+find conservation effects of around two to five percent ­ certainly not trivial, but far from
+adequate to address the magnitude of the shortages (e.g. Ferraro et al., 2011; Ferraro and
+Price, 2013; Mitchell and Chesnutt, 2013; Bernedo et al., 2014; Brent et al., 2015; Jessoe
+et al., 2019, Forthcoming; Bhanot, Forthcoming). Moreover, Allcott and Kessler (2019) find
+that the majority of conservation nudge recipients are unwilling to pay the marginal social
+cost of the nudge, which questions the economic efficiency of such policies.
+    With regulations, the challenge is enforcement. For example, a common form of water
+rationing is to restrict outdoor water use to certain days of the week, but the reliance on
+violators' neighbors to be informants means that in practice these restrictions are rarely
+enforced.3 However, for water conservation ­ as in many contexts ­ technology is advancing
+    1
+      The United Nations' forecasts are available at www.un.org/waterforlifedecade/scarcity.shtml.
+    2
+      Some examples of sinking cities are www.nytimes.com/interactive/2017/02/17/world/americas/mexico-
+city-sinking.html and www.nytimes.com/interactive/2017/12/21/world/asia/jakarta-sinking-climate.html.
+    3
+      For instance, California state reports show that during the recent drought we study, most water agencies
+that restricted irrigation never issued a single penalty (CA State Water Board, www.waterboards.ca.gov).
+More generally, the poor quality of reporting of violations hinders the scope of regulatory enforcement in
+many settings of environmental compliance monitoring (e.g. Evans et al., 2009; Gilpatric et al., 2011).
+
+
+
+                                                      1
+rapidly to enable automated detection of violations and enforcement of regulations. Thus,
+given the aforementioned limitations, a promising second-best policy to potentially address
+water shortages is technology-enforced restrictions on water use.
+    We examine such a policy in this study, providing the first evaluation to our knowledge
+of the effects of automating the enforcement of water conservation regulations. In addition,
+we reevaluate a HWR social pressure intervention in the same setting and with the same
+customers (Jessoe et al., 2019, Forthcoming), providing for a direct comparison between these
+two types of conservation policies as well as an evaluation of their layered effects. Our findings
+indicate that automating the enforcement of pre-existing residential irrigation restrictions
+has large effects, inducing treated households to curtail their summer water consumption by
+about 31 percent. In comparison, we find ­ consonant with prior WaterSmart studies in the
+literature ­ that HWR reduce household water consumption by about three percent. That is,
+the effects of technology-enforced regulations in this context are an order of magnitude larger
+than those of the social pressure. Facilitated by novel high-frequency data, we additionally
+show that automating enforcement causes households to shift some water consumption into
+unregulated time periods, a form of environmental leakage; in contrast, HWR yield water
+conservation across the hours of the week.
+    To empirically arrive at these findings, we use data from WaterSmart Software and a
+Southern Californian water utility that measures hourly residential water consumption using
+Advanced Metering Infrastructure. In July 2015, the utility tested an innovative approach
+to enforcing existing mandatory restrictions by leveraging the smart meter data to automate
+detection of irrigation violations and notify offending households. These notices stipulated
+fines for continued violation of the pre-existing irrigation policies and made it clear that
+violations had been detected by computer algorithms. This pilot program dramatically
+increased the scope of enforcement: within one week, the one-time application of automation
+increased the share of households that had ever been warned from 4.6 to 39.2 percent.4 We
+exploit the algorithmic nature of this strengthened enforcement in a regression discontinuity
+design that compares barely-treated households to those whose targeted water use fell just
+below the essentially arbitrary cutoff that designated an irrigation violation. Throughout
+the post-automation summer water season, we estimate local average treatment effects of
+566 gallons saved weekly per household ­ thirty-one percent of the mean ­ and that this
+overall effect is composed of gross conservation of 756 gallons during irrigation-prohibited
+   4
+    The notices never state that this was a one-time pilot program testing the algorithm, but to the extent
+that some households viewed the warnings as cheap-talk, this implies that our estimates are lower-bounds
+of the conservation treatment effects of a more persistent automated enforcement of irrigation restrictions.
+
+
+                                                     2
+time periods and a gross increase in consumption of 190 gallons when irrigation was allowed.
+    To directly compare these water conservation effects to those of social pressure, we utilize
+a field experiment conducted by WaterSmart Software in partnership with Jessoe et al. (2019,
+Forthcoming). The experiment sent HWR to randomly-selected households in the same
+city during the months spanning the utility's automated irrigation enforcement. Using this
+randomization to identify intent-to-treat effects, we find ­ replicating their results ­ that
+HWR reduce average household water consumption by about 78 gallons per week during
+the summer water season, roughly three percent of the control group mean and well within
+the range of estimates in the sizable literature on HWR. Extrapolating the RD estimates
+for the automated enforcement to apply to all treated households (thirty-seven percent of
+the sample population), a comparison of the two interventions on a per-treated-household
+basis shows that, while the overall effects of HWR are economically significant, the total
+conservation induced is about a tenth of the magnitude of that from automated enforcement
+of landscape irrigation regulations.
+    We then build upon this work to explore the layering of the two interventions. By esti-
+mating treatment effects in the weeks just before versus just after the automated violation
+notices, we find average conservation effects from HWR of 79 gallons per week prior to the
+automated enforcement (in May and June) and effects of 78 gallons just after (in July through
+October). That is, our evidence is suggestive that the effects of the randomized HWR are
+completely invariant to the regime change in irrigation enforcement. We additionally show
+that following this heightened enforcement, HWR continue to cause water conservation both
+during time periods when irrigation is allowed and during irrigation-prohibited days, includ-
+ing among households that are high-volume water consumers (the vast majority of whom
+were sent violation notices). This pattern starkly contrasts the increased water use dur-
+ing irrigation-allowed periods caused by the automated enforcement. An actionable policy
+implication of these collective findings is that, while technology-enforced regulations induce
+much greater behavioral change, social pressure serves as an effective simultaneous interven-
+tion to obtain additional conservation and mitigate some of the environmental leakage from
+asymmetric regulations.
+    Our study makes three primary contributions to the research literature. Most directly,
+we provide the first empirical evidence on automating the enforcement of regulations that
+target household resource conservation. The small literature on technology-enforced regu-
+lations has focused on automated traffic enforcement for speeding and red light violations,
+generally finding mixed evidence of social benefits (Retting et al., 2008; Hu and McCartt,
+
+
+                                               3
+2016; Gallagher and Fisher, 2020). The evidence from our study supports the potential for
+large conservation benefits by the households targeted by automated enforcement for water
+policies, especially given the technological facilitation provided by the rapid growth in smart
+water meter deployment.5
+    Secondly, we join a growing literature on the multi-faceted approach of simultaneously
+increasing both social pressure and financial or regulatory incentives to change behavior.
+Policymakers regularly employ tactics such as layering strengthened regulations onto height-
+ened normative interventions to internalize externalities and promote voluntary contributions
+towards public goods (Browne et al., 2020). For example, the United States Forest Service
+attempts to reduce forest fires using both extensive prohibitions of risky behaviors ­ backed
+by statutory financial penalties ­ and large-scale media campaigns of normative messaging
+such as "only YOU can prevent wildfires."6 Prior studies focus on how financial incentives
+might interact with social pressure for resource conservation (List et al., 2017; Pellerano
+et al., 2017; Gillan, 2018; Ito et al., 2018; Holladay et al., 2019). We build on this literature
+by evaluating a context in which strengthened enforcement of existing regulations is imple-
+mented concurrently with a widely-used form of social pressure. We also show promising
+new results regarding their use in combination.
+    Finally, our findings serve as novel evidence that a credible threat of fines can substan-
+tially influence peoples' behavior. The threat of financial penalty is used as a primary policy
+instrument to back regulations in many settings, particularly so for environmental contexts
+such as littering, emissions control, and trespassing in protected areas. Whereas statutory
+penalties can readily be changed by policymakers, the expected value of a fine also depends
+greatly on the level of enforcement (Becker, 1968). In the setting we study, official restric-
+tions and penalties pertaining to irrigation remained unchanged while enforcement increased
+from virtually none to essentially complete enforcement. We provide causal evidence that
+households are very responsive to this newly-credible threat of financial penalties, in con-
+trast to a body of work highlighting relatively minimal sensitivity of water consumption to
+changing prices (e.g. Olmstead et al., 2007; Browne et al., 2020). Technological advances are
+likely to further enable utilities and governments to automate the enforcement of policies
+not only for water conservation, but for many other resources and behaviors as well.
+  5
+     Forecasts from ABI Research and IHS Markit predict that there will be a global base of 400 million
+smart water meters by 2026, one-third of new meter installments (see media coverage of these forecasts
+at businesswire.com/news/home/20190801005064/en/400-Million-Smart-Water-Meters-Installed-Worldwide
+and technology.informa.com/610487/water-meters-market-to-be-one-third-smart-by-2025).
+   6
+     cf. U.S. Forest Service messaging at firerestrictions.us and smokeybear.com.
+
+
+
+                                                  4
+2       Study setting and research design
+As in many regions of the world, Southern California has a history of extreme and persistent
+variation in precipitation, including regular periods of extended drought conditions (see
+Appendix Figure A1). During the most recent drought (2011-2017), water utilities across
+California explored a wide variety of conventional and novel approaches to managing water
+demand in the face of rapidly shrinking supply. Our paper evaluates two simultaneous policy
+interventions for residential water conservation that were implemented in Burbank (Los
+Angeles County) by the local utility, Burbank Water and Power (BWP). Methodologically,
+we utilize a regression discontinuity design to identify the effects of automating enforcement
+of pre-existing landscape irrigation restrictions, and we use a randomized field experiment
+to identify the effects of social pressure via Home Water Reports (HWR).
+    Our primary research focus is on the automated enforcement of day-of-week and time-
+of-day outdoor water use restrictions (hereafter, DOWR). Irrigation restrictions have a long
+heritage in water conservation and are widely-used across California during droughts.7 Al-
+though the social benefits from water conservation do not vary across hours of the week,
+there are several institutional and horticultural reasons to impose DOWR.8 Perhaps more
+importantly, restricting outdoor irrigation to specific days facilitates enforcement. Prior to
+the introduction of "smart" meters that record high-frequency water consumption data using
+Automated Metering Infrastructure (AMI), the only method of detecting irrigation violations
+was visual inspection by a utility employee or an informant neighbor of the violator. While
+DOWR allow informants to focus only on the extensive margin of "wrong day" water use,
+enforcement is believed to be quite low ­ as we provide empirical support for below. BWP's
+use of a computer algorithm to enforce DOWR is highly novel, and ours is the first study to
+our knowledge to evaluate automated enforcement of residential water policies.
+    On May 14, 2015, the Burbank City Council approved the implementation of tighter
+restrictions which included limiting outdoor water use to only on Tuesdays and Saturdays
+before 9:00 a.m. and after 6:00 p.m.9 Notably, BWP initially enforced these DOWR using
+only the conventional method of visual inspection. Then, during the first week of July, the
+    7
+      See California Water Resources Control Board's Water Conservation Portal: Conservation Reporting.
+www.waterboards.ca.gov/water_issues/programs/conservation_portal/conservation_reporting.html
+    8
+      DOWR generally prohibit irrigation between a few hours after sunrise and a few hours before sunset,
+which minimizes water lost to evaporation (Christiansen, 1942). Furthermore, spacing out the days on which
+irrigation is allowed ensures water can be spread efficiently for the benefit of plants. Finally, outdoor water
+use comprises a large share of municipal water use and provides the potential to conserve water with minimal
+health and safety consequences (California Department of Water Resources, 2013).
+    9
+      These revised DOWR replaced existing outdoor water use limits in Burbank of three days per week.
+
+
+                                                      5
+utility conducted a pilot test of a computer algorithm that uses AMI data to automatically
+detect DOWR violations. Within one week, the share of single-family residences that had
+ever been found in violation jumped from 4.6 percent to 39.5 percent ­ that is, more than
+one-third of Burbank households were sent their first water violation notice in early July, as
+shown in Figure 1. These notices (shown in Appendix Figure A2) clearly indicate that the
+violations were detected by a computer algorithm, which had not been previously announced.
+In addition, the notices reminded customers of the existing fines of $100 for irrigating more
+often than twice per week, with fines increasing to $200 and then to $500 for subsequent
+violations. The notices do not state whether automated enforcement would continue, and
+BWP ultimately used the algorithm only once, so this treatment is best interpreted as being
+a shock to household beliefs about detection and enforcement probabilities pertaining to
+existing regulations and the associated pecuniary penalties.
+     To identify the effects of this novel enforcement, we use a regression discontinuity de-
+sign based on a cutoff in the algorithm that the BWP employed to determine violations.
+Using data from a single week in late June 2015, the noncompliance algorithm estimated
+the number of days per week that each household was irrigating, defined by whether the
+water meter had flow of more than 125 gallons during any individual hour of the day. For
+each household's third-highest daily peak consumption hour, this arbitrary cutoff of 125
+gallons thus forms the basis of our regression discontinuity design. For example, a house-
+hold would be assigned to be sent an automated notice if their seven daily peak hours were
+{200, 200, 125, 100, 100, 100, 100}, and a household would not be assigned to treatment if
+their seven daily peak hours were {200, 200, 124, 100, 100, 100, 100}. Although HWR assign-
+ment is not a factor in the algorithm, BWP decided to allow for comparatively more detected
+irrigation days per week for both HWR Treatment and Control accounts with "average" or
+"efficient" consumption, per the WaterSmart tier categorizations discussed below. Because
+we imperfectly observe households' historical tiers (particularly among the HWR control
+group), we assign all households to the running variable based on the third-highest daily
+peak consumption hour, which would determine violations under the strictest allowance.
+For this reason, we evaluate the automated enforcement using a "fuzzy" RDD.
+     We additionally evaluate the effects of HWR in Burbank during the same time period,
+which provides points of comparison for both overall conservation effects as well as more
+nuanced behavioral changes. Acting in partnership with BWP and the Center for Water
+and Energy Efficiency at UC Davis (Jessoe et al., 2019, Forthcoming), WaterSmart Software
+included nearly 17,000 single-family households in the randomized control study, with the
+
+
+                                              6
+timing of initial HWR treatment (by mail or email) rolled out over the monthly water billing
+cycle during late April through mid May 2015. Notably, treated households began to receive
+HWR at least six weeks prior to the automated enforcement of irrigation restrictions in early
+July and continued to receive HWR for at least several months ­ throughout the October
+end of the 2015 summer water season that we include in our empirical analyses.
+    HWR include several components (see Appendix Figure A3). The primary component is a
+normative comparison of the treated household's water consumption with that of a peer group
+of neighboring households with the same number of occupants and similar irrigable area.10
+The reports also provide treated households with some potentially water-saving suggestions
+(e.g. "Upgrade to a low-flow toilet" or "Reduce showers to 5 minutes"). Some Burbank
+HWR also included one of three randomly generated messages, two of which pertain to hot
+water use.11 Jessoe et al. (2019) find "that households did not respond to the messaging
+or recommendations," and we also verified that our estimated coefficients of interest are
+the same for the pooled three arms as for the random subset receiving only the core HWR
+messaging. Broadly, the literature has determined that the social pressure is by far the most
+effective component of HWR (and Home Energy Reports), and that the other components
+are largely ineffective in the absence of normative peer comparisons (Ferraro et al., 2011;
+Ferraro and Price, 2013; Mitchell and Chesnutt, 2013; Allcott and Rogers, 2014; Brent et al.,
+2015, 2020; Jessoe et al., 2019, Forthcoming; Bhanot, Forthcoming). We cannot separately
+identify effects of each included piece of information and join prior literature in viewing the
+overall HWR intervention as the relevant "treatment" from a policymaker's perspective.
+    Our research designs allow us to examine the impacts of automated enforcement and
+social pressure within a given period across quasi-randomly and randomly assigned groups.
+One consideration for this particular setting is the external validity of conclusions drawn
+at the height of severe drought in a drought-prone region. Both of these interventions
+were introduced into a landscape filled with media coverage and other policies encouraging
+water-saving behavior, and BWP was facing threats of State-mandated penalties tied to con-
+  10
+      HWR do not state the specific thresholds for the qualitative bins, but the "efficient" neighbor benchmark
+is based on the 20th percentile of peer group consumption and the "average" benchmark is the 55th percentile.
+The reports also provide the gallons per day values corresponding to each of these thresholds.
+   11
+      These messages are: i) "Surprised by your WaterScore? Your WaterScore compares your use to others in
+Burbank who also have X occupants and a similar yard size. Is your household different? Log on to tune your
+profile and see adjusted comparisons.", ii) "Reduce hot water use: Did you know that heating water is the
+second most energy intensive activity in your home? Log on for information and offers for the water, energy,
+and money saving actions below!", or iii) "Save hot water, win big! Reduce water use by 24 percent and gas
+use by 3 percent in the next 7 months and win one of: a) 25 high-efficiency Whirlpool clothes washers, b)
+100 luxurious, efficient Evolve shower heads, or c) A hot water efficiency starter. conserveandwin.com"
+
+
+
+                                                      7
+servation targets.12 Although these factors might bias our estimates towards finding smaller
+effects, prior research supports that there is ample scope for residential water conservation,
+especially for outdoor water use (Castledine et al., 2014; Baker, Forthcoming; Brelsford and
+Abbott, 2018; Pratt, 2019; Browne et al., 2020). Moreover, as periods of extended drought
+become increasingly common, it is important to study policies during such an event in order
+to better understand the effects of related policies within the contexts in which they will be
+invoked.
+
+
+3      Data
+Our study primarily uses data sourced from Automated Metering Infrastructure residen-
+tial water meters, which provide high-frequency records of household water consumption.
+The availability of hourly consumption data avoids the measurement error that is typically
+present when trying to map metered water use to the actual timing of consumption. For
+municipal utilities, one widely-recognized benefit of AMI is the ability to implement algo-
+rithmic detection of water leaks. In addition, the technology facilitates automated detection
+of landscape irrigation, as we study. Single-family residential accounts typically do not have
+separate meters for irrigation, so utilities (and researchers) are generally unable to identify
+irrigation disaggregated from total household water use; however, the flow rate of irrigation
+controllers is so large that consumption during an hour with irrigation far exceeds regular
+household consumption during any other hour of the week.13 Unlike with smart meters
+for electricity, AMI adoption has been relatively rare for household water use historically,
+although deployment of the technology exhibits a steep upward time trend.14 Thus, as wa-
+ter utilities increasingly install smart meters throughout their jurisdictions, the scope for
+applying AMI technology to enforce water policies will continue to steadily grow.
+    Burbank Water and Power had installed AMI throughout their service area approxi-
+mately one year prior to implementing the interventions we study. WaterSmart Software
+provided us with data on all single-family residential accounts within BWP's service terri-
+tory in Burbank, California. The city of Burbank has a population of about one-hundred
+thousand people, but the Home Water Report program focused on single-family homes with
+  12
+     California enacted fines of $10,000 per day for water agencies that did not meet mandated conservation
+targets (www.mercurynews.com/2015/04/28/water-wasting-fines-of-10000-proposed-by-gov-jerry-brown).
+  13
+     See an example comparison at www.wsscwater.com/customer-service/rates/water-usage.html.
+  14
+     In 2015, only about seven million smart meters for water had been installed in the United States,
+compared to about 68 million smart electricity meters. (see www.westmonroepartners.com/Insights/White-
+Papers/State-of-Advanced-Metering-Infrastructure).
+
+
+                                                    8
+some irrigable landscape area. We observe hourly water consumption for nearly 17,000
+single-family households during April 2014 through October 2015. We collapse these hourly
+data to the household-weekly level for our analysis, although we utilize the hourly disaggre-
+gation to identify patterns of within-week intertemporal substitution and to provide a deeper
+understanding of how and when households respond to the two water conservation policies
+that we evaluate.
+    In addition to data on water consumption, BWP and WaterSmart Software provided us
+with data on all Home Water Reports and on violations of irrigation restrictions. We also
+incorporate several household-level covariates into our analyses. These control terms were
+compiled by WaterSmart Software through property records and inferred when necessary
+from other house characteristics; the covariates included are the size and irrigable area of
+each residential lot, and each house's size in square-feet, year of construction, number of
+floors, number of bedrooms, and number of bathrooms.
+    Table 1 presents summary statistics for these variables, as well as demonstrating balance
+between the HWR treatment and control groups. By design and as expected with randomiza-
+tion across a large sample, implementation of the HWR treatment shows virtually complete
+compliance and the two arms are highly-balanced. Prior to the automated enforcement pi-
+lot, roughly five percent of sample households had been sent a (non-automated) violation
+notice. During the year prior to the interventions (April 2014 through March 2015), average
+household water use was about 2,700 gallons per week. The full distribution of this water
+consumption is plotted by HWR arm in Appendix Figure A4. As is typical of household
+resource consumption, the distribution is skewed and has a long right tail; the standard
+deviation is 1,645 gallons and the Pearson's moment coefficient of skewness is 2.55. For
+comparison, during our primary analysis period of late May through October 2015, average
+water use by the control group was 2,323 gallons (sd = 1,776).
+
+
+4    Empirical specifications and results
+This section presents our empirical findings. First, we evaluate the impacts of the viola-
+tion notices on water usage using a regression discontinuity design based on the computer
+algorithm used to automate enforcement. We estimate treatment effects both during hours
+when watering was allowed and during hours when irrigation was prohibited, as well as for
+total household water consumption. Second, we assess the impact of social pressure using
+the randomized Home Water Reports field experiment. We estimate these treatment effects
+
+
+                                             9
+both for total consumption and separately for watering-allowed/prohibited hours. Finally,
+we examine the layering of the two policies by comparing estimates for the HWR intervention
+during weeks just before and just after the automated enforcement of irrigation restrictions.
+
+
+4.1    Regression discontinuity estimates for automated enforcement
+To examine the effects of the automated violation notices on household water consumption,
+we use a regression discontinuity design based on an arbitrary cutoff in the algorithm used
+to determine irrigation violations (discussed above in Section 2). We do not attempt to dis-
+entangle the mechanism(s) for these conservation effects, such as whether it is the pecuniary
+incentive from threat of fines or the increased perception of regulatory oversight by the utility
+and city. We can only test the reduced-form impact of this policy as it was implemented in
+Burbank ­ and as it could readily be deployed by other jurisdictions.
+    Before turning to the estimates, we conduct some standard exercises to support the valid-
+ity of our RDD. First, we test for manipulation along the running variable, which measures
+the distance to the irrigation violation cutoff. Given that the automation of detecting irriga-
+tion violations was unprecedented and unannounced, a priori there is no reason for concern.
+As shown in Appendix Figure A5, there is some measurement lumpiness from the under-
+lying meter technology, but there is no evidence of any asymmetric sorting of households
+around the threshold, which visually confirms the results of our statistical implementation
+of McCrary's (2008) test for manipulation. Further supporting the identification strategy,
+Appendix Figure A6 demonstrates that there is also smoothness across the threshold in
+pre-treatment water consumption along the running variable.
+    Next, we evaluate treatment compliance. Figure 2 displays the share of households re-
+ceiving automated violation notices along the running variable. For visual clarity, Figures 2-4
+use bins of 10 gallons for the running variable. The size of the markers corresponds to the
+number of households included in each local average. Consistent with the algorithm, zero
+households below the threshold received a violation notice; at the threshold, there is a clear
+discontinuous jump for receipt of an automated violation notice in the first week of July.
+Because of the heterogeneous intensity of treatment across the different consumption tiers,
+as discussed earlier, the computer algorithm used by BWP resulted in perfect compliance
+below the threshold but not above the cutoff.
+    Quantitatively, we estimate that households with peak hourly water consumption just
+above the 125 gallon threshold are 25.5 percentage points more likely to have received a
+violation notice from the water utility relative to households just below the threshold. In
+
+                                               10
+addition, because households that have higher peak water consumption are more likely to
+consume "above average" amounts of water per WaterSmart designation ­ and are thus more
+likely to be assigned to treatment using the stricter allowance ­ the treatment propensity
+increases with the running variable.15 At the right end of the range displayed in Figure 2, we
+find that 40 percent of households received a notice, an increasing slope that continues past
+the displayed range. Thus, the running variable represents a necessary but not sufficient
+condition for a household to be sent an automated violation notice, and this first stage
+supports a fuzzy RDD.
+    Having established the validity of our first-stage, we examine the effects of the auto-
+mated enforcement on water use. We start by plotting local averages of post-treatment
+water consumption against the running variable. Figure 3 shows total average weekly wa-
+ter consumption in gallons; Figure 4(a) shows water consumption during targeted periods
+of the week, when irrigation was not allowed; and Figure 4(b) shows water consumption
+during hours of the week when irrigation was allowed (Tuesday and Saturday before 9:00
+a.m. and after 6:00 p.m.). Average water consumption in these figures is pooled over July-
+October 2015, the four-month period immediately following the automated violation notices
+treatment and continuing through the end of the statutory local summer water season.
+    Figure 4(a) shows a substantial discontinuous drop at the threshold in water consumption
+during irrigation-restricted periods of the week. In reduced-form, the discontinuity is roughly
+200 gallons per household per week, about 14.5 percent of the respective sample mean. For
+water consumption during the entire week, in Figure 3 we also find a large drop at the thresh-
+old of about 8 percent in reduced-form. This overall conservation is comparatively smaller,
+consistent with possible intertemporal substitution in response to the enhanced enforcement
+of an asymmetric restriction. Figure 4(b) reinforces evidence for such substitution, showing
+that water consumption discontinuously increased during hours of the week when irrigation
+was allowed.
+    We investigate these patterns more formally by estimating nonparametric local linear
+regressions of the following form:
+
+       WaterUseit = 0 +  AboveCutoffi + f (Peak Water Consumptioni ) +                  it             (1)
+
+In Equation (1), WaterUseit is the quantity of water consumed by household i in week t. This
+outcome variable is either the household's weekly total water consumption or the total con-
+  15
+    As discussed in Section 2, the algorithm uses "above average" households' third-highest daily peak hour
+during a specific week in late June 2015, but allows more leniency for lower-volume consumers.
+
+
+                                                    11
+sumption during subsets of hours of the week, such as consumption during irrigation-allowed
+hours only. In all regressions, each observation is one household for one week. AboveCutoffi is
+an indicator for whether the household's water use is above the cutoff in the algorithm used to
+determine irrigation violations (discussed above in Section 2). f (Peak Water Consumptioni )
+is a nonparametric function of the household's water use that entered into the algorithm and
+that is represented as the RDD running variable. it is a mean-zero idiosyncratic error term.
+    In addition to presenting reduced-form results using Equation (1), we also estimate local
+average treatment effects using nonparametric local linear regressions of the following form:
+
+        WaterUseit = 0 +  AutomatedViolationi + f (Peak Water Consumptioni ) +                   it    (2)
+
+Here, AutomatedViolationi is an indicator for whether household i was sent an automated
+violation notice due to the enforcement algorithm. Leveraging the RDD framework, we
+instrument for AutomatedViolationi using AboveCutoffi to obtain the LATE estimates. Es-
+sentially, this re-scales the estimates from Equation (1) by the magnitude of the first-stage
+discontinuity. We estimate all RDD specifications using techniques from Calonico et al.
+(2014). With their provided statistical software package, we use local linear regressions with
+a triangular kernel.
+    Table 2 reports RD estimates of the effects of irrigation violation notices. Panel [A]
+presents reduced-form estimates and Panel [B] presents the local average treatment effects,
+which essentially rescale the reduced-form estimates by the estimated magnitude of the first
+stage. Each cell in the table presents an RD estimate at the cutoff for automated violation
+notices. We use a consistent bandwidth of 80 gallons and compute heteroskedasticity-robust
+bias-corrected standard errors using the approach provided by Calonico et al. (2014).16
+    In Panel [A], we present the reduced-form estimates that correspond to Figures 3 and 4.
+Column (3) shows estimates for water consumption during irrigation-prohibited hours of the
+week. We find a statistically significant drop of 192.6 gallons per week at the threshold. Some
+of this decrease in water consumption, however, is offset by an increase in water consumption
+during non-restricted periods within the week. Column (4) shows that water consumption
+increased discontinuously at the treatment threshold on average by 48.4 gallons per week
+during the irrigation-allowed hours on Tuesdays and Saturdays before 9:00 a.m. or after 6:00
+p.m. Thus, the violation notices partly shifted water consumption from irrigation-restricted
+times to irrigation-allowed times, showing intertemporal substitution in response to a policy
+with (intentionally) partial coverage. Focusing on total weekly water conservation in Column
+ 16
+      Estimates are quantitatively and qualitatively similar when using data-driven "optimal" bandwidths.
+
+
+                                                     12
+(2), we also find significant effects at the threshold, with total water consumption decreasing
+in reduced-form by 144.2 gallons per week.
+    As displayed in Figure 2, household receipt of violation notices increases substantially
+at the threshold. Confirming this visible discontinuous jump, nonparametric RD estimates
+indicate an increase of 25.5 percent at the cutoff for automated violation notices. The
+estimate is reported in the first column of Panel [A] in Table 2. Given that only one out of
+four "barely-eligible" households received the violation notice, it is useful to rescale the RD
+estimates so that they can be interpreted as the effect of receiving a violation notice instead
+of as a reduced-form estimate of the effects of crossing the arbitrary threshold.
+    Panel [B] of Table 2 reports RD estimates for local average treatment effects (LATE) of
+receiving a violation notice. As expected, the LATE estimates are roughly four times larger
+than the reduced-form estimates. The effect of receiving a violation notice is to reduce
+post-notice water consumption by 755.8 gallons per week during irrigation-restricted times
+of the week. In contrast, water use during irrigation-allowed portions of the week increases
+by 189.9 gallons per week. Finally, total weekly water use decreases by 565.9 gallons per
+week on average for households sent a violation notice. To place this into perspective, these
+estimates imply that automated enforcement decreases household water use by about 31
+percent on average, a very economically significant effect.17
+    In Table 3, we show that these conservation effects persist throughout (at least) the 2015
+summer water season. The table presents reduced-form and local average treatment effect
+estimates for household weekly water use by month during July, August, September, and
+October. While the estimates fluctuate somewhat ­ as is expected of data on a highly-
+variable outcome ­ there is compelling evidence that estimated impacts of the violation
+notices persist for months after the one-time use of automated enforcement.18 While the
+largest point estimate is for July, a LATE of 641.3 gallons per week, the estimated LATE
+remains at 526.2 gallons in October. Moreover, the estimates for July through October
+form a rather tight range between 437.5 and 641.3 gallons per week. As shown in Appendix
+Table A1, the treatment effects appear to persist even through the summer of 2016.
+    On the whole, these results for the effects of automated enforcement of irrigation restric-
+  17
+     Our estimates for automated enforcement of irrigation policies are substantially larger than those for
+conventionally-enforced DOWR (e.g. Hayden and Tsvetanov, 2019). In percentage terms, we find water con-
+servation on par with that from subsidizing "Water Smart Landscape" conversion (e.g. Baker, Forthcoming;
+Brelsford and Abbott, 2018) or increasing marginal water prices by about 150 percent (Browne et al., 2020).
+  18
+     While we have no data on specific household behavioral changes, these findings are consistent with an
+induced change in irrigation controller settings. Given that (counterfactual) households clearly were not
+making similar changes absent the notifications, this potential explanation is interesting in its own right.
+
+
+
+                                                    13
+tions are both academically interesting and directly policy-relevant. Following a one-time
+application of automated enforcement, it is clear that households respond by significantly
+altering consumption patterns. While the aggregate impact on consumption is the most
+consequential for addressing water shortages, it is also valuable to understand how these
+reductions are achieved, including the evidence of within-week intertemporal substitution.
+
+
+4.2     Estimated effects of the randomized home water reports
+We next examine how social pressure affects water conservation. Our identification strategy
+uses a field experiment in which randomly-selected households were provided HWR including
+normative social comparisons of water use. Building on previous work by Jessoe et al. (2019,
+Forthcoming) that explores the overall effect of the intervention, we primarily focus on time
+periods corresponding to features of the automated enforcement of irrigation policy. Of
+novel interest, we explore the sensitivity of HWR to the sharp change in enforcement by
+estimating treatment effects in the weeks just before versus after the automated irrigation
+violation notices.
+    Figure 5 displays average household-weekly water consumption by month for both the
+treatment group that received HWR and the control group that did not. The time range
+shown in the figure spans one full year from November 2014 to October 2015, consisting of
+three distinct policy regimes. From November 2014 through March 2015 is a "pre-treatments"
+regime when neither HWR nor automated enforcement were in effect. HWR-treated house-
+holds were sent initial social comparisons during April through May 2015, and the "HWR
+only" regime runs from April through June. Then, the automated enforcement was con-
+ducted in the first week of July; the "HWR plus automated violations" regime runs from
+July through October, concluding the 2015 summer water season. In the pre-treatments
+period, there is clearly no difference between the treatment and control groups, which were
+defined randomly. As initial HWR were sent in April and May, the AMI data enable us
+to see treatment effects immediately: average water use is visibly lower for HWR-treated
+households compared to the control group for every month over the experimental period.19
+Finally, the magnitude of HWR treatment-control differences appears to remain strikingly
+similar in the third regime following the automated enforcement of irrigation restrictions.
+    We investigate the effects of HWR on water use more formally by estimating regression
+  19
+    The immediacy of the treatment effect is consistent with Reiss and White (2008), who find that electricity
+consumers respond promptly to both price changes and normative appeals. These findings support our use
+of May-June as a counterfactual for HWR effects during the "HWR plus automated violations" regime.
+
+
+
+                                                     14
+specifications of the following form:
+
+       WaterUseit = 0 +  HWRit + µi + t + Xi +                   it                                         (3)
+
+As above in Section 4.1, WaterUseit is the quantity of water consumed by household i in
+week t. HWRit indicates whether the household had been randomly-assigned to be sent a
+Home Water Report(s). Xi is a vector of household control terms including residential lot
+size, irrigable area, and the home's square footage, year of construction, number of floors,
+number of bedrooms, and number of bathrooms. µi and t are fixed effects for each household
+and week of the sample, respectively. it is a mean-zero idiosyncratic error term.
+    Column (1) of Table 4 uses a univariate OLS regression of household-weekly water
+consumption on assignment to treatment during the post-treatment period from late-May
+through October. In Column (2), we augment this specification with a vector of base-
+line controls for residential lot size, irrigable area, and the home's square footage, year of
+construction, number of floors, number of bedrooms, and number of bathrooms. We also
+estimate a difference-in-differences specification in Column (3) by adding pre-period data
+from January through late May of 2015, including household fixed effects, week of sample
+fixed effects, and interacting the assignment to treatment term with a binary indicator for
+post-HWR-implementation. For each regression, standard errors in parentheses are two-way
+clustered by household and week.20
+    Across the specifications, we find an average intent-to-treat effect of HWR of about 70
+to 80 gallons per household per week. Using the control group sample averages (in the
+lower portion of Table 4), the point estimates correspond to an average reduction in water
+consumption of 3.1 to 3.4 percent, with a ninety-five percent confidence interval spanning 1.0
+to 5.7 percent.21 This finding essentially replicates that of Jessoe et al. (2019, Forthcoming)
+using the same field experiment but slightly different measures. Our results also closely
+align with evidence on HWR in other jurisdictions (Ferraro et al., 2011; Ferraro and Price,
+2013; Mitchell and Chesnutt, 2013; Bernedo et al., 2014; Brent et al., 2015, 2020; Bhanot,
+Forthcoming). Whereas the conservation benefits of HWR are qualitatively well-documented,
+our study provides a novel point of comparison: we show that automated enforcement of
+irrigation restrictions has effects on water consumption that are about ten times as large as
+  20
+     As our study period includes a fairly small number of weeks, we verified that standard errors are very
+similar when clustering only by household.
+  21
+     If, instead of calculating the percentage treatment effect relative to the randomly-assigned control group,
+we compute it using pre-treatment consumption for the treated (from Table 1), these estimates represent a
+change of 2.9 percent.
+
+
+                                                      15
+those of HWR (thirty-one percent versus three percent).
+    Building on these existing results of the social pressure field experiment, we next explore
+how simultaneously using both HWR and automated enforcement policies affects household
+water conservation. We explore the layering of the policies in two ways. First, we exam-
+ine how water conservation changes as automated enforcement is layered onto the social
+comparison policy over time. Second, we focus on how layering the policies changes water
+conservation by days of the week, i.e. when outdoor irrigation is allowed or not allowed.22
+    As discussed just above in the context of Figure 5, the HWR post-treatment period
+consists of two regimes. During the six weeks from late May through June of 2015, the
+statutory summer watering season under irrigation restrictions was in effect, but it was prior
+to automation of the associated regulatory enforcement. Then, during July through October,
+the statutory summer watering season under irrigation restrictions remained in effect, but
+automated violation notices had been abruptly issued to more than one-third of households
+(as shown in Figure 1). We show above that this automated enforcement reduced average
+household water consumption by about 31 percent per week. Thus, there was a sharp change
+in the enforcement regime while other aspects of the setting and HWR experiment remained
+unchanged.23 Empirically, we explore potential policy interactions and behavioral changes by
+estimating the effects of randomized HWR on post-treatment water consumption separately
+for different periods of time.
+    In Table 5, we report these regression estimates. Column (1) includes our full HWR
+time period of late May through October, directly repeating Table 4's Column (2) for con-
+venience. For this full post-treatment period, we find an intent-to-treat estimate from social
+pressure of 78 gallons per week reduction in water use per treated household. The remaining
+columns of Table 5 maintain this same specification but vary the included time periods.
+In Column (2), we estimate an average reduction of 79 gallons per household-week during
+late May through June, prior to the automated enforcement. In Column (3), we estimate a
+conservation effect of 78 gallons per week during July through October, following the use of
+  22
+     In principle, we could test for policy interactions by evaluating the difference in discontinuities across the
+HWR Treatment and Control arms. In practice, such an exercise is statically underpowered as there are too
+few households near the RD cutoff, particularly among the much smaller Control group. We present results
+in Appendix Table A2 for the regression discontinuity estimates using only the sample of HWR-treated
+households, showing a very similar pattern as that shown for all households in Table 2.
+  23
+     Following plans to the tariff structure announced years in advance, water prices changed once near the
+beginning of our study period on June 2, 2015. The price change was a relatively small increase of 5.2 cents
+per hundred cubic feet (about 748 gallons) for the first consumption tier, with slightly larger increases on
+higher tiers. The median May water bill of 8,550 gallons would have increased by only $1.59, inclusive of a
+$1.00 increase to the fixed service charge. There were no additional changes during our study period.
+
+
+
+                                                        16
+automated enforcement.24 The comparison of these treatment estimates reveals that they are
+virtually identical, providing suggestive evidence that the policies may be fully additive.25
+The finding also provides some suggestive evidence on the interactions between mechanisms.
+Two mechanisms through which HWR theoretically might affect water conservation are by
+increasing responsiveness to intrinsic incentives (e.g. moral costs) and by reducing respon-
+siveness to extrinsic incentives (e.g. financial costs) via substitution effects. Concerns about
+the behavioral response to intrinsic incentives being sensitive to the strength of extrinsic in-
+centives have been conjectured in the broader economics literature (e.g. Bénabou and Tirole,
+2006; Gneezy et al., 2011; Pellerano et al., 2017), but we do not find evidence of a strong
+interaction between the two interventions in this setting.
+    The remaining two columns of Table 5 explore the effects of HWR for different times
+within the week during the post-automation regime. Specifically, Column (4) includes only
+hours of the week when irrigation was prohibited and Column (5) includes only hours when
+outdoor irrigation was allowed. We find that HWR reduce average water use by 40 gallons per
+week during irrigation-prohibited time periods and by 38 gallons per week during irrigation-
+allowed time periods. This ubiquity of HWR effects with respect to irrigation permission
+starkly contrasts the intertemporal substitution shown earlier for the automated enforcement.
+Even though automated enforcement of irrigation regulations has large conservation effects
+during irrigation-prohibited periods, it also shifts some water use to non-restricted days of
+the week; in contrast, social pressure has a blanketed effect of reducing water use regardless of
+irrigation restrictions. These results provide further evidence suggesting that social pressure
+works independently of automated enforcement policies for water conservation.
+    We bolster this evidence by focusing on high-volume water consumers, of which the vast
+majority (70 percent) were sent an automated violation notice. Table 6 reports estimates for
+the same outcomes as in Table 5 but uses the subset of households who had pre-treatment
+water consumption in the top tercile of weekly volume. Of note, 70 percent of these house-
+holds were sent an automated violation notice during the first week of July. For these
+high-volume consumers, we find even larger and more significant conservation effects from
+HWR. In Column (1), we estimate an average intent-to-treat reduction of 164 gallons per
+week for the full time period (4.8 percent of the mean). Focusing on time periods before and
+  24
+     As discussed above, the irrigation policy did not change at this time ­ only the approach to enforcement.
+  25
+     In Appendix Table A3, we show that these results remain unchanged when adding additional controls
+for weather (temperature and precipitation) and to adding week-of-sample fixed effects. A formal test of the
+difference across time periods yields a point estimate of essentially zero. The standard error is small enough
+to rule out interactions of larger than a 25 gallons per week reduction or increase, about one-third of the
+average treatment effect of the HWR.
+
+
+                                                     17
+after the automated enforcement intervention, we find similar levels of water conservation:
+163 and 165 gallons, respectively. We also find similar levels of water conservation from
+HWR during irrigation-prohibited hours (80 gallons per week) as during irrigation-allowed
+hours (85 gallons per week).
+    Finally, we show results in Table 7 in two panels separately for late May through June
+and for July through October (2015), across four time blocks within the week: (1) non-
+irrigation days between 0:00-9:00 and 18:00-24:00, (2) non-irrigation days between 9:00-
+18:00, (3) irrigation days (Tuesday and Saturday) between 0:00-9:00 and 18:00-24:00, and
+(4) irrigation days between 9:00-18:00. This decomposition allows us to compare the impact
+of HWR on water use for the same set of hours on days when irrigation is permitted and
+when irrigation is prohibited. The two panels of the table facilitate making this comparison
+before versus after the automated irrigation enforcement.26 Qualitatively, the evidence in
+Table 7 shows that HWR treatment effects are concentrated more heavily on non-irrigation
+days prior to the automated enforcement, and then the treatment effects moderately shift
+to occur during irrigation-allowed periods following the automated enforcement. This shift
+is reflected in the statistical (in)significance of the respective coefficients, but is not itself a
+statistically significant shift in the composition of treatment effect timing. Overall, this new
+table supports that HWR appear to largely operate through a different behavior channel
+than that of the automated irrigation enforcement, especially as the HWR effects remain
+stable during non-irrigation hours (9:00-18:00) of all days of the week across the two regimes.
+    On the whole, these findings do not show any evidence of a significant change in HWR
+effects from layering the two interventions, and the estimates reported in Tables 6 and 7
+serve as a strong further robustness check for additive effects of the two policies. We caveat,
+however, that these evaluations are comparisons of behavior by the same people at different
+points in time; while total precipitation was very minimal during the periods we study,
+there might be seasonality or other time-varying factors determining the response to HWR
+treatment. Thus, we view our evidence as only being suggestive that the effectiveness of
+social pressure does not appear to vary with the strength of enforcement for regulations
+targeting the same or similar behaviors.
+  26
+    Appendix Table A4 further disaggregates these estimates across 21 time blocks within the week and
+shows that, while the conservation from HWR is especially pronounced during irrigation-permitted time
+periods, the social pressure reduces water use across the hours of the week.
+
+
+
+
+                                                 18
+5    Conclusions
+In this study, we examine both the impacts of automating the enforcement of day-of-week
+and time-specific irrigation regulations and of social pressure for water conservation via Home
+Water Reports. Using hourly data on household water consumption for a city in Southern
+California, we estimate how these two policy interventions affect residential water usage
+during an extreme drought.
+    Using a regression discontinuity design based on the irrigation detection algorithm, we
+find that automating the enforcement of existing irrigation policies reduces average water
+consumption by approximately 31 percent among targeted households. In comparison, we
+find using a randomized field experiment that the social pressure reduces average water
+use by about three percent, replicating the findings of Jessoe et al. (2019, Forthcoming).
+Extrapolating the RD estimates to apply to all treated households, this implies that the
+total water conservation effects of automated enforcement of irrigation restrictions are about
+ten-fold those of Home Water Reports on a per-treated-household basis. Exploring how
+these respective effects vary across the hours of the week, we show that the automated
+enforcement induces intertemporal substitution from irrigation-prohibited to unregulated
+periods within the week; in contrast, we find that Home Water Reports cause conservation
+during all hours of the week, both before and following the application of automated irrigation
+policy enforcement.
+    Although irrigation regulations and social pressure have both been studied extensively in
+the resource conservation literature, our study presents novel findings about the automation
+of associated enforcement and the efficacy of these two policies when implemented con-
+temporaneously. Given the sparsity of existing literature studying automated enforcement
+of public policies, our research demonstrates promising potential for technology-enforced
+regulations to dramatically change consumer behaviors. While the city we study used au-
+tomated enforcement only once, we find that the conservation effects persist in magnitude
+for the duration of summer water season and underlying irrigation policy period. Moreover,
+rather than the layering of multiple policies having diminishing marginal returns, these two
+interventions appear to yield fully additive conservation effects: Home Water Reports suc-
+cessfully encouraged conservation both during time periods when irrigation was allowed and
+when irrigation was not allowed, to a similar extent both before and after the application of
+automated irrigation policy enforcement.
+    Our findings speak to a challenging tradeoff faced by utilities and public policymakers.
+Automated enforcement of regulations produces meaningful resource conservation in this
+
+                                              19
+setting, but efficacy is only one consideration. Technology-driven enforcement is imperfect
+and somewhat invasive, which incurs complaints from offended utility customers.27 There
+is also a potential concern that strengthened enforcement of regulations might reduce peo-
+ple's intrinsic motivation to conserve resources. The evidence from our study suggests this
+potential displacement is minimal in practice, perhaps because irrigation policy and social
+pressure may work through different behavioral channels. As the technological scope for
+automated enforcement of policies continues to rapidly grow, the potential lack of popular
+support will need to be carefully balanced against the large potential social benefits from re-
+source conservation and other behavioral changes. Our study shows that these policymaking
+tradeoffs can reasonably be considered independently of existing or proposed social pressure
+interventions.
+
+
+References
+H. Allcott and J. B. Kessler. The welfare effects of nudges: A case study of energy use social
+  comparisons. American Economic Journal: Applied Economics, 11(1):236­276, 2019.
+
+H. Allcott and T. Rogers. The short-run and long-run effects of behavioral interventions:
+  Experimental evidence from energy conservation. The American Economic Review, 104
+  (10):3003­3037, 2014.
+
+J. E. Baker. Subsidies for succulents: Evaluating the Las Vegas Cash-for-Grass rebate
+  program. Journal of the Association of Environmental and Resource Economists, Forth-
+  coming.
+
+G. S. Becker. Crime and punishment: An economic approach. Journal of Political Economy,
+  76(2):169­217, 1968.
+
+R. Bénabou and J. Tirole. Incentives and prosocial behavior. The American Economic
+  Review, 96(5):1652­1678, 2006.
+
+M. Bernedo, P. J. Ferraro, and M. K. Price. The persistent impacts of norm-based messaging
+ and their implications for water conservation. Journal of Consumer Policy, 37(3):437­452,
+ 2014.
+
+S. P. Bhanot. Isolating the effect of injunctive norms on conservation behavior: New evi-
+  dence from a field experiment in California. Organizational Behavior and Human Decision
+  Processes, Forthcoming.
+  27
+    The water utility ultimately apologized for mailing some automated violation notices to households who
+were not actually in violation of the irrigation regulations, as discussed in this Los Angeles Times article:
+www.latimes.com/local/california/la-me-water-error-20150720-story.html.
+
+
+                                                     20
+C. Brelsford and J. K. Abbott. How smart are "Water Smart Landscapes"?              arXiv.org
+  Working Paper, 2018.
+
+D. A. Brent, J. H. Cook, and S. Olsen. Social comparisons, household water use, and
+  participation in utility conservation programs: Evidence from three randomized trials.
+  Journal of the Association of Environmental and Resource Economists, 2(4):597­627, 2015.
+
+D. A. Brent, C. Lott, M. Taylor, J. Cook, K. Rollins, and S. Stoddard. What causes hetero-
+  geneous responses to social comparison messages for water conservation? Environmental
+  and Resource Economics, 77:503­537, 2020.
+
+O. Browne, L. Gazze, and M. Greenstone. Do conservation policies work? Evidence from
+  residential water use. Mimeo, 2020.
+
+California Department of Water Resources. California water plan update, volume 3, chapter
+  3: Urban water use efficiency. Technical report, water.ca.gov, 2013.
+
+S. Calonico, M. D. Cattaneo, and R. Titiunik. Robust nonparametric confidence intervals
+  for regression-discontinuity designs. Econometrica, 82(6):2295­2326, 2014.
+
+A. Castledine, K. Moeltner, M. K. Price, and S. Stoddard. Free to choose: Promoting
+  conservation by relaxing outdoor watering restrictions. Journal of Economic Behavior
+  and Organization, 107(A):324­343, 2014.
+
+J. E. Christiansen. Irrigation by Sprinkling, volume 670. University of California, College of
+   Agriculture: Agricultural Experiment Station, Berkeley, California, 1942.
+
+M. F. Evans, S. M. Gilpatric, and L. Liu. Regulation with direct benefits of information dis-
+ closure and imperfect monitoring. Journal of Environmental Economics and Management,
+ 57:284­292, 2009.
+
+P. J. Ferraro and M. K. Price. Using nonpecuniary strategies to influence behavior: Evidence
+  from a large-scale field experiment. The Review of Economics and Statistics, 95(1):64­73,
+  2013.
+
+P. J. Ferraro, J. J. Miranda, and M. K. Price. The persistence of treatment effects with norm-
+   based policy instruments: Evidence from a randomized environmental policy experiment.
+   The American Economic Review: Papers & Proceedings, 101(3):318­322, 2011.
+
+J. Gallagher and P. J. Fisher. Criminal deterrence when there are offsetting risks: Traffic
+   cameras, vehicular accidents, and public safety. American Economic Journal: Economic
+   Policy, 12(3):202­237, 2020.
+
+J. M. Gillan. Dynamic pricing, attention, and automation: Evidence from a field experiment
+   in electricity consumption. Energy Institute at Haas Working Paper 284, 2018.
+
+
+
+                                             21
+S. M. Gilpatric, C. A. Vossler, and M. McKee. Regulatory enforcement with competitive
+  endogenous audit mechanisms. The RAND Journal of Economics, 42:292­312, 2011.
+
+U. Gneezy, S. Meier, and P. Rey-Biel. When and why incentives (don't) work to modify
+  behavior. Journal of Economic Perspectives, 25(4):191­210, 2011.
+
+H. Hayden and T. Tsvetanov. The effectiveness of urban irrigation day restrictions in Cali-
+  fornia. Water Economics and Policy, 5(3), 2019.
+
+S. Holladay, J. LaRiviere, D. Novgorodsky, and M. Price. Prices versus nudges: What
+  matters for search versus purchase of energy investments? Journal of Public Economics,
+  172:151­173, 2019.
+
+W. Hu and A. T. McCartt. Effects of automated speed enforcement in Montgomery County,
+ Maryland, on vehicle speeds, public opinion, and crashes. Traffic Injury Prevention, 17
+ (sup1):53­58, 2016.
+
+K. Ito, T. Ida, and M. Tanaka. Moral suasion and economic incentives: Field experimental
+  evidence from energy demand. American Economic Journal: Economic Policy, 10(1):
+  240­267, 2018.
+
+K. Jessoe, G. E. Lade, F. Loge, and E. Spang. Residential water conservation during drought:
+  Experimental evidence from three behavioral interventions. UC Davis Working Paper,
+  2019.
+
+K. Jessoe, G. E. Lade, F. Loge, and E. Spang. Spillovers from behavioral interventions:
+  Experimental evidence from water and energy use. Journal of the Association of Environ-
+  mental and Resource Economists, Forthcoming.
+
+J. A. List, R. D. Metcalfe, M. K. Price, and F. Rundhammer. Harnessing policy comple-
+   mentarities to conserve energy: Evidence from a natural field experiment. NBER Working
+   Paper 23355, 2017.
+
+J. McCrary. Manipulation of the running variable in the regression discontinuity design: A
+   density test. Journal of Econometrics, 142(2):698­714, 2008.
+
+D. L. Mitchell and T. W. Chesnutt. Evaluation of East Bay Municipal Utility District's
+  pilot of WaterSmart Home Water Reports. Commissioned report, for the California Water
+  Foundation and the East Bay Municipal Utility District, 2013.
+
+S. M. Olmstead, M. Hanemann, and R. N. Stavins. Water demand under alternative price
+  structures. Journal of Environmental Economics and Management, 54(2):181­198, 2007.
+
+J. A. Pellerano, M. K. Price, S. L. Puller, and G. E. Sánchez. Do extrinsic incentives
+  undermine social norms? Evidence from a field experiment in energy conservation. Envi-
+  ronmental and Resource Economics, 67(3):413­428, 2017.
+
+
+                                            22
+B. Pratt. A fine is more than a price: Evidence from drought restrictions. Mimeo, 2019.
+
+P. C. Reiss and M. W. White. What changes energy consumption? Prices and public
+  pressures. The RAND Journal of Economics, 39(3):636­663, 2008.
+
+R. A. Retting, S. Y. Kyrychenko, and A. T. McCartt. Evaluation of automated speed en-
+  forcement on Loop 101 freeway in Scottsdale, Arizona. Accident Analysis and Prevention,
+  40:1506­1512, 2008.
+
+
+
+
+                                           23
+Figures and tables
+
+                                                             Figure 1: Time series for issued residential irrigation violation notices
+
+
+                                                    45
+                                                                                                                                                                     q q q q q q
+                                                                                                                                                     q q q q q q q q
+                                                                                                                                           q q q q q
+                                                                               Automated algorithmic                           q
+                                                                                                                                   q
+                                                                                                                                       q q
+
+                                                                                                                           q
+                                                                               detection of violations             q q q
+Cumulative share of households notified (percent)
+
+
+
+
+                                                    30
+
+
+
+
+                                                    15
+
+
+
+
+                                                                                                               q
+                                                                                                         q q
+                                                                                                     q q
+                                                                                               q q q
+                                                                             q q q q q q q q q
+                                                           q q q q q q q q q
+
+                                                     0
+
+                                                         January                   April                       July                              October                    January
+                                                                                                         Week of 2015
+
+             Notes: Figure 1 plots the cumulative share of in-sample households that had ever received an irrigation
+             violation notice by week. Throughout this period, violations were determined when either a municipal
+             employee or a neighbor of the offender reported unlawful irrigation to the city. As indicated by the
+             annotation, the city also implemented an automated algorithmic detection of violations in early July.
+
+
+
+
+                                                                                                           24
+                                                Figure 2: Regression discontinuity design: First stage for automated violation notices
+
+
+                                                      100
+Share of households sent violation notice (percent)
+
+
+
+
+                                                       75
+
+
+
+
+                                                       50
+                                                                                                                                           q
+
+                                                                                                                                               q
+                                                                                                                                                     q   q
+
+
+
+
+                                                                                                                      q           q
+                                                                                                                           q
+                                                                                                                  q
+                                                       25
+
+
+
+
+                                                        0         q   q    q      q         q   q   q     q
+
+
+
+                                                            -80                       -40                     0                       40                     80
+                                                                          Distance along running variable to irrigation violation cutoff (gallons)
+
+              Notes: Figure 2 plots local averages for the first stage outcome of whether a household received an
+              automated irrigation violation notice during the first week of July 2015. For clarity, the running variable
+              uses 10 gallon bins. The size of the markers corresponds to the number of households included in the local
+              averages. The LOESS curves shown are fit to the underlying microdata separately on each side of the
+              threshold. Because the running variable represents a necessary but not sufficient condition for a household
+              to be sent an automated violation notice, the first stage supports a "fuzzy" regression discontinuity design.
+
+
+
+
+                                                                                                         25
+                                             Figure 3: Reduced-form local averages for post-treatment weekly water consumption
+
+
+                                             2250
+
+
+
+
+                                                                                                                                             q
+Average weekly water consumption (gallons)
+
+
+
+
+                                                                                                                                                 q
+                                                                                                                                      q
+
+                                             2000
+                                                                                                                         q
+                                                                                            q     q           q                   q
+                                                                                                                   q
+                                                                                                          q
+                                                                                    q
+
+                                                                                        q
+                                             1750
+                                                                          q
+
+                                                                   q
+
+                                                              q
+                                             1500
+
+                                                          q
+
+
+
+
+                                             1250
+
+                                                    -80                       -40                     0                      40                      80
+                                                                  Distance along running variable to irrigation violation cutoff (gallons)
+
+           Notes: Figure 3 plots local averages for weekly water consumption during July-October 2015, the period
+           following the automated violation notices treatment. For clarity, the running variable uses 10 gallon bins.
+           The size of the markers corresponds to the number of households included in the local averages. The
+           LOESS curves shown are fit to the underlying microdata separately on each side of the threshold.
+
+
+
+
+                                                                                                26
+Figure 4: Reduced-form for post-treatment weekly water consumption by hours of the week
+
+                                                      1750
+
+
+         Average weekly water consumption (gallons)
+
+
+                                                      1500
+                                                                                                     q   q
+                                                                                                                                          q   q
+                                                                                                                                                  q
+
+
+                                                                                             q                               q
+                                                                                                 q                   q   q            q
+                                                                                   q                             q
+
+                                                      1250                   q
+                                                                         q
+
+
+                                                                   q
+                                                      1000
+
+
+
+
+                                                       750
+
+                                                             -80                       -40                   0                   40                   80
+                                                                       Distance along running variable to irrigation violation cutoff (gallons)
+                                                         (a) Consumption during hours of the week when irrigation is not allowed
+
+
+                                                      1000
+         Average weekly water consumption (gallons)
+
+
+
+
+                                                       750
+
+
+                                                                                                                                              q   q
+
+                                                                                                                                          q
+                                                                                                                             q
+                                                                                                                     q                q
+                                                                                                                 q       q
+                                                       500
+                                                                                             q       q   q
+                                                                                                 q
+                                                                   q     q   q     q
+
+
+
+
+                                                       250
+
+
+
+
+                                                         0
+
+                                                             -80                       -40                   0                   40                   80
+                                                                       Distance along running variable to irrigation violation cutoff (gallons)
+                                                             (b) Consumption during hours of the week when irrigation is allowed
+Notes: Figure 4 plots local averages for weekly water consumption during July-October 2015, the period
+following the automated violation notices treatment. For clarity, the running variable uses 10 gallon bins.
+The size of the markers corresponds to the number of households included in the local averages. The
+LOESS curves shown are fit to the underlying microdata separately on each side of the threshold.
+Figure 5: Average weekly water consumption by WaterSmart arm across the three regimes
+
+
+                                             3000
+                                                                                                                 WaterSmart treatment arm
+                                                                                                                     q   Control
+                                                                                                                     q   Home water reports (HWR)
+Average weekly water consumption (gallons)
+
+
+
+
+                                             2500                                                        q                  q
+
+                                                                                         q               q      q           q
+                                                           q
+                                                           q                             q
+                                                                                                                q
+                                                                                                 q
+                                                                                                 q                                 q
+
+                                                                                                                                   q
+                                                                                 q
+                                                                                 q
+                                                                                                                                           q
+                                             2000
+                                                                                                                                           q
+                                                                            q
+                                                                      q
+                                                                      q
+
+
+
+                                                                q
+
+
+
+                                                                Pre-treatments                HWR only         HWR + auto. violations
+                                             1500
+
+                                                    Nov. 2014                    April 2015              July 2015                          Nov. 2015
+
+
+
+           Notes: Figure 5 plots average weekly residential water consumption by month for each WaterSmart Home
+           Water Reports treatment arm during November 2014 through October 2015. The dashed vertical lines
+           indicate the three regimes of policy interventions. HWR were sent to households starting with the April-
+           May 2015 billing cycle and throughout the end of 2015 (and later). Algorithmic automated notices for
+           violations of irrigation restrictions were sent to households during the first week of July 2015.
+
+
+
+
+                                                                                        28
+       Table 1: Summary statistics and randomization balance checks
+
+
+                                     Group means                        t-tests
+                                 (1)          (2)                  (3)           (4)
+Covariate                      Control     HWR-treated         Difference      p-value
+Number of households            2920            13703
+Sent WaterSmart HWR               0             0.9972
+
+Prior water violation          0.0486           0.045            -0.0036          0.41
+Lot size (SqFt)                 7346            7322               -24            0.74
+Irrigable area (SqFt)           3829            3796               -33            0.47
+House size (SqFt)               1619            1620                 1            0.93
+Year built                      1945            1945                 0            0.86
+Number of floors               1.061            1.067             0.006           0.27
+Number of bedrooms              2.912           2.919             0.007           0.69
+Number of bathrooms            1.929            1.939              0.01           0.59
+Weekly water gallons            2734            2721               -13            0.68
+
+ Notes: Table 1 shows statistics by WaterSmart Home Water Reports (HWR) treatment
+ arm for household-level covariates. The first two columns show means by treatment
+ arm for all households in the randomization sample, Column (3) shows the difference in
+ means, and Column (4) shows the p-values for t-tests of whether the difference in group
+ means is significantly different from zero. Initial HWR were sent to treated households
+ during the billing cycle spanning from mid April through mid May 2015. All outcomes
+ in the lower panel are determined prior to the randomization and prior to the automated
+ irrigation restrictions enforcement. For pre-treatment weekly water consumption, we
+ use each household's average weekly gallons consumed during April 2014 through March
+ 2015, spanning a full year prior to both treatments.
+
+
+
+
+                                           29
+    Table 2: Regression discontinuity estimates of effects of irrigation violation notice
+
+
+                                       Weekly water consumption: July-Oct 2015 (gallons)
+                          (1)            (2)                 (3)                      (4)
+                      First-stage     All hours        Non-irrig. hours          Irrig. hours.
+
+ Panel [A]: Reduced-form estimates
+Discontinuity          0.2549          -144.2             -192.6                    48.4
+                       (0.0068)          (26.1)            (21.42)                  (10.67)
+
+ Panel [B]: Local average treatment effects
+Discontinuity                          -565.9             -755.8                    189.9
+                                        (106.5)            (89.53)                  (41.29)
+
+Sample mean               0.15          1833                1334                      499
+Bandwidth (gal)            80            80                  80                       80
+Observations            111,211        111,211             111,211                  111,211
+
+ 
+  p<0.1;  p<0.05;  p<0.01          Notes: Each cell presents a nonparametric regression discontinuity
+ estimate at the cutoff for automated violation notices. All regressions use the "rdrobust" software
+ package developed and provided by Calonico et al. (2014). Heteroskedasticity-robust bias-corrected
+ standard errors are estimated using the same package. Column (1) provides the estimated first-stage
+ for automated violation notices. These notices were sent to households during the first week of July
+ 2015. Columns (2) - (4) present estimates for household weekly water consumption during July
+ through October 2015, the remainder of the legal and technical local summer water season following
+ the violation notices. Panel [A] shows the reduced-form estimates and Panel [B] shows the estimated
+ local average treatment effects. Column (2) includes water consumption pooled across all hours of
+ the week. Column (3) includes consumption only during hours of the week when irrigation was not
+ legally allowed. Column (4) includes consumption only during hours irrigation was legally allowed:
+ Tuesdays and Saturdays before 9:00 a.m. or after 6:00 p.m.
+
+
+
+
+                                                  30
+          Table 3: RD estimates of effects of irrigation violation notice by month
+
+
+                                  Weekly water consumption in 2015 (gallons)
+
+                    Reduced-form                   LATE
+Time period         coef.         s.e.        coef.         s.e.       obs.      bw     sample mean
+
+July             -163.0        (48.99)     -641.3        (202.4)     31,385      80          1890
+August            -111.0       (57.58)      -437.5       (233.3)     24,735      80          2006
+September        -159.0        (49.99)     -625.2        (205.0)     30,695      80          1793
+October          -135.7        (51.07)      -526.2       (206.4)     24,396      80          1635
+
+ 
+  p<0.1;  p<0.05;  p<0.01 Notes: Each row presents nonparametric regression discontinuity es-
+ timates at the cutoff for automated violation notices. The outcome variable is total weekly water
+ consumption. The month for each week is defined based on which month the first day of the week falls
+ within. All regressions use the "rdrobust" software package developed and provided by Calonico et al.
+ (2014). Heteroskedasticity-robust bias-corrected standard errors are estimated using the same package.
+
+
+
+
+                                                   31
+Table 4: Estimated effects of randomized WaterSmart Home Water Reports
+
+
+                                Weekly water consumption in 2015 (gallons)
+                                  Late May - October           January - October
+
+                                    (1)            (2)                  (3)
+  I{HWR}                        -77.88          -77.67              -68.76
+                                 (28.38)         (25.62)             (17.44)
+
+  Household controls               No              Yes                 --
+  Household fixed effects          No              No                  Yes
+  Week of sample FE                No              No                  Yes
+  Control group mean              2323            2323                2217
+  Num. of households             16,623          16,623              16,623
+  Observations                   391,552         391,552             706,882
+
+   
+    p<0.1;  p<0.05;  p<0.01           Notes: Table 4 presents estimates of the aver-
+   age intent-to-treat effect of the randomized WaterSmart HWR for weekly water
+   consumption during 2015 for the month ranges indicated by the column titles.
+   Home Water Report treated households each had been sent one HWR as of late
+   May 2015, and monthly reports continued to be sent throughout (and following)
+   October, the end of the legal and technical local summer water season. The house-
+   hold control terms in Column (2) include residential lot size, irrigable area, and
+   the home's square footage, year of construction, number of floors, number of bed-
+   rooms, and number of bathrooms. Standard errors in parentheses are two-way
+   clustered by household and week.
+
+
+
+
+                                           32
+    Table 5: Estimated effects of randomized WaterSmart Home Water Reports by time period
+
+
+                                            Weekly water consumption in 2015 (gallons)
+                           Late May - Oct        Late May - June                     July - October
+                                  (1)                    (2)                (3)           (4)              (5)
+                               All hours              All hours          All hours      Non-irrig.        Irrig.
+I{HWR}                        -77.67                  -78.80             -77.51          -39.71         -37.79
+                               (25.62)                 (28.96)            (25.57)        (18.31)        (15.28)
+
+Household controls                Yes                   Yes                 Yes             Yes            Yes
+Control group mean               2323                   2442                2283           1414            869
+Num. of households              16,623                 16,623              16,623         16,623         16,623
+Observations                    391,552                99,477             292,075         292,075        292,075
+
+ 
+  p<0.1;  p<0.05;  p<0.01          Notes: Table 5 presents estimates of the average intent-to-treat effect of the
+ randomized WaterSmart HWR for weekly water consumption during 2015 for the time periods indicated by the
+ column titles. Specifically, Column (1) includes the full 2015 summer treatment period from late May through
+ October; Column (2) includes only late May through June, before the automated violation notices were sent;
+ and Columns (3) - (5) includes July through October, after the automated violation notices were sent. Column
+ (4) includes consumption only during hours of the week when irrigation was not legally allowed. Column (5)
+ includes consumption only during hours irrigation was legally allowed: Tuesdays and Saturdays before 9:00 a.m.
+ or after 6:00 p.m. Home Water Report treated households each had been sent one HWR as of late May 2015, and
+ monthly reports continued to be sent throughout (and following) October, the end of the legal and technical local
+ summer water season. The household control terms include residential lot size, irrigable area, and the home's
+ square footage, year of construction, number of floors, number of bedrooms, and number of bathrooms. Standard
+ errors in parentheses are two-way clustered by household and week.
+
+
+
+
+                                                        33
+            Table 6: Estimated effects of HWR by time period for high-volume consumers
+
+
+                                              Weekly water consumption in 2015 (gallons)
+                           Late May - Oct         Late May - June                      July - October
+                                  (1)                    (2)                  (3)           (4)               (5)
+                               All hours              All hours            All hours      Non-irrig.         Irrig.
+I{HWR}                        -163.97                -162.45              -164.79          -79.68         -85.11
+                               (48.93)                (54.97)              (49.93)         (40.20)         (32.15)
+
+Household controls                Yes                    Yes                 Yes              Yes            Yes
+Control group mean               3572                    3832                3483             2060           1423
+Num. of households               5,536                  5,536               5,536            5,536          5,536
+Observations                    130,414                 33,122              97,292           97,292         97,292
+
+ 
+  p<0.1;  p<0.05;  p<0.01            Notes: This table replicates the specifications in Table 5 for the sub-sample of
+ households that had pre-treatment water consumption in the top tercile of weekly volume. Of these households,
+ 70 percent were sent an automated violation notice in early July 2015. Specifically, Column (1) includes the
+ full 2015 summer treatment period from late May through October; Column (2) includes only late May through
+ June, before the automated violation notices were sent; and Columns (3) - (5) includes July through October,
+ after the automated violation notices were sent. Column (4) includes consumption only during hours of the week
+ when irrigation was not legally allowed. Column (5) includes consumption only during hours irrigation was legally
+ allowed: Tuesdays and Saturdays before 9:00 a.m. or after 6:00 p.m. The household control terms include residential
+ lot size, irrigable area, and the home's square footage, year of construction, number of floors, number of bedrooms,
+ and number of bathrooms. Standard errors in parentheses are two-way clustered by household and week.
+
+
+
+
+                                                          34
+Table 7: Estimated effects of randomized WaterSmart Home Water Reports by time block
+
+
+                                        Weekly water consumption in 2015 (gallons)
+                                Non- Tuesday and Saturday               Tuesday and Saturday
+                                0-9:00/18-24:00         9-18:00      0-9:00/18-24:00        9-18:00
+                                        (1)               (2)                (3)              (4)
+   Panel [A]: Late May - June
+  I{HWR}                            -33.97             -19.88             -17.33            -7.41
+                                    (15.43)             (8.60)            (12.30)           (4.40)
+
+   Panel [B]: July - October
+  I{HWR}                             -19.06            -12.31            -36.74             -7.03
+                                     (11.76)            (5.96)           (15.10)            (3.63)
+
+  Household controls                   Yes               Yes                Yes              Yes
+  Panel [A] control mean               1001              499                699              245
+  Panel [B] control mean               744               425                855              218
+  Num. of households                  16,623            16,623            16,623           16,623
+  Panel [A] observations             99,417             99,417            99,349           99,349
+  Panel [B] observations             291,855           291,855            291,496          291,496
+   
+    p<0.1;  p<0.05;  p<0.01          Notes: Table 7 presents estimates of the average intent-to-treat
+   effect of the randomized WaterSmart HWR for weekly water consumption during 2015 for the
+   time blocks within each week indicated by the column titles. Specifically, Column (1) includes the
+   hours from midnight to 9:00 and 18:00 to midnight on days other than Tuesday and Saturday.
+   Column (2) includes hours from 9:00-18:00 on days other than Tuesday and Saturday. Column (3)
+   includes the hours from midnight to 9:00 and 18:00 to midnight on Tuesday and Saturday. Column
+   (4) includes hours from 9:00-18:00 on Tuesday and Saturday. Panel [A] shows estimates for the
+   period that includes only late May through June, and Panel [B] shows estimates for the period that
+   includes only July through October, after the automated violation notices were sent. Throughout
+   the entire late May through October period, irrigation was allowed only on Tuesdays and Saturday
+   before 9:00 or after 18:00, i.e. in the hours for Column (3) only. Home Water Report treated
+   households each had been sent one HWR as of late May 2015, and monthly reports continued
+   to be sent throughout (and following) October, the end of the legal and technical local summer
+   water season. The household control terms include residential lot size, irrigable area, and the
+   home's square footage, year of construction, number of floors, number of bedrooms, and number
+   of bathrooms. Standard errors in parentheses are two-way clustered by household and week.
+
+
+
+
+                                                  35
+A                                   Appendix figures and tables
+
+                                   Figure A1: Historical perspective on severity of drought in southern California
+
+
+
+
+                                 Extremely
+                                     Moist
+                                      Very
+                                     Moist
+                                Moderately
+Palmer Drought Severity Index
+
+
+
+
+                                     Moist
+
+
+
+
+                                 Moderate
+                                  Drought
+                                   Severe
+                                  Drought
+                                  Extreme
+                                  Drought
+
+
+
+
+                                             1898   1908   1918   1928   1938   1948   1958   1968   1978   1988   1998   2008   2018
+
+
+
+        Notes: Appendix Figure A1 plots historical monthly observed drought severity on the Palmer Drought
+        Severity Index for the hydrological region of Coastal Southern California. Our study period during 2015
+        lies within the most severe drought on record for the region, but lengthy periods of drought are common.
+
+
+
+
+                                                                                36
+Figure A2: Example of an automated irrigation violation notice
+Figure A3: Example of a WaterSmart Home Water Report (HWR)
+        Figure A4: Balance test of pre-treatment water consumption by WaterSmart RCT arm
+
+
+                        0.0003
+                                                                                   WaterSmart treatment arm
+                                                                                      Control
+                                                                                      Home water reports (HWR)
+Density of households
+
+
+
+
+                        0.0002
+
+
+
+
+                        0.0001
+
+
+
+
+                        0.0000
+
+                                 0     5000              10000             15000                20000
+                                     Pre-treatment average weekly water consumption (gallons)
+
+     Notes: Appendix Figure A4 plots the distributions of average weekly water consumption for in-sample
+     households during April 2014 through March 2015, prior to both the WaterSmart Home Water Reports
+     (HWR) and the automated enforcement interventions. The solid line shows the distribution only for
+     households assigned to the HWR treatment arm, and the dashed line shows only the control group.
+
+
+
+
+                                                           39
+Figure A5: Distribution of households along the regression discontinuity running variable
+
+
+                       750
+
+
+
+
+                       500
+Number of households
+
+
+
+
+                       250
+
+
+
+
+                         0
+
+                             -80             -40                       0                      40              80
+                                   Distance along running variable to irrigation violation cutoff (gallons)
+
+     Notes: Appendix Figure A5 plots the distribution of households along the running variable used in
+     our regression discontinuity design, providing a graphical version of the McCrary (2008) bunching test
+     for manipulation with respect to treatment assignment. Due to heterogeneity in the granularity of
+     measurement for included water meters, there is significantly more mass at cubic foot (7.48 gallons) and
+     five cubic feet (37.4 gallons) increments. Importantly, there is no evidence of any excess distributional
+     mass in the region surrounding the cutoff used for determining automated irrigation violation notices.
+
+
+
+
+                                                                  40
+Figure A6: Identification check for pre-treatment consumption along the running variable
+
+
+                                                     3000
+Pre-treatment average weekly consumption (gallons)
+
+
+
+
+                                                     2500
+
+
+
+
+                                                     2000
+
+
+
+
+                                                     1500
+
+                                                            -80             -40                      0                      40               80
+                                                                  Distance along running variable to irrigation violation cutoff (gallons)
+
+              Notes: Appendix Figure A6 plots local averages for weekly water consumption during April 2014 through
+              March 2015, prior to both the automated enforcement and social comparison interventions. For clarity,
+              the running variable uses 10 gallon bins. The size of the markers corresponds to the number of households
+              included in the local averages. The LOESS curves shown are fit to the underlying microdata separately
+              on each side of the threshold. This identification check shows that pre-treatment water consumption is
+              smooth across the cutoff used for determining automated irrigation violation notices.
+
+
+
+
+                                                                                                41
+    Table A1: RD estimates of effects of irrigation violation notice by month in 2016
+
+
+                                  Weekly water consumption in 2016 (gallons)
+
+                   Reduced-form                 LATE
+Time period        coef.       s.e.        coef.         s.e.       obs.      bw      sample mean
+
+July              -78.7      (69.91)      -311.0        (279.6)   24,017      80           2186
+August            -109.4     (77.47)      -433.8        (310.9)   29,953      80           2189
+September         -93.8      (61.71)      -372.5        (248.5)   23,923      80           1773
+July-Sept.       -96.0       (41.68)     -380.4         (167.2)   77,893      80           2060
+
+ 
+  p<0.1;  p<0.05;  p<0.01 Notes: Each row presents nonparametric regression discontinuity es-
+ timates at the cutoff for automated violation notices. The outcome variable is total weekly water
+ consumption. The month for each week is defined based on which month the first day of the week falls
+ within. All regressions use the "rdrobust" software package developed and provided by Calonico et al.
+ (2014). Heteroskedasticity-robust bias-corrected standard errors are estimated using the same package.
+
+
+
+
+                                                   42
+Table A2: RD estimates of effects of irrigation violation notice for HWR-treated sample
+
+
+                                        Weekly water consumption: July-Oct 2015 (gallons)
+                           (1)            (2)                 (3)                      (4)
+                       First-stage     All hours        Non-irrig. hours          Irrig. hours.
+
+  Panel [A]: Reduced-form estimates
+ Discontinuity          0.2548          -102.6             -155.4                    52.82
+                        (0.0074)         (28.52)            (23.48)                  (11.77)
+
+  Panel [B]: Local average treatment effects
+ Discontinuity                          -402.7              -610                     207.3
+                                          (115)             (96.79)                  (45.49)
+
+ Sample mean               0.15           1829               1331                     498
+ Bandwidth (gal)            80             80                 80                       80
+ Observations             91,717         91,717             91,717                   91,717
+
+  
+   p<0.1;  p<0.05;  p<0.01          Notes: Each cell presents a nonparametric regression discontinuity
+  estimate at the cutoff for automated violation notices. All regressions use the "rdrobust" software
+  package developed and provided by Calonico et al. (2014). Heteroskedasticity-robust bias-corrected
+  standard errors are estimated using the same package. Column (1) provides the estimated first-stage
+  for automated violation notices. These notices were sent to households during the first week of July
+  2015. Columns (2) - (4) present estimates for household weekly water consumption during July
+  through October 2015, the remainder of the legal and technical local summer water season following
+  the violation notices. Panel [A] shows the reduced-form estimates and Panel [B] shows the estimated
+  local average treatment effects. Column (2) includes water consumption pooled across all hours of
+  the week. Column (3) includes consumption only during hours of the week when irrigation was not
+  legally allowed. Column (4) includes consumption only during hours irrigation was legally allowed:
+  Tuesdays and Saturdays before 9:00 a.m. or after 6:00 p.m.
+
+
+
+
+                                                   43
+Table A3: Robustness of estimated effects of randomized WaterSmart HWR by time period
+
+
+                                     Weekly water consumption in 2015 (gallons)
+                                Late May - Oct       Late May - June        July - October
+                                       (1)                   (2)                  (3)
+                                    All hours             All hours            All hours
+       Panel [A]: Baseline reproducing Table 5
+      I{HWR}                       -77.67                -78.80                -77.51
+                                    (25.62)               (28.96)               (25.57)
+
+       Panel [B]: Adding weather controls
+      I{HWR}                       -77.76                -78.83                -77.72
+                                    (25.62)               (28.97)               (25.57)
+
+       Panel [C]: Adding week-of-sample fixed effects
+      I{HWR}                       -78.24                 -78.85               -78.03
+                                    (25.64)               (28.98)               (25.59)
+
+      Household controls              Yes                   Yes                   Yes
+      Control group mean             2323                   2442                 2283
+      Num. of households            16,623                 16,623               16,623
+      Observations                  391,552                99,477               292,075
+
+       
+        p<0.1;  p<0.05;  p<0.01        Notes: see notes for Table 5. Panel [A] replicates
+       the first three columns of Table 5. Panel [B] adds controls for the weekly total
+       precipitation, maximum temperature, and minimum temperature. Panel [C] adds
+       week-of-sample fixed effects.
+
+
+
+
+                                                44
+Table A4: Estimated effects of Home Water Reports by weekday and time block in 2015
+
+
+Weekday           Time block          Irrig.      Weekly water consumption in 2015 (gallons)
+                                    Allowed       Late May - June        July - October          Diff.
+Sunday           00:00-09:00           No                    -1.74                 0.07        1.81
+Sunday           09:00-18:00           No                    -4.12                -2.74        1.38
+Sunday           18:00-00:00           No                    -3.24                -1.51        1.73
+Monday           00:00-09:00           No                    -2.53                -1.50        1.03
+Monday           09:00-18:00           No                    -4.65                -2.00        2.66
+Monday           18:00-00:00           No                    -4.49                -2.25        2.24
+Tuesday         00:00-09:00            Yes                   -6.52                -8.54       -2.02
+Tuesday          09:00-18:00           No                    -4.13                -3.24        0.89
+Tuesday         18:00-00:00            Yes                   -6.92               -12.17       -5.25
+Wednesday        00:00-09:00           No                    -1.97                -4.63       -2.66
+Wednesday        09:00-18:00           No                    -4.09                -3.74        0.36
+Wednesday        18:00-00:00           No                    -1.81                -3.59       -1.78
+Thursday         00:00-09:00           No                    -5.09                -2.42        2.67
+Thursday         09:00-18:00           No                    -2.00                -2.68       -0.68
+Thursday         18:00-00:00           No                    -2.05                -1.38        0.67
+Friday           00:00-09:00           No                    -7.42                -3.04        4.38
+Friday           09:00-18:00           No                    -4.85                -1.38        3.47
+Friday           18:00-00:00           No                    -3.91                 0.50        4.41
+Saturday        00:00-09:00            Yes                   -0.54                -4.50       -3.97
+Saturday         09:00-18:00           No                    -3.22                -4.00       -0.78
+Saturday        18:00-00:00            Yes                   -3.05               -12.25       -9.20
+
+Total                                                        -78.60               -77.85         0.75
+
+ Notes: Table A4 shows the point estimates of the average intent-to-treat effect of the randomized Wa-
+ terSmart HWR for weekly water consumption during the indicated weekday and time block, separately
+ by policy regime calendar period during 2015.
+
+
+
+
+                                                  45
+
