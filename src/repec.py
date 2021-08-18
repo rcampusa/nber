@@ -39,7 +39,7 @@ class RePEc:
         status_code = None
         while status_code != 200:
             url = f'{self.url}{self.string_id()}'
-            response = requests.get(url, proxies={'http': self.proxy})
+            response = requests.get(url, proxies={'http': self.proxy}, timeout=5)
             status_code = response.status_code
             if status_code in [403, 404]:
                 break
