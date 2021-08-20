@@ -33,9 +33,9 @@ class RePEc:
         while status_code != 200:
             try:
                 url = f'{self.url}{self.string_id()}'
-                proxy = Proxy().get_proxy()
+                proxy = {'http': Proxy().get_proxy()}
                 print(f'{self.timestamp()} {url} DOWNLOAD CITATION \U0001F4BE')
-                response = requests.get(url, proxies={'http': proxy}, timeout=timeout)
+                response = requests.get(url, timeout=timeout, proxies=proxy)
                 status_code = response.status_code
                 try:
                     xml = et.fromstring(response.text)
@@ -52,10 +52,10 @@ class RePEc:
         status_code = None
         while status_code != 200:
             try:
-                proxy = Proxy().get_proxy()
+                proxy = {'http': Proxy().get_proxy()}
                 url = f'http://citec.repec.org/api/amf/RePEc:nbr:nberwo:{self.string_id()}'
                 print(f'{self.timestamp()} {url} DOWNLOAD REFERENCE \U0001F4BE')
-                response = requests.get(url, proxies={'http': proxy}, timeout=timeout)
+                response = requests.get(url, timeout=timeout, proxies=proxy)
                 status_code = response.status_code
                 try:
                     parser = et.XMLParser(encoding='utf-8')

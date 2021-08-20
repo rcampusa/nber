@@ -36,15 +36,16 @@ class Wikipedia:
 
         return author_comb
 
-    def profile(self, author, proxy):
+    def profile(self, author):
         try:
             url = f'https://en.wikipedia.org/wiki/{author}_(economist)'
             print(f'[GET \U0001F4BE]: {url}')
-            response = requests.get(url, proxies={'https': proxy}, timeout=5)
+            proxy = {'https': Proxy().get_proxy()}
+            response = requests.get(url, proxies=proxy, timeout=5)
             if response.status_code == 404:
                 url = f'https://en.wikipedia.org/wiki/{author}'
                 print(f'[GET \U0001F4BE]: {url}')
-                response = requests.get(url, proxies={'https': proxy}, timeout=5)
+                response = requests.get(url, proxies=proxy, timeout=5)
             return response
         except:
             pass
@@ -81,10 +82,9 @@ if __name__ == "__main__":
     author = wikipedia.get_author(data)
     author = wikipedia.get_author_combination(author)
     for a in author:
-        proxy = Proxy().get_proxy()
         file_name = f"data/wikipedia/{a.replace('_', '-').lower()}.json"
         if not os.path.exists(file_name):
-            response = wikipedia.profile(a, proxy)
+            response = wikipedia.profile(a)
             data = wikipedia.biography(response)
             if data != None:
                 wikipedia.save_data(file_name, data)

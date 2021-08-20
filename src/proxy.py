@@ -2,14 +2,15 @@ import os
 from random import randint
 
 class Proxy:
-    '''
-    This class returns a string of proxy when making a request.
-    '''
-    
-    def __init__(self):
-        self.proxy_user = os.environ['PROXY_USER']
-        self.proxy_password = os.environ['PROXY_PASSWORD']
-        self.proxy_port = os.environ['PROXY_PORT']
+
+    def proxy(self):
+        try:
+            proxy_user = os.environ['PROXY_USER']
+            proxy_password = os.environ['PROXY_PASSWORD']
+            proxy_port = os.environ['PROXY_PORT']
+            return proxy_user, proxy_password, proxy_port
+        except KeyError:
+            pass
 
     def get_host(self):
         file_name = 'host.txt'
@@ -20,11 +21,9 @@ class Proxy:
             return host[index]
 
     def get_proxy(self):
-        '''
-        Returns a proxy
-        '''
-
-        proxy = f'socks5h://{self.proxy_user}:{self.proxy_password}@{self.get_host()}:{self.proxy_port}'
-
-        return proxy
+        proxy = self.proxy()
+        try:
+            return f'socks5h://{proxy[0]}:{proxy[1]}@{self.get_host()}:{proxy[2]}'
+        except TypeError:
+            return None
 
